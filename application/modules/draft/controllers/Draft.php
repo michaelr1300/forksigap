@@ -98,8 +98,8 @@ class Draft extends Operator_Controller
 
     public function add(int $category_id = null)
     {
-        // khusus admin dan author
-        if (!is_admin() && $this->level != 'author') {
+        // khusus admin
+        if (!is_admin()) {
             redirect();
         }
 
@@ -114,20 +114,20 @@ class Draft extends Operator_Controller
                 $this->session->set_flashdata('error', $this->lang->line('form_draft_error_author_not_registered'));
                 redirect();
             }
-        }
 
-        // cek category tersedia dan aktif
-        // untuk pendaftaran draft oleh author
-        if ($category_id) {
-            $category        = $this->draft->get_where(['category_id' => $category_id], 'category');
-            $sisa_waktu_buka = Carbon::parse(Carbon::today())->diffInDays($category->date_open, false);
+            // cek category tersedia dan aktif
+            // untuk pendaftaran draft oleh author
+            if ($category_id) {
+                $category        = $this->draft->get_where(['category_id' => $category_id], 'category');
+                $sisa_waktu_buka = Carbon::parse(Carbon::today())->diffInDays($category->date_open, false);
 
-            if (!$category || $category->category_status == 'n') {
-                $this->session->set_flashdata('error', $this->lang->line('form_draft_error_category_not_found'));
-                redirect();
-            } elseif ($sisa_waktu_buka >= 1) {
-                $this->session->set_flashdata('error', $this->lang->line('form_draft_error_category_not_opened'));
-                redirect();
+                if (!$category || $category->category_status == 'n') {
+                    $this->session->set_flashdata('error', $this->lang->line('form_draft_error_category_not_found'));
+                    redirect();
+                } elseif ($sisa_waktu_buka >= 1) {
+                    $this->session->set_flashdata('error', $this->lang->line('form_draft_error_category_not_opened'));
+                    redirect();
+                }
             }
         }
 
