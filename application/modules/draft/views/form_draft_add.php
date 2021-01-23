@@ -139,9 +139,6 @@ $(document).ready(function() {
                     crequired: true,
                     cminlength: 5,
                 },
-                "author_id[]": {
-                    crequired: true,
-                },
                 draft_file: {
                     extension: "<?= get_allowed_file_types('draft_file')['types']; ?>",
                 },
@@ -190,7 +187,10 @@ $(document).ready(function() {
 
     $("#category").select2();
     $("#theme").select2();
+
+    // hilangkan placeholder pilih
     $('#author option[value=""]').detach();
+
     $("#author").select2({
         multiple: true
     });

@@ -606,6 +606,10 @@ class Draft extends Operator_Controller
 
         if (!$_POST) {
             $input = (object) $draft;
+            $authors = $this->author->get_draft_authors($draft_id);
+            $input->author_id = array_map(function ($a) {
+                return $a->author_id;
+            }, $authors);
         } else {
             $input = (object) $this->input->post(null, false);
         }
@@ -645,6 +649,18 @@ class Draft extends Operator_Controller
 
         // update draft
         $this->draft->where('draft_id', $draft_id)->update($input);
+
+        // update draft author
+        $this->draft_author->where('draft_id', $draft_id)->delete();
+        foreach ($input->author_id as $key => $value) {
+            // hanya author pertama yang boleh edit draft
+            // author lain hanya bisa view only
+            $this->draft_author->insert([
+                'author_id'           => $value,
+                'draft_id'            => $draft_id,
+                'draft_author_status' => $key == 0 ? 1 : 0, // author pertama, flag 1, artinya boleh edit draft
+            ]);
+        }
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
