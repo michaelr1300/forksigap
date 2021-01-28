@@ -786,11 +786,11 @@ function get_print_order_finishing()
 }
 
 function strip_disallowed_char($string)
-{
-    $bad = array_merge(
-        array_map('chr', range(0, 31)),
-        array("<", ">", ":", '"', "/", "\\", "|", "?", "*", "(", ")", "@", "&", "!", ";", ",")
-    );
-    $string = str_replace($bad, "_", $string);
-    return $string;
+{ 
+    $extension = substr($string, strripos($string, ".") + 1);  
+    $filename  = substr($string, 0 ,strripos($string, "."));
+
+    $bad = array("<", ">", ":", '"', "/", "\\", "|", "?", "*", "(", ")", "@", "&", "!", ";", ",",".");
+    $filename = str_replace($bad, "_", $filename);
+    return $filename.".".$extension;
 }
