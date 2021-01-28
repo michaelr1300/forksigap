@@ -47,6 +47,10 @@ class Print_order extends Printing_Controller
         }
     }
 
+    function coba(){
+        echo strip_disallowed_char('Pidato Guru Besar - Prof. Hertiani - 11 Jan 2021-Cetak.rar');
+    }
+
     public function add()
     {
         if (!$this->_is_printing_admin()) {
@@ -83,7 +87,7 @@ class Print_order extends Printing_Controller
 
         if ($this->print_order->validate()) {
             if (!empty($_FILES) && $file_name = $_FILES['print_order_file']['name']) {
-                $generated_name = strip_disallowed_char($this->_generate_file_name($file_name));
+                $generated_name = $this->_generate_file_name(strip_disallowed_char($file_name));
                 $upload          = $this->print_order->upload_print_order_file('print_order_file', $generated_name);
                 if ($upload) {
                     $input->print_order_file = $generated_name;
@@ -189,7 +193,7 @@ class Print_order extends Printing_Controller
 
         if ($this->print_order->validate()) {
             if (!empty($_FILES) && $file_name = $_FILES['print_order_file']['name']) {
-                $generated_name = strip_disallowed_char($this->_generate_file_name($file_name));
+                $generated_name = $this->_generate_file_name(strip_disallowed_char($file_name));
                 $upload          = $this->print_order->upload_print_order_file('print_order_file', $generated_name);
                 if ($upload) {
                     $input->print_order_file = $generated_name;
