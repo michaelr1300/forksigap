@@ -47,7 +47,8 @@ class Print_order extends Printing_Controller
         }
     }
 
-    function coba(){
+    function coba()
+    {
         echo strip_disallowed_char('Pidato Guru Besar - Prof. Hertiani - 11 Jan 2021-Cetak.rar');
     }
 
@@ -138,10 +139,18 @@ class Print_order extends Printing_Controller
                 $input->paper_estimation = empty_to_null($input->paper_estimation);
             } else {
                 $book_pages = $this->print_order->get_book($input->book_id)->book_pages;
-                if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
-                    $input->paper_estimation = empty_to_null($input->paper_estimation);
+                if (!$input->category == 'nonbook') {
+                    if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
+                        $input->paper_estimation = empty_to_null($input->paper_estimation);
+                    } else {
+                        $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
+                    }
                 } else {
-                    $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
+                    if (empty($input->total) || empty($input->paper_divider)) {
+                        $input->paper_estimation = empty_to_null($input->paper_estimation);
+                    } else {
+                        $input->paper_estimation = $input->total / $input->paper_divider;
+                    }
                 }
             }
         }
@@ -254,10 +263,18 @@ class Print_order extends Printing_Controller
                 $input->paper_estimation = empty_to_null($input->paper_estimation);
             } else {
                 $book_pages = $this->print_order->get_book($input->book_id)->book_pages;
-                if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
-                    $input->paper_estimation = empty_to_null($input->paper_estimation);
+                if (!$input->category == 'nonbook') {
+                    if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
+                        $input->paper_estimation = empty_to_null($input->paper_estimation);
+                    } else {
+                        $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
+                    }
                 } else {
-                    $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
+                    if (empty($input->total) || empty($input->paper_divider)) {
+                        $input->paper_estimation = empty_to_null($input->paper_estimation);
+                    } else {
+                        $input->paper_estimation = $input->total / $input->paper_divider;
+                    }
                 }
             }
         }

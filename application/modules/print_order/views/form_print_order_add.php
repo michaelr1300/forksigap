@@ -399,8 +399,13 @@ $(document).ready(function() {
     })
 
     $("#total,#paper-divider,#book-id").change(function(halaman) {
-        $("#paper-estimation").val(($("#total").val() * $("#info-book-pages").text()) / $("#paper-divider").val());
-        $("#paper-estimation-info").html($("#paper-estimation").val());
+        if ($('#print-mode').val() != 'nonbook') {
+            $("#paper-estimation").val(($("#total").val() * $("#info-book-pages").text()) / $("#paper-divider").val());
+            $("#paper-estimation-info").html($("#paper-estimation").val());
+        } else {
+            $("#paper-estimation").val($("#total").val() / $("#paper-divider").val());
+            $("#paper-estimation-info").html($("#paper-estimation").val());
+        }
     });
 
 
