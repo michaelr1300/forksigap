@@ -220,8 +220,7 @@ class Author extends Admin_Controller
 
     public function view_image($folder, $file_name)
     {
-        $storage_directory = realpath("storage\\{$folder}");
-        $file = "{$storage_directory}\\{$file_name}";
+        $file = "storage/{$folder}/{$file_name}";
 
         if (file_exists($file)) {
             ob_end_clean();
