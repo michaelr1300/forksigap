@@ -4,6 +4,7 @@ class Draft_model extends MY_Model
 {
     // set public if want to ovveride per_page
     public $per_page;
+    private $draftfile_directory = 'storage/draftfile';
 
     public function get_validation_rules()
     {
@@ -678,10 +679,15 @@ class Draft_model extends MY_Model
         return !!$is_authorized;
     }
 
+    // upload initial draft file
     public function upload_draft_file($field_name, $draft_file_name)
     {
+        if (!is_dir($this->draftfile_directory)) {
+            mkdir($this->draftfile_directory, 0777, TRUE);
+        }
+
         $config = [
-            'upload_path'      => './draftfile/',
+            'upload_path'      => $this->draftfile_directory,
             'file_name'        => $draft_file_name,
             'allowed_types'    => get_allowed_file_types('draft_file')['types'],
             'max_size'         => 51200,                                           // 50MB
@@ -699,12 +705,11 @@ class Draft_model extends MY_Model
         }
     }
 
-    public function delete_draft_file($draft_file)
+    // delete initial draft file
+    public function delete_draft_file($draft_file_name)
     {
-        if ($draft_file != "") {
-            if (file_exists("./draftfile/$draft_file")) {
-                unlink("./draftfile/$draft_file");
-            }
+        if ($draft_file_name && file_exists("$this->draftfile_directory/$draft_file_name")) {
+            unlink("$this->draftfile_directory/$draft_file_name");
         }
     }
     // public function deleteCoverfile($draftFile)
@@ -716,10 +721,15 @@ class Draft_model extends MY_Model
     //     }
     // }
 
+    // upload progress file
     public function upload_file($field_name, $draft_file_name)
     {
+        if (!is_dir($this->draftfile_directory)) {
+            mkdir($this->draftfile_directory, 0777, TRUE);
+        }
+
         $config = [
-            'upload_path'      => './draftfile/',
+            'upload_path'      => $this->draftfile_directory,
             'file_name'        => $draft_file_name,
             'allowed_types'    => 'docx|doc|pdf|idml|indd|indt|zip|rar|jpg|jpeg|png',   // docx dan indesign
             'max_size'         => 151200,
@@ -760,14 +770,11 @@ class Draft_model extends MY_Model
     //     }
     // }
 
-    public function delete_file($draft_file)
+    // delete progress file
+    public function delete_file($draft_file_name)
     {
-        if ($draft_file) {
-            if (file_exists("./draftfile/$draft_file")) {
-                unlink("./draftfile/$draft_file");
-                return true;
-            }
-            return false;
+        if ($draft_file_name && file_exists("$this->draftfile_directory/$draft_file_name")) {
+            unlink("$this->draftfile_directory/$draft_file_name");
         }
     }
 
