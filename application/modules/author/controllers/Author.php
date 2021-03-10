@@ -218,9 +218,11 @@ class Author extends Admin_Controller
         return str_replace(" ", "_", "KTP" . '_' . $author_name . '_' . date('YmdHis') . '.' . $get_extension); // author ktp name
     }
 
-    public function view_image($folder, $author_ktp)
+    public function view_image($folder, $file_name)
     {
-        $file = realpath($folder) . "\\" . $author_ktp;
+        $storage_directory = realpath("storage\\{$folder}");
+        $file = "{$storage_directory}\\{$file_name}";
+
         if (file_exists($file)) {
             ob_end_clean();
             $data = file_get_contents($file);
@@ -229,6 +231,8 @@ class Author extends Admin_Controller
                 ->set_content_type('image/jpeg')
                 ->set_output($data)
                 ->_display();
+        } else {
+            echo $this->lang->line('toast_error_file_not_found');
         }
     }
 

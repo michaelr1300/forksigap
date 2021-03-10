@@ -3,6 +3,7 @@
 class Author_model extends MY_Model
 {
     protected $per_page = 10;
+    private $authorktp_directory = 'storage/authorktp';
 
     public function get_validation_rules()
     {
@@ -188,8 +189,12 @@ class Author_model extends MY_Model
 
     public function upload_author_ktp($ktp_field_name, $ktp_name)
     {
+        if (!is_dir($this->authorktp_directory)) {
+            mkdir($this->authorktp_directory, 0777, TRUE);
+        }
+
         $config = [
-            'upload_path'      => './authorktp/',
+            'upload_path'      => $this->authorktp_directory,
             'file_name'        => $ktp_name,
             'allowed_types'    => 'jpg|png|jpeg|pdf',
             'max_size'         => 15360, // 15MB
@@ -210,10 +215,8 @@ class Author_model extends MY_Model
 
     public function delete_author_ktp($ktp_name)
     {
-        if ($ktp_name != "") {
-            if (file_exists("./authorktp/$ktp_name")) {
-                unlink("./authorktp/$ktp_name");
-            }
+        if ($ktp_name && file_exists("$this->authorktp_directory/$ktp_name")) {
+            unlink("$this->authorktp_directory/$ktp_name");
         }
     }
 }

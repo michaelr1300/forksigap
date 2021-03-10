@@ -3,6 +3,7 @@
 class Document_model extends MY_Model
 {
     protected $per_page = 10;
+    private $documentfile_directory = 'storage/documentfile';
 
     public function get_validation_rules()
     {
@@ -69,11 +70,15 @@ class Document_model extends MY_Model
         ];
     }
 
-    public function upload_document_file($fieldname, $documentFileName)
+    public function upload_document_file($fieldname, $document_file_name)
     {
+        if (!is_dir($this->documentfile_directory)) {
+            mkdir($this->documentfile_directory, 0777, TRUE);
+        }
+
         $config = [
-            'upload_path'      => './documentfile/',
-            'file_name'        => $documentFileName,
+            'upload_path'      => $this->documentfile_directory,
+            'file_name'        => $document_file_name,
             'allowed_types'    => get_allowed_file_types('document_file')['types'],
             'max_size'         => 51200, // 50MB
             'overwrite'        => true,
@@ -90,12 +95,10 @@ class Document_model extends MY_Model
         }
     }
 
-    public function delete_document_file($document_file)
+    public function delete_document_file($document_file_name)
     {
-        if ($document_file != "") {
-            if (file_exists("./documentfile/$document_file")) {
-                unlink("./documentfile/$document_file");
-            }
+        if ($document_file_name && file_exists("$this->documentfile_directory/$document_file_name")) {
+            unlink("$this->documentfile_directory/$document_file_name");
         }
     }
 }

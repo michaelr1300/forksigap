@@ -4,6 +4,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Print_order_model extends MY_Model
 {
     public $per_page = 10;
+    private $preprintfile_directory = 'storage/preprintfile';
+    private $printorderfile_directory = 'storage/printorderfile';
+
 
     public function get_validation_rules()
     {
@@ -254,8 +257,12 @@ class Print_order_model extends MY_Model
 
     public function upload_print_order_file($field_name, $file_name)
     {
+        if (!is_dir($this->printorderfile_directory)) {
+            mkdir($this->printorderfile_directory, 0777, TRUE);
+        }
+
         $config = [
-            'upload_path'      => './printorderfile/',
+            'upload_path'      => $this->printorderfile_directory,
             'file_name'        => $file_name,
             'allowed_types'    => get_allowed_file_types('print_order_file')['types'],
             'max_size'         => 51200,                                           // 50MB
@@ -275,12 +282,8 @@ class Print_order_model extends MY_Model
 
     public function delete_print_order_file($print_order_file)
     {
-        if ($print_order_file) {
-            if (file_exists("./printorderfile/$print_order_file")) {
-                unlink("./printorderfile/$print_order_file");
-                return true;
-            }
-            return false;
+        if ($print_order_file && file_exists("$this->printorderfile_directory/$print_order_file")) {
+            unlink("$this->printorderfile_directory/$print_order_file");
         }
     }
 
@@ -297,19 +300,19 @@ class Print_order_model extends MY_Model
 
     public function delete_preprint_file($preprint_file)
     {
-        if ($preprint_file) {
-            if (file_exists("./preprintfile/$preprint_file")) {
-                unlink("./preprintfile/$preprint_file");
-                return true;
-            }
-            return false;
+        if ($preprint_file && file_exists("$this->preprintfile_directory/$preprint_file")) {
+            unlink("$this->preprintfile_directory/$preprint_file");
         }
     }
 
     public function upload_preprint_file($field_name, $print_order_file_name)
     {
+        if (!is_dir($this->preprintfile_directory)) {
+            mkdir($this->preprintfile_directory, 0777, TRUE);
+        }
+
         $config = [
-            'upload_path'      => './preprintfile/',
+            'upload_path'      => $this->preprintfile_directory,
             'file_name'        => $print_order_file_name,
             'allowed_types'    => get_allowed_file_types('preprint_file')['types'],
             'max_size'         => 51200,                                           // 50MB
