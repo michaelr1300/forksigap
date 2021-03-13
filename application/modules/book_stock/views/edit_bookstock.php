@@ -55,11 +55,11 @@
                                 <input type="hidden" name="warehouse_past" id="warehouse_past"
                                     value="<?//= $input->stock_warehouse; ?>">
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label class="font-weight-bold" for="date">Tanggal
                                     Input<abbr title="Required">*</abbr></label>
                                 <input type="date" name="date" id="date" value="" class="form-control dates" />
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <label class="font-weight-bold" for="notes">Catatan</label>
                                 <textarea rows="6" class="form-control summernote-basic" id="notes"
