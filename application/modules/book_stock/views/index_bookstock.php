@@ -93,6 +93,8 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 </th>
                                 <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
                                     ISBN</th>
+                                <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
+                                    Lokasi Rak</th>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center" colspan="3">
                                     Stok</th>
                                 <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
@@ -105,7 +107,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                             </tr>
                             <tr>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center">Gudang</th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Perpus</th>
+                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Perpustakaan</th>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center">Showroom</th>
                             </tr>
                         </thead>
@@ -124,6 +126,9 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 </td>
                                 <td class="align-middle text-center">
                                     <?= $book_stock->isbn; ?></td>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <?= $book_stock->book_location; ?></td>
                                 </td>
                                 <?php if($book_stock->warehouse_present <= 50) : ?>
                                 <td class="align-middle text-center text-danger"><b>
