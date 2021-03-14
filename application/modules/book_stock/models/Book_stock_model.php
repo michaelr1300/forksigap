@@ -69,15 +69,15 @@ class Book_stock_model extends MY_Model
                 $this->where('year(published_date)', $data);
             }
             if ($params == 'warehouse_present') {
-                // if($data <= 50){
-                //     $this->where('warehouse_present', "{$data}_0&&50");
-                // }
-                // if($data =='y'){
-                //     $this->where('warehouse_present', "{$data}");
-                // } 
-                // else{
+                if($data == 1){
+                    $this->where('warehouse_present <=', 50);
+                }
+                else if($data == 2){
+                    $this->where('warehouse_present >', 50);
+                } 
+                else{
                     $this->where('warehouse_present', $data);
-                // }
+                }
             }
         }
         return $this;

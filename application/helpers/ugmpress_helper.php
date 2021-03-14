@@ -818,26 +818,11 @@ function get_selling_options()
 }
 
 function get_warehouse_stock(){
-    $CI = get_instance();
-    $query = $CI->db->select('warehouse_present')->from('book_stock')->where('warehouse_present<=50')->get();
-
-    $warehouse_present=[
-        ''=>'Semua'
-    ];
-    // if($CI >=0 && $CI <= 50){
-    //     $col1=$CI->db->select('warehouse_present')->from('book_stock')->where('warehouse_present<=50')->get();
-    //     $warehouse_present[$col1] = '<= 50';
-    // }
-    // if($CI >50){
-    //     $col2=$CI->db->select('warehouse_present')->from('book_stock')->where('warehouse_present>50')->get();
-    //     $warehouse_present[$col2] = '<= 50';
-    // }
     return [
         '' => 'Semua',
-        '50' => '<= 50',
-        '100' => '> 50'
+        '1' => '<= 50',
+        '2' => '> 50'
     ];
-    // return $warehouse_present;
 }
 
 function get_book_receive_status(){
