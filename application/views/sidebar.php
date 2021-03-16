@@ -37,37 +37,37 @@ $menu_list = [
     ],
     [
         'title' => 'Pasca Produksi',
-        'level' => 'superadmin|admin_gudang|admin_pemasaran|admin_keuangan'
+        'level' => 'superadmin|admin_gudang|admin_pemasaran|staff_gudang'
     ],
     [
         'name'  => 'Buku Gudang',
         'icon'  => 'fa fa-warehouse',
-        'level' => 'superadmin|admin_gudang|admin_pemasaran|admin_keuangan',
+        'level' => 'superadmin|admin_gudang|admin_pemasaran|staff_gudang',
         'child' => [
             [
                 'name'  => 'Stok Buku',
                 'url'   => 'book_stock',
-                'level' => 'superadmin|admin_gudang'
+                'level' => 'superadmin|admin_gudang|staff_gudang'
             ],
             [
                 'name'  => 'Penerimaan Buku',
                 'url'   => 'book_receive',
-                'level' => 'superadmin|admin_gudang'
+                'level' => 'superadmin|admin_gudang|staff_gudang'
             ],
             [
                 'name'  => 'Permintaan Buku',
                 'url'   => 'book_request',
-                'level' => 'superadmin|admin_gudang|admin_pemasaran'
+                'level' => 'superadmin|admin_gudang|admin_pemasaran|staff_gudang'
             ],
             [
                 'name'  => 'Transaksi Buku Harian',
                 'url'   => 'book_transaction_daily',
-                'level' => 'superadmin|admin_gudang'
+                'level' => 'superadmin|admin_gudang|staff_gudang'
             ],
             [
                 'name'  => 'Transaksi Buku Bulanan',
                 'url'   => 'book_transaction_monthly',
-                'level' => 'superadmin|admin_gudang'
+                'level' => 'superadmin|admin_gudang|staff_gudang'
             ],
         ]
     ],

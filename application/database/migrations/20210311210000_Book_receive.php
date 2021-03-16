@@ -80,16 +80,22 @@ class Migration_Book_receive extends CI_Migration{
                 'type' => 'TIMESTAMP',
                 'null' => TRUE
             ],
-            'wraping_notes' => [
+            'wrapping_notes' => [
                 'type' => 'TEXT',
             ],
-            'print_notes_admin' => [
+            'wrapping_notes_admin' => [
                 'type' => 'TEXT',
             ],
-            'wraping_user' => [
+            'wrapping_user' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100
             ],
+
+            //book title
+            'name' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100
+            ]
         ]);
         $this->dbforge->add_key('book_receive_id', TRUE);
         $this->dbforge->create_table('book_receive');

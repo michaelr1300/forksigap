@@ -830,7 +830,7 @@ function get_book_receive_status(){
         '' => '--Pilih--',
         'reject' => 'Ditolak',
         'revisi' => 'Butuh Revisi',
-        'serah_terima' => 'Serah Terima',
+        'handover' => 'Serah Terima',
         'wrapping' => 'Wrapping',
         'finalisai' => 'Menunggu Finalisasi',
         'finish' => 'Selesai',
