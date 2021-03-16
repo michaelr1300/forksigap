@@ -74,7 +74,7 @@ $level              = check_level();
                                     <tr>
                                     <tr>
                                         <td width="160px">Stok Keseluruhan</td>
-                                        <td>554</td>
+                                        <td><?= $input->warehouse_present+$input->library_present+$input->showroom_present; ?></td>
                                     </tr>
                                     <td width="160px">Stok Gudang</td>
                                     <td>
@@ -83,11 +83,11 @@ $level              = check_level();
                                     </tr>
                                     <tr>
                                         <td width="160px">Stok Perpustakaan</td>
-                                        <td>100</td>
+                                        <td><?= $input->library_present; ?></td>
                                     </tr>
                                     <tr>
                                         <td width="160px">Stok Showroom</td>
-                                        <td>52</td>
+                                        <td><?= $input->showroom_present; ?></td>
                                     </tr>
                                     <tr>
                                         <td width="160px">Perubahan Terakhir</td>
@@ -95,20 +95,11 @@ $level              = check_level();
                                     </tr>
                                     <tr>
                                         <td width="160px">Lokasi Rak (Gudang)</td>
-                                        <td>R12B</td>
+                                        <td><?= $input->book_location; ?></td>
                                     </tr>
                                     <tr>
                                         <td width="160px">Perubahan Terakhir</td>
                                         <td>19 December 2020 12:00:00</td>
-                                    </tr>
-                                    <tr>
-                                        <td width="160px">Perubahan Terakhir</td>
-                                        <td><?php /* if (empty($stock_last) == FALSE) {
-                                                        echo date('d F Y H:i:s', strtotime($stock_last->date));
-                                                } else {
-                                                    echo "-";
-                                            } */?>
-                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
