@@ -62,6 +62,9 @@ class Book_receive extends MY_Controller
         $this->load->view('template', compact('form_action', 'main_view', 'pages', 'book_receive', 'is_final', 'is_handover', 'is_wrapping'));
     }
 
+    // api buat start progress, finish progress, update, action progress, 
+    // select staff di view dll kayak di print order
+
     public function api_get_staff_gudang()
     {
         $staff_gudang = $this->book_receive->get_staff_gudang();

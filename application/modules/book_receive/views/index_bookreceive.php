@@ -64,7 +64,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                             </div>
                             <div class="col-12 col-md-6">
                                 <label for="status">Pencarian</label>
-                                <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Nama" class="form-control"'); ?>
+                                <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Nama atau Kode Buku" class="form-control"'); ?>
                             </div>
                             <div class="col-12 col-lg-4">
                                 <label>&nbsp;</label>

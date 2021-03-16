@@ -22,6 +22,7 @@ class Book_receive_model extends MY_Model
         $total = $this->select('book_receive_id')
             ->when('keyword', $filters['keyword'])
             ->join_table('print_order', 'book_receive', 'print_order')
+            ->join_table('book', 'book_receive', 'book')
             ->count();
         return [
             'book_receives' => $book_receives,
@@ -36,8 +37,8 @@ class Book_receive_model extends MY_Model
             if ($params == 'keyword') {
                 $this->group_start();
                 // $this->or_like('name', $data);
-                $this->or_like('book_title', $data);
-                $this->or_like('isbn', $data);
+                $this->like('book_title', $data);
+                $this->or_like('order_number', $data);
                 $this->group_end();
             }
             if ($params == 'book_receive_status'){

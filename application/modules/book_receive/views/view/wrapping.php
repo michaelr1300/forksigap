@@ -121,14 +121,6 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
                 <!-- button tanggapan wrapping -->
                 <button type="button" class="btn btn-outline-success" data-toggle="modal"
                     data-target="#modal-wrapping-notes">Catatan</button>
-                <?php if (!$is_final) : ?>
-                <a 
-                href="<?= base_url('book_receive/generate_pdf/' . $book_receive->book_receive_id . "/wrapping") ?>"
-                    class="btn btn-outline-danger 
-                    <?//= (!$is_wrapping_deadline_set) ? 'disabled' : ''; ?>"
-                    id="btn-generate-pdf-wrapping" title="Generate PDF">Generate PDF <i
-                        class="fas fa-file-pdf fa-fw"></i></a>
-                <?php endif; ?>
             </div>
         </div>
 
