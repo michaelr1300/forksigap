@@ -4,8 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
-    <script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script> -->
     <style>
     h1 {
         font-family: 'Calibri', sans-serif;
@@ -48,8 +46,7 @@
 
     .column {
         float: left;
-        height: 300px;
-        /* Should be removed. Only for demonstration */
+        height: auto;
     }
 
     .left {
@@ -64,7 +61,6 @@
         width: 35%;
     }
 
-    /* Clear floats after the columns */
     .row:after {
         content: "";
         display: table;
@@ -75,25 +71,33 @@
 </head>
 
 <body>
-    <h1 style="text-align: center;"><b>SERAH TERIMA<br>(PRODUKSI &ndash; GUDANG)</b></h1>
+    <h1 style="text-align: center;"><b>BERITA ACARA SERAH TERIMA<br>(PRODUKSI &ndash; GUDANG)</b></h1>
     <table>
         <tr>
             <th>No</th>
             <th>Judul</th>
             <th>Nomor Order</th>
             <th>Jumlah Order</th>
-            <th>Jumlah Akhir</th>
+            <th>Jumlah Tercetak</th>
         </tr>
         <tr>
             <td>1</td>
             <td><?= $title ?></td>
             <td><?= $ordernumber ?></td>
-            <td><?= 'total_order' ?></td>
-            <td><?= $total ?></td>
+            <td><?= $total_print ?></td>
+            <td><?= $total_postprint ?></td>
         </tr>
     </table>
     <br>
-    <h2>TANGGAL: <span>11/11/11</span></h2>
+    <div class="row">
+        <div class="column left">
+        <h2>TANGGAL: <span><?= $handover_end_date ?></span></h2>
+        </div>
+        <div class="column middle"></div>
+        <div class="column right">
+        <h2>KETERANGAN: <span><?= $notes ?></span></h2>
+        </div>
+    </div>
     <br><br><br>
     <div class="row">
         <div class="column left" style="text-align:center">

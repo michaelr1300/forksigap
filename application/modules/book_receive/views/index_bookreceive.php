@@ -88,9 +88,11 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <th scope="col" style="min-width:150px;" class="align-middle text-center">
                                     Nomor Order</th>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center" >
-                                    Tanggal Masuk Gudang</th>
+                                    Tanggal Mulai Penerimaan Buku</th>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center" >
-                                    Jumlah Dicetak</th>
+                                    Jumlah Order</th>
+                                <th scope="col" style="min-width:100px;" class="align-middle text-center" >
+                                    Jumlah Tercetak</th>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center">
                                     Status</th>
                                 <?php if ($level == 'superadmin') : ?>
@@ -123,7 +125,10 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?=$book_receive->entry_date; ?></td>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?=$book_receive->total; ?></td>
+                                    <?=$book_receive->total_print; ?></td>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <?=$book_receive->total_postprint; ?></td>
                                 </td>
                                 <td class="align-middle text-center">
                                     <?= get_book_receive_status()[$book_receive->book_receive_status] ?? $book_receive->print_order_status;  ?></td>

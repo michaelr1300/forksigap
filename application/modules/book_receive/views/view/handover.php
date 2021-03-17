@@ -17,11 +17,10 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
                         ]);
                     ?>
                 <div class="card-header-control">
-                    <button id="btn-start-handover" title="Mulai proses serah terima" type="button"
-                        class="d-inline btn 
+                    <button id="btn-start-handover" title="Mulai proses serah terima" type="button" class="d-inline btn 
                         <?= !$is_handover_started ? 'btn-warning' : 'btn-secondary'; ?> <?= ($is_handover_started || !$is_handover_deadline_set) ? 'btn-disabled' : ''; ?>
-                        "
-                        <?= ($is_handover_started || !$is_handover_deadline_set) ? 'disabled' : ''; ?>><i class="fas fa-play"></i><span class="d-none d-lg-inline"> Mulai</span></button>
+                        " <?= ($is_handover_started || !$is_handover_deadline_set) ? 'disabled' : ''; ?>><i
+                            class="fas fa-play"></i><span class="d-none d-lg-inline"> Mulai</span></button>
                     <button id="btn-finish-handover" title="Selesai proses serah terima" type="button"
                         class="d-inline btn btn-secondary <?= !$is_handover_started ? 'btn-disabled' : '' ?>"
                         <?= !$is_handover_started ? 'disabled' : '' ?>><i class="fas fa-stop"></i><span
@@ -114,21 +113,31 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
                 <!-- button aksi -->
                 <?php if (($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_gudang') && !$is_final) : ?>
                 <button title="Aksi admin"
-                    class="btn btn-outline-dark <?= !$book_receive->total ? 'btn-disabled' : ''; ?>"
-                    data-toggle="modal" data-target="#modal-action-handover"
-                    <?= !$book_receive->total ? 'disabled' : ''; ?>>Aksi</button>
+                    class="btn btn-outline-dark <?= !$book_receive->total ? 'btn-disabled' : ''; ?>" data-toggle="modal"
+                    data-target="#modal-action-handover" <?= !$book_receive->total ? 'disabled' : ''; ?>>Aksi</button>
                 <?php endif; ?>
 
                 <!-- button tanggapan handover -->
                 <button type="button" class="btn btn-outline-success" data-toggle="modal"
                     data-target="#modal-handover-notes">Catatan</button>
                 <?php if (!$is_final) : ?>
-                <a 
-                href="<?= base_url('book_receive/generate_pdf/' . $book_receive->book_receive_id . "/handover") ?>"
+                <a href="<?= base_url('book_receive/generate_pdf_handover/' . $book_receive->book_receive_id . "/handover") ?>"
                     class="btn btn-outline-danger 
-                    <?//= (!$is_handover_deadline_set) ? 'disabled' : ''; ?>"
-                    id="btn-generate-pdf-handover" title="Generate PDF">Generate PDF <i
-                        class="fas fa-file-pdf fa-fw"></i></a>
+                    <?//= (!$is_handover_deadline_set) ? 'disabled' : ''; ?>" id="btn-generate-pdf-handover"
+                    title="Generate PDF berita acara serah terima">Generate PDF <i class="fas fa-file-pdf fa-fw"></i>
+                </a>
+                <form action="" method="POST" enctype="multipart/form-data">
+                    <style>
+                    input[type="file"] {
+                        display: none;
+                    }
+                    </style>
+                    <label class="btn btn-outline-primary" id="btn-upload-pdf-handover"
+                        title="Upload PDF berita acara serah terima"><i class="fas fa-file-pdf fa-fw"></i>
+                        <input type="file" class="btn btn-outline-primary" />
+                        Upload PDF
+                    </label>
+                </form>
                 <?php endif; ?>
             </div>
         </div>
