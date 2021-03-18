@@ -55,7 +55,7 @@ $menu_list = [
                 'level' => 'superadmin|admin_gudang|staff_gudang'
             ],
             [
-                'name'  => 'Permintaan Buku',
+                'name'  => 'Pesanan Buku',
                 'url'   => 'book_request',
                 'level' => 'superadmin|admin_gudang|admin_pemasaran|staff_gudang'
             ],
