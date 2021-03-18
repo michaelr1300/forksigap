@@ -150,10 +150,10 @@ class Book_receive extends MY_Controller
     }
 
     //add book receive
-    public function add()
+    public function edit()
     {
         $pages = $this->pages;
-        $main_view = 'book_receive/add_bookreceive';
+        $main_view = 'book_receive/edit_bookreceive';
         $this->load->view('template', compact('pages', 'main_view'));
     }
 }

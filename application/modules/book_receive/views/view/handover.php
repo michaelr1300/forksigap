@@ -95,7 +95,7 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
 
             <?php if ($book_receive->total) : ?>
             <div class="list-group-item justify-content-between">
-                <span class="text-muted">Hasil Jilid</span>
+                <span class="text-muted">Jumlah buku diterima</span>
                 <strong id="total-handover"><?= $book_receive->total; ?></strong>
             </div>
             <?php endif; ?>
