@@ -837,12 +837,21 @@ function get_book_receive_status(){
     ];
 }
 
-// function get_per_page_options()
-// {
-//     return [
-//         '10'  => '10',
-//         '25'  => '25',
-//         '50'  => '50',
-//         '100' => '100',
-//     ];
-// }
+function get_book_request_category(){
+    return [
+        '' => '--Pilih--',
+        'gudang' => 'Gudang',
+        'non_gudang_showroom' => 'Non Gudang Showroom',
+        'non_gudang_perpus' => 'Non Gudang Perpustakaan'
+    ];
+}
+
+function get_book_request_status(){
+    return [
+        '' => '--Pilih--',
+        'not_started' => 'Belum dimulai',
+        'preparing' => 'Sedang disiapkan',
+        'preparing_finish' => 'Selesai disiapkan',
+        'finish' => 'Selesai'
+    ];
+}

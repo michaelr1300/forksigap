@@ -35,25 +35,24 @@ class Book_request_model extends MY_Model{
     //     return TRUE;
     // }
 
-    // public function fetch_book_request_id($book_request_id){
-    //     return $this->db
-    //     ->select(['book_request.*, book_stock.book_stock_id, book.book_title, 
-    //     book.book_file, book.book_file_link'])
-    //     ->from('book_request')
-    //     ->join_table('book_stock', 'book_request', 'book_stock')
-    //     ->join_table('book', 'book_request', 'book')
-    //     ->where('book_request_id', $book_request_id)
-    //     ->get()->row();
-    // }
+    public function fetch_book_request_id($book_request_id){
+        return $this->db
+        ->select('*')
+        ->from('book_request')
+        // ->join_table('book_stock', 'book_request', 'book_stock')
+        // ->join_table('faktur', 'book_request', 'faktur')
+        ->where('book_request_id', $book_request_id)
+        ->get()->row();
+    }
 
-    // public function fetch_book_stock_id($book_id){
-    //     return $this->db
-    //     ->select('*')
-    //     ->from('book_stock')
-    //     ->where('book_id',$book_id)
-    //     ->order_by("UNIX_TIMESTAMP(stock_input_date)","DESC")
-    //     ->limit(1)->get()->row();
-    // }
+    public function fetch_faktur_id($faktur_id){
+        return $this->db
+        ->select('*')
+        ->from('faktur')
+        ->where('faktur_id',$faktur_id)
+        // ->order_by("UNIX_TIMESTAMP(stock_input_date)","DESC")
+        ->limit(1)->get()->row();
+    }
     
     // public function action_request($book_request_id){
     //     $date = date('Y-m-d H:i:s');
@@ -133,6 +132,7 @@ class Book_request_model extends MY_Model{
             'book_request.*'])
         ->when('keyword',$filters['keyword'])
         ->when('status',$filters['status'])
+        ->when('book_request_category', $filters['book_request_category'])
         ->join_table('faktur','book_request','faktur')
         // ->join_table('book','book_request','book')
         // ->order_by('UNIX_TIMESTAMP(entry_date)','DESC')
@@ -140,10 +140,11 @@ class Book_request_model extends MY_Model{
         ->paginate($page)
         ->get_all();
 
-        $total = $this->select(['faktur.faktur_id', 'faktur.nomor_faktur', 'book.book_title',
+        $total = $this->select(['faktur.faktur_id', 'faktur.nomor_faktur', 'faktur.status', 'book.book_title',
         'book_request.*'])
         ->when('keyword',$filters['keyword'])
         ->when('status',$filters['status'])
+        ->when('book_request_category', $filters['book_request_category'])
         ->join_table('faktur','book_request','faktur')
         // ->join_table('book','book_request','book')
         // ->order_by('UNIX_TIMESTAMP(entry_date)','DESC')
@@ -162,16 +163,38 @@ class Book_request_model extends MY_Model{
         if ($data != '') {
             if($params == 'keyword'){
                 $this->group_start();
-                $this->or_like('book_title',$data);
+                // $this->or_like('book_title',$data);
                 $this->or_like('nomor_faktur',$data);
-                $this->or_like('total',$data);
+                // $this->or_like('total',$data);
                 $this->group_end();
             }
-
             if($params == 'status'){
                 $this->where('status', $data);
+            }
+            if($params == 'book_request_category'){
+                $this->where('book_request_category', $data);
             }
         }
         return $this;
     }
+
+    public function get_staff_gudang()
+    {
+        return $this->select(['user_id', 'username', 'level', 'email'])
+            ->where('level', 'staff_gudang')
+            ->where('is_blocked', 'n')
+            ->order_by('username', 'ASC')
+            ->get_all('user');
+    }
+
+    public function get_staff_gudang_by_progress($progress, $book_receive_id)
+    {
+        return $this->db->select(['book_receive_user_id', 'book_receive_user.user_id', 'book_receive_id', 'progress', 'username', 'email'])
+            ->from('user')
+            ->join('book_receive_user', 'user.user_id = book_receive_user.user_id')
+            ->where('book_receive_id', $book_receive_id)
+            ->where('progress', $progress)
+            ->get()->result();
+    }
+
 }

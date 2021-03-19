@@ -2,24 +2,10 @@
 $level              = check_level();
 $per_page           = 10;
 $keyword            = $this->input->get('keyword');
-$status             = $this->input->get('status');
+$status     = $this->input->get('status');
+$book_request_category = $this->input->get('book_request_category');
 $page               = $this->uri->segment(2);
 $i                  = isset($page) ? $page * $per_page - $per_page : 0;
-
-$status_options = [
-    ''  => '- Filter Status -',
-    '0' => 'Proses Permintaan',
-    '1' => 'Proses Finalisasi',
-    '2' => 'Ditolak',
-    '3' => 'Selesai'
-];
-
-$request_category = [
-    '' => '- Filter Kategori -',
-    '0' => 'Gudang',
-    '1' => 'Non Gudang Showroom',
-    '2' => 'Non Gudang Perpustakaan'
-]
 ?>
 
 <header class="page-title-bar">
@@ -56,14 +42,14 @@ $request_category = [
                             </div>
                             <div class="col-12 col-md-4">
                                 <label for="status">Status</label>
-                                <?= form_dropdown('status', $status_options, $status, 'id="status" class="form-control custom-select d-block" title="Filter Status"'); ?>
+                                <?= form_dropdown('status', get_book_request_status(), $status, 'id="status" class="form-control custom-select d-block" title="Filter Status"'); ?>
                             </div>
                             <div class="col-12 col-md-4">
-                                <label for="status">Kategori</label>
-                                <?= form_dropdown('category', $request_category, $status, 'id="status" class="form-control custom-select d-block" title="Filter Kategori"'); ?>
+                                <label for="category">Kategori</label>
+                                <?= form_dropdown('book_request_category', get_book_request_category(), $book_request_category, 'id="book_request_category" class="form-control custom-select d-block" title="Filter Kategori"'); ?>
                             </div>
                             <div class="col-12 col-md-6 mt-md-2">
-                                <label for="status">Pencarian</label>
+                                <label for="keyword">Pencarian</label>
                                 <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Nomor Order" class="form-control"'); ?>
                             </div>
                             <div class="col-12 col-lg-3 mt-md-2">
@@ -86,52 +72,45 @@ $request_category = [
                                 <!-- <th scope="col" style="min-width:300px;">Judul</th> -->
                                 <th scope="col" style="min-width:150px;">Nomor Order</th>
                                 <!-- <th scope="col" style="min-width:150px;">Jumlah Permintaan</th> -->
-                                <th scope="col" style="min-width:200px;">Tanggal Masuk</th>
+                                <th scope="col" style="min-width:200px;">Tanggal Pesanan</th>
+                                <th scope="col" style="min-width:200px;">Kategori Pesanan</th>
                                 <th scope="col" style="min-width:200px;">Status</th>
-                                <th style="min-width:100px;"> &nbsp; </th>
+                                <th style="min-width:100px;"> Aksi </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($book_request as $rData) : ?>
+                            <?php foreach ($book_request as $book_request) : ?>
                             <tr class="text-center">
                                 <td class="align-middle pl-4"><?= ++$i; ?></td>
-                                <!-- <td class="text-left align-middle">
-                                    <a href="<?//= base_url('book_request/view/' . $rData->book_request_id . ''); ?>"
+                                <td class="text-left align-middle">
+                                    <a href="<?= base_url('book_request/view/' . $book_request->book_request_id . ''); ?>"
                                         class="font-weight-bold">
-                                        <?//= highlight_keyword($rData->book_title, $keyword); ?>
+                                        <?= highlight_keyword($book_request->nomor_faktur, $keyword); ?>
                                     </a>
-                                </td> -->
-                                <td class="align-middle">
-                                    <?= highlight_keyword($rData->nomor_faktur, $keyword); ?>
-                                </td>
-                                <!-- <td class="align-middle">
-                                    <?//= highlight_keyword($rData->total, $keyword); ?>
-                                </td> -->
-                                <td class="align-middle">
-                                    <?= date('d F Y H:i:s', strtotime($rData->entry_date)); ?>
                                 </td>
                                 <td class="align-middle">
-                                    <?php
-                                                if($rData->status == 0){echo 'Proses Permintaan';}
-                                                elseif($rData->status == 1){echo 'Proses Finalisasi';}
-                                                elseif($rData->status == 3){echo 'Ditolak';}
-                                                elseif($rData->status == 4){echo 'Selesai';}
-                                                else{'';}
-                                            ?>
+                                    <?= format_datetime($book_request->entry_date); ?>
+                                </td>
+                                <td class="align-middle">
+                                    <?= get_book_request_category()[$book_request->book_request_category]; ?>
+                                </td>
+                                <td class="align-middle">
+                                    <?= get_book_request_status()[$book_request->request_status ?? $book_request->status]; ?>
                                 </td>
                                 <td class="align-middle text-right">
-                                    <a href="<?= base_url('book_request/edit/'.$rData->book_request_id); ?>"
+                                    <a href="<?= base_url('book_request/edit/'.$book_request->book_request_id); ?>"
                                         class="btn btn-sm btn-secondary">
                                         <i class="fa fa-pencil-alt"></i>
                                         <span class="sr-only">Edit</span>
                                     </a>
                                     <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
-                                        data-target="#modal-hapus-<?= $rData->book_request_id; ?>"><i
+                                        data-target="#modal-hapus-<?= $book_request->book_request_id; ?>"><i
                                             class="fa fa-trash-alt"></i><span class="sr-only">Delete</span></button>
                                     <div class="text-left">
                                         <div class="modal modal-alert fade"
-                                            id="modal-hapus-<?= $rData->book_request_id; ?>" tabindex="-1" role="dialog"
-                                            aria-labelledby="modal-hapus-<?= $rData->book_request_id; ?>"
+                                            id="modal-hapus-<?= $book_request->book_request_id; ?>" tabindex="-1"
+                                            role="dialog"
+                                            aria-labelledby="modal-hapus-<?= $book_request->book_request_id; ?>"
                                             aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
@@ -143,13 +122,13 @@ $request_category = [
                                                         </h5>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <p>Apakah anda yakin akan menghapus order cetak <span
-                                                                class="font-weight-bold"><?= $rData->book_title; ?></span>?
+                                                        <p>Apakah anda yakin akan menghapus pesanan buku <span
+                                                                class="font-weight-bold"><?= $book_request->order_number; ?></span>?
                                                         </p>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-danger"
-                                                            onclick="location.href='<?= base_url('book_request/delete_book_request/'.$rData->book_request_id); ?>'"
+                                                            onclick="location.href='<?= base_url('book_request/delete_book_request/'.$book_request->book_request_id); ?>'"
                                                             data-dismiss="modal">Hapus</button>
                                                         <button type="button" class="btn btn-light"
                                                             data-dismiss="modal">Close</button>

@@ -14,7 +14,8 @@ class Book_request extends MY_Controller
         // all filter
         $filters = [
             'keyword'           => $this->input->get('keyword', true),
-            'status'            => $this->input->get('status', true)
+            'status'            => $this->input->get('status', true),
+            'book_request_category' => $this->input->get('book_request_category', true)
         ];
 
         // custom per page
@@ -57,10 +58,10 @@ class Book_request extends MY_Controller
         if($this->check_level_gudang_pemasaran() == TRUE):
         $pages       = $this->pages;
         $main_view   = 'book_request/book_request_view';
-        $rData       = $this->book_request->fetch_book_request_id($book_request_id);
-        if(empty($rData) == FALSE):
-        $stock       = $this->book_request->fetch_book_stock_id($rData->book_id);
-        $this->load->view('template', compact('pages', 'main_view', 'rData', 'stock'));
+        $book_request       = $this->book_request->fetch_book_request_id($book_request_id);
+        if(empty($book_request) == FALSE):
+        $faktur       = $this->book_request->fetch_faktur_id($book_request->faktur_id);
+        $this->load->view('template', compact('pages', 'main_view', 'book_request', 'faktur'));
         else:
         $this->session->set_flashdata('error','Halaman tidak ditemukan.');
         redirect(base_url(), 'refresh');
