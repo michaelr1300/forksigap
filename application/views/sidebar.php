@@ -60,6 +60,11 @@ $menu_list = [
                 'level' => 'superadmin|admin_gudang|admin_pemasaran|staff_gudang'
             ],
             [
+                'name'  => 'Pemindahan Buku',
+                'url'   => 'book_transfer',
+                'level' => 'superadmin|admin_gudang|admin_pemasaran|staff_gudang'
+            ],
+            [
                 'name'  => 'Transaksi Buku Harian',
                 'url'   => 'book_transaction_daily',
                 'level' => 'superadmin|admin_gudang|staff_gudang'
