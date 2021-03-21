@@ -156,4 +156,47 @@ class Book_receive extends MY_Controller
         $main_view = 'book_receive/edit_bookreceive';
         $this->load->view('template', compact('pages', 'main_view'));
     }
+
+    public function delete($book_receive_id = null)
+    {
+        if (!$this->_is_warehouse_admin()) {
+            redirect($this->pages);
+        }
+
+        $book_receive = $this->book_receive->where('book_receive_id', $book_receive_id)->get();
+        if (!$book_receive) {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
+
+        // memastikan konsistensi data
+        $this->db->trans_begin();
+
+        $this->book_receive->where('book_receive_id', $book_receive_id)->delete();
+            // $this->book_stock->delete_book_stock($book_stock_id);
+            // $this->print_order->delete_print_order_file($print_order->print_order_file);
+            // $this->print_order->delete_letter_file($print_order->letter_file);
+            // $this->print_order->delete_preprint_file($print_order->delete_preprint_file);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('error', $this->lang->line('toast_delete_fail'));
+        } else {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_delete_success'));
+        }
+
+        redirect($this->pages);
+    }
+
+    private function _is_warehouse_admin()
+    {
+        if ($this->level == 'superadmin' || $this->level == 'admin_gudang') {
+            return true;
+        } else {
+            $this->session->set_flashdata('error', 'Hanya admin gudang dan superadmin yang dapat mengakses.');
+            return false;
+        }
+    }
+
 }

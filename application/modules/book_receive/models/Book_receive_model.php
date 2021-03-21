@@ -96,4 +96,9 @@ class Book_receive_model extends MY_Model
             ->get('book_receive_user')
             ->num_rows();
     }
+
+    public function delete_book_receive($where){
+        $this->db->where('book_receive_id', $where);
+        $this->db->delete('book_receive');
+    }
 }
