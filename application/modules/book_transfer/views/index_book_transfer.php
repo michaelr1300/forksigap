@@ -36,19 +36,19 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                     <div class="p-3">
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-4 mb-4">
                                 <label for="per_page">Data per halaman</label>
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-4 mb-4">
                                 <label for="status">Status</label>
                                 <?= form_dropdown('status', get_book_transfer_status(), $status, 'id="status" class="form-control custom-select d-block" title="Filter Status"'); ?>
                             </div>
-                            <div class="col-12 col-md-6 mt-md-2">
+                            <div class="col-12 col-md-6">
                                 <label for="keyword">Pencarian</label>
                                 <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Judul Buku" class="form-control"'); ?>
                             </div>
-                            <div class="col-12 col-lg-3 mt-md-2">
+                            <div class="col-12 col-lg-3">
                                 <label>&nbsp;</label>
                                 <div class="btn-group btn-block" role="group" aria-label="Filter button">
                                     <button class="btn btn-secondary" type="button"
@@ -65,9 +65,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                         <thead>
                             <tr class="text-center">
                                 <th scope="col" class="pl-4">No</th>
-                                <!-- <th scope="col" style="min-width:300px;">Judul</th> -->
                                 <th scope="col" style="min-width:200px;">Judul Buku</th>
-                                <!-- <th scope="col" style="min-width:150px;">Jumlah Permintaan</th> -->
                                 <th scope="col" style="min-width:300px;">Tujuan</th>
                                 <th scope="col" style="min-width:100px;">Jumlah</th>
                                 <th scope="col" style="min-width:200px;">Status</th>

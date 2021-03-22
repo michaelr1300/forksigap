@@ -64,7 +64,7 @@ class Book_transfer extends MY_Controller
     }
 
     public function edit($book_transfer_id){
-        if($this->check_level_gudang() == TRUE):
+        if($this->check_level_gudang_pemasaran() == TRUE):
         $pages       = $this->pages;
         $main_view   = 'book_transfer/book_transfer_edit';
         $rData       = $this->book_transfer->fetch_book_transfer_id($book_transfer_id);
