@@ -180,4 +180,9 @@ class Book_transfer_model extends MY_Model{
             ->get()->result();
     }
 
+    public function delete_book_transfer($where){
+        $this->db->where('book_transfer_id', $where);
+        $this->db->delete('book_transfer');
+    }
+
 }
