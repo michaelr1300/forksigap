@@ -5,14 +5,55 @@ class Book_receive_model extends MY_Model
 
     public $per_page = 10;
 
+    public function get_validation_rules()
+    {
+        $validation_rules = [
+            [
+                'field' => 'book_receive_status',
+                'label' => $this->lang->line('form_book_receive_status'),
+                'rules' => 'trim|required',
+            ],
+            [
+                'field' => 'deadline',
+                'label' => $this->lang->line('form_book_receive_deadline'),
+                'rules' => 'trim|required',
+            ],
+            [
+                'field' => 'book_receive_id',
+                'label' => $this->lang->line('ID Penerimaan Buku'),
+                'rules' => 'trim|required',
+            ],
+        ];
+
+        return $validation_rules;
+    }
+
+    public function get_default_values()
+    {
+        return [
+            'book_id'           => '',
+            'print_order_id'    => '',
+            'order_number'      => '',
+            'total_print'       => '',
+            'total_postprint'   => '',
+            'book_title'        => '',
+            'deadline'          => ''
+        ];
+    }
+
     //insert data
 
 
     //get & filter data and total of data
     public function filter_book_receive($filters, $page)
     {
-        $book_receives = $this->select(['print_order.print_order_id', 'print_order.order_number', 
-        'print_order.total_print', 'print_order.total_postprint', 'book.book_id', 'book.book_title', 
+        $book_receives = $this->select(['print_order.print_order_id', 
+        // 'CONCAT_WS(" - ", NULLIF(book_receive.order_number1,""), print_order.order_number) AS order_number_1', 
+        'print_order.order_number',
+        'print_order.total_print', 'print_order.total_postprint', 
+        'book.book_id', 
+        'book.book_title',
+        // 'CONCAT_WS(" - ", NULLIF(book_receive.name,""), book.book_title) AS title',
         'book_receive.*'])
             ->when('keyword', $filters['keyword'])
             ->when('book_receive_status', $filters['book_receive_status'])
@@ -54,15 +95,28 @@ class Book_receive_model extends MY_Model
     {
         return $this->select('book.*')
             ->where('book_id', $book_id)
-            ->join_table('book', 'book_stock', 'book')
+            ->join_table('book', 'book_receive', 'book')
             ->get('book');
     }
+    
+    //get print_order_id
+    public function get_print_order($print_order_id)
+    {
+        return $this->select('print_order.*')
+            ->where('print_order_id', $print_order_id)
+            ->join_table('print_order', 'book_receive', 'print_order')
+            ->get('print_order');
+    }    
 
     //get book receive id
     public function get_book_receive($book_receive_id)
     {
-        return $this->select(['print_order.print_order_id', 'print_order.order_number', 
-        'print_order.total_print', 'print_order.total_postprint', 'book.book_id', 'book.book_title', 
+        return $this->select([
+        'print_order.print_order_id',
+        'print_order.order_number', 
+        'print_order.total_print', 'print_order.total_postprint', 
+        'book.book_id', 
+        'book.book_title', 
         'book_receive.*'])
             ->join_table('print_order', 'book_receive', 'print_order')
             ->join_table('book', 'book_receive', 'book')
@@ -100,5 +154,10 @@ class Book_receive_model extends MY_Model
     public function delete_book_receive($where){
         $this->db->where('book_receive_id', $where);
         $this->db->delete('book_receive');
+    }
+
+    public function edit_book_receive($book_receive_id){
+        $this->select()
+            ->where('book_receive', $book_receive_id);
     }
 }
