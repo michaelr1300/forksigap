@@ -110,28 +110,28 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                         <div class="modal modal-alert fade"
                                             id="modal-hapus-<?= $book_transfer->book_transfer_id; ?>" tabindex="-1"
                                             role="dialog"
-                                            aria-labelledby="modal-hapus-<?= $book_transfer->book_transfer_id; ?>"
+                                            aria-labelledby="modal-hapus-"
                                             aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title">
                                                             <i class="fa fa-exclamation-triangle text-red mr-1"></i>
-                                                            Konfirmasi
-                                                            Hapus
+                                                            Konfirmasi Hapus
                                                         </h5>
                                                     </div>
                                                     <div class="modal-body">
-                                                        <p>Apakah anda yakin akan menghapus pemindahan buku <span
-                                                                class="font-weight-bold"><?= $book_transfer->order_number; ?></span>?
+                                                        <p>Apakah anda yakin akan menghapus data pemindahan buku <span
+                                                                class="font-weight-bold"><?= $book_transfer->book_title; ?></span>?
                                                         </p>
                                                     </div>
                                                     <div class="modal-footer">
+                                                        <button type ="button" class="btn btn-light" 
+                                                            data-dismiss="modal">Close</button>
                                                         <button type="button" class="btn btn-danger"
                                                             onclick="location.href='<?= base_url('book_transfer/delete_book_transfer/'.$book_transfer->book_transfer_id); ?>'"
                                                             data-dismiss="modal">Hapus</button>
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Close</button>
+                                                        
                                                     </div>
                                                 </div>
                                             </div>

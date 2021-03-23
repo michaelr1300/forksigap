@@ -125,17 +125,49 @@ class Book_transfer extends MY_Controller
         endif;
     }
 
-    public function delete_book_transfer($book_transfer_id){
-        if($this->check_level_gudang() == TRUE):
-        $check  = $this->book_transfer->delete_book_transfer($book_transfer_id);
-        if($check   ==  TRUE){
-            $this->session->set_flashdata('success','Berhasil menghapus data draft permintaan buku.');
-            redirect('book_transfer');
-        }else{
-            $this->session->set_flashdata('error','Gagal menghapus data draft permintaan buku.');
-            redirect('book_transfer');
+    // public function delete_book_transfer($book_transfer_id){
+    //     if($this->check_level_gudang() == TRUE):
+    //     $check  = $this->book_transfer->delete_book_transfer($book_transfer_id);
+    //     if($check   ==  TRUE){
+    //         $this->session->set_flashdata('success','Berhasil menghapus data draft permintaan buku.');
+    //         redirect('book_transfer');
+    //     }else{
+    //         $this->session->set_flashdata('error','Gagal menghapus data draft permintaan buku.');
+    //         redirect('book_transfer');
+    //     }
+    //     endif;
+    // }
+
+    public function delete_book_transfer($book_transfer_id = null)
+    {
+        if (!$this->_is_warehouse_admin()) {
+            redirect($this->pages);
         }
-        endif;
+
+        $book_transfer = $this->book_transfer->where('book_transfer_id', $book_transfer_id)->get();
+        if (!$book_transfer) {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
+
+        // memastikan konsistensi data
+        $this->db->trans_begin();
+
+        $this->book_transfer->where('book_transfer_id', $book_transfer_id)->delete();
+            // $this->book_stock->delete_book_stock($book_stock_id);
+            // $this->print_order->delete_print_order_file($print_order->print_order_file);
+            // $this->print_order->delete_letter_file($print_order->letter_file);
+            // $this->print_order->delete_preprint_file($print_order->delete_preprint_file);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('error', $this->lang->line('toast_delete_fail'));
+        } else {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_delete_success'));
+        }
+
+        redirect($this->pages);
     }
 
     public function action_transfer($book_transfer_id){
@@ -216,5 +248,15 @@ class Book_transfer extends MY_Controller
         $data       =   $this->book_transfer->fetch_book_id($postData);
 
         echo json_encode($data);
+    }
+
+    private function _is_warehouse_admin()
+    {
+        if ($this->level == 'superadmin' || $this->level == 'admin_gudang') {
+            return true;
+        } else {
+            $this->session->set_flashdata('error', 'Hanya admin gudang dan superadmin yang dapat mengakses.');
+            return false;
+        }
     }
 }
