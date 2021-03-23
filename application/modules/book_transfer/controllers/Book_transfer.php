@@ -32,17 +32,17 @@ class Book_transfer extends MY_Controller
         endif;
     }
 
-    public function view($book_transfer_id = null)
+    public function view($book_transfer_id)
     {
-        if (!$this->_is_book_transfer_user()) {
-            redirect($this->pages);
-        }
+        // if (!$this->_is_book_transfer_user()) {
+        //     redirect($this->pages);
+        // }
 
         if ($book_transfer_id == null) {
             redirect($this->pages);
         }
 
-        $book_transfer = $this->book_transfer->fetch_book_transfer_id($book_transfer_id);
+        $book_transfer = $this->book_transfer->fetch_book_transfer($book_transfer_id);
 
         if (!$book_transfer) {
             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
@@ -50,9 +50,8 @@ class Book_transfer extends MY_Controller
         }
 
         $pages       = $this->pages;
-        $main_view   = 'book_transfer/view/overview';
-        $form_action = "book_transfer/edit/$book_transfer_id";
-        $this->load->view('template', compact('form_action', 'main_view', 'pages', 'book_transfer', 'is_final', 'is_handover', 'is_wrapping'));
+        $main_view   = 'book_transfer/book_transfer_view';
+        $this->load->view('template', compact('main_view', 'pages', 'book_transfer'));
     }
 
     public function add(){

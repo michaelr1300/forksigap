@@ -9,28 +9,28 @@ $level              = check_level();
                 <a href="<?= base_url(); ?>"><span class="fa fa-home"></span></a>
             </li>
             <li class="breadcrumb-item">
-                <a href="<?= base_url('Book_request'); ?>">Permintaan Buku</a>
+                <a href="<?= base_url('book_transfer'); ?>">Pemindahan Buku</a>
             </li>
             <li class="breadcrumb-item">
-                <a class="text-muted"><?= $book_request->order_number; ?></a>
+                <a class="text-muted"><?= $book_transfer->book_title; ?></a>
             </li>
         </ol>
     </nav>
     <div class="d-flex justify-content-between align-items-center my-3">
-        <div class="page-title mb-0 pb-0 h1"> Permintaan Buku </div>
-        <a href="<?= base_url('book_request/edit/'.$book_request->book_request_id); ?>"
-            class="btn btn-secondary btn-sm"><i class="fa fa-edit fa-fw"></i> Edit Permintaan Buku</a>
+        <div class="page-title mb-0 pb-0 h1"> Pemindahan Buku </div>
+        <a href="<?= base_url('book_request/edit/'.$book_transfer->book_transfer_id); ?>"
+            class="btn btn-secondary btn-sm"><i class="fa fa-edit fa-fw"></i> Edit Pemindahan Buku</a>
     </div>
 </header>
 <!-- BREADCUMB,TITLE -->
 
 <!-- DETAIL -->
-<section class="card" id="detail_book_request">
+<section class="card" id="detail_book_transfer">
     <header class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
                 <a class="nav-link active show" data-toggle="tab" href="#detail_info_wrapper"><i
-                        class="fa fa-info-circle"></i> Detail Permintaan Buku</a>
+                        class="fa fa-info-circle"></i> Detail Pemindahan Buku</a>
             </li>
         </ul>
     </header>
@@ -42,64 +42,39 @@ $level              = check_level();
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered mb-0 nowrap">
                         <tbody>
-                            <!-- <tr>
-                    <td width="200px"> Judul Buku </td>
-                    <td>
-                        <strong><?//= $book_request->book_title; ?></strong>
-                    </td>
-                </tr> -->
-                            <!-- <tr>
-                    <td width="200px"> Link </td>
-                    <td>
-                        <a data-toggle="tooltip" data-placement="right" title="" class="btn btn-success btn-xs my-0" href="<?//= base_url("book/download_file/bookfile/$rData->book_file");?>" data-original-title="<?//= $book_request->book_file;?>"><i class="fa fa-book"></i> File Buku</a>
-                        <a data-toggle="tooltip" data-placement="right" title="" class="btn btn-success btn-xs my-0" target="_blank" href="<?//= $rData->book_file_link; ?>"><i class="fa fa-external-link-alt"></i> External file</a>
-                        <a data-toggle="tooltip" data-placement="right" title="" class="btn btn-success btn-xs my-0" target="_blank" href="<?//= base_url('book/view/'.$rData->book_id); ?>"><i class="fa fa-external-link-alt"></i> Link buku</a>
-                    </td>
-                </tr> -->
-                            <!-- <tr>
-                    <td width="200px"> Stok Dalam Gudang </td>
-                    <td>
-                        <?//php if(empty($stock->stock_in_warehouse) == FALSE){echo $stock->stock_in_warehouse;}else{echo 0;} ?>
-                    </td>
-                </tr> -->
-                            <!-- <tr>
-                    <td width="200px"> Stok Dalam Gudang </td>
-                    <td>
-                        <?//php if(empty($stock->stock_out_warehouse) == FALSE){echo $stock->stock_out_warehouse;}else{echo 0;} ?>
-                    </td>
-                </tr> -->
-                            <!-- <tr>
-                    <td width="200px"> Stok Pemasaran </td>
-                    <td>
-                        <?//php if(empty($stock->stock_marketing) == FALSE){echo $stock->stock_marketing;}else{echo 0;} ?>
-                    </td>
-                </tr> -->
                             <tr>
-                                <td width="200px"> Nomor Order </td>
+                                <td width="200px"> Judul Buku </td>
                                 <td>
-                                    <?= $book_request->order_number;?>
+                                    <?= $book_transfer->book_title;?>
                                 </td>
                             </tr>
                             <tr>
-                                <td width="200px"> Tanggal Masuk </td>
-                                <td><?= format_datetime($book_request->entry_date)?>
+                                <td width="200px"> Jumlah </td>
+                                <td> <?= $book_transfer->quantity?>
                                 </td>
                             </tr>
                             <tr>
-                                <td width="200px"> Tanggal Selesai </td>
-                                <td><?= format_datetime($book_request->finish_date) ?>
-                                </td>
-                            </tr>
-                            <!-- <tr>
-                                <td width="200px"> User </td>
+                                <td width="200px"> Tanggal Pindah </td>
                                 <td>
-                                    <?//= $rData->user_entry;?>
                                 </td>
-                            </tr> -->
+                            </tr>
+                            <tr>
+                                <td width="200px"> Tujuan Pemindahan </td>
+                                <td> <?= $book_transfer->destination?>
+                                </td>
+                            </tr>
+                            <?php if ($book_transfer->destination == 'library') : ?>
+                            <tr>
+                                <td width="200px"> Nama Perpustakaan </td>
+                                <td> <?= $book_transfer->library_name?>
+                                </td>
+                            </tr>
+                            <?php endif?>
                             <tr>
                                 <td width="200px"> Status </td>
                                 <td>
-                                    <?= get_book_request_status()[$book_request->request_status ?? $book_request->status]?>
+                                    <!-- <?//= get_book_request_status()[$book_transfer->transfer_status ?? $book_transfer->status]?> -->
+                                    <?= $book_transfer->status?>
                                 </td>
                             </tr>
                         </tbody>
@@ -169,7 +144,7 @@ $level              = check_level();
 <hr class="my-3"> -->
 <!-- REQUEST -->
 <?php
-    $this->load->view('book_request/view/progress_preparing');
+    // $this->load->view('book_request/view/progress_preparing');
 ?>
 <!-- FINAL -->
 <?php

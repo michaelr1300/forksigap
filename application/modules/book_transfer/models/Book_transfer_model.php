@@ -34,14 +34,13 @@ class Book_transfer_model extends MY_Model{
     //     $this->db->where('book_transfer_id',$book_transfer_id)->delete('book_transfer');
     //     return TRUE;
     // }
-    public function fetch_book_transfer_id($book_transfer_id){
-        return $this->db
-        ->select(['book.*', 'book_transfer.*'])
-        ->from('book_transfer')
+    public function fetch_book_transfer($book_transfer_id){
+        return $this->select(['book.book_id', 'book_title', 'library.*', 'book_transfer.*'])
+        // ->from('book_transfer')
         ->join_table('book', 'book_transfer', 'book')
-        // ->join_table('faktur', 'book_transfer', 'faktur')
+        ->join_table('library', 'book_transfer', 'library')
         ->where('book_transfer_id', $book_transfer_id)
-        ->get()->row();
+        ->get();
     }
     
     // public function action_transfer($book_transfer_id){
