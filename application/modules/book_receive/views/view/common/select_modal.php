@@ -17,78 +17,50 @@ if ($level == 'superadmin' || $level == 'admin_gudang') :
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"> Pilih staff untuk progress <?= $progress_text; ?> </h5>
+                <h5 class="modal-title"> Staff Gudang untuk Progress <?= $progress_text; ?> </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <form>
                     <fieldset>
                         <div class="form-group" id="form-staff-gudang-<?= $progress; ?>">
                             <label for="staff-gudang-id-<?= $progress; ?>">Nama Staff Gudang</label>
-                            <select id="staff-gudang-id-<?= $progress; ?>"
-                                name="staff-gudang-id-<?= $progress; ?>"
-                                class="form-control custom-select d-block"></select>
+                            <input type="text" id="staff_<?=$progress?>" class="form-control">
+                            <!-- <select id="staff-gudang-id-<?//= $progress; ?>"
+                                name="staff-gudang-id-<?//= $progress; ?>"
+                                class="form-control custom-select d-block"></select> -->
                         </div>
                     </fieldset>
                     <div class="d-flex justify-content-end">
-                        <button id="btn-select-staff-gudang-<?= $progress; ?>" class="btn btn-primary"
+                        <button id="btn-select-staff-gudang-<?//= $progress; ?>" class="btn btn-primary"
                             type="button">Pilih</button>
                     </div>
                 </form>
                 <hr>
-
                 <div id="staff-gudang-list-wrapper-<?= $progress; ?>">
                     <div id="staff-gudang-list-<?= $progress; ?>">
-                        <p>Daftar Staff Gudang</p>
-                        <?php if ($staff_gudang) : ?>
-                        <?php $i = 1; ?>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-bordered mb-0 nowrap">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">No</th>
-                                        <th scope="col">Nama</th>
-                                        <th scope="col">Email</th>
-                                        <?php if ($level == 'superadmin' || $level == 'admin_gudang') : ?>
-                                        <th style="width:100px; min-width:100px;"> &nbsp; </th>
-                                        <?php endif; ?>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($staff_gudang as $staff) : ?>
-                                    <tr>
-                                        <td class="align-middle">
-                                            <?= $i++; ?>
-                                        </td>
-                                        <td class="align-middle">
-                                            <?= $staff->username; ?>
-                                        </td>
-                                        <td class="align-middle">
-                                            <?= $staff->email; ?>
-                                        </td>
-                                        <?php if ($level == 'superadmin' || $level == 'admin_gudang') : ?>
-                                        <td class="align-middle text-center">
-                                            <button title="Hapus"
-                                                class="btn btn-sm btn-danger btn-delete-staff-gudang-<?= $progress; ?>"
-                                                data="<?= $staff->book_receive_user_id; ?>">
-                                                <i class="fa fa-trash-alt"></i>
-                                                <span class="sr-only">Delete</span>
-                                            </button>
-                                        </td>
-                                        <?php endif; ?>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
+                        <p>Nama Staff Gudang yang Bertugas</p>
+                        <!-- <?php if($progress == 'handover') : ?>
+                            <?php if($staff_handover==null) : ?>
+                            <p>Anda belum mengisi data staff gudang yang bertugas untuk progress <?=$progress?></p>
+                            <?php else : ?>
+                            <p><?= $staff_handover?></p>
+                            <?php endif?>
                         <?php else : ?>
-                        <p class="text-center text-muted my-3">Staff Gudang belum dipilih</p>
-                        <?php endif; ?>
+                            <?php if($staff_wrapping==null) : ?>
+                            <p>Anda belum mengisi data staff gudang yang bertugas untuk progress <?=$progress?></p>
+                            <?php else : ?>
+                            <p><?= $staff_wrapping?></p>
+                            <?php endif?>
+                        <?php endif ?> -->
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <!-- <div class="modal-footer">
                 <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
