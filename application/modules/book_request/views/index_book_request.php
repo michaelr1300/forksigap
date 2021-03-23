@@ -98,14 +98,56 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?= get_book_request_status()[$book_request->request_status ?? $book_request->status]; ?>
                                 </td>
                                 <td class="align-middle text-right">
-                                    <a href="<?= base_url('book_request/edit/'.$book_request->book_request_id); ?>"
+                                    <!-- <a href="<?//= base_url('book_request/edit/'.$book_request->book_request_id); ?>"
                                         class="btn btn-sm btn-secondary">
                                         <i class="fa fa-pencil-alt"></i>
                                         <span class="sr-only">Edit</span>
-                                    </a>
+                                    </a> -->
+                                    <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal"
+                                        data-target="#modal-edit-<?= $book_request->book_request_id; ?>"><i
+                                            class="fa fa-pencil-alt"></i><span class="sr-only">Edit</span></button>
                                     <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
                                         data-target="#modal-hapus-<?= $book_request->book_request_id; ?>"><i
                                             class="fa fa-trash-alt"></i><span class="sr-only">Delete</span></button>
+                                    <div class="text-left">
+                                        <div class="modal modal-alert fade"
+                                            id="modal-edit-<?= $book_request->book_request_id; ?>" tabindex="-1"
+                                            role="dialog"
+                                            aria-labelledby="modal-edit-<?= $book_request->book_request_id; ?>"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">
+                                                            <i class="fa fa-pencil-alt text-black mr-1"></i>
+                                                            Edit Status
+                                                        </h5>
+                                                    </div>
+                                                    <form action="<?=base_url('book_request/edit_book_request/')?>" method='post'>
+                                                        <div class="modal-body">
+                                                            <div class="form-group">
+                                                                <label for="order_number" class="font-weight-bold">Nomor Pesanan</label>
+                                                                <input type="text" name="order_number" id="order_number" class="form-control" value=<?=$book_request->order_number ?> disabled/>
+                                                                <input type="hidden" name="request_id" id="request_id" class="form-control" value=<?=$book_request->book_request_id ?>/>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="order_status" class="font-weight-bold">Status Pesanan</label>
+                                                                <?= form_dropdown('order_status', get_book_request_status_edit(), $book_request->request_status, 'id="order_status" class="form-control custom-select d-block" title="Edit Status"'); ?>
+                                                                <small>Status pesanan sekarang = <?= get_book_request_status()[$book_request->request_status ?? $book_request->status]; ?></small>
+                                                            </div>     
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <div class="form-group">
+                                                                <input type="submit" class="btn btn-primary" id="submit"/>
+                                                                <button type="button" class="btn btn-light"
+                                                                    data-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="text-left">
                                         <div class="modal modal-alert fade"
                                             id="modal-hapus-<?= $book_request->book_request_id; ?>" tabindex="-1"

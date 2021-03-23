@@ -93,41 +93,58 @@ class Book_request extends MY_Controller
         endif;
     }
 
-    public function edit_book_request($book_request_id){
-        if($this->check_level_gudang() == TRUE):
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('book_id', 'Judul buku', 'max_length[10]');
-        $this->form_validation->set_rules('order_number', 'Nomor Order', 'max_length[25]');
-        $this->form_validation->set_rules('total', 'Jumlah Permintaan', 'max_length[10]');
-        $this->form_validation->set_rules('notes', 'Catatan', 'max_length[250]');
-
-        if($this->form_validation->run() == FALSE){
-            $this->session->set_flashdata('error','Gagal mengubah data draft permintaan buku.');
-            redirect($_SERVER['HTTP_REFERER'], 'refresh');
-        }else{
-            $check  =   $this->book_request->edit_book_request($book_request_id);
-            if($check   ==  TRUE){
-                $this->session->set_flashdata('success','Berhasil mengubah data draft permintaan buku.');
-                redirect('book_request/view/'.$book_request_id);
-            }else{
-                $this->session->set_flashdata('error','Gagal mengubah data draft permintaan buku.');
-                redirect($_SERVER['HTTP_REFERER'], 'refresh');
+    public function edit_book_request(){
+        if($this->check_level_gudang_pemasaran() == TRUE && $this->input->method()=='post'){
+            $order_number = $this->input->post('order_number');
+            $book_request_id = $this->input->post('request_id');
+            $new_status = $this->input->post('order_status');
+            $book_request = $this->book_request->where('book_request_id', $book_request_id)->get();
+            if (!$book_request) {
+                $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
             }
+            else {
+                $book_request->request_status = $new_status;
+                if ($this->book_request->where('book_request_id', $book_request_id)->update($book_request)) {
+                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+                } else {
+                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_fail'));
+                }
+            }
+            // if($this->form_validation->run() == FALSE){
+            //     $this->session->set_flashdata('error','Gagal mengubah data draft permintaan buku.');
+            //     redirect($_SERVER['HTTP_REFERER'], 'refresh');
+            // }else{
+            //     $check  =   $this->book_request->edit_book_request($book_request_id);
+            //     if($check   ==  TRUE){
+            //         $this->session->set_flashdata('success','Berhasil mengubah data draft permintaan buku.');
+            //         redirect('book_request/view/'.$book_request_id);
+            //     }else{
+            //         $this->session->set_flashdata('error','Gagal mengubah data draft permintaan buku.');
+            //         redirect($_SERVER['HTTP_REFERER'], 'refresh');
+            //     }
+            // }
         }
-        endif;
+        else {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_edit_fail'));
+        }
+        redirect($this->pages);
     }
 
     public function delete_book_request($book_request_id){
-        if($this->check_level_gudang() == TRUE):
-        $check  = $this->book_request->delete_book_request($book_request_id);
-        if($check   ==  TRUE){
-            $this->session->set_flashdata('success','Berhasil menghapus data draft permintaan buku.');
-            redirect('book_request');
-        }else{
-            $this->session->set_flashdata('error','Gagal menghapus data draft permintaan buku.');
-            redirect('book_request');
+        if($this->check_level_gudang_pemasaran() == TRUE){
+            $book_request = $this->book_request->where('book_request_id', $book_request_id)->get();
+            if (!$book_request) {
+                $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+                redirect($this->pages);
+            }
+
+            if ($this->book_request->where('book_request_id', $book_request_id)->delete()) {
+                $this->session->set_flashdata('success', $this->lang->line('toast_delete_success'));
+            } else {
+                $this->session->set_flashdata('success', $this->lang->line('toast_delete_fail'));
+            }
         }
-        endif;
+        redirect($this->pages);
     }
 
     public function action_request($book_request_id){
