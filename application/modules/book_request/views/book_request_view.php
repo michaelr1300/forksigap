@@ -169,7 +169,9 @@ $level              = check_level();
 <hr class="my-3"> -->
 <!-- REQUEST -->
 <?php
-    $this->load->view('book_request/view/progress_preparing');
+    if($book_request->book_request_category == 'gudang'){
+        $this->load->view('book_request/view/progress_preparing');
+    }
 ?>
 <!-- FINAL -->
 <?php
