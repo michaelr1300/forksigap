@@ -855,6 +855,14 @@ function get_book_request_status(){
         'finish' => 'Selesai'
     ];
 }
+function get_book_request_status_edit(){
+    return [
+        'not_started' => 'Belum dimulai',
+        'preparing' => 'Sedang disiapkan',
+        'preparing_finish' => 'Selesai disiapkan',
+        'finish' => 'Selesai'
+    ];
+}
 function get_book_transfer_status(){
     return [
         '' => '--Pilih--',
