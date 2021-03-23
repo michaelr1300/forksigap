@@ -158,7 +158,7 @@ class Book_receive extends MY_Controller
             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
             redirect($this->pages);
         } else {
-            if (!$this->book_receive->validate()) {
+            // if (!$this->book_receive->validate()) {
                 $pages       = $this->pages;
                 $main_view   = 'book_receive/edit_bookreceive';
                 // $form_action = "book_receive/edit/$book_receive_id";
@@ -169,10 +169,8 @@ class Book_receive extends MY_Controller
                     // 'input', 
                     'book_receive'
                 ));
-                return;
-            }
-            $this->update($book_receive);
-            redirect('book_receive/view/' . $book_receive_id);
+            //     return;
+            // }
         }
 
         // if (!$_POST) {
@@ -206,9 +204,10 @@ class Book_receive extends MY_Controller
 
     }
 
-    public function update($book_receive)
+    public function update($book_receive_id)
     {
-        // $book_receive_id = $this->input->post('book_receive_id');
+        $book_receive = $this->book_receive->where('book_receive_id', $book_receive_id)->get();
+        $book_receive_id = $this->input->post('book_receive_id');
         $entry_date = $this->input->post('entry_date');
         $deadline = $this->input->post('deadline');
         $finish_date = $this->input->post('finish_date');
@@ -221,23 +220,38 @@ class Book_receive extends MY_Controller
         $wrapping_end_date = $this->input->post('wrapping_end_date');
         $wrapping_deadline = $this->input->post('wrapping_deadline');
 
-        $book_receive->entry_date = $entry_date;
-        $book_receive->deadline = $deadline;
-        $book_receive->finish_date = $finish_date;
-        $book_receive->is_handover = $is_handover;
-        $book_receive->handover_start_date = $handover_start_date;
-        $book_receive->handover_end_date = $handover_end_date;
-        $book_receive->handover_deadline = $handover_deadline;
-        $book_receive->is_wrapping = $is_wrapping;
-        $book_receive->wrapping_start_date = $wrapping_start_date;
-        $book_receive->wrapping_end_date = $wrapping_end_date;
-        $book_receive->wrapping_deadline = $wrapping_deadline;
+        // $book_receive->entry_date = $entry_date;
+        // $book_receive->deadline = $deadline;
+        // $book_receive->finish_date = $finish_date;
+        // $book_receive->is_handover = $is_handover;
+        // $book_receive->handover_start_date = $handover_start_date;
+        // $book_receive->handover_end_date = $handover_end_date;
+        // $book_receive->handover_deadline = $handover_deadline;
+        // $book_receive->is_wrapping = $is_wrapping;
+        // $book_receive->wrapping_start_date = $wrapping_start_date;
+        // $book_receive->wrapping_end_date = $wrapping_end_date;
+        // $book_receive->wrapping_deadline = $wrapping_deadline;
+        $data = [
+            'entry_date' => $entry_date,
+            'deadline' => $deadline,
+            'finish_date' => $finish_date,
+            'is_handover' => $is_handover,
+            'handover_start_date' => $handover_start_date,
+            'handover_end_date' => $handover_end_date,
+            'handover_deadline' => $handover_deadline,
+            'is_wrapping' => $is_wrapping,
+            'wrapping_start_date' => $wrapping_start_date,
+            'wrapping_end_date' => $wrapping_end_date,
+            'wrapping_deadline' => $wrapping_deadline,
+        ];
 
-        if ($this->book_receive->where('book_receive_id', $book_receive->book_receive_id)->update($book_receive)) {
-            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
-        } else {
-            $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
-        }
+        // $this->book_receive->update_book_receive($book_receive_id, $data, 'book_receive');
+        // if ($this->book_receive->where('book_receive_id', $book_receive_id)->update($book_receive)) {
+            $this->db->set($data)->where('book_receive_id', $book_receive_id)->update('book_receive');
+            // $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+        // } else {
+            // $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+        // }
 
         redirect('book_receive/view/' . $book_receive->book_receive_id);
     }

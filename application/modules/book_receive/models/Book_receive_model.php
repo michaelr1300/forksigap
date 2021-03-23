@@ -151,13 +151,13 @@ class Book_receive_model extends MY_Model
             ->num_rows();
     }
 
+    public function update_book_receive($book_receive_id, $data, $table){
+        $this->db->where('book_receive_id', $book_receive_id);
+        $this->db->update($table, $data);
+    }
+
     public function delete_book_receive($where){
         $this->db->where('book_receive_id', $where);
         $this->db->delete('book_receive');
-    }
-
-    public function edit_book_receive($book_receive_id){
-        $this->select()
-            ->where('book_receive', $book_receive_id);
     }
 }

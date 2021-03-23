@@ -18,7 +18,7 @@
         <div class="col-md-8">
             <section class="card">
                 <div class="card-body">
-                    <form action='<?=base_url('book_receive/edit/' . $book_receive->book_receive_id)?>' id="form-book-receive">
+                    <form method="post" action='<?=base_url('book_receive/update/' . $book_receive->book_receive_id)?>' id="form-book-receive">
                     <fieldset>
                         <legend>Form Edit Penerimaan Buku</legend>
                         <?= isset($book_receive->book_receive_id) ? form_hidden('book_receive_id', $book_receive->book_receive_id) : ''; ?>
