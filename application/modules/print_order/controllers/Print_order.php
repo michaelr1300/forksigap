@@ -315,35 +315,45 @@ class Print_order extends Printing_Controller
         if ($category !== 'nonbook' && $category !== 'from_outside') {
             // Mekanisme input stok
             $book_id             =   $data->book_id;
-            $warehouse_past      =   intval($data->stock_warehouse);
+            $print_order_id      =   $data->print_order_id;
+            // $warehouse_past      =   intval($data->stock_warehouse);
 
-            if ($data->total_postprint) {
-                $warehouse_modifier  =   abs($data->total_postprint);
-            } else {
-                $warehouse_modifier  =   abs($data->total_print);
-            }
+            // if ($data->total_postprint) {
+            //     $warehouse_modifier  =   abs($data->total_postprint);
+            // } else {
+            //     $warehouse_modifier  =   abs($data->total_print);
+            // }
 
-            $warehouse_operator  =   "+";
-            $warehouse_present   =   $warehouse_past + $warehouse_modifier;
+            // $warehouse_operator  =   "+";
+            // $warehouse_present   =   $warehouse_past + $warehouse_modifier;
 
-            $edit   =   [
-                'stock_warehouse'    => $warehouse_present,
-            ];
+            // $edit   =   [
+            //     'stock_warehouse'    => $warehouse_present,
+            // ];
 
-            $add    =   [
-                'book_id'               => $book_id,
-                'user_id'               => $_SESSION['user_id'],
-                'type'                  => 'print_order',
-                'date'                  => date('Y-m-d H:i:s'),
-                'notes'                 => '<a href="' . base_url('print_order/view/' . $data->print_order_id) . '" target="_blank"> <i class="fa fa-external-link-alt"></i> Link Order Cetak</a>',
-                'warehouse_past'        => $warehouse_past,
-                'warehouse_modifier'    => $warehouse_modifier,
-                'warehouse_present'     => $warehouse_present,
-                'warehouse_operator'    => $warehouse_operator
-            ];
+            // $add    =   [
+            //     'book_id'               => $book_id,
+            //     'user_id'               => $_SESSION['user_id'],
+            //     'type'                  => 'print_order',
+            //     'date'                  => date('Y-m-d H:i:s'),
+            //     'notes'                 => '<a href="' . base_url('print_order/view/' . $data->print_order_id) . '" target="_blank"> <i class="fa fa-external-link-alt"></i> Link Order Cetak</a>',
+            //     'warehouse_past'        => $warehouse_past,
+            //     'warehouse_modifier'    => $warehouse_modifier,
+            //     'warehouse_present'     => $warehouse_present,
+            //     'warehouse_operator'    => $warehouse_operator
+            // ];
 
-            $this->db->set($edit)->where('book_id', $book_id)->update('book');
-            $this->db->insert('book_stock', $add);
+            // $this->db->set($edit)->where('book_id', $book_id)->update('book');
+            // $this->db->insert('book_stock', $add);
+
+            // insert data print_order_id 
+            // ke tabel book_receive gudang
+            $insert_data_print = array(
+                'book_id' => $book_id,
+                'print_order_id' => $print_order_id,
+                'book_receive_status' => 'waiting'
+            );
+            $this->db->insert('book_receive', $insert_data_print);
         }
 
         // memastikan konsistensi data
@@ -360,7 +370,6 @@ class Print_order extends Printing_Controller
             'print_order_status' => $action,
             'finish_date' => $action == 'finish' ? now() : null
         ]);
-
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
             $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));

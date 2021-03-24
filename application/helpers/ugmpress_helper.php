@@ -828,11 +828,14 @@ function get_warehouse_stock(){
 function get_book_receive_status(){
     return [
         '' => '--Pilih--',
+        'waiting' => 'Belum Diproses',
         'reject' => 'Ditolak',
-        'revisi' => 'Butuh Revisi',
+        // 'revisi' => 'Butuh Revisi',
         'handover' => 'Serah Terima',
+        'handover_finish' => 'Selesai Serah Terima',
         'wrapping' => 'Wrapping',
-        'finalisai' => 'Menunggu Finalisasi',
+        'wrapping_finish' => 'Selesai Wrapping',
+        // 'finalisai' => 'Menunggu Finalisasi',
         'finish' => 'Selesai',
     ];
 }
