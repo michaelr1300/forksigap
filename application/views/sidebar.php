@@ -73,7 +73,7 @@ $menu_list = [
     ],
     [
         'title' => 'Data',
-        'level' => 'superadmin|admin_penerbitan|editor|layouter'
+        'level' => 'superadmin|admin_penerbitan|editor|layouter|admin_gudang|admin_pemasaran'
     ],
     [
         'name'  => 'Lembar Kerja',
