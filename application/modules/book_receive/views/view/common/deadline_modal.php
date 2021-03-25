@@ -34,7 +34,7 @@
 <script>
 $(document).ready(function() {
     const progress = '<?= $progress ?>'
-    const bookReceiveId = '<?= $book_receive->book_receive_id ?>'
+    const book_receive_id = '<?= $book_receive->book_receive_id ?>'
     const deadline = '<?= $book_receive->{"{$progress}_deadline"} ?>'
 
     // ketika modal tampil, pasang listener
@@ -58,7 +58,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "<?= base_url('book_receive/api_update/'); ?>" + printOrderId,
+            url: "<?= base_url('book_receive/api_update/'); ?>" + book_receive_id,
             data: {
                 [`${progress}_deadline`]: deadline,
                 progress

@@ -351,7 +351,8 @@ class Print_order extends Printing_Controller
             $insert_data_print = array(
                 'book_id' => $book_id,
                 'print_order_id' => $print_order_id,
-                'book_receive_status' => 'waiting'
+                'book_receive_status' => 'waiting',
+                'entry_date' => now() 
             );
             $this->db->insert('book_receive', $insert_data_print);
         }

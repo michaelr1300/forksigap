@@ -55,10 +55,6 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <label for="category">Status</label>
                                 <?= form_dropdown('book_receive_status', get_book_receive_status(), $book_receive_status, 'id="book_receive_status" class="form-control custom-select d-block" title="Status"'); ?>
                             </div>
-                            <!-- <div class="col-12 col-md-3 mb-3">
-                                <label for="category">Jumlah Dicetak</label>
-                                <?//= form_dropdown('book_stock_total', get_book_stock_total(), $book_stock_total, 'id="book_stock_total" class="form-control custom-select d-block" title="Total Stok Buku"'); ?>
-                            </div> -->
                             <div class="col-12 col-md-6">
                                 <label for="status">Pencarian</label>
                                 <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Nama atau Kode Buku" class="form-control"'); ?>
@@ -82,53 +78,51 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <th scope="col" class="pl-4 align-middle text-center" rowspan="2">No</th>
                                 <th scope="col" style="min-width:350px;" class="align-middle text-center" rowspan="2">
                                     Judul</th>
-                                <!-- <th scope="col" style="min-width:100px;" class="align-middle text-center" rowspan="2">
-                                    Tahun Terbit
-                                </th> -->
                                 <th scope="col" style="min-width:150px;" class="align-middle text-center">
                                     Nomor Order</th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center" >
-                                    Tanggal Mulai Penerimaan Buku</th>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center" >
                                     Jumlah Order</th>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center" >
                                     Jumlah Tercetak</th>
+                                <th scope="col" style="min-width:100px;" class="align-middle text-center" >
+                                    Tanggal Mulai</th>
+                                <th scope="col" style="min-width:100px;" class="align-middle text-center" >
+                                    Tanggal Selesai</th>
+                                <th scope="col" style="min-width:100px;" class="align-middle text-center" >
+                                    Deadline</th>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center">
                                     Status</th>
                                 <?php if ($level == 'superadmin') : ?>
                                 <th style="min-width:150px;" class="align-middle text-center" rowspan="2"> Aksi </th>
                                 <?php endif; ?>
                             </tr>
-                            <!-- <tr>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Gudang</th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Perpus</th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Showroom</th>
-                            </tr> -->
                         </thead>
                         <tbody>
                             <?php foreach ($book_receives as $book_receive) : ?>
                             <tr>
                                 <td class="align-middle text-center"><?= ++$i; ?></td>
                                 <td class="align-middle">
-                                    <!-- Perlu diedit sprtinya,, -->
                                     <a href="<?= base_url('book_receive/view/' . $book_receive->book_receive_id . ''); ?>"
                                         class="font-weight-bold">
                                         <?= highlight_keyword($book_receive->book_title, $keyword); ?>
                                 </td>
-                                <!-- <td class="align-middle text-center">
-                                    <?//=konversiTahun($book_stock->published_date);?>
-                                </td> -->
                                 <td class="align-middle text-center">
                                     <?= $book_receive->order_number; ?></td>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?=$book_receive->entry_date; ?></td>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <?=$book_receive->total_print; ?></td>
+                                    <?=$book_receive->total; ?></td>
                                 </td>
                                 <td class="align-middle text-center">
                                     <?=$book_receive->total_postprint; ?></td>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <?= format_datetime($book_receive->entry_date); ?></td>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <?= format_datetime($book_receive->finish_date); ?></td>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <?= deadline_color($book_receive->deadline, $book_receive->book_receive_status); ?>
                                 </td>
                                 <td class="align-middle text-center">
                                     <?= get_book_receive_status()[$book_receive->book_receive_status] ?? $book_receive->print_order_status;  ?></td>
@@ -136,7 +130,6 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <?php if ($level == 'superadmin') : ?>
                                 <td style="min-width: 130px" class="align-middle text-center">
                                     <a href="<?= base_url('book_receive/edit/' . $book_receive->book_receive_id . ''
-                                    // . $print_order->print_order_id . ''
                                     ); ?>" class="btn btn-sm btn-secondary" title="Edit Stok Buku">
                                         <i class="fa fa-pencil-alt"></i>
                                         <span class="sr-only">Edit Stok Buku</span>
@@ -163,8 +156,6 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-light"
                                                             data-dismiss="modal">Close</button>
-                                                        <!-- <button type="button" class="btn btn-danger"
-                                                            data-dismiss="modal">Hapus</button> -->
                                                         <button type="button" class="btn btn-danger"
                                                             onclick="location.href='<?= base_url('book_receive/delete/' . $book_receive->book_receive_id . ''); ?>'"
                                                             data-dismiss="modal">Hapus</button>
@@ -183,211 +174,6 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                     <p class="text-center my-5">Data tidak tersedia</p>
                     <?php endif; ?>
                     <?= $pagination ?? null; ?>
-
-                    <!-- hard code -->
-                    <!-- <small class="ml-3">*tabelnya masih hard code</small>
-                    <table class="table table-striped mb-0 table-responsive">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="pl-4 align-middle text-center">No</th>
-                                <th scope="col" style="min-width:400px;" class="align-middle text-center">Judul</th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Tahun Terbit
-                                </th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Nomor Order
-                                </th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Tanggal Masuk
-                                    Gudang</th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Jumlah Dicetak
-                                </th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Status</th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Lokasi Rak
-                                </th>
-                                <th style="min-width:100px" class="align-middle text-center">
-                                    &nbsp; </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="align-middle text-center pl-4">1</td>
-                                <td class="align-middle text-left">
-                                    <a href="detailbuku.html" class="font-weight-bold">
-                                        Sistem Pengendalian Manajemen </a>
-                                </td>
-                                <td class="align-middle text-center">2019</td>
-                                <td class="align-middle text-center">2019-12-182</td>
-                                <td class="align-middle text-center">27/11/2020 10:02:43</td>
-                                <td class="align-middle text-center">554</td>
-                                <td class="align-middle text-center">Selesai</td>
-                                <td class="align-middle text-center">R12B</td>
-                                <td class="align-middle text-center">
-                                    <button title="Edit Stok" data-toggle="modal" data-target="#modal_add_stock"
-                                        class="btn btn-sm btn-secondary">
-                                        <i class="fa fa-pencil-alt"></i>
-                                        <span class="sr-only">Edit</span>
-                                    </button>
-                                    Modal add stock
-                                    <div class="modal fade" id="modal_add_stock" tabindex="-1" role="dialog"
-                                        aria-labelledby="modal_add_stock" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Ubah Stok</h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">×</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body text-left">
-                                                    <div class="alert alert-warning">
-                                                        <strong>PERHATIAN!</strong> Fitur ini
-                                                        berfungsi untuk mengubah stok buku.
-                                                    </div>
-                                                    <form action="https://sigapdev.com/book/add_book_stock"
-                                                        method="post">
-                                                        <div class="form-group">
-                                                            <label class="font-weight-bold">Judul
-                                                                Buku</label>
-                                                            <input type="text" class="form-control"
-                                                                value="Sistem Pengendalian Manajemen" disabled="">
-                                                            <input type="hidden" class="form-control" id="book_id"
-                                                                name="book_id" value="41">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="type" class="d-block font-weight-bold">
-                                                                Tipe Operasi <abbr title="Required">*</abbr>
-                                                            </label>
-                                                            <div class="btn-group btn-group-toggle"
-                                                                data-toggle="buttons">
-                                                                <label class="btn btn-secondary active">
-                                                                    <input type="radio" name="warehouse_operator"
-                                                                        value="+" checked="checked"
-                                                                        class="custom-control-input">
-                                                                    Tambah</label>
-
-                                                                <label class="btn btn-secondary">
-                                                                    <input type="radio" name="warehouse_operator"
-                                                                        value="-" class="custom-control-input">
-                                                                    Kurang</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="font-weight-bold"
-                                                                for="warehouse_modifier">Perubahan<abbr
-                                                                    title="Required">*</abbr></label>
-                                                            <input type="number" class="form-control"
-                                                                name="warehouse_modifier" id="warehouse_modifier">
-                                                            <input type="hidden" name="warehouse_past"
-                                                                id="warehouse_past" value="">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="font-weight-bold" for="date">Tanggal
-                                                                Input<abbr title="Required">*</abbr></label>
-                                                            <input type="text" name="date" id="date" value=""
-                                                                class="form-control dates">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="font-weight-bold" for="notes">Catatan</label>
-                                                            <textarea rows="6" class="form-control summernote-basic"
-                                                                id="notes" name="notes"></textarea>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-light ml-auto"
-                                                        data-dismiss="modal">Close</button>
-                                                    <button class="btn btn-primary" type="submit">Submit</button>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    Modal Add Stok
-                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
-                                        data-target="#modal-hapus-11"><i class="fa fa-trash-alt"></i><span
-                                            class="sr-only">Delete</span></button>
-                                    <div class="text-left">
-                                        <div class="modal modal-alert fade" id="modal-hapus-11" tabindex="-1"
-                                            role="dialog" aria-labelledby="modal-hapus" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">
-                                                            <i class="fa fa-exclamation-triangle text-red mr-1"></i>
-                                                            Konfirmasi
-                                                            Hapus
-                                                        </h5>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Apakah anda yakin akan menghapus
-                                                            print_order <span class="font-weight-bold">Toksikologi
-                                                                Lingkungan</span>?</p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-danger"
-                                                            onclick="location.href='https://sigapdev.com/print_order/delete/11'"
-                                                            data-dismiss="modal">Hapus</button>
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="align-middle text-center pl-4">2</td>
-                                <td class="align-middle text-left">
-                                    <a href="#" class="font-weight-bold">
-                                        Toksikologi Lingkungan </a>
-                                </td>
-                                <td class="align-middle text-center">2018</td>
-                                <td class="align-middle text-center">2018-11-328</td>
-                                <td class="align-middle text-center">27/11/2020 09:05:15</td>
-                                <td class="align-middle text-center">503</td>
-                                <td class="align-middle text-center">Selesai</td>
-                                <td class="align-middle text-center">R10A</td>
-                                <td class="align-middle text-center">
-                                    <a href="https://sigapdev.com/print_order/edit/11" class="btn btn-sm btn-secondary">
-                                        <i class="fa fa-pencil-alt"></i>
-                                        <span class="sr-only">Edit</span>
-                                    </a>
-                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
-                                        data-target="#modal-hapus-11"><i class="fa fa-trash-alt"></i><span
-                                            class="sr-only">Delete</span></button>
-                                    <div class="text-left">
-                                        <div class="modal modal-alert fade" id="modal-hapus-11" tabindex="-1"
-                                            role="dialog" aria-labelledby="modal-hapus" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">
-                                                            <i class="fa fa-exclamation-triangle text-red mr-1"></i>
-                                                            Konfirmasi
-                                                            Hapus
-                                                        </h5>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Apakah anda yakin akan menghapus
-                                                            print_order <span class="font-weight-bold">Toksikologi
-                                                                Lingkungan</span>?</p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-danger"
-                                                            onclick="location.href='https://sigapdev.com/print_order/delete/11'"
-                                                            data-dismiss="modal">Hapus</button>
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table> -->
-                    <!-- end of hard code -->
                 </div>
             </section>
         </div>

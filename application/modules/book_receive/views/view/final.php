@@ -11,8 +11,8 @@ if (!$is_final) :
 
         <button class="btn btn-primary <?= ($is_ready) ? null : 'btn-disabled'; ?>" data-toggle="modal"
             data-target="#modal-accept-book-receive" <?= ($is_ready) ? null : 'disabled'; ?>>Finalisasi</button>
-        <button class="btn btn-danger <?= ($is_ready) ? null : 'btn-disabled'; ?>" data-toggle="modal"
-            data-target="#modal-reject-book-receive" <?= ($is_ready) ? null : 'disabled'; ?>>Tolak</button>
+        <!-- <button class="btn btn-danger <?//= ($is_ready) ? null : 'btn-disabled'; ?>" data-toggle="modal"
+            data-target="#modal-reject-book-receive" <?//= ($is_ready) ? null : 'disabled'; ?>>Tolak</button> -->
     </div>
 </div>
 
@@ -35,7 +35,7 @@ if (!$is_final) :
     </div>
 </div>
 
-<div class="modal modal-alert fade" id="modal-reject-book-receive" tabindex="-1" role="dialog"
+<!-- <div class="modal modal-alert fade" id="modal-reject-book-receive" tabindex="-1" role="dialog"
     aria-labelledby="modal-reject-book-receive" aria-hidden="true">
     <div class="modal-dialog  modal-dialog-centered">
         <div class="modal-content">
@@ -51,7 +51,7 @@ if (!$is_final) :
             </div>
         </div>
     </div>
-</div>
+</div> -->
 <script>
 $(document).ready(function() {
     const bookReceiveId = '<?= $book_receive->book_receive_id ?>';

@@ -24,7 +24,7 @@
     tr {
         font-family: 'Calibri', sans-serif;
         font-weight: lighter;
-        font-size: 18px;
+        font-size: 16px;
         color: black;
     }
 
@@ -53,17 +53,6 @@
                 <?= $title; ?>
             </td>
         </tr>
-        <!-- <tr>
-            <td>
-                KATEGORI
-            </td>
-            <td>
-                :
-            </td>
-            <td>
-                <?= $category; ?>
-            </td>
-        </tr> -->
         <tr>
             <td>
                 JENIS PEKERJAAN
@@ -75,18 +64,6 @@
                 <?= $jobtype; ?>
             </td>
         </tr>
-
-        <!-- <tr>
-            <td>
-                FINISHING
-            </td>
-            <td>
-                :
-            </td>
-            <td>
-                <?= $finishing; ?>
-            </td>
-        </tr> -->
         <tr>
             <td>
                 NOMOR ORDER
@@ -106,7 +83,7 @@
                 :
             </td>
             <td>
-                <?= $total_print; ?>
+                <?= $total; ?>
             </td>
         </tr>
         <tr>
@@ -120,28 +97,17 @@
                 <?= $total_postprint; ?>
             </td>
         </tr>
-        <!-- <tr>
+        <tr>
             <td>
-                TANGGAL MASUK
+                JUMLAH HASIL WRAPPING
             </td>
             <td>
                 :
             </td>
             <td>
-                <?//= $entrydate; ?>
+                <?= $total_postprint; ?>
             </td>
-        </tr> -->
-        <!-- <tr>
-            <td>
-                DEADLINE
-            </td>
-            <td>
-                :
-            </td>
-            <td>
-                <?//= $deadline; ?>
-            </td>
-        </tr> -->
+        </tr>
         <tr>
             <td>
                 TANGGAL MULAI KERJA
@@ -150,7 +116,18 @@
                 :
             </td>
             <td>
-
+                <?= $wrapping_start_date; ?>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                DEADLINE
+            </td>
+            <td>
+                :
+            </td>
+            <td>
+                <?= $wrapping_deadline; ?>
             </td>
         </tr>
         <tr>
@@ -161,7 +138,7 @@
                 :
             </td>
             <td>
-
+                <?= $wrapping_end_date; ?>
             </td>
         </tr>
         <tr>
@@ -175,7 +152,7 @@
                 <?= $staff; ?>
             </td>
         </tr>
-        <tr>
+        <!-- <tr>
             <td>
                 STATUS PENYELESAIAN
             </td>
@@ -183,9 +160,9 @@
                 :
             </td>
             <td>
-
+                <?//= $progress; ?>
             </td>
-        </tr>
+        </tr> -->
         <tr>
             <td>
                 KETERANGAN

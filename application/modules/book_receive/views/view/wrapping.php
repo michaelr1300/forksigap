@@ -2,32 +2,32 @@
 $is_wrapping_started       = format_datetime($book_receive->wrapping_start_date);
 $is_wrapping_finished      = format_datetime($book_receive->wrapping_end_date);
 $is_wrapping_deadline_set  = format_datetime($book_receive->wrapping_deadline);
-$staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('wrapping', $book_receive->book_receive_id);
-
+// $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('wrapping', $book_receive->book_receive_id);
+$is_wrapping_staff_set     = $book_receive->wrapping_staff;
 ?>
 <section id="wrapping-progress-wrapper" class="card">
     <div id="wrapping-progress">
         <header class="card-header">
             <div class="d-flex align-items-center"><span class="mr-auto">Wrapping</span>
-                <?php if (!$is_final) :
-                        //modal select
-                        $this->load->view('book_receive/view/common/select_modal', [
-                            'progress' => 'wrapping',
-                            'staff_gudang' => $staff_gudang
-                        ]);
-                    ?>
+                <!-- <?php 
+                        // if (!$is_final) :
+                        // //modal select
+                        // $this->load->view('book_receive/view/common/select_modal', [
+                        //     'progress' => 'wrapping',
+                        //     'staff_gudang' => $staff_gudang
+                        // ]);
+                    ?> -->
                 <div class="card-header-control">
-                    <button id="btn-start-wrapping" title="Mulai proses wrapping" type="button"
-                        class="d-inline btn 
-                        <?= !$is_wrapping_started ? 'btn-warning' : 'btn-secondary'; ?> <?= ($is_wrapping_started || !$is_wrapping_deadline_set) ? 'btn-disabled' : ''; ?>
-                        "
-                        <?= ($is_wrapping_started || !$is_wrapping_deadline_set) ? 'disabled' : ''; ?>><i class="fas fa-play"></i><span class="d-none d-lg-inline"> Mulai</span></button>
+                    <button id="btn-start-wrapping" title="Mulai proses wrapping" type="button" class="d-inline btn 
+                        <?= !$is_wrapping_started ? 'btn-warning' : 'btn-secondary'; ?> <?= ($is_wrapping_started || !$is_wrapping_deadline_set || !$is_wrapping_staff_set) ? 'btn-disabled' : ''; ?>
+                        " <?= ($is_wrapping_started || !$is_wrapping_deadline_set || !$is_wrapping_staff_set) ? 'disabled' : ''; ?>><i
+                            class="fas fa-play"></i><span class="d-none d-lg-inline"> Mulai</span></button>
                     <button id="btn-finish-wrapping" title="Selesai proses wrapping" type="button"
-                        class="d-inline btn btn-secondary <?= !$is_wrapping_started ? 'btn-disabled' : '' ?>"
-                        <?= !$is_wrapping_started ? 'disabled' : '' ?>><i class="fas fa-stop"></i><span
+                        class="d-inline btn btn-secondary <?= (!$is_wrapping_started || $is_wrapping) ? 'btn-disabled' : '' ?>"
+                        <?= (!$is_wrapping_started || $is_wrapping) ? 'disabled' : '' ?>><i class="fas fa-stop"></i><span
                             class="d-none d-lg-inline"> Selesai</span></button>
                 </div>
-                <?php endif ?>
+                <?php //endif ?>
             </div>
         </header>
 
@@ -35,7 +35,7 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
         <?php 
             $this->load->view('book_receive/view/common/progress_alert', [
                 'progress'          => 'wrapping',
-                'staff_gudang'  => $staff_gudang
+                // 'staff_gudang'  => $staff_gudang
             ]); 
             ?>
 
@@ -74,32 +74,38 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
             </div>
 
             <div class="list-group-item justify-content-between">
-                <?php //if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && empty($book_receive->wrapping_deadline))) && $staff_gudang && !$is_final) : ?>
+                <?php if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && empty($book_receive->wrapping_deadline))) && !$is_final) : ?>
                 <a href="#" id="btn-modal-deadline-wrapping" title="Ubah deadline" data-toggle="modal"
                     data-target="#modal-deadline-wrapping">Deadline <i class="fas fa-edit fa-fw"></i></a>
-                <!-- <?php //else : ?>
+                <?php else : ?>
                 <span class="text-muted">Deadline</span>
-                <?php //endif ?> -->
+                <?php endif ?>
                 <strong><?= format_datetime($book_receive->wrapping_deadline); ?></strong>
             </div>
 
-            <?php if ($staff_gudang) : ?>
+
+
+
+            <!-- <?php //if ($book_receive->wrapping_staff) : ?> -->
             <div class="list-group-item justify-content-between">
+                <?php if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && empty($book_receive->handover_deadline))) && !$is_final) : ?>
+                <a href="#" id="btn-modal-staff-wrapping" title="Staff Bertugas" data-toggle="modal"
+                    data-target="#modal-staff-wrapping">Staff Bertugas <i class="fas fa-edit fa-fw"></i></a>
+                <?php else : ?>
                 <span class="text-muted">Staff Bertugas</span>
+                <?php endif ?>
                 <strong>
-                    <?php foreach ($staff_gudang as $staff) : ?>
-                    <span class="badge badge-info p-1"><?= $staff->username; ?></span>
-                    <?php endforeach; ?>
+                    <span><?= $book_receive->wrapping_staff ?></span>
                 </strong>
             </div>
-            <?php endif; ?>
+            <!-- <?php// endif; ?> -->
 
-            <?php if ($book_receive->total) : ?>
+            <!-- <?php //if ($book_receive->total) : ?>
             <div class="list-group-item justify-content-between">
                 <span class="text-muted">Jumlah hasil wrapping</span>
-                <strong id="total-wrapping"><?= $book_receive->total; ?></strong>
+                <strong id="total-wrapping"><?//= $book_receive->total; ?></strong>
             </div>
-            <?php endif; ?>
+            <?php //endif; ?> -->
 
             <div class="m-3">
                 <div class="text-muted pb-1">Catatan Admin</div>
@@ -113,27 +119,29 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
                 <!-- button aksi -->
                 <?php if (($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_gudang') && !$is_final) : ?>
                 <button title="Aksi admin"
-                    class="btn btn-outline-dark <?= !$book_receive->total ? 'btn-disabled' : ''; ?>"
-                    data-toggle="modal" data-target="#modal-action-wrapping"
-                    <?= !$book_receive->total ? 'disabled' : ''; ?>>Aksi</button>
+                    class="btn btn-outline-dark <?= !$book_receive->wrapping_end_date ? 'btn-disabled' : ''; ?>" data-toggle="modal"
+                    data-target="#modal-action-wrapping" <?= !$book_receive->wrapping_end_date ? 'disabled' : ''; ?>>Aksi</button>
                 <?php endif; ?>
 
                 <!-- button tanggapan wrapping -->
                 <button type="button" class="btn btn-outline-success" data-toggle="modal"
                     data-target="#modal-wrapping-notes">Catatan</button>
                 <?php if (!$is_final) : ?>
-                <a 
-                href="<?= base_url('book_receive/generate_pdf_wrapping/' . $book_receive->book_receive_id . "/wrapping") ?>"
+                <a href="<?= base_url('book_receive/generate_pdf_wrapping/' . $book_receive->book_receive_id . "/wrapping") ?>"
                     class="btn btn-outline-danger 
-                    <?//= (!$is_wrapping_deadline_set) ? 'disabled' : ''; ?>"
-                    id="btn-generate-pdf-handover" title="Generate PDF">Generate PDF <i
-                        class="fas fa-file-pdf fa-fw"></i></a>
+                    <?= (!$is_wrapping_deadline_set) ? 'disabled' : ''; ?>" id="btn-generate-pdf-handover"
+                    title="Generate PDF">Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
                 <?php endif; ?>
 
             </div>
         </div>
 
         <?php
+            // modal staff
+            $this->load->view('book_receive/view/common/input_staff_modal', [
+                'progress' => 'wrapping'
+            ]);        
+        
             // modal deadline
             $this->load->view('book_receive/view/common/deadline_modal', [
                 'progress' => 'wrapping',
@@ -171,7 +179,7 @@ $(document).ready(function() {
     $('#wrapping-progress-wrapper').on('click', '#btn-start-wrapping', function() {
         $.ajax({
             type: "POST",
-            url: "<?//= base_url('book_receive/api_start_progress/'); ?>" + book_receive_id,
+            url: "<?= base_url('book_receive/api_start_progress/'); ?>" + book_receive_id,
             datatype: "JSON",
             data: {
                 progress: 'wrapping'
@@ -188,7 +196,7 @@ $(document).ready(function() {
                 // reload progress
                 $('#progress-list-wrapper').load(' #progress-list');
                 // reload data 
-                $('#book-receive-data-wrapper').load(' #book-receive-data');
+                $('#book-receive-data-wrapper').load(' #book-receive');
             },
         })
     })
@@ -214,7 +222,7 @@ $(document).ready(function() {
                 // reload progress
                 $('#progress-list-wrapper').load(' #progress-list');
                 // reload data
-                $('#book-receive-data-wrapper').load(' #book-receive-data');
+                $('#book-receive-data-wrapper').load(' #book-receive');
             },
         })
     })

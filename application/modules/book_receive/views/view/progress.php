@@ -13,11 +13,7 @@ function get_book_receive_progress($progress = null, $book_receive, $progress_li
 
     ${"{$progress}_class"} = '';
     ${"{$progress}_title"} = '';
-    if (!$book_receive->{"is_{$progress}"} && $book_receive->book_receive_status == 'reject') {
-        ${"{$progress}_class"} .= 'error ';
-        ${"{$progress}_title"} = 'Ditolak';
-    } 
-    else if ($book_receive->{"is_{$progress}"}) {
+    if ($book_receive->{"is_{$progress}"}) {
         ${"{$progress}_class"} .= 'success ';
         ${"{$progress}_title"} = 'Selesai';
     } 
@@ -33,8 +29,6 @@ function get_book_receive_progress($progress = null, $book_receive, $progress_li
         $text = 'serah terima';
     } elseif ($progress == 'wrapping') {
         $text = 'wrapping';
-    } elseif ($progress == 'finalisasi') {
-        $text = 'menunggu finalisasi';
     } else {
         $text = '';
     }

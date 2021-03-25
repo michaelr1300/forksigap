@@ -2,31 +2,31 @@
 $is_handover_started       = format_datetime($book_receive->handover_start_date);
 $is_handover_finished      = format_datetime($book_receive->handover_end_date);
 $is_handover_deadline_set  = format_datetime($book_receive->handover_deadline);
-$staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('handover', $book_receive->book_receive_id);
-
+$is_handover_staff_set     = $book_receive->handover_staff;
+// $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('handover', $book_receive->book_receive_id);
 ?>
 <section id="handover-progress-wrapper" class="card">
     <div id="handover-progress">
         <header class="card-header">
             <div class="d-flex align-items-center"><span class="mr-auto">Serah Terima</span>
-                <?php if (!$is_final) :
+                <!-- <?php// if (!$is_final) :
                         //modal select
-                        $this->load->view('book_receive/view/common/select_modal', [
-                            'progress' => 'handover',
-                            'staff_gudang' => $staff_gudang
-                        ]);
-                    ?>
+                        // $this->load->view('book_receive/view/common/select_modal', [
+                            // 'progress' => 'handover',
+                            // 'staff_gudang' => $staff_gudang
+                        // ]);
+                    ?> -->
                 <div class="card-header-control">
                     <button id="btn-start-handover" title="Mulai proses serah terima" type="button" class="d-inline btn 
-                        <?= !$is_handover_started ? 'btn-warning' : 'btn-secondary'; ?> <?= ($is_handover_started || !$is_handover_deadline_set) ? 'btn-disabled' : ''; ?>
-                        " <?= ($is_handover_started || !$is_handover_deadline_set) ? 'disabled' : ''; ?>><i
+                        <?= !$is_handover_started ? 'btn-warning' : 'btn-secondary'; ?> <?= ($is_handover_started || !$is_handover_deadline_set || !$is_handover_staff_set) ? 'btn-disabled' : ''; ?>
+                        " <?= ($is_handover_started || !$is_handover_deadline_set || !$is_handover_staff_set) ? 'disabled' : ''; ?>><i
                             class="fas fa-play"></i><span class="d-none d-lg-inline"> Mulai</span></button>
                     <button id="btn-finish-handover" title="Selesai proses serah terima" type="button"
-                        class="d-inline btn btn-secondary <?= !$is_handover_started ? 'btn-disabled' : '' ?>"
-                        <?= !$is_handover_started ? 'disabled' : '' ?>><i class="fas fa-stop"></i><span
+                        class="d-inline btn btn-secondary <?= (!$is_handover_started || $is_wrapping) ? 'btn-disabled' : '' ?>"
+                        <?= (!$is_handover_started || $is_wrapping) ? 'disabled' : '' ?>><i class="fas fa-stop"></i><span
                             class="d-none d-lg-inline"> Selesai</span></button>
                 </div>
-                <?php endif ?>
+                <?php //endif ?>
             </div>
         </header>
 
@@ -34,7 +34,7 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
         <?php 
             $this->load->view('book_receive/view/common/progress_alert', [
                 'progress'          => 'handover',
-                'staff_gudang'  => $staff_gudang
+                // 'staff_gudang'  => $staff_gudang
             ]);
             ?>
 
@@ -73,32 +73,31 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
             </div>
 
             <div class="list-group-item justify-content-between">
-                <?php //if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && empty($book_receive->handover_deadline))) && $staff_gudang && !$is_final) : ?>
+                <?php if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && empty($book_receive->handover_deadline))) && !$is_final) : ?>
                 <a href="#" id="btn-modal-deadline-handover" title="Ubah deadline" data-toggle="modal"
                     data-target="#modal-deadline-handover">Deadline <i class="fas fa-edit fa-fw"></i></a>
-                <!-- <?php //else : ?>
+                <?php else : ?>
                 <span class="text-muted">Deadline</span>
-                <?php //endif ?> -->
+                <?php endif ?>
                 <strong><?= format_datetime($book_receive->handover_deadline); ?></strong>
             </div>
 
-            <?php if ($staff_gudang) : ?>
             <div class="list-group-item justify-content-between">
-                <span class="text-muted">Staff Bertugas</span>
+                <?php if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && empty($book_receive->handover_deadline))) && !$is_final) : ?>
+                <a href="#" id="btn-modal-staff-handover" title="Staff Bertugas" data-toggle="modal"
+                    data-target="#modal-staff-handover">Staff Bertugas <i class="fas fa-edit fa-fw"></i></a>
+                <?php else : ?>
+                    <span class="text-muted">Staff Bertugas</span>
+                <?php endif ?>
                 <strong>
-                    <?php foreach ($staff_gudang as $staff) : ?>
-                    <span class="badge badge-info p-1"><?= $staff->username; ?></span>
-                    <?php endforeach; ?>
+                    <span><?= $book_receive->handover_staff ?></span>
                 </strong>
             </div>
-            <?php endif; ?>
 
-            <?php if ($book_receive->total) : ?>
             <div class="list-group-item justify-content-between">
                 <span class="text-muted">Jumlah buku diterima</span>
-                <strong id="total-handover"><?= $book_receive->total; ?></strong>
+                <strong id="total-handover"><?= $book_receive->total_postprint; ?></strong>
             </div>
-            <?php endif; ?>
 
             <div class="m-3">
                 <div class="text-muted pb-1">Catatan Admin</div>
@@ -113,8 +112,8 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
                 <!-- button aksi -->
                 <?php if (($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_gudang') && !$is_final) : ?>
                 <button title="Aksi admin"
-                    class="btn btn-outline-dark <?= !$book_receive->total ? 'btn-disabled' : ''; ?>" data-toggle="modal"
-                    data-target="#modal-action-handover" <?= !$book_receive->total ? 'disabled' : ''; ?>>Aksi</button>
+                    class="btn btn-outline-dark <?= !$book_receive->handover_end_date ? 'btn-disabled' : ''; ?>" data-toggle="modal"
+                    data-target="#modal-action-handover" <?= !$book_receive->handover_end_date ? 'disabled' : ''; ?>>Aksi</button>
                 <?php endif; ?>
 
                 <!-- button tanggapan handover -->
@@ -123,7 +122,7 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
                 <?php if (!$is_final) : ?>
                 <a href="<?= base_url('book_receive/generate_pdf_handover/' . $book_receive->book_receive_id . "/handover") ?>"
                     class="btn btn-outline-danger 
-                    <?//= (!$is_handover_deadline_set) ? 'disabled' : ''; ?>" id="btn-generate-pdf-handover"
+                    <?= (!$is_handover_deadline_set) ? 'disabled' : ''; ?>" id="btn-generate-pdf-handover"
                     title="Generate PDF berita acara serah terima">Generate PDF <i class="fas fa-file-pdf fa-fw"></i>
                 </a>
                 <form action="" method="POST" enctype="multipart/form-data">
@@ -143,6 +142,11 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
         </div>
 
         <?php
+            // modal staff
+            $this->load->view('book_receive/view/common/input_staff_modal', [
+                'progress' => 'handover'
+            ]);        
+
             // modal deadline
             $this->load->view('book_receive/view/common/deadline_modal', [
                 'progress' => 'handover',
@@ -180,7 +184,7 @@ $(document).ready(function() {
     $('#handover-progress-wrapper').on('click', '#btn-start-handover', function() {
         $.ajax({
             type: "POST",
-            url: "<?//= base_url('book_receive/api_start_progress/'); ?>" + book_receive_id,
+            url: "<?= base_url('book_receive/api_start_progress/'); ?>" + book_receive_id,
             datatype: "JSON",
             data: {
                 progress: 'handover'
@@ -197,7 +201,7 @@ $(document).ready(function() {
                 // reload progress
                 $('#progress-list-wrapper').load(' #progress-list');
                 // reload data 
-                $('#book-receive-data-wrapper').load(' #book-receive-data');
+                $('#book-receive-data-wrapper').load(' #book-receive');
             },
         })
     })
@@ -223,7 +227,7 @@ $(document).ready(function() {
                 // reload progress
                 $('#progress-list-wrapper').load(' #progress-list');
                 // reload data
-                $('#book-receive-data-wrapper').load(' #book-receive-data');
+                $('#book-receive-data-wrapper').load(' #book-receive');
             },
         })
     })

@@ -19,48 +19,9 @@
         <div>
             <?php if (!$is_final && $_SESSION['level'] == 'superadmin') : 
             ?>
-            <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal"
-                data-target="#modal-additional-notes">
-                <i class="fa fa-edit fa-fw"></i> Edit Penerimaan Buku</button>
-            <div class="modal fade" id="modal-additional-notes" tabindex="-1" role="dialog"
-                aria-labelledby="modal-additional-notes" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-overflow" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title"> Edit Penerimaan Buku</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <fieldset>
-                                <div class="form-group">
-                                    <?//= form_open('book_receive/add_additional_notes/' . $book_receive->book_receive_id, ''); ?>
-                                    <?php /*
-                                        echo form_textarea([
-                                            'name'  => "additional_notes",
-                                            'class' => 'form-control',
-                                            'id'    => "additional-notes",
-                                            'rows'  => '6',
-                                            'value' => $book_receive->additional_notes
-                                        ]);  */
-                                    ?>
-                                </div>
-                            </fieldset>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-light ml-auto" data-dismiss="modal">Close</button>
-                            <?php //if (!$is_final) : 
-                            ?>
-                            <button class="btn btn-primary" type="submit" value="Submit"
-                                id="btn-submit-additional-notes">Submit</button>
-                            <?= form_close(); ?>
-                            <?php //endif 
-                            ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <a type="button" class="btn btn-secondary btn-sm" 
+                href="<?=base_url('book_receive/edit/' . $book_receive->book_receive_id)?>">
+                <i class="fa fa-edit fa-fw"></i> Edit Penerimaan Buku</a>
             <?php endif; 
             ?>
         </div>

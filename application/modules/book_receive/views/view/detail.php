@@ -16,55 +16,40 @@
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered mb-0">
                             <tbody>
-                                <!-- <tr>
-                                    <td width="200px"> Kategori Cetak </td>
-                                    <td>Cetak Ulang Non Revisi </td>
-                                </tr> -->
                                 <tr>
                                     <td width="200px"> Judul Buku </td>
                                     <td><strong><?=$book_receive->book_title?></strong> </td>
                                 </tr>
-                                <!-- <tr>
-                                    <td width="200px"> Catatan Order Cetak </td>
-                                    <td> </td>
-                                </tr> -->
                                 <tr>
                                     <td width="200px"> Nomor Order </td>
                                     <td><?= $book_receive->order_number;?> </td>
                                 </tr>
-                                <!-- <tr>
-                                    <td width="200px"> Kode Order </td>
-                                    <td>700800 </td>
-                                </tr>
-                                <tr>
-                                    <td width="200px"> Tipe Cetak </td>
-                                    <td>pod </td>
-                                </tr>
-                                <tr>
-                                    <td width="200px"> Jumlah Eksemplar </td>
-                                    <td> </td>
-                                </tr> -->
                                 <tr>
                                     <td width="200px"> Hasil Cetak </td>
-                                    <td><?=$book_receive->total?></td>
+                                    <td><?=$book_receive->total_postprint?></td>
                                 </tr>
                                 <tr>
                                     <td width="200px"> Tanggal Masuk Gudang </td>
-                                    <td><?=$book_receive->entry_date?> </td>
+                                    <td><?=format_datetime($book_receive->entry_date)?> </td>
                                 </tr>
                                 <tr>
-                                    <td width="200px"> Tanggal Finalisasi</td>
-                                    <td><?=$book_receive->finish_date?> </td>
+                                    <td width="200px"> Tanggal Selesai</td>
+                                    <td><?=format_datetime($book_receive->finish_date)?> </td>
                                 </tr>
                                 <tr>
                                     <td width="200px"> Deadline</td>
                                     <td>
-                                        <div class="text-danger"><?=$book_receive->deadline?></div>
+                                        <?php if($book_receive->deadline==null) : ?>
+                                        <a href="#" class="btn btn-primary" id="btn-modal-deadline" title="Isi Deadline"
+                                            data-toggle="modal" data-target="#modal-deadline"><i
+                                                class="fas fa-clock mr-2"></i> Deadline</a>
+                                        <br>
+                                        <small class="text-danger">Isi deadline sebelum memulai proses penerimaan
+                                            buku</small>
+                                        <?php else: ?>
+                                        <?=deadline_color($book_receive->deadline, $book_receive->book_receive_status)?>
+                                        <?php endif?>
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td width="200px"> Diinput Oleh </td>
-                                    <td>superadmin </td>
                                 </tr>
                                 <tr>
                                     <td width="200px"> Status</td>
@@ -77,4 +62,50 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modal-deadline" tabindex="-1" role="dialog" aria-labelledby="modal-deadline"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-title">Deadline Penerimaan Buku</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action='<?=base_url('book_receive/add_deadline/' . $book_receive->book_receive_id)?>' id="form-book-receive-add-deadline" enctype="multipart/form-data">
+                        <fieldset>
+                            <div class="form-group col-8">
+                                <label for="deadline">Deadline Penerimaan Buku</label>
+                                <?= form_input('deadline', $book_receive->deadline, 'class="form-control dates"')?>
+                                <?= form_error('deadline'); ?>
+                                <br>
+                                <input type="submit" value="submit" class="btn btn-primary">
+                            </div>
+                        </fieldset>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </section>
+<script>
+$(document).ready(function() {
+    loadValidateSetting();
+    $("#form-book-receive-add-deadline").validate({
+            rules: {
+                deadline: "crequired",
+            },
+            errorElement: "span",
+            errorPlacement: validateErrorPlacement,
+        },
+        validateSelect2()
+    );
+
+    $('.dates').flatpickr({
+        altInput: true,
+        altFormat: 'j F Y',
+        dateFormat: 'Y-m-d'
+    });
+})
+</script>

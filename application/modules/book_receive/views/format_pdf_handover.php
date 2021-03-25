@@ -84,7 +84,7 @@
             <td>1</td>
             <td><?= $title ?></td>
             <td><?= $ordernumber ?></td>
-            <td><?= $total_print ?></td>
+            <td><?= $total ?></td>
             <td><?= $total_postprint ?></td>
         </tr>
     </table>
@@ -105,7 +105,7 @@
         </div>
         <div class="column middle" style="text-align:center"></div>
         <div class="column right" style="text-align:center">
-            <h2>PENERIMA<br><br><br><br><br><br><br>nama_staf_gudang</h2>
+            <h2>PENERIMA<br><br><br><br><br><br><br><?=$staff?></h2>
         </div>
     </div>
 </body>

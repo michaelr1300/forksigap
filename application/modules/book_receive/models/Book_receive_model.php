@@ -34,7 +34,7 @@ class Book_receive_model extends MY_Model
             'book_id'           => '',
             'print_order_id'    => '',
             'order_number'      => '',
-            'total_print'       => '',
+            'total'             => '',
             'total_postprint'   => '',
             'book_title'        => '',
             'deadline'          => ''
@@ -50,7 +50,7 @@ class Book_receive_model extends MY_Model
         $book_receives = $this->select(['print_order.print_order_id', 
         // 'CONCAT_WS(" - ", NULLIF(book_receive.order_number1,""), print_order.order_number) AS order_number_1', 
         'print_order.order_number',
-        'print_order.total_print', 'print_order.total_postprint', 
+        'print_order.total', 'print_order.total_postprint', 
         'book.book_id', 
         'book.book_title',
         // 'CONCAT_WS(" - ", NULLIF(book_receive.name,""), book.book_title) AS title',
@@ -59,6 +59,7 @@ class Book_receive_model extends MY_Model
             ->when('book_receive_status', $filters['book_receive_status'])
             ->join_table('print_order', 'book_receive', 'print_order')
             ->join_table('book', 'book_receive', 'book')
+            ->order_by('entry_date', 'DESC')
             ->paginate($page)
             ->get_all();
         $total = $this->select('book_receive_id')
@@ -114,7 +115,7 @@ class Book_receive_model extends MY_Model
         return $this->select([
         'print_order.print_order_id',
         'print_order.order_number', 
-        'print_order.total_print', 'print_order.total_postprint', 
+        'print_order.total', 'print_order.total_postprint', 
         'book.book_id', 
         'book.book_title', 
         'book_receive.*'])
@@ -151,13 +152,51 @@ class Book_receive_model extends MY_Model
             ->num_rows();
     }
 
-    public function update_book_receive($book_receive_id, $data, $table){
-        $this->db->where('book_receive_id', $book_receive_id);
-        $this->db->update($table, $data);
-    }
+    // public function update_book_receive($book_receive_id, $data, $table){
+    //     $this->db->where('book_receive_id', $book_receive_id);
+    //     $this->db->update($table, $data);
+    // }
 
     public function delete_book_receive($where){
         $this->db->where('book_receive_id', $where);
         $this->db->delete('book_receive');
     }
+
+    public function start_progress($book_receive_id, $progress)
+    {
+        // transaction data agar konsisten
+        $this->db->trans_begin();
+
+        $input = [
+            'book_receive_status' => $progress,
+            "{$progress}_start_date" => date('Y-m-d H:i:s')
+        ];
+
+        $this->book_receive->where('book_receive_id', $book_receive_id)->update($input);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            return false;
+        } else {
+            $this->db->trans_commit();
+            return true;
+        }
+    }
+
+    public function finish_progress($book_receive_id, $progress)
+    {
+        $input = [
+            'book_receive_status' => "{$progress}_approval",
+            "{$progress}_end_date" => date('Y-m-d H:i:s')
+        ];
+
+        $update_state = $this->book_receive->where('book_receive_id', $book_receive_id)->update($input);
+
+        if ($update_state) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
