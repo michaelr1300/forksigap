@@ -75,6 +75,19 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="handover_deadline">Deadline Serah Terima
+                            </label>
+                            <div class="has-clearable">
+                                <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                </button>
+                                <?= form_input('handover_deadline', $book_receive->handover_deadline, 'class="form-control dates" '); ?>
+                                <?= form_error('handover_deadline'); ?>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="handover_end_date">Tanggal Selesai Serah Terima
                             </label>
                             <div class="has-clearable">
@@ -119,7 +132,20 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="wrapping_end_date">Tanggal Selesai Pracetak
+                            <label for="wrapping_deadline">Deadline Wrapping
+                            </label>
+                            <div class="has-clearable">
+                                <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                </button>
+                                <?= form_input('wrapping_deadline', $book_receive->wrapping_deadline, 'class="form-control dates" '); ?>
+                                <?= form_error('wrapping_deadline'); ?>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="wrapping_end_date">Tanggal Selesai Wrapping
                             </label>
                             <div class="has-clearable">
                                 <button type="button" class="close" aria-label="Close">
@@ -137,7 +163,6 @@
                         <input class="btn btn-primary ml-auto" type="submit" value="Submit" id="btn-submit">
                     </div>
                     </form>
-                    <?//= form_close(); ?>
                 </div>
             </section>
         </div>
@@ -155,18 +180,12 @@ $(document).ready(function() {
     $("#form-book-receive").validate({
             rules: {
                 book_id: "crequired",
-                // name: "crequired",
-                // category: "crequired",
                 order_number: "crequired",
-                order_code: "crequired",
-                // type: "crequired",
+                deadline: "crequired",
                 total: {
                     crequired: true,
                     cnumber: true
                 },
-                // paper_content: "crequired",
-                // paper_cover: "crequired",
-                // paper_size: "crequired",
             },
             errorElement: "span",
             errorPlacement: validateErrorPlacement,
@@ -174,95 +193,10 @@ $(document).ready(function() {
         validateSelect2()
     );
 
-    // handleCategoryChange($('#category').val())
-
-    // $('#category').change(function(e) {
-    //     const category = e.target.value
-    //     handleCategoryChange(category)
-    // })
-
-    // function handleCategoryChange(category) {
-    //     if (category === 'nonbook') {
-    //         $('#book-id-wrapper').hide()
-    //         $('#name-wrapper').show()
-    //         $('#nonbook_example').show()
-    //         $('#book-id').val('');
-    //     } else {
-    //         $('#book-id-wrapper').show()
-    //         $('#name-wrapper').hide()
-    //         $('#nonbook_example').hide()
-    //         $('#name').val('');
-    //     }
-    // }
-
-    // $("#total,#paper-divider,#book-id").change(function(halaman) {
-    //     $("#paper-estimation").val(($("#total").val() * $("#info-book-pages").text()) / $(
-    //         "#paper-divider").val());
-    // });
-
     $('.dates').flatpickr({
         altInput: true,
         altFormat: 'j F Y',
         dateFormat: 'Y-m-d'
     });
-
-    // $('#delete-file').change(function() {
-    //     if (this.checked) {
-    //         $('#upload-file-form').hide()
-    //     } else {
-    //         $('#upload-file-form').show()
-    //     }
-    // })
-
-    $('#book-id').change(function(e) {
-        const bookId = e.target.value
-        console.log(bookId)
-
-        $.ajax({
-            type: "GET",
-            url: "<?= base_url('print_order/api_get_book/'); ?>" + bookId,
-            datatype: "JSON",
-            success: function(res) {
-                console.log(res);
-                $('#book-info').show()
-                $('#info-book-title').html(res.data.book_title)
-                $('#info-book-title').attr("href", "<?= base_url('book/view/'); ?>" +
-                    bookId)
-                $('#info-book-pages').html(res.data.book_pages)
-                $('#info-isbn').html(res.data.isbn)
-                $('#info-book-file-link').attr("href", "" + res.data.book_file_link)
-                $('#info-book-file-link').attr("title", "" + res.data.book_title)
-
-                if (res.data.from_outside == 0) {
-                    $('#name-wrapper').val('');
-                    $('#name-wrapper').hide()
-                } else {
-                    $('#name-wrapper').val('');
-                    $('#name-wrapper').show()
-                }
-            },
-            error: function(err) {
-                console.log(err);
-            },
-        });
-    })
-
-    // $('#location-binding').change(function(e) {
-    //     if ($('#location-binding').val() != 'inside') {
-    //         $('#location-binding-outside-wrapper').show();
-    //     } else {
-    //         $('#location-binding-outside').val('');
-    //         $('#location-binding-outside-wrapper').hide();
-    //     }
-    // })
-
-    // $('#location-laminate').change(function(e) {
-    //     if ($('#location-laminate').val() != 'inside') {
-    //         $('#location-laminate-outside-wrapper').show();
-    //     } else {
-    //         $('#location-laminate-outside').val('');
-    //         $('#location-laminate-outside-wrapper').hide();
-    //     }
-    // })
 })
 </script>

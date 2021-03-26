@@ -174,6 +174,8 @@ class Book_receive extends MY_Controller
         $wrapping_end_date = $this->input->post('wrapping_end_date');
         $wrapping_deadline = $this->input->post('wrapping_deadline');
 
+        $this->form_validation->set_rules('deadline', 'Deadline Penerimaan Buku', 'required');
+
         $data = [
             'entry_date' => $entry_date,
             'deadline' => $deadline,
@@ -188,14 +190,75 @@ class Book_receive extends MY_Controller
             'wrapping_deadline' => $wrapping_deadline,
         ];
 
-        // $this->book_receive->update_book_receive($book_receive_id, $data, 'book_receive');
-        // if () {
-        $this->db->set($data)->where('book_receive_id', $book_receive_id)->update('book_receive');
-        // $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
-        // } else {
-        // $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
-        // }
+        $status_waiting           = ['book_receive_status' => 'waiting'];
+        $status_handover          = ['book_receive_status' => 'handover'];
+        $status_handover_approval = ['book_receive_status' => 'handover_approval'];
+        $status_handover_finish   = ['book_receive_status' => 'handover_finish'];
+        $status_wrapping          = ['book_receive_status' => 'wrapping'];
+        $status_wrapping_approval = ['book_receive_status' => 'wrapping_approval'];
+        $status_wrapping_finish   = ['book_receive_status' => 'wrapping_finish'];
+        $status_finish            = ['book_receive_status' => 'finish'];
 
+        if (empty($book_receive->handover_start_date)) {
+            $book_receive->handover_start_date = empty_to_null($book_receive->handover_start_date);
+        }
+        if (empty($book_receive->handover_end_date)) {
+            $book_receive->handover_end_date = empty_to_null($book_receive->handover_end_date);
+        }
+        if (empty($book_receive->handover_deadline)) {
+            $book_receive->handover_deadline = empty_to_null($book_receive->handover_deadline);
+        }
+        if (empty($book_receive->wrapping_start_date)) {
+            $book_receive->wrapping_start_date = empty_to_null($book_receive->wrapping_start_date);
+        }
+        if (empty($book_receive->wrapping_end_date)) {
+            $book_receive->wrapping_end_date = empty_to_null($book_receive->wrapping_end_date);
+        }
+        if (empty($book_receive->wrapping_deadline)) {
+            $book_receive->wrapping_deadline = empty_to_null($book_receive->wrapping_deadline);
+        }
+
+        if ($this->form_validation->run() == true) {
+            $this->db->set($data)->where('book_receive_id', $book_receive_id)->update('book_receive');
+            if ($finish_date == null) {
+                if ($is_handover == 0 && $is_wrapping == 0){
+                    if($handover_start_date == null && $handover_deadline == null && $handover_end_date == null
+                    && $wrapping_start_date == null && $wrapping_deadline == null && $wrapping_end_date == null) {
+                        $this->db->set($status_waiting)->where('book_receive_id', $book_receive_id)->update('book_receive');
+                    }
+                    if(!$handover_start_date == null && !$handover_deadline == null){
+                        if ($handover_end_date == null) {
+                            $this->db->set($status_handover)->where('book_receive_id', $book_receive_id)->update('book_receive');
+                        } else if (!$handover_end_date == null) {
+                            $this->db->set($status_handover_approval)->where('book_receive_id', $book_receive_id)->update('book_receive');
+                        }    
+                    }
+                }
+                if($is_handover == 1 && $is_wrapping == 0){
+                    if ($wrapping_start_date == null && $wrapping_deadline == null && $wrapping_end_date == null) {
+                        $this->db->set($status_handover_finish)->where('book_receive_id', $book_receive_id)->update('book_receive');
+                    }
+                    if(!$wrapping_start_date == null && !$wrapping_deadline == null){
+                        if($wrapping_end_date == null){
+                            $this->db->set($status_wrapping)->where('book_receive_id', $book_receive_id)->update('book_receive');
+                        }
+                        if(!$wrapping_end_date == null){
+                            $this->db->set($status_wrapping_approval)->where('book_receive_id', $book_receive_id)->update('book_receive');
+                        }
+                    }    
+                }
+                if($is_handover == 1 && $is_wrapping == 1){
+                    $this->db->set($status_wrapping_finish)->where('book_receive_id', $book_receive_id)->update('book_receive');
+                }
+            }
+            if(!$finish_date == null && $is_handover == 1 && $is_wrapping == 1){
+                $this->db->set($status_finish)->where('book_receive_id', $book_receive_id)->update('book_receive');
+            }
+            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+        } else {
+            $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+            redirect($_SERVER['HTTP_REFERER'], 'refresh');
+        }
         redirect('book_receive/view/' . $book_receive->book_receive_id);
     }
 
@@ -446,7 +509,7 @@ class Book_receive extends MY_Controller
         if (!$this->_is_warehouse_admin()) {
             redirect($_SERVER['HTTP_REFERER']);
         }
-        
+
         // ambil data book_receive
         // $data = $this->book_receive->get_book_receive($book_receive_id);
 
@@ -479,7 +542,5 @@ class Book_receive extends MY_Controller
         }
 
         redirect($this->pages . "/view/$book_receive_id");
-        
     }
-    
 }
