@@ -47,11 +47,6 @@ class Print_order extends Printing_Controller
         }
     }
 
-    function coba()
-    {
-        echo strip_disallowed_char('Pidato Guru Besar - Prof. Hertiani - 11 Jan 2021-Cetak.rar');
-    }
-
     public function add()
     {
         if (!$this->_is_printing_admin()) {
