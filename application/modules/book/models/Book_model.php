@@ -257,7 +257,7 @@ class Book_model extends MY_Model
         $config = [
             'upload_path'      => $this->hakcipta_directory,
             'file_name'        => $hakcipta_file_name,
-            'allowed_types'    => 'jpg|png|jpeg|pdf', // file types allowed
+            'allowed_types'    => get_allowed_file_types('hakcipta_file')['types'], // file types allowed
             'max_size'         => 15360, // 15MB
             'overwrite'        => true,
             'file_ext_tolower' => true,
