@@ -14,6 +14,7 @@
     </nav>
 </header>
 <div class="page-section">
+    <?= validation_errors() ?>
     <div class="row">
         <div class="col-md-6">
             <section class="card">
@@ -24,6 +25,7 @@
                         <?= isset($input->book_id) ? form_hidden('book_id', $input->book_id) : ''; ?>
                         <?= isset($input->draft_id) ? form_hidden('draft_id', $input->draft_id) : ''; ?>
                         <?= isset($input->book_title) ? form_hidden('book_title', $input->book_title) : ''; ?>
+                        <?= isset($input->from_outside) ? form_hidden('from_outside', $input->from_outside) : ''; ?>
 
                         <div class="form-group">
                             <label for="book_title">Judul Buku</label>
@@ -39,22 +41,36 @@
                         <div class="form-group">
                             <label for="file_hak_cipta">File Hak Cipta</label>
                             <?php if ($input->file_hak_cipta) : ?>
-                                <div class="alert alert-info d-flex justify-content-between align-items-center">File buku yang tersimpan
-                                    <a
-                                        href="<?= base_url("book/download_file/bookfile/$input->file_hak_cipta"); ?>"
-                                        class="btn btn-success btn-sm my-2 uploaded-file"
-                                    ><i class="fa fa-download"></i> Download</a>
+                                <div class="alert alert-info">
+                                    <div class="d-flex justify-content-between align-items-center">File hak cipta yang tersimpan
+                                        <a
+                                            href="<?= base_url("book/download_file/hakcipta/$input->file_hak_cipta"); ?>"
+                                            class="btn btn-success btn-sm my-2 uploaded-file"
+                                        ><i class="fa fa-download"></i> Download</a>
+                                    </div>
+                                    <hr>
+                                    <div>
+                                        <?= form_checkbox('delete_hakcipta', true, false, 'id="delete_hakcipta"'); ?>
+                                        <label
+                                            class="form-check-label"
+                                            for="delete_hakcipta"
+                                        >
+                                            <span class="text-danger">Hapus file hak cipta</span>
+                                        </label>
+                                    </div>
                                 </div>
                             <?php endif; ?>
-                            <div class="custom-file">
-                                <?= form_upload('file_hak_cipta', '', 'class="custom-file-input" id="file_hak_cipta"'); ?>
-                                <label
-                                    class="custom-file-label"
-                                    for="tf3"
-                                >Pilih file</label>
+                            <div id="upload-file-form">
+                                <div class="custom-file">
+                                    <?= form_upload('file_hak_cipta', '', 'class="custom-file-input" id="file_hak_cipta"'); ?>
+                                    <label
+                                        class="custom-file-label"
+                                        for="file_hak_cipta"
+                                    >Pilih file</label>
+                                </div>
+                                <small class="form-text text-muted">Hanya menerima file bertype : <?= get_allowed_file_types('hakcipta_file')['to_text']; ?></small>
+                                <?= file_form_error('file_hak_cipta', '<p class="text-danger">', '</p>'); ?>
                             </div>
-                            <small class="form-text text-muted">Hanya menerima file bertype : <?= get_allowed_file_types('hakcipta_file')['to_text']; ?></small>
-                            <?= file_form_error('file_hak_cipta', '<p class="text-danger">', '</p>'); ?>
                         </div>
                         <div class="form-group">
                             <label for="file_hak_cipta_link">Link File Hak Cipta</label>

@@ -78,7 +78,7 @@ class Author extends Admin_Controller
 
             // repopulate author_ktp ketika validasi form gagal
             if (!isset($input->author_ktp)) {
-                $input->author_ktp = null;
+                $input->author_ktp = '';
             }
             $this->session->set_flashdata('ktp_no_data', $this->lang->line('form_error_file_no_data'));
 
