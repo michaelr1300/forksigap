@@ -23,11 +23,11 @@ $level              = check_level();
         <div>
             <a
                 href="<?= base_url("$pages/edit/$input->book_id"); ?>"
-                class="btn btn-primary btn-sm"
+                class="btn btn-secondary btn-sm"
             ><i class="fa fa-edit fa-fw"></i> Edit Buku</a>
             <a
                 href="<?= base_url("$pages/edit_hakcipta/$input->book_id"); ?>"
-                class="btn btn-primary btn-sm"
+                class="btn btn-secondary btn-sm"
             ><i class="fa fa-edit fa-fw"></i> Edit Hak Cipta</a>
         </div>
     </div>
@@ -455,7 +455,8 @@ $level              = check_level();
                                                                             <div class="modal-header">
                                                                                 <h5 class="modal-title">
                                                                                     <i class="fa fa-exclamation-triangle text-red mr-1"></i> Konfirmasi
-                                                                                    Hapus</h5>
+                                                                                    Hapus
+                                                                                </h5>
                                                                             </div>
                                                                             <div class="modal-body">
                                                                                 <p>Apakah anda yakin akan menghapus data stok buku dari buku <span class="font-weight-bold"><?= $input->book_title; ?></span> ?<br>Menghapus riwayat akan mengubah jumlah stok di gudang.</p>
