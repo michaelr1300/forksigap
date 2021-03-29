@@ -108,8 +108,6 @@ class Print_order extends Printing_Controller
         // set status awal
         $input->print_order_status = 'waiting';
 
-        unset($input->print_mode);
-
         if (empty($input->deadline_date)) {
             $input->deadline_date = empty_to_null($input->deadline_date);
         }
@@ -129,26 +127,23 @@ class Print_order extends Printing_Controller
             $input->book_id = empty_to_null($input->book_id);
         }
 
-        if (empty($input->paper_estimation)) {
-            if (empty($input->book_id)) {
+        if ($input->print_mode !== 'nonbook') {
+            $book_pages = $this->print_order->get_book($input->book_id)->book_pages;
+            if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
                 $input->paper_estimation = empty_to_null($input->paper_estimation);
             } else {
-                $book_pages = $this->print_order->get_book($input->book_id)->book_pages;
-                if (!$input->category == 'nonbook') {
-                    if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
-                        $input->paper_estimation = empty_to_null($input->paper_estimation);
-                    } else {
-                        $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
-                    }
-                } else {
-                    if (empty($input->total) || empty($input->paper_divider)) {
-                        $input->paper_estimation = empty_to_null($input->paper_estimation);
-                    } else {
-                        $input->paper_estimation = $input->total / $input->paper_divider;
-                    }
-                }
+                $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
+            }
+        } else {
+            if (empty($input->total) || empty($input->paper_divider || empty($input->non_book_pages))) {
+                $input->paper_estimation = empty_to_null($input->paper_estimation);
+            } else {
+                $input->paper_estimation = ($input->total * $input->non_book_pages) / $input->paper_divider;
             }
         }
+
+        unset($input->print_mode);
+        unset($input->non_book_pages);
 
         // insert print order
         $print_order_id = $this->print_order->insert($input);
@@ -253,26 +248,22 @@ class Print_order extends Printing_Controller
             $input->book_id = empty_to_null($input->book_id);
         }
 
-        if (empty($input->paper_estimation)) {
-            if (empty($input->book_id)) {
+        if ($input->category == 'nonbook') {
+            if (empty($input->total) || empty($input->paper_divider || empty($input->non_book_pages))) {
                 $input->paper_estimation = empty_to_null($input->paper_estimation);
             } else {
-                $book_pages = $this->print_order->get_book($input->book_id)->book_pages;
-                if (!$input->category == 'nonbook') {
-                    if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
-                        $input->paper_estimation = empty_to_null($input->paper_estimation);
-                    } else {
-                        $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
-                    }
-                } else {
-                    if (empty($input->total) || empty($input->paper_divider)) {
-                        $input->paper_estimation = empty_to_null($input->paper_estimation);
-                    } else {
-                        $input->paper_estimation = $input->total / $input->paper_divider;
-                    }
-                }
+                $input->paper_estimation = ($input->total * $input->non_book_pages) / $input->paper_divider;
+            }
+        } else {
+            $book_pages = $this->print_order->get_book($input->book_id)->book_pages;
+            if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
+                $input->paper_estimation = empty_to_null($input->paper_estimation);
+            } else {
+                $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
             }
         }
+
+        unset($input->non_book_pages);
 
         // update print order
         $this->print_order->where('print_order_id', $print_order_id)->update($input);
