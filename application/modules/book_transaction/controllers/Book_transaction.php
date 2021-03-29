@@ -1,43 +1,65 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
-
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class Book_transaction extends MY_Controller{
-
+class Book_transaction extends MY_Controller
+{
     public function __construct()
     {
         parent::__construct();
         $this->pages = "book_transaction";
         $this->load->model('book_transaction/book_transaction_model', 'book_transaction');
+        $this->load->model('book/book_model', 'book');
     }
 
     public function index($page = NULL){
-        // if($this->check_level_gudang_pemasaran() == TRUE):
-        // all filter
+        //all filter
+        $filters = [
+            'keyword'           => $this->input->get('keyword', true),
+            'published_year'    => $this->input->get('published_year', true),
+            'start_date'        => $this->input->get('start_date', true),
+            'end_date'          => $this->input->get('end_date', true),
+            'excel'             => $this->input->get('excel', true)
+        ];
+        //custom per page
+        $this->book_transaction->per_page = $this->input->get('per_page', true) ?? 10;
+        $get_data = $this->book_transaction->filter_book_transaction($filters, $page);
 
-        // custom per page
-        // $this->book_transaction->per_page = $this->input->get('per_page', true) ?? 10;
+        $book_transactions= $get_data['book_transactions'];
+        $total = $get_data['total'];
+        $pagination = $this->book_transaction->make_pagination(site_url('book_transaction'), 2, $total);
+        $pages      = $this->pages;
+        $main_view  = 'book_transaction/index_booktransaction';
+        $this->load->view('template', compact('pages', 'main_view', 'book_transactions', 'pagination', 'total'));
 
-        // $get_data = $this->book_transfer->filter_book_transfer($filters, $page);
-
-        // $get_data = $this->book_transaction->filter_excel();
-        // $book_transfer   = $get_data['book_transfer'];
-        // $total          = $get_data['total'];
-        // $pagination     = $this->book_transaction->make_pagination(site_url('book_transfer'), 2, $total);
-        $pages          = $this->pages;
-        $main_view      = 'book_transaction/index_book_transaction';
-        $this->load->view('template', compact('pages', 'main_view', 
-        // 'book_transaction',
-        //  'pagination', 'total'
-    ));
-        // endif;
+        if ($filters['excel'] == 1) {
+            $this->generate_excel($filters);
+        }
     }
 
-    // public function generate_excel($filters)
+
+    public function view($book_transaction_id){
+        // $book_transaction = $this->book_transaction->join('book')->where('book.book_id', $book_id)->get();
+        $book_transaction = $this->book_transaction->get_book_transaction($book_transaction_id);
+        if (!$book_transaction) {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
+
+        $input = (object) $book_transaction;
+        // $get_transaction      = $this->book_transaction->fetch_transaction_by_id($book_transaction_id);
+        // $transaction_history  = $get_transaction['transaction_history'];
+        // $transaction_last     = $get_transaction['transaction_last'];
+
+        $pages       = $this->pages;
+        $main_view   = 'book_transaction/view_booktransaction';
+        $this->load->view('template', compact('pages', 'main_view', 'input'));
+        return;
+    }
+
     public function generate_excel()
     {
-        // $get_data = $this->book_stock->filter_excel($filters);
+        // $get_data = $this->book_transaction->filter_excel($filters);
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
         $filename = 'Transaksi Buku';
@@ -73,7 +95,7 @@ class Book_transaction extends MY_Controller{
         $sheet->getColumnDimension('E')->setAutoSize(true);
         $sheet->getColumnDimension('F')->setAutoSize(true);
 
-        // $get_data = $this->book_stock->filter_excel($filters);
+        // $get_data = $this->book_transaction->filter_excel($filters);
         $get_data = $this->book_transaction->filter_excel();
         $no = 1;
         $i = 4;
@@ -132,5 +154,13 @@ class Book_transaction extends MY_Controller{
         die();
     }
 
-
+    private function _is_warehouse_admin()
+    {
+        if ($this->level == 'superadmin' || $this->level == 'admin_gudang') {
+            return true;
+        } else {
+            $this->session->set_flashdata('error', 'Hanya admin gudang dan superadmin yang dapat mengakses.');
+            return false;
+        }
+    }
 }
