@@ -16,13 +16,13 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                 <a href="<?= base_url(); ?>"><span class="fa fa-home"></span></a>
             </li>
             <li class="breadcrumb-item active">
-                <a class="text-muted">Stok Buku</a>
+                <a class="text-muted">Transaksi Buku</a>
             </li>
         </ol>
     </nav>
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h1 class="page-title"> Stok Buku </h1>
+            <h1 class="page-title"> Transaksi Buku </h1>
             <span class="badge badge-info">Total:
                 <?= $total; ?>
             </span>
@@ -96,6 +96,16 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                         </thead>
                         <tbody>
                             <?php foreach ($book_transactions as $book_transaction) : ?>
+                            <?php if ($book_transaction->stock_in) {
+                                    $stock_display = $book_transaction->stock_in;
+                                    $type_display = "Masuk";
+                                    $date_display = $book_transaction->finish_date_in;
+                                }
+                                else {
+                                    $stock_display = $book_transaction->stock_out;
+                                    $type_display = "Keluar";
+                                    $date_display = $book_transaction->finish_date_out;
+                                } ?>
                             <tr>
                                 <td class="align-middle text-center"><?= ++$i; ?></td>
                                 <td class="align-middle">
@@ -109,25 +119,13 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?= $book_transaction->stock_initial; ?>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?php if ($book_transaction->stock_in) {
-                                        $stock_display = $book_transaction->stock_in;
-                                    }
-                                    else {
-                                        $stock_display = $book_transaction->stock_out;
-                                    } ?>
                                     <?= $stock_display ?>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?php if ($book_transaction->stock_in) {
-                                        $type_display = "Masuk";
-                                    }
-                                    else {
-                                        $type_display = "Keluar";
-                                    } ?>
                                     <?= $type_display ?>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?=$book_transaction->transaction_date;?>
+                                    <?= substr($date_display,0,10); ?>
                                 </td>
                             </tr>
                             <?php endforeach ?>

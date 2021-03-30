@@ -14,27 +14,29 @@ class Book_transaction extends MY_Controller
 
     public function index($page = NULL){
         //all filter
-        $filters = [
-            'keyword'           => $this->input->get('keyword', true),
-            'published_year'    => $this->input->get('published_year', true),
-            'start_date'        => $this->input->get('start_date', true),
-            'end_date'          => $this->input->get('end_date', true),
-            'excel'             => $this->input->get('excel', true)
-        ];
-        //custom per page
-        $this->book_transaction->per_page = $this->input->get('per_page', true) ?? 10;
-        $get_data = $this->book_transaction->filter_book_transaction($filters, $page);
-
-        $book_transactions= $get_data['book_transactions'];
-        $total = $get_data['total'];
-        $pagination = $this->book_transaction->make_pagination(site_url('book_transaction'), 2, $total);
-        $pages      = $this->pages;
-        $main_view  = 'book_transaction/index_booktransaction';
-        $this->load->view('template', compact('pages', 'main_view', 'book_transactions', 'pagination', 'total'));
-
-        if ($filters['excel'] == 1) {
-            $this->generate_excel($filters);
-        }
+        if($this->_is_warehouse_admin() == TRUE):
+            $filters = [
+                'keyword'           => $this->input->get('keyword', true),
+                'published_year'    => $this->input->get('published_year', true),
+                'start_date'        => $this->input->get('start_date', true),
+                'end_date'          => $this->input->get('end_date', true),
+                'excel'             => $this->input->get('excel', true)
+            ];
+            //custom per page
+            $this->book_transaction->per_page = $this->input->get('per_page', true) ?? 10;
+            $get_data = $this->book_transaction->filter_book_transaction($filters, $page);
+        
+            $book_transactions= $get_data['book_transactions'];
+            $total = $get_data['total'];
+            $pagination = $this->book_transaction->make_pagination(site_url('book_transaction'), 2, $total);
+            $pages      = $this->pages;
+            $main_view  = 'book_transaction/index_booktransaction';
+            $this->load->view('template', compact('pages', 'main_view', 'book_transactions', 'pagination', 'total'));
+        
+            if ($filters['excel'] == 1) {
+                $this->generate_excel($filters);
+            }
+        endif;
     }
 
 

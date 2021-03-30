@@ -5,27 +5,24 @@ class Book_transaction_model extends MY_Model{
     public $per_page = 10;
     public function filter_book_transaction($filters, $page)
     {
-        $book_transactions = $this->select([
-            // 'book.book_id',
-            'book.book_title',
-            'book_transaction.*'])
+        $book_transactions = $this->select([            
+            'book.book_title', 'book_transaction.*',
+            'book_receive.finish_date AS finish_date_in','faktur.tanggal_selesai AS finish_date_out'])
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
             ->when('end_date', $filters['end_date'])
             ->join_table('book', 'book_transaction', 'book')
+            ->join_table('book_receive', 'book_transaction', 'book_receive')
+            ->join_table('book_faktur', 'book_transaction', 'book_faktur')
+            ->join_table('faktur', 'book_faktur', 'faktur')
             ->order_by('transaction_date')
             ->paginate($page)
             ->get_all();
 
-        $total = $this->select([
-            // 'book.book_id',
-            'book.book_title',
-            'book_transaction.*'])
+        $total = $this->select(['book_transaction.*'])
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
             ->when('end_date', $filters['end_date'])
-            ->join_table('book', 'book_transaction', 'book')
-            ->order_by('transaction_date')
             ->paginate($page)
             ->count();
         return [
