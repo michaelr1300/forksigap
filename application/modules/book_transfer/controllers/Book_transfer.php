@@ -60,6 +60,9 @@ class Book_transfer extends MY_Controller
         $main_view   = 'book_transfer/book_transfer_add';
         $this->load->view('template', compact('pages', 'main_view'));
         endif;
+
+        $data['book'] = $this->book_transfer_model->get_book()->result();
+        $this->load->view('template', compact('pages', 'main_view'));
     }
 
     public function edit($book_transfer_id){
