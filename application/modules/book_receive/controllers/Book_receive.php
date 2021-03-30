@@ -10,6 +10,7 @@ class Book_receive extends MY_Controller
         $this->pages = "book_receive";
         $this->load->model('book_receive/book_receive_model', 'book_receive');
         $this->load->model('book_stock/book_stock_model', 'book_stock');
+        $this->load->model('book_transaction/book_transaction_model', 'book_transaction');        
     }
 
     //index book receive
@@ -221,37 +222,39 @@ class Book_receive extends MY_Controller
         if ($this->form_validation->run() == true) {
             $this->db->set($data)->where('book_receive_id', $book_receive_id)->update('book_receive');
             if ($finish_date == null) {
-                if ($is_handover == 0 && $is_wrapping == 0){
-                    if($handover_start_date == null && $handover_deadline == null && $handover_end_date == null
-                    && $wrapping_start_date == null && $wrapping_deadline == null && $wrapping_end_date == null) {
+                if ($is_handover == 0 && $is_wrapping == 0) {
+                    if (
+                        $handover_start_date == null && $handover_deadline == null && $handover_end_date == null
+                        && $wrapping_start_date == null && $wrapping_deadline == null && $wrapping_end_date == null
+                    ) {
                         $this->db->set($status_waiting)->where('book_receive_id', $book_receive_id)->update('book_receive');
                     }
-                    if(!$handover_start_date == null && !$handover_deadline == null){
+                    if (!$handover_start_date == null && !$handover_deadline == null) {
                         if ($handover_end_date == null) {
                             $this->db->set($status_handover)->where('book_receive_id', $book_receive_id)->update('book_receive');
                         } else if (!$handover_end_date == null) {
                             $this->db->set($status_handover_approval)->where('book_receive_id', $book_receive_id)->update('book_receive');
-                        }    
+                        }
                     }
                 }
-                if($is_handover == 1 && $is_wrapping == 0){
+                if ($is_handover == 1 && $is_wrapping == 0) {
                     if ($wrapping_start_date == null && $wrapping_deadline == null && $wrapping_end_date == null) {
                         $this->db->set($status_handover_finish)->where('book_receive_id', $book_receive_id)->update('book_receive');
                     }
-                    if(!$wrapping_start_date == null && !$wrapping_deadline == null){
-                        if($wrapping_end_date == null){
+                    if (!$wrapping_start_date == null && !$wrapping_deadline == null) {
+                        if ($wrapping_end_date == null) {
                             $this->db->set($status_wrapping)->where('book_receive_id', $book_receive_id)->update('book_receive');
                         }
-                        if(!$wrapping_end_date == null){
+                        if (!$wrapping_end_date == null) {
                             $this->db->set($status_wrapping_approval)->where('book_receive_id', $book_receive_id)->update('book_receive');
                         }
-                    }    
+                    }
                 }
-                if($is_handover == 1 && $is_wrapping == 1){
+                if ($is_handover == 1 && $is_wrapping == 1) {
                     $this->db->set($status_wrapping_finish)->where('book_receive_id', $book_receive_id)->update('book_receive');
                 }
             }
-            if(!$finish_date == null && $is_handover == 1 && $is_wrapping == 1){
+            if (!$finish_date == null && $is_handover == 1 && $is_wrapping == 1) {
                 $this->db->set($status_finish)->where('book_receive_id', $book_receive_id)->update('book_receive');
             }
             $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
@@ -532,6 +535,26 @@ class Book_receive extends MY_Controller
         $this->book_receive->where('book_receive_id', $book_receive_id)->update([
             'book_receive_status' => $action,
             'finish_date' => $action == 'finish' ? now() : null
+        ]);
+        //insert to book stock
+        //yg book request id sama book receive id buat apa
+        $book_stock = $this->book_stock->where('book_id', $book_receive->book_id)->get();
+        $book_stock_print = $this->book_receive->get_print_order($book_receive->print_order_id);
+        if ($book_stock) {
+            $book_stock->warehouse_present += $book_stock_print->total_postprint;
+            $this->book_stock->where('book_id', $book_stock->book_id)->update($book_stock);
+        } else {
+            $this->book_stock->insert([
+                'book_id'            => $book_receive->book_id,
+                'warehouse_present'  => $book_stock_print->total_postprint
+            ]);
+        }
+        //insert to book transaction
+        //ini datenya dari book transaction atau ambil dari print order sama book request
+        $this->book_transaction->insert([
+            'book_id'            => $book_receive->book_id,
+            'book_receive_id'    => $book_receive->book_receive_id,
+            'stock_in'           => $book_stock_print->total_postprint
         ]);
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

@@ -105,7 +105,6 @@ class Book_receive_model extends MY_Model
     {
         return $this->select('print_order.*')
             ->where('print_order_id', $print_order_id)
-            ->join_table('print_order', 'book_receive', 'print_order')
             ->get('print_order');
     }    
 
