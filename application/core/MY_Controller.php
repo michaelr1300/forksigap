@@ -52,22 +52,21 @@ class MY_Controller extends MX_Controller
 
     public function download_file($folder, $file_name)
     {
-        $file = realpath($folder) . "/" . $file_name;
+        $file = "storage/{$folder}/{$file_name}";
+
         if (file_exists($file)) {
             $data = file_get_contents($file);
             force_download($file_name, $data);
         } else {
             echo $this->lang->line('toast_error_file_not_found');
-            // $this->session->set_flashdata('warning', $this->lang->line('toast_error_file_not_found'));
-            // redirect($redirect ?? $this->pages);
         }
     }
 
     public function copy_file($source, $target, $file_name_source, $file_name_target)
     {
-        $file = realpath($source) . "\\" . $file_name_source;
+        $file = "storage/{$source}/$file_name_source";
         if (file_exists($file)) {
-            copy($file, "$target\\$file_name_target");
+            copy($file, "storage/$target/$file_name_target");
         } else {
             echo $this->lang->line('toast_error_file_not_found');
         }

@@ -3,6 +3,8 @@
 class Book_model extends MY_Model
 {
     public $per_page = 10;
+    private $bookfile_directory = 'storage/bookfile';
+    private $hakcipta_directory = 'storage/hakcipta';
 
     public function get_validation_rules()
     {
@@ -215,8 +217,12 @@ class Book_model extends MY_Model
 
     public function upload_book_file($field_name, $book_file_name)
     {
+        if (!is_dir($this->bookfile_directory)) {
+            mkdir($this->bookfile_directory, 0777, TRUE);
+        }
+
         $config = [
-            'upload_path'      => './bookfile/',
+            'upload_path'      => $this->bookfile_directory,
             'file_name'        => $book_file_name,
             'allowed_types'    => get_allowed_file_types('book_file')['types'],
             'max_size'         => 51200, // 15MB
@@ -235,21 +241,23 @@ class Book_model extends MY_Model
         }
     }
 
-    public function delete_book_file($book_file)
+    public function delete_book_file($book_file_name)
     {
-        if ($book_file != "") {
-            if (file_exists("./bookfile/$book_file")) {
-                unlink("./bookfile/$book_file");
-            }
+        if ($book_file_name && file_exists("$this->bookfile_directory/$book_file_name")) {
+            unlink("$this->bookfile_directory/$book_file_name");
         }
     }
 
     public function uploadHCfile($field_name, $hakcipta_file_name)
     {
+        if (!is_dir($this->hakcipta_directory)) {
+            mkdir($this->hakcipta_directory, 0777, TRUE);
+        }
+
         $config = [
-            'upload_path'      => './hakcipta/',
+            'upload_path'      => $this->hakcipta_directory,
             'file_name'        => $hakcipta_file_name,
-            'allowed_types'    => 'jpg|png|jpeg|pdf', // file types allowed
+            'allowed_types'    => get_allowed_file_types('hakcipta_file')['types'], // file types allowed
             'max_size'         => 15360, // 15MB
             'overwrite'        => true,
             'file_ext_tolower' => true,
@@ -266,12 +274,10 @@ class Book_model extends MY_Model
         }
     }
 
-    public function delete_hak_cipta_file($hak_cipta_file)
+    public function delete_hak_cipta_file($hakcipta_file_name)
     {
-        if ($hak_cipta_file != "") {
-            if (file_exists("./hakcipta/$hak_cipta_file")) {
-                unlink("./hakcipta/$hak_cipta_file");
-            }
+        if ($hakcipta_file_name && file_exists("$this->hakcipta_directory/$hakcipta_file_name")) {
+            unlink("$this->hakcipta_directory/$hakcipta_file_name");
         }
     }
 

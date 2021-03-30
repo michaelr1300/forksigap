@@ -1,44 +1,5 @@
-# app document file
-authorktp/*
-!authorktp/.gitkeep
-!authorktp/.htaccess
-!authorktp/index.html
-
-# draft file
-draftfile/*
-!draftfile/.gitkeep
-!draftfile/.htaccess
-!draftfile/index.html
-
-# draft file
-bookfile/*
-!bookfile/.gitkeep
-!bookfile/.htaccess
-!bookfile/index.html
-
-# hakcipta file
-hakcipta/*
-!hakcipta/.gitkeep
-!hakcipta/.htaccess
-!hakcipta/index.html
-
-# document file
-documentfile/*
-!documentfile/.gitkeep
-!documentfile/.htaccess
-!documentfile/index.html
-
-# document file
-printorderfile/*
-!printorderfile/.gitkeep
-!printorderfile/.htaccess
-!printorderfile/index.html
-
-# document file
-preprintfile/*
-!preprintfile/.gitkeep
-!preprintfile/.htaccess
-!preprintfile/index.html
+# storage folder
+storage/*
 
 .env
 .env.development

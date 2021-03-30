@@ -78,7 +78,7 @@ class Author extends Admin_Controller
 
             // repopulate author_ktp ketika validasi form gagal
             if (!isset($input->author_ktp)) {
-                $input->author_ktp = null;
+                $input->author_ktp = '';
             }
             $this->session->set_flashdata('ktp_no_data', $this->lang->line('form_error_file_no_data'));
 
@@ -218,9 +218,10 @@ class Author extends Admin_Controller
         return str_replace(" ", "_", "KTP" . '_' . $author_name . '_' . date('YmdHis') . '.' . $get_extension); // author ktp name
     }
 
-    public function view_image($folder, $author_ktp)
+    public function view_image($folder, $file_name)
     {
-        $file = realpath($folder) . "\\" . $author_ktp;
+        $file = "storage/{$folder}/{$file_name}";
+
         if (file_exists($file)) {
             ob_end_clean();
             $data = file_get_contents($file);
@@ -229,6 +230,8 @@ class Author extends Admin_Controller
                 ->set_content_type('image/jpeg')
                 ->set_output($data)
                 ->_display();
+        } else {
+            echo $this->lang->line('toast_error_file_not_found');
         }
     }
 

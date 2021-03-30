@@ -221,7 +221,6 @@ class Book extends Admin_Controller
         //  hapus buku jika check delete_book
         if (isset($input->delete_book) && $input->delete_book == 1) {
             $this->book->delete_book_file($book->book_file);
-            $this->book->delete_book_file($input->book_file);
             $input->book_file = null;
             unset($input->delete_book);
         }
@@ -274,6 +273,7 @@ class Book extends Admin_Controller
             }
         }
 
+
         // If something wrong
         if (!$this->book->validate() || $this->form_validation->error_array()) {
             $pages       = $this->pages;
@@ -282,10 +282,26 @@ class Book extends Admin_Controller
             $this->load->view('template', compact('pages', 'main_view', 'form_action', 'input'));
             return;
         }
-        if ($this->book->where('book_id', $book_id)->update($input)) {
-            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
-        } else {
+
+        // memastikan konsistensi data
+        $this->db->trans_begin();
+
+        // hapus hak cipta jika check delete_hakcipta
+        if (isset($input->delete_hakcipta) && $input->delete_hakcipta == 1) {
+            $this->book->delete_hak_cipta_file($book->file_hak_cipta);
+            $input->file_hak_cipta = null;
+            unset($input->delete_hakcipta);
+        }
+
+        // update
+        $this->book->where('book_id', $book_id)->update($input);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
             $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+        } else {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
         }
 
         redirect("$this->pages/view/$book_id");
