@@ -34,14 +34,30 @@ $type_options = [
             <h1 class="page-title"> Customer </h1>
             <span class="badge badge-info">Total : <?= $total; ?></span>
         </div>
-        <button
-            type="button"
-            class="btn btn-sm btn-primary"
-            data-toggle="modal"
-            data-target="#modal-add"
-        >
-            <i class="fa fa-plus fa-fw"></i>Tambah
-        </button>
+        <div><button
+                type="button"
+                class="btn btn-sm btn-primary"
+                data-toggle="modal"
+                data-target="#modal-discount"
+            >
+                <i
+                    class="fa fa-pencil-alt fa-fw"
+                    style="margin-right: 5px;"
+                ></i>Diskon
+            </button>
+            <button
+                type="button"
+                class="btn btn-sm btn-primary"
+                data-toggle="modal"
+                data-target="#modal-add"
+            >
+                <i
+                    class="fa fa-plus fa-fw"
+                    style="margin-right: 5px;"
+                ></i>Tambah
+            </button>
+        </div>
+
     </div>
 </header>
 <div class="page-section">
@@ -178,6 +194,120 @@ $type_options = [
                 <!-- Modals -->
                 <div
                     class="modal modal-alert fade"
+                    id="modal-discount"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="modal-discount"
+                    aria-hidden="true"
+                >
+                    <div
+                        class="modal-dialog"
+                        role="document"
+                    >
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Diskon</h5>
+                            </div>
+                            <form
+                                id="update-customer-form"
+                                method="post"
+                                action="<?= base_url('customer/edit_discount/'); ?>"
+                            >
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label
+                                            for="distributor"
+                                            class="font-weight-bold"
+                                        >
+                                            Distributor
+                                            <abbr title="Required">*</abbr>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="distributor"
+                                            id="distributor"
+                                            class="form-control"
+                                            value="<?= $discount[0]->discount ?>"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            for="reseller"
+                                            class="font-weight-bold"
+                                        >Reseller
+                                            <abbr title="Required">*</abbr>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="reseller"
+                                            id="reseller"
+                                            class="form-control"
+                                            value="<?= $discount[1]->discount ?>"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            for="penulis"
+                                            class="font-weight-bold"
+                                        >Penulis
+                                            <abbr title="Required">*</abbr>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="penulis"
+                                            id="penulis"
+                                            class="form-control"
+                                            value="<?= $discount[2]->discount ?>"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            for="member"
+                                            class="font-weight-bold"
+                                        >Member
+                                            <abbr title="Required">*</abbr>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="member"
+                                            id="member"
+                                            class="form-control"
+                                            value="<?= $discount[3]->discount ?>"
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            for="biasa"
+                                            class="font-weight-bold"
+                                        >Biasa
+                                            <abbr title="Required">*</abbr>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="biasa"
+                                            id="biasa"
+                                            class="form-control"
+                                            value="<?= $discount[4]->discount ?>"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                    >Save</button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-light"
+                                        data-dismiss="modal"
+                                    >Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="modal modal-alert fade"
                     id="modal-add"
                     tabindex="-1"
                     role="dialog"
@@ -218,6 +348,7 @@ $type_options = [
                                             for="address"
                                             class="font-weight-bold"
                                         >Alamat
+                                            <abbr title="Required">*</abbr>
                                         </label>
                                         <input
                                             type="text"
@@ -318,6 +449,7 @@ $type_options = [
                                             for="address"
                                             class="font-weight-bold"
                                         >Alamat
+                                            <abbr title="Required">*</abbr>
                                         </label>
                                         <input
                                             type="text"
@@ -380,7 +512,6 @@ function modalEdit(customerId) {
         url: "<?= base_url('customer/api_customer_info/'); ?>" + customerId,
         dataType: "JSON",
         success: function(res) {
-            console.log(res)
             $('#editId').val(res.customer_id)
             $('#editName').val(res.name)
             $('#editAddress').val(res.address)

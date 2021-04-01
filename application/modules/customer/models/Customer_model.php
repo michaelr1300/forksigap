@@ -86,4 +86,38 @@ class Customer_model extends MY_Model
         }
         return $this;
     }
+
+    public function get_discount()
+    {
+        return $this->db->select('*')->from('discount')->get()->result();
+    }
+
+    public function edit_discount()
+    {
+        $data = array(
+            array(
+                'membership' => 'distributor',
+                'discount'   => $this->input->post('distributor')
+            ),
+            array(
+                'membership' => 'reseller',
+                'discount'   => $this->input->post('reseller')
+            ),
+            array(
+                'membership' => 'penulis',
+                'discount'   => $this->input->post('penulis')
+            ),
+            array(
+                'membership' => 'member',
+                'discount'   => $this->input->post('member')
+            ),
+            array(
+                'membership' => 'biasa',
+                'discount'   => $this->input->post('biasa')
+            )
+        );
+        $this->db->update_batch('discount', $data, 'membership');
+        return TRUE;
+    }
+
 }

@@ -28,13 +28,14 @@ class Customer extends MY_Controller
         $this->customer->per_page = $this->input->get('per_page', true) ?? 10;
 
         $get_data = $this->customer->filter_data($filters, $page);
+        $discount = $this->customer->get_discount();
 
         $customers  = $get_data['customers'];
         $total      = $get_data['total'];
         $pages      = $this->pages;
         $main_view  = 'customer/index_customer';
         $pagination = $this->customer->make_pagination(site_url('customer'), 2, $total);
-        $this->load->view('template', compact('pagination', 'pages', 'main_view', 'customers', 'total', 'customer_type'));
+        $this->load->view('template', compact('pagination', 'pages', 'main_view', 'customers', 'total', 'customer_type', 'discount'));
     }
 
     public function api_customer_info($customer_id)
@@ -91,6 +92,30 @@ class Customer extends MY_Controller
     public function delete($id = null)
     {
         $this->customer->delete_customer($id);
+        redirect('customer');
+    }
+
+    public function edit_discount()
+    {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('distributor', 'Distributor', 'required');
+        $this->form_validation->set_rules('reseller', 'Reseller', 'required');
+        $this->form_validation->set_rules('penulis', 'Penulis', 'required');
+        $this->form_validation->set_rules('member', 'Member', 'required');
+        $this->form_validation->set_rules('biasa', 'Biasa', 'required');
+        if ($this->form_validation->run() == FALSE) {
+            $this->session->set_flashdata('error', 'Diskon gagal diupdate.');
+            redirect($_SERVER['HTTP_REFERER'], 'refresh');
+        } else {
+            $check = $this->customer->edit_discount();
+            if ($check   ==  TRUE) {
+                $this->session->set_flashdata('success', 'Diskon berhasil diupdate.');
+                redirect('customer');
+            } else {
+                $this->session->set_flashdata('error', 'Diskon gagal diupdate.');
+                redirect($_SERVER['HTTP_REFERER'], 'refresh');
+            }
+        }
         redirect('customer');
     }
 }
