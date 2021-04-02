@@ -81,7 +81,7 @@
                         </table>
                     </div>
                     <?php else: ?>
-                    <p class="text-center">Data tidak tersedia</p>
+                    <p class="text-center mt-3">Data tidak tersedia</p>
                     <?php endif;?>
                 </div>
             </section>

@@ -11,7 +11,6 @@ class Library_model extends MY_Model
                 'rules' => 'trim|required|min_length[1]|max_length[256]|callback_unique_library_name',
             ],
         ];
-
         return $validation_rules;
     }
 
