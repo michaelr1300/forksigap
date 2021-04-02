@@ -57,6 +57,8 @@ $is_wrapping_staff_set     = $book_receive->wrapping_staff;
                     <span class="text-primary">
                         <span>Sedang Diproses</span>
                     </span>
+                    <?php elseif (!$book_receive->is_wrapping && $book_receive->wrapping_start_date==strtotime('0000-00-00 00:00:00')) : ?>
+                    <span></span>
                     <?php endif ?>
                 </span>
             </div>
@@ -66,13 +68,11 @@ $is_wrapping_staff_set     = $book_receive->wrapping_staff;
                 <strong>
                     <?= format_datetime($book_receive->wrapping_start_date); ?></strong>
             </div>
-
             <div class="list-group-item justify-content-between">
                 <span class="text-muted">Tanggal selesai</span>
                 <strong>
                     <?= format_datetime($book_receive->wrapping_end_date); ?></strong>
             </div>
-
             <div class="list-group-item justify-content-between">
                 <?php if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && empty($book_receive->wrapping_deadline))) && !$is_final) : ?>
                 <a href="#" id="btn-modal-deadline-wrapping" title="Ubah deadline" data-toggle="modal"
@@ -82,10 +82,6 @@ $is_wrapping_staff_set     = $book_receive->wrapping_staff;
                 <?php endif ?>
                 <strong><?= format_datetime($book_receive->wrapping_deadline); ?></strong>
             </div>
-
-
-
-
             <!-- <?php //if ($book_receive->wrapping_staff) : ?> -->
             <div class="list-group-item justify-content-between">
                 <?php if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && empty($book_receive->handover_deadline))) && !$is_final) : ?>
@@ -98,8 +94,12 @@ $is_wrapping_staff_set     = $book_receive->wrapping_staff;
                     <span><?= $book_receive->wrapping_staff ?></span>
                 </strong>
             </div>
+            <div class="list-group-item justify-content-between">
+                <span class="text-muted">Jumlah Hasil Wrapping</span>
+                <strong>
+                    <?= $book_receive->total_postprint ?></strong>
+            </div>
             <!-- <?php// endif; ?> -->
-
             <!-- <?php //if ($book_receive->total) : ?>
             <div class="list-group-item justify-content-between">
                 <span class="text-muted">Jumlah hasil wrapping</span>

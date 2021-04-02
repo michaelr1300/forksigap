@@ -90,24 +90,16 @@ $level              = check_level();
                                         <td><?= $input->showroom_present; ?></td>
                                     </tr>
                                     <tr>
-                                        <td width="160px">Perubahan Terakhir</td>
-                                        <td class="text-success">+ 102</td>
-                                    </tr>
-                                    <tr>
                                         <td width="160px">Lokasi Rak (Gudang)</td>
                                         <td><?= $input->book_location; ?></td>
-                                    </tr>
-                                    <tr>
-                                        <td width="160px">Perubahan Terakhir</td>
-                                        <td>19 December 2020 12:00:00</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <?php //if (empty($stock_history) == FALSE) : ?>
                         <hr>
-                        <!-- Log Perubahan Stok -->
-                        <p class="font-weight-bold">Log Perubahan Stok</p>
+                        <!-- Log Revisi Stok -->
+                        <p class="font-weight-bold">Log Revisi Stok</p>
                         <div class="table-responsive" style="max-height:500px;">
                             <table class="table table-striped table-bordered mb-0">
                                 <thead>
