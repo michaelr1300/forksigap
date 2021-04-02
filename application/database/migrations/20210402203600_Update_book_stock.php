@@ -1,26 +1,43 @@
 <?php
 
-class Migration_update_revision_book_stock extends CI_Migration
+class Migration_update_book_stock extends CI_Migration
 {
     public function up()
     {
         $this->dbforge->add_column('book_stock', 
         [
+            'library_present' => [
+                'type' => 'INT',
+                'constraint' => 10 
+            ],
+            'showroom_present' => [
+                'type' => 'INT',
+                'constraint' => 10 
+            ],           
+            'selling' => [
+                'type' => 'VARCHAR', 
+                'constraint' => 20, 
+                'default' => 'laris'
+            ],
             'book_location' => [
                 'type' => 'VARCHAR',
                 'constraint' => 20 
             ]
         ]);
-
         $this->dbforge->drop_column('book_stock', 'type');
         $this->dbforge->drop_column('book_stock', 'date');
         $this->dbforge->drop_column('book_stock', 'notes');
         $this->dbforge->drop_column('book_stock', 'warehouse_past');
         $this->dbforge->drop_column('book_stock', 'warehouse_modifier');
         $this->dbforge->drop_column('book_stock', 'warehouse_operator');
+
     }
 
     public function down(){
+        $this->dbforge->drop_column('book_stock', 'library_present');
+        $this->dbforge->drop_column('book_stock', 'showroom_present');
+        $this->dbforge->drop_column('book_stock', 'selling');
+        $this->dbforge->drop_column('book_stock', 'book_location');
         $this->dbforge->add_column('book_stock', [
             'type' => [
                 'type' => 'VARCHAR',
@@ -46,6 +63,5 @@ class Migration_update_revision_book_stock extends CI_Migration
                 'constraint' => 1
             ],
         ]);
-        $this->dbforge->drop_column('book_stock', 'book_location');
     }
 }

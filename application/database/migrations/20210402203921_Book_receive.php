@@ -1,7 +1,9 @@
 <?php
 
-class Migration_Book_receive extends CI_Migration{
-    public function up(){
+class Migration_Book_receive extends CI_Migration
+{
+    public function up()
+    {
         $this->dbforge->add_field([
             'book_receive_id' => [
                 'type' => 'INT',
@@ -22,7 +24,6 @@ class Migration_Book_receive extends CI_Migration{
             ],
             'entry_date' => [
                 'type' => 'TIMESTAMP'
-                // 'constraint' => 5,
             ],
             'deadline' => [
                 'type' => 'TIMESTAMP',
@@ -61,6 +62,11 @@ class Migration_Book_receive extends CI_Migration{
             'handover_notes_admin' => [
                 'type' => 'TEXT',
             ],
+            'handover_staff' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => TRUE
+            ],
 
             // wrapping
             'is_wrapping' => [
@@ -86,22 +92,17 @@ class Migration_Book_receive extends CI_Migration{
             'wrapping_notes_admin' => [
                 'type' => 'TEXT',
             ],
-            'wrapping_user' => [
+            'wrapping_staff' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100
             ],
-
-            //book title
-            'name' => [
-                'type' => 'VARCHAR',
-                'constraint' => 100
-            ]
         ]);
         $this->dbforge->add_key('book_receive_id', TRUE);
         $this->dbforge->create_table('book_receive');
     }
 
-    public function down(){
+    public function down()
+    {
         $this->dbforge->drop_table('book_receive');
     }
 }
