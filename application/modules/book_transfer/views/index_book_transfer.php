@@ -24,8 +24,8 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
             <h1 class="page-title"> Pemindahan Buku </h1>
             <span class="badge badge-info">Total : <?= $total; ?></span>
         </div>
-        <!-- <a href="<?//= base_url("$pages/add"); ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus fa-fw"></i>
-            Tambah</a> -->
+        <a href="<?= base_url("$pages/add"); ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus fa-fw"></i>
+            Tambah</a>
     </div>
 </header>
 <div class="page-section">
@@ -68,6 +68,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <th scope="col" style="min-width:200px;">Judul Buku</th>
                                 <th scope="col" style="min-width:300px;">Tujuan</th>
                                 <th scope="col" style="min-width:100px;">Jumlah</th>
+                                <th scope="col" style="min-width:100px;">Tanggal</th>
                                 <th scope="col" style="min-width:200px;">Status</th>
                                 <th style="min-width:100px;"> Aksi </th>
                             </tr>
@@ -88,11 +89,14 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 </td>
                                 <?php else: ?>
                                 <td class="align-middle">
-                                    <?= $book_transfer->destination;; ?>
+                                    <?= get_book_transfer_destination()[$book_transfer->destination]; ?>
                                 </td>
                                 <?php endif; ?>
                                 <td class="align-middle">
                                     <?= $book_transfer->quantity; ?>
+                                </td>
+                                <td class="align-middle">
+                                    <?= format_datetime($book_transfer->transfer_date); ?>
                                 </td>
                                 <td class="align-middle">
                                     <?= get_book_transfer_status()[$book_transfer->transfer_status ?? $book_transfer->status]; ?>

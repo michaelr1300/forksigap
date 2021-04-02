@@ -870,9 +870,28 @@ function get_book_request_status_edit(){
 function get_book_transfer_status(){
     return [
         '' => '--Pilih--',
-        'not_started' => 'Belum dimulai',
+        'waiting' => 'Belum dimulai',
         'preparing' => 'Sedang disiapkan',
-        'preparing_finish' => 'Selesai disiapkan',
+        // 'preparing_finish' => 'Selesai disiapkan',
         'finish' => 'Selesai'
+    ];
+}
+
+function get_dropdown_list_library()
+{
+    $condition = function () {
+        $CI = &get_instance();
+        $CI->db->order_by('library_name', 'asc');
+        return $CI;
+    };
+
+    return get_dropdown_list('library', ['library_id', 'library_name'], $condition);
+}
+
+function get_book_transfer_destination(){
+    return [
+        '' => '--Pilih--',
+        'showroom' => 'Showroom',
+        'library' => 'Perpustakaan',
     ];
 }

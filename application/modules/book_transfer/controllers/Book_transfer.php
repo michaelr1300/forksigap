@@ -7,6 +7,7 @@ class Book_transfer extends MY_Controller
         parent::__construct();
         $this->pages = 'book_transfer';
         $this->load->model('book_transfer_model', 'book_transfer');
+        $this->load->model('book_stock/book_stock_model', 'book_stock');
     }
 
     public function index($page = NULL){
@@ -54,78 +55,196 @@ class Book_transfer extends MY_Controller
         $this->load->view('template', compact('main_view', 'pages', 'book_transfer'));
     }
 
-    public function add(){
-        if($this->check_level_gudang_pemasaran() == TRUE):
-        $pages       = $this->pages;
-        $main_view   = 'book_transfer/book_transfer_add';
-        $this->load->view('template', compact('pages', 'main_view'));
-        endif;
-
-        $data['book'] = $this->book_transfer_model->get_book()->result();
-        $this->load->view('template', compact('pages', 'main_view'));
-    }
-
-    public function edit($book_transfer_id){
-        if($this->check_level_gudang_pemasaran() == TRUE):
-        $pages       = $this->pages;
-        $main_view   = 'book_transfer/book_transfer_edit';
-        $rData       = $this->book_transfer->fetch_book_transfer_id($book_transfer_id);
-        if(empty($rData) == FALSE):
-        $this->load->view('template', compact('pages', 'main_view', 'rData'));
-        else:
-        $this->session->set_flashdata('error','Halaman tidak ditemukan.');
-        redirect(base_url(), 'refresh');
-        endif;
-        endif;
-    }
-
-    public function add_book_transfer(){
-        if($this->check_level_gudang_pemasaran() == TRUE):
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('book_id', 'Judul buku', 'required|max_length[10]');
-        $this->form_validation->set_rules('order_number', 'Nomor Order', 'required|max_length[25]');
-        $this->form_validation->set_rules('total', 'Jumlah Permintaan', 'required|max_length[10]');
-        $this->form_validation->set_rules('notes', 'Catatan', 'required|max_length[250]');
-
-        if($this->form_validation->run() == FALSE){
-            $this->session->set_flashdata('error',validation_errors());
-            redirect($_SERVER['HTTP_REFERER'], 'refresh');
-        }else{
-            $check  =   $this->book_transfer->add_book_transfer();
-            if($check   ==  TRUE){
-                $this->session->set_flashdata('success','Berhasil menambahkan draft permintaan buku.');
-                redirect('book_transfer');
-            }else{
-                $this->session->set_flashdata('error','Gagal menambahkan draft permintaan buku.');
-                redirect($_SERVER['HTTP_REFERER'], 'refresh');
-            }
+    public function add()
+    {
+        if (!$this->check_level_gudang_pemasaran()==true) {
+            redirect($this->pages);
         }
-        endif;
-    }
 
-    public function edit_book_transfer($book_transfer_id){
-        if($this->check_level_gudang() == TRUE):
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('book_id', 'Judul buku', 'max_length[10]');
-        $this->form_validation->set_rules('order_number', 'Nomor Order', 'max_length[25]');
-        $this->form_validation->set_rules('total', 'Jumlah Permintaan', 'max_length[10]');
-        $this->form_validation->set_rules('notes', 'Catatan', 'max_length[250]');
-
-        if($this->form_validation->run() == FALSE){
-            $this->session->set_flashdata('error','Gagal mengubah data draft permintaan buku.');
-            redirect($_SERVER['HTTP_REFERER'], 'refresh');
-        }else{
-            $check  =   $this->book_transfer->edit_book_transfer($book_transfer_id);
-            if($check   ==  TRUE){
-                $this->session->set_flashdata('success','Berhasil mengubah data draft permintaan buku.');
-                redirect('book_transfer/view/'.$book_transfer_id);
-            }else{
-                $this->session->set_flashdata('error','Gagal mengubah data draft permintaan buku.');
-                redirect($_SERVER['HTTP_REFERER'], 'refresh');
-            }
+        if (!$_POST) {
+            $input = (object) $this->book_transfer->get_default_values();
+        } else {
+            $input = (object) $this->input->post(null, true);
+            // catat orang yang menginput order cetak
         }
-        endif;
+
+        if (!$this->book_transfer->validate() || $this->form_validation->error_array()) {
+
+            $pages       = $this->pages;
+            $main_view   = 'book_transfer/book_transfer_add';
+            $form_action = 'book_transfer/add';
+            $this->load->view('template', compact('pages', 'main_view', 'form_action', 'input'));
+            return;
+        }
+
+        // set status awal
+        $input->status = 'waiting';
+        $input->transfer_date = now();
+
+        if (empty($input->library_id)) {
+            $input->library_id = empty_to_null($input->library_id);
+        }
+
+        // insert book transfer
+        $book_transfer_id = $this->book_transfer->insert($input);
+        //insert to book stock
+        $book_stock = $this->book_stock->where('book_id', $input->book_id)->get();
+        // $book_stock_print = $this->book_receive->get_print_order($book_receive->print_order_id);
+
+        // if ($book_stock) {
+            $book_stock->warehouse_present -= $input->quantity;
+            if($input->library_id){
+                $book_stock->library_present += $input->quantity;
+            }
+            else{
+                $book_stock->showroom_present += $input->quantity;
+            }
+            $this->book_stock->where('book_id', $book_stock->book_id)->update($book_stock);
+        // } 
+        // else {
+        //     $this->book_stock->insert([
+        //         'book_id'            => $book_receive->book_id,
+        //         'warehouse_present'  => $book_stock_print->total_postprint
+        //     ]);
+        // }
+
+
+        if ($book_transfer_id) {
+            $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
+        } else {
+            $this->session->set_flashdata('error', $this->lang->line('toast_add_fail'));
+        }
+        redirect('book_transfer');
+
+        // redirect('book_transfer/view/' . $book_transfer_id);
     }
+
+    public function api_get_book($book_id)
+    {
+        return $this->send_json_output(true, $this->book_transfer->get_book($book_id));
+    }
+    
+    public function edit($book_transfer_id)
+    {
+        if (!$this->check_level_gudang_pemasaran()) {
+            redirect($this->pages);
+        }
+
+        $book_transfer = $this->book_transfer->fetch_book_transfer($book_transfer_id);
+        if (!$book_transfer) {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
+
+        if (!$_POST) {
+            $input = (object)  $book_transfer;
+        } else {
+            $input = (object) $this->input->post(null, true);
+        }
+
+        if (!$this->book_transfer->validate() || $this->form_validation->error_array()) {
+            $pages       = $this->pages;
+            $main_view   = 'book_transfer/book_transfer_edit';
+            $form_action = "book_transfer/edit/$book_transfer_id";
+            $this->load->view('template', compact('pages', 'main_view', 'form_action', 'input', 'book_transfer'));
+            return;
+        }
+
+        // memastikan konsistensi data
+        $this->db->trans_begin();
+
+        //  hapus order cetak jika check delete_file
+
+        if (empty($input->library_id)) {
+            $input->library_id = empty_to_null($input->library_id);
+        }
+        // update print order
+        $this->book_transfer->where('book_transfer_id', $book_transfer_id)->update($input);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+        } else {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+        }
+
+        redirect('book_transfer');
+    }
+
+
+    // public function add(){
+    //     if($this->check_level_gudang_pemasaran() == TRUE):
+    //     $pages       = $this->pages;
+    //     $main_view   = 'book_transfer/book_transfer_add';
+    //     $this->load->view('template', compact('pages', 'main_view'));
+    //     endif;book_transfer
+
+    //     $data['book'] = $this->book_transfer_model->get_book()->result();
+    //     $this->load->view('template', compact('pages', 'main_view'));
+    // }
+
+    // public function edit($book_transfer_id){
+    //     if($this->check_level_gudang_pemasaran() == TRUE):
+    //     $pages       = $this->pages;
+    //     $main_view   = 'book_transfer/book_transfer_edit';
+    //     $rData       = $this->book_transfer->fetch_book_transfer_id($book_transfer_id);
+    //     if(empty($rData) == FALSE):
+    //     $this->load->view('template', compact('pages', 'main_view', 'rData'));
+    //     else:
+    //     $this->session->set_flashdata('error','Halaman tidak ditemukan.');
+    //     redirect(base_url(), 'refresh');
+    //     endif;
+    //     endif;
+    // }
+
+    // public function add_book_transfer(){
+    //     if($this->check_level_gudang_pemasaran() == TRUE):
+    //     $this->load->library('form_validation');
+    //     $this->form_validation->set_rules('book_id', 'Judul buku', 'required|max_length[10]');
+    //     $this->form_validation->set_rules('order_number', 'Nomor Order', 'required|max_length[25]');
+    //     $this->form_validation->set_rules('total', 'Jumlah Permintaan', 'required|max_length[10]');
+    //     $this->form_validation->set_rules('notes', 'Catatan', 'required|max_length[250]');
+
+    //     if($this->form_validation->run() == FALSE){
+    //         $this->session->set_flashdata('error',validation_errors());
+    //         redirect($_SERVER['HTTP_REFERER'], 'refresh');
+    //     }else{
+    //         $check  =   $this->book_transfer->add_book_transfer();
+    //         if($check   ==  TRUE){
+    //             $this->session->set_flashdata('success','Berhasil menambahkan draft permintaan buku.');
+    //             redirect('book_transfer');
+    //         }else{
+    //             $this->session->set_flashdata('error','Gagal menambahkan draft permintaan buku.');
+    //             redirect($_SERVER['HTTP_REFERER'], 'refresh');
+    //         }
+    //     }
+    //     endif;
+    // }
+
+    // public function edit_book_transfer($book_transfer_id){
+    //     if($this->check_level_gudang() == TRUE):
+    //     $this->load->library('form_validation');
+    //     $this->form_validation->set_rules('book_id', 'Judul buku', 'max_length[10]');
+    //     $this->form_validation->set_rules('order_number', 'Nomor Order', 'max_length[25]');
+    //     $this->form_validation->set_rules('total', 'Jumlah Permintaan', 'max_length[10]');
+    //     $this->form_validation->set_rules('notes', 'Catatan', 'max_length[250]');
+
+    //     if($this->form_validation->run() == FALSE){
+    //         $this->session->set_flashdata('error','Gagal mengubah data draft permintaan buku.');
+    //         redirect($_SERVER['HTTP_REFERER'], 'refresh');
+    //     }else{
+    //         $check  =   $this->book_transfer->edit_book_transfer($book_transfer_id);
+    //         if($check   ==  TRUE){
+    //             $this->session->set_flashdata('success','Berhasil mengubah data draft permintaan buku.');
+    //             redirect('book_transfer/view/'.$book_transfer_id);
+    //         }else{
+    //             $this->session->set_flashdata('error','Gagal mengubah data draft permintaan buku.');
+    //             redirect($_SERVER['HTTP_REFERER'], 'refresh');
+    //         }
+    //     }
+    //     endif;
+    // }
 
     // public function delete_book_transfer($book_transfer_id){
     //     if($this->check_level_gudang() == TRUE):
@@ -156,10 +275,6 @@ class Book_transfer extends MY_Controller
         $this->db->trans_begin();
 
         $this->book_transfer->where('book_transfer_id', $book_transfer_id)->delete();
-            // $this->book_stock->delete_book_stock($book_stock_id);
-            // $this->print_order->delete_print_order_file($print_order->print_order_file);
-            // $this->print_order->delete_letter_file($print_order->letter_file);
-            // $this->print_order->delete_preprint_file($print_order->delete_preprint_file);
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

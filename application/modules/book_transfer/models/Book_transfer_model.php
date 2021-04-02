@@ -3,44 +3,48 @@
 class Book_transfer_model extends MY_Model{
     public $per_page = 10;
 
-    // public function add_book_transfer(){
-    //     $add = [
-    //         'book_id'           => $this->input->post('book_id'),
-    //         'order_number'      => $this->input->post('order_number'),
-    //         'total'             => $this->input->post('total'),
-    //         'notes'             => $this->input->post('notes'),
-    //         'user_entry'        => $_SESSION['username'],
-    //         'entry_date'        => date('Y-m-d H:i:s'),
-    //         'transfer_status'    => 1,
-    //     ];
-        
-    //     $this->db->insert('book_transfer', $add);
-    //     return TRUE;
-    // }
+    public function get_validation_rules()
+    {
+        $validation_rules = [
+            [
+                'field' => 'quantity',
+                'label' => 'Jumlah Buku',
+                'rules' => 'trim|required',
+            ],
+            [
+                'field' => 'destination',
+                'label' => 'Tujuan Pemindahan',
+                'rules' => 'trim|required',
+            ],
+        ];
 
-    // public function edit_book_transfer($book_transfer_id){
-    //     $set = [
-    //         'book_id'           => $this->input->post('book_id'),
-    //         'order_number'      => $this->input->post('order_number'),
-    //         'total'             => $this->input->post('total'),
-    //         'notes'             => $this->input->post('notes')
-    //     ];
+        return $validation_rules;
+    }
 
-    //     $this->db->set($set)->where('book_transfer_id',$book_transfer_id)->update('book_transfer');
-    //     return TRUE;
-    // }
+    public function get_default_values()
+    {
+        return [
+            'book_id'           => '',
+            'destination'       => '',
+            'library_id'        => '',
+            'quantity'          => '',
+        ];
+    }
 
-    // public function delete_book_transfer($book_transfer_id){
-    //     $this->db->where('book_transfer_id',$book_transfer_id)->delete('book_transfer');
-    //     return TRUE;
-    // }
     public function fetch_book_transfer($book_transfer_id){
-        return $this->select(['book.book_id', 'book_title', 'library.*', 'book_transfer.*'])
+        return $this->select(['book.book_id', 'book.book_title', 'library.*', 'book_transfer.*'])
         // ->from('book_transfer')
         ->join_table('book', 'book_transfer', 'book')
         ->join_table('library', 'book_transfer', 'library')
         ->where('book_transfer_id', $book_transfer_id)
         ->get();
+    }
+
+    public function get_book($book_id)
+    {
+        return $this->select('book.*')
+            ->where('book_id', $book_id)
+            ->get('book');
     }
     
     // public function action_transfer($book_transfer_id){

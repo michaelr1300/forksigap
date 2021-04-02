@@ -55,12 +55,12 @@ $level              = check_level();
                             </tr>
                             <tr>
                                 <td width="200px"> Tanggal Pindah </td>
-                                <td>
+                                <td><?= format_datetime($book_transfer->transfer_date)?>
                                 </td>
                             </tr>
                             <tr>
                                 <td width="200px"> Tujuan Pemindahan </td>
-                                <td> <?= $book_transfer->destination?>
+                                <td> <?= get_book_transfer_destination()[$book_transfer->destination]?>
                                 </td>
                             </tr>
                             <?php if ($book_transfer->destination == 'library') : ?>
@@ -74,7 +74,7 @@ $level              = check_level();
                                 <td width="200px"> Status </td>
                                 <td>
                                     <!-- <?//= get_book_request_status()[$book_transfer->transfer_status ?? $book_transfer->status]?> -->
-                                    <?= $book_transfer->status?>
+                                    <?= get_book_transfer_status()[$book_transfer->status]?>
                                 </td>
                             </tr>
                         </tbody>
