@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
- 
+
 class Library_model extends MY_Model
 {
     public function get_validation_rules()
@@ -11,10 +11,9 @@ class Library_model extends MY_Model
                 'rules' => 'trim|required|min_length[1]|max_length[256]|callback_unique_library_name',
             ],
         ];
- 
         return $validation_rules;
     }
- 
+
     public function get_default_values()
     {
         return [
