@@ -16,7 +16,7 @@ class Migration_Book_transaction extends CI_Migration{
                 'type' => 'INT',
                 'constraint' => 10,
             ],
-            'buku_faktur_id' => [
+            'book_invoice_id' => [
                 'type' => 'INT',
                 'constraint' => 10,
                 'null' => TRUE
@@ -44,6 +44,11 @@ class Migration_Book_transaction extends CI_Migration{
                 'constraint' => 10,
                 'null' => TRUE
             ],
+            'date' => [
+                'type' => 'TIMESTAMP',
+                'null' => TRUE
+                ],
+
         ]);
         $this->dbforge->add_key('book_transaction_id', TRUE);
         $this->dbforge->create_table('book_transaction');

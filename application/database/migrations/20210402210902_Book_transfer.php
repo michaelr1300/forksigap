@@ -28,6 +28,10 @@ class Migration_Book_transfer extends CI_Migration{
                 'type' => 'VARCHAR',
                 'constraint' => 20,
             ],
+            'transfer_date' => [
+                'type' => 'TIMESTAMP',
+                'null' => TRUE
+            ],
         ]);
         $this->dbforge->add_key('book_transfer_id', TRUE);
         $this->dbforge->create_table('book_transfer');
