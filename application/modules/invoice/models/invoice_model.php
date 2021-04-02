@@ -129,6 +129,19 @@ class Invoice_model extends MY_Model
             ->row();
     }
 
+    public function fetch_warehouse_stock($book_id)
+    {
+
+        $stock = $this->db->select('warehouse_present')
+                    ->from('book_stock')
+                    ->where('book_id', $book_id)
+                    ->order_by("book_stock_id", "DESC")
+                    ->limit(1)
+                    ->get()
+                    ->row();
+        return $stock;
+    }
+
     public function get_ready_book_list()
     {
         $books = $this->db
@@ -139,14 +152,7 @@ class Invoice_model extends MY_Model
             ->result();
         foreach ($books as $book) {
             // Tambahkan data stock ke buku
-            $stock = $this->db
-                ->select('warehouse_present')
-                ->from('book_stock')
-                ->where('book_id', $book->book_id)
-                ->order_by("UNIX_TIMESTAMP(date)", "DESC")
-                ->limit(1)
-                ->get()
-                ->row();
+            $stock = $this->fetch_warehouse_stock($book->book_id);
             if ($stock == NULL)
                 $book->stock = 0;
             else
@@ -175,7 +181,7 @@ class Invoice_model extends MY_Model
             ->where('book_id', $book_id)
             ->get('book');
 
-        $stock = $this->db->select('warehouse_present')->from('book_stock')->where('book_id', $book_id)->order_by("UNIX_TIMESTAMP(date)", "DESC")->limit(1)->get()->row();
+        $stock = $this->fetch_warehouse_stock($book_id);
 
         if ($stock == NULL) {
             $book->stock = 0;
@@ -245,14 +251,7 @@ class Invoice_model extends MY_Model
         ];
     }
 
-    public function fetch_warehouse_stock($book_id)
-    {
-
-        $stock       = $this->db->select('warehouse_present')->from('book_stock')->where('book_id', $book_id)->order_by("UNIX_TIMESTAMP(date)", "DESC")->limit(1)->get()->row();
-        return [
-            'stock'    => $stock
-        ];
-    }
+    
 
     public function when($params, $data)
     {
