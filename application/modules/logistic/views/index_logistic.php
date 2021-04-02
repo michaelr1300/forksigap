@@ -76,7 +76,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     >No</th>
                                     <th
                                         scope="col"
-                                        style="min-width:300px;"
+                                        style="min-width:600px;"
                                     >Nama Logistik</th>
                                     <th
                                         scope="col"
@@ -86,10 +86,6 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                         scope="col"
                                         style="min-width:200px;"
                                     >Kategori Logistik</th>
-                                    <th
-                                        scope="col"
-                                        style="min-width:200px;"
-                                    >Jumlah Stok</th>
                                     <?php if($level == 'superadmin' || $level == 'admin_gudang'): ?>
                                     <th style="min-width:100px;"> &nbsp; </th>
                                     <?php endif; ?>
@@ -112,9 +108,6 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                         </td>
                                         <td class="align-middle">
                                             <?= highlight_keyword($lData->category, $keyword); ?>
-                                        </td>
-                                        <td class="align-middle">
-                                            <?= highlight_keyword($lData->type, $keyword); ?>
                                         </td>
                                         <?php if($level == 'superadmin' || $level == 'admin_gudang'): ?>
                                         <td class="align-middle">

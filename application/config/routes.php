@@ -68,8 +68,6 @@ $route['theme/(:num)']            = 'theme/index/$1';
 $route['book/(:num)']             = 'book/index/$1';
 $route['document/(:num)']         = 'document/index/$1';
 $route['print_order/(:num)']      = 'print_order/index/$1';
-$route['book_stock/(:num)']       = 'book_stock/index/$1';
-$route['book_receive/(:num)']    = 'book_receive/index/$1';
 $route['book_request/(:num)']     = 'book_request/index/$1';
 $route['logistic/(:num)']         = 'logistic/index/$1';
 $route['logistic_request/(:num)'] = 'logistic_request/index/$1';
@@ -88,6 +86,3 @@ $route['production_report/'] = 'production_report/total';
 $route['production_report/index/'] = 'production_report/total';
 $route['production_report/total/'] = 'production_report/total';
 $route['production_report/detail/'] = 'production_report/detail';
-
-//stok buku
-$route['book_stock'] = 'book_stock';

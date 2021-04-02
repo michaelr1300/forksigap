@@ -13,6 +13,7 @@
         </ol>
     </nav>
 </header>
+ 
 <div class="page-section">
     <div class="row">
         <div class="col-md-6">
@@ -40,6 +41,7 @@
         </div>
     </div>
 </div>
+ 
 <script>
 $(document).ready(function() {
     loadValidateSetting();
