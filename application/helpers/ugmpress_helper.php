@@ -795,3 +795,103 @@ function strip_disallowed_char($string)
     $string = str_replace($bad, "_", $string);
     return $string;
 }
+
+//coba2 gatau bener apa engga??
+// function get_bookshelf_location(){
+//     return[
+//         '' => 'Semua',
+//         'a1' => 'A1',
+//         'a2' => 'A2',
+//         'a3' => 'A3',
+//         'b1' => 'B1',
+//         'b2' => 'B2',
+//         'b3' => 'B3',
+//     ];
+// }
+
+function get_selling_options()
+{
+    return [
+        '0' => 'Laris',
+        '1' => 'Semi Laris'
+    ];
+}
+
+function get_warehouse_stock(){
+    return [
+        '' => 'Semua',
+        '1' => '<= 50',
+        '2' => '> 50'
+    ];
+}
+
+function get_book_receive_status(){
+    return [
+        '' => '--Pilih--',
+        'waiting' => 'Belum Diproses',
+        'reject' => 'Ditolak',
+        // 'revisi' => 'Butuh Revisi',
+        'handover' => 'Serah Terima',
+        'handover_approval' => 'Serah Terima Menunggu Approval',
+        'handover_finish' => 'Selesai Serah Terima',
+        'wrapping' => 'Wrapping',
+        'wrapping_approval' => 'Wrapping Menunggu Approval',
+        'wrapping_finish' => 'Selesai Wrapping',
+        // 'finalisai' => 'Menunggu Finalisasi',
+        'finish' => 'Selesai',
+    ];
+}
+
+function get_book_request_category(){
+    return [
+        'gudang' => 'Gudang',
+        'non_gudang_showroom' => 'Non Gudang Showroom',
+        'non_gudang_perpus' => 'Non Gudang Perpustakaan'
+    ];
+}
+
+function get_book_request_status(){
+    return [
+        '' => '--Pilih--',
+        'not_started' => 'Belum dimulai',
+        'preparing' => 'Sedang disiapkan',
+        'preparing_finish' => 'Selesai disiapkan',
+        'finish' => 'Selesai'
+    ];
+}
+function get_book_request_status_edit(){
+    return [
+        'not_started' => 'Belum dimulai',
+        'preparing' => 'Sedang disiapkan',
+        'preparing_finish' => 'Selesai disiapkan',
+        'finish' => 'Selesai'
+    ];
+}
+function get_book_transfer_status(){
+    return [
+        '' => '--Pilih--',
+        'waiting' => 'Belum dimulai',
+        'preparing' => 'Sedang disiapkan',
+        // 'preparing_finish' => 'Selesai disiapkan',
+        'finish' => 'Selesai'
+    ];
+}
+
+function get_dropdown_list_library()
+{
+    $condition = function () {
+        $CI = &get_instance();
+        $CI->db->order_by('library_name', 'asc');
+        return $CI;
+    };
+
+    return get_dropdown_list('library', ['library_id', 'library_name'], $condition);
+}
+
+function get_book_transfer_destination(){
+    return [
+        '' => '--Pilih--',
+        'showroom' => 'Showroom',
+        'library' => 'Perpustakaan',
+    ];
+}
