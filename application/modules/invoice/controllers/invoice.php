@@ -8,6 +8,7 @@ class Invoice extends MY_Controller
         $this->pages = 'invoice';
         $this->load->model('invoice_model', 'invoice');
         $this->load->model('book/Book_model', 'book');
+        $this->load->helper('invoice_helper');
     }
 
     public function index($page = NULL)
