@@ -11,6 +11,7 @@ class Migration_Book_transfer extends CI_Migration{
             'library_id' => [
                 'type' => 'INT',
                 'constraint' => 10,
+                'null' => TRUE
             ],
             'book_id' => [
                 'type' => 'INT',
