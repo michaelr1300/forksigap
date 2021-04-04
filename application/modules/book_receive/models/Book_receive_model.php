@@ -4,6 +4,7 @@ class Book_receive_model extends MY_Model
 {
 
     public $per_page = 10;
+    private $storage_directory = 'storage/bookreceive';
 
     public function get_validation_rules()
     {
@@ -197,5 +198,29 @@ class Book_receive_model extends MY_Model
             return false;
         }
     }
+    public function upload_handover($input_field_name, $file_name)
+    {
+        if (!is_dir($this->storage_directory)) {
+            mkdir($this->storage_directory, 0777, TRUE);
+        }
 
+        $config = [
+            'upload_path'      => $this->storage_directory,
+            'file_name'        => $file_name,
+            'allowed_types'    => 'jpg|png|jpeg|pdf',
+            'max_size'         => 15360, // 15MB
+            'overwrite'        => true,
+            'file_ext_tolower' => true,
+        ];
+
+        $this->load->library('upload', $config);
+        if ($this->upload->do_upload($input_field_name)) {
+            // Upload OK, return uploaded file info.
+            return $this->upload->data();
+        } else {
+            // Add error to $_error_array
+            $this->form_validation->add_to_error_array($input_field_name, $this->upload->display_errors('', ''));
+            return false;
+        }
+    }
 }

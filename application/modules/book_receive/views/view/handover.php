@@ -125,7 +125,7 @@ $is_handover_staff_set     = $book_receive->handover_staff;
                     <?= (!$is_handover_deadline_set) ? 'disabled' : ''; ?>" id="btn-generate-pdf-handover"
                     title="Generate PDF berita acara serah terima">Generate PDF <i class="fas fa-file-pdf fa-fw"></i>
                 </a>
-                <form action="" method="POST" enctype="multipart/form-data">
+                <form action="<?=base_url('book_receive/api_upload_handover/')?>" method="POST" enctype="multipart/form-data" id="handover_upload_form">
                     <style>
                     input[type="file"] {
                         display: none;
@@ -133,9 +133,10 @@ $is_handover_staff_set     = $book_receive->handover_staff;
                     </style>
                     <label class="btn btn-outline-primary" id="btn-upload-pdf-handover"
                         title="Upload PDF berita acara serah terima"><i class="fas fa-file-pdf fa-fw"></i>
-                        <input type="file" class="btn btn-outline-primary" />
+                        <input type="file" class="btn btn-outline-primary" name="handover_file" id="handover_file" onchange="form.submit()"/>
                         Upload PDF
                     </label>
+                    <input type="hidden" name="receive_id" id="receive_id" value=<?= $book_receive->book_receive_id ?>/>
                 </form>
                 <?php endif; ?>
             </div>
