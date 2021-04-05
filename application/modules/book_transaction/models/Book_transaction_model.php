@@ -6,12 +6,8 @@ class Book_transaction_model extends MY_Model{
     public function filter_book_transaction($filters, $page)
     {
         $book_transactions = $this->select([            
-            'book.book_title', 'book_transaction.*',
-            'book_receive.finish_date AS finish_date_in','faktur.tanggal_selesai AS finish_date_out'])
+            'book.book_title', 'book_transaction.*'])
             ->join_table('book', 'book_transaction', 'book')
-            ->join_table('book_receive', 'book_transaction', 'book_receive')
-            ->join_table('book_faktur', 'book_transaction', 'book_faktur')
-            ->join_table('faktur', 'book_faktur', 'faktur')
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
             ->when('end_date', $filters['end_date'])
@@ -25,7 +21,7 @@ class Book_transaction_model extends MY_Model{
             ->join_table('faktur', 'book_faktur', 'faktur')
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
-            ->when('end_date', $filters['end_date'])
+            ->when('end_date', $filters['start_date'])
             ->paginate($page)
             ->count();
         return [
@@ -44,12 +40,10 @@ class Book_transaction_model extends MY_Model{
                 $this->group_end();
             }
             else if ($params == 'start_date') {
-                $this->where('book_receive.finish_date >=', $data);
-                $this->or_where('faktur.tanggal_selesai >=', $data);
+                $this->where('date >=', $data);
             }
             else if ($params == 'end_date') {
-                $this->where('book_receive.finish_date <=', $data);
-                $this->or_where('faktur.tanggal_selesai <=', $data);
+                $this->where('date <=', $data);
             }
         }
         return $this;
