@@ -9,7 +9,7 @@ $level              = check_level();
                 <a href="<?= base_url(); ?>"><span class="fa fa-home"></span></a>
             </li>
             <li class="breadcrumb-item">
-                <a href="<?= base_url('Book_request'); ?>">Permintaan Buku</a>
+                <a href="<?= base_url('Book_request'); ?>">Pesanan Buku</a>
             </li>
             <li class="breadcrumb-item">
                 <a class="text-muted"><?= $book_request->order_number; ?></a>
@@ -17,10 +17,53 @@ $level              = check_level();
         </ol>
     </nav>
     <div class="d-flex justify-content-between align-items-center my-3">
-        <div class="page-title mb-0 pb-0 h1"> Permintaan Buku </div>
-        <a href="<?= base_url('book_request/edit/'.$book_request->book_request_id); ?>"
-            class="btn btn-secondary btn-sm"><i class="fa fa-edit fa-fw"></i> Edit Permintaan Buku</a>
+        <div class="page-title mb-0 pb-0 h1"> Pesanan Buku </div>
+
+        <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal"
+            data-target="#modal-edit-<?= $book_request->book_request_id; ?>"><i
+            class="fa fa-edit fa-fw"></i> Edit Permintaan Buku</button>
+            
     </div>
+    <div class="text-left">
+        <div class="modal modal-alert fade"
+            id="modal-edit-<?= $book_request->book_request_id; ?>" tabindex="-1"
+            role="dialog"
+            aria-labelledby="modal-edit-<?= $book_request->book_request_id; ?>"
+            aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fa fa-pencil-alt text-black mr-1"></i>
+                                    Edit Status
+                            </h5>
+                        </div>
+                        <form action="<?=base_url('book_request/edit_book_request/')?>" method='post'>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="order_number" class="font-weight-bold">Nomor Pesanan</label>
+                                    <input type="text" name="order_number" id="order_number" class="form-control" value=<?=$book_request->order_number ?> disabled/>
+                                    <input type="hidden" name="request_id" id="request_id" class="form-control" value=<?=$book_request->book_request_id ?>/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="order_status" class="font-weight-bold">Status Pesanan</label>
+                                    <?= form_dropdown('order_status', get_book_request_status_edit(), $book_request->request_status, 'id="order_status" class="form-control custom-select d-block" title="Edit Status"'); ?>
+                                    <small>Status pesanan sekarang = <?= get_book_request_status()[$book_request->request_status ?? $book_request->status]; ?></small>
+                                </div>     
+                            </div>
+                            <div class="modal-footer">
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-primary" id="submit"/>
+                                    <button type="button" class="btn btn-light"
+                                        data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+        </div>
+    </div>
+
 </header>
 <!-- BREADCUMB,TITLE -->
 
@@ -30,7 +73,7 @@ $level              = check_level();
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
                 <a class="nav-link active show" data-toggle="tab" href="#detail_info_wrapper"><i
-                        class="fa fa-info-circle"></i> Detail Permintaan Buku</a>
+                        class="fa fa-info-circle"></i> Detail Pesanan Buku</a>
             </li>
         </ul>
     </header>

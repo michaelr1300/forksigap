@@ -45,11 +45,11 @@ class Book_request_model extends MY_Model{
         ->get()->row();
     }
 
-    public function fetch_faktur_id($faktur_id){
+    public function fetch_invoice_id($invoice_id){
         return $this->db
         ->select('*')
-        ->from('faktur')
-        ->where('faktur_id',$faktur_id)
+        ->from('invoice')
+        ->where('invoice_id',$invoice_id)
         // ->order_by("UNIX_TIMESTAMP(stock_input_date)","DESC")
         ->limit(1)->get()->row();
     }
@@ -128,24 +128,24 @@ class Book_request_model extends MY_Model{
 
     public function filter_book_request($filters, $page){
         $book_request = $this->select([
-            'faktur.faktur_id', 'faktur.nomor_faktur',
+            'invoice.invoice_id', 'invoice.number',
             'book_request.*'])
         ->when('keyword',$filters['keyword'])
         ->when('status',$filters['status'])
         ->when('book_request_category', $filters['book_request_category'])
-        ->join_table('faktur','book_request','faktur')
+        ->join_table('invoice','book_request','invoice')
         // ->join_table('book','book_request','book')
         // ->order_by('UNIX_TIMESTAMP(entry_date)','DESC')
         // ->order_by('book_title')
         ->paginate($page)
         ->get_all();
 
-        $total = $this->select(['faktur.faktur_id', 'faktur.nomor_faktur', 'faktur.status', 'book.book_title',
+        $total = $this->select(['invoice.invoice_id', 'invoice.number', 'invoice.status', 'book.book_title',
         'book_request.*'])
         ->when('keyword',$filters['keyword'])
         ->when('status',$filters['status'])
         ->when('book_request_category', $filters['book_request_category'])
-        ->join_table('faktur','book_request','faktur')
+        ->join_table('invoice','book_request','invoice')
         // ->join_table('book','book_request','book')
         // ->order_by('UNIX_TIMESTAMP(entry_date)','DESC')
         // ->order_by('book_title')
@@ -164,7 +164,7 @@ class Book_request_model extends MY_Model{
             if($params == 'keyword'){
                 $this->group_start();
                 // $this->or_like('book_title',$data);
-                $this->or_like('nomor_faktur',$data);
+                $this->or_like('number',$data);
                 // $this->or_like('total',$data);
                 $this->group_end();
             }

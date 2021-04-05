@@ -60,8 +60,8 @@ class Book_request extends MY_Controller
         $main_view   = 'book_request/book_request_view';
         $book_request       = $this->book_request->fetch_book_request_id($book_request_id);
         if(empty($book_request) == FALSE):
-        $faktur       = $this->book_request->fetch_faktur_id($book_request->faktur_id);
-        $this->load->view('template', compact('pages', 'main_view', 'book_request', 'faktur'));
+        $invoice       = $this->book_request->fetch_invoice_id($book_request->invoice_id);
+        $this->load->view('template', compact('pages', 'main_view', 'book_request', 'invoice'));
         else:
         $this->session->set_flashdata('error','Halaman tidak ditemukan.');
         redirect(base_url(), 'refresh');

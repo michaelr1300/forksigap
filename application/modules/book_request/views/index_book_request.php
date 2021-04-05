@@ -85,7 +85,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <td class="text-left align-middle">
                                     <a href="<?= base_url('book_request/view/' . $book_request->book_request_id . ''); ?>"
                                         class="font-weight-bold">
-                                        <?= highlight_keyword($book_request->nomor_faktur, $keyword); ?>
+                                        <?= highlight_keyword($book_request->number, $keyword); ?>
                                     </a>
                                 </td>
                                 <td class="align-middle">
