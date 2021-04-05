@@ -26,7 +26,7 @@
                         <div class="alert alert-warning">
                             <strong>PERHATIAN!</strong> Fitur ini berfungsi untuk mengubah stok buku.
                         </div>
-                        <form action="<?//= base_url('book_stock/edit_book_stock'); ?>" method="post">
+                        <form action="<?= base_url('book_stock/edit_book_stock'); ?>" method="post">
                             <div class="form-group">
                                 <label class="font-weight-bold">Judul Buku</label>
                                 <input type="text" class="form-control" value="<?= $input->book_title; ?>" disabled />
@@ -65,7 +65,6 @@
                                 <textarea rows="6" class="form-control summernote-basic" id="notes"
                                     name="notes"></textarea>
                             </div>
-                            <button type="button" class="btn btn-light ml-auto" data-dismiss="modal">Close</button>
                             <button class="btn btn-primary" type="submit">Submit</button>
                         </form>
                     </fieldset>
