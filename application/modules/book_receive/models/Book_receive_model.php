@@ -214,6 +214,10 @@ class Book_receive_model extends MY_Model
         ];
 
         $this->load->library('upload', $config);
+        $delete_existing_file=$this->find_file_ext($file_name);
+        if ($delete_existing_file){
+            unlink($this->storage_directory."/".$delete_existing_file);
+        }
         if ($this->upload->do_upload($input_field_name)) {
             // Upload OK, return uploaded file info.
             return $this->upload->data();
@@ -222,5 +226,21 @@ class Book_receive_model extends MY_Model
             $this->form_validation->add_to_error_array($input_field_name, $this->upload->display_errors('', ''));
             return false;
         }
+    }
+    public function find_file_ext($filename){
+        $full_filename = $this->storage_directory."/".$filename;
+        if (file_exists($full_filename.".jpg")){
+            return $filename.".jpg";
+        }
+        else if (file_exists($full_filename.".png")){
+            return $filename.".png";
+        }
+        else if (file_exists($full_filename.".jpeg")){
+            return $filename.".jpeg";
+        }
+        else if (file_exists($full_filename.".pdf")){
+            return $filename.".pdf";
+        }
+        else return NULL;
     }
 }
