@@ -68,15 +68,23 @@
                             <label for="status">Status
                                 <abbr title="Required">*</abbr>
                             </label>
-                            <?= form_dropdown('status', get_book_transfer_status(), $input->status, 'id="status" class="form-control custom-select d-block"'); ?>
+                            <?php if($input->status!='finish') : ?>
+                            <?= form_dropdown('status', get_book_transfer_status_edit(), $input->status, 'id="status" class="form-control custom-select d-block"'); ?>
                             <?= form_error('status'); ?>
+                            <?php else : ?>
+                            <span class="form-control d-block bg-secondary"><?=get_book_transfer_status()[$book_transfer->status]?></span>
+                            <?= form_hidden('status', $input->status); ?>
+                            <?= form_error('status'); ?>
+                            <?php endif?>
                         </div>
                     </fieldset>
                     <hr>
                     <!-- button -->
+                    <?php if($input->status!='finish') : ?>
                     <input type="submit" class="btn btn-primary" value="Submit" />
                     <a class="btn btn-secondary" href="<?php echo base_url('book_transfer') ?>" role="button">Back</a>
                     <?=form_close()?>
+                    <?php endif?>
                 </div>
             </section>
         </div>

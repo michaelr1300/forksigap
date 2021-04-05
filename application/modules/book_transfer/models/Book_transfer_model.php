@@ -164,23 +164,30 @@ class Book_transfer_model extends MY_Model{
         return $this;
     }
 
-    public function get_staff_gudang()
-    {
-        return $this->select(['user_id', 'username', 'level', 'email'])
-            ->where('level', 'staff_gudang')
-            ->where('is_blocked', 'n')
-            ->order_by('username', 'ASC')
-            ->get_all('user');
-    }
+    // public function get_staff_gudang()
+    // {
+    //     return $this->select(['user_id', 'username', 'level', 'email'])
+    //         ->where('level', 'staff_gudang')
+    //         ->where('is_blocked', 'n')
+    //         ->order_by('username', 'ASC')
+    //         ->get_all('user');
+    // }
 
-    public function get_staff_gudang_by_progress($progress, $book_receive_id)
-    {
-        return $this->db->select(['book_receive_user_id', 'book_receive_user.user_id', 'book_receive_id', 'progress', 'username', 'email'])
-            ->from('user')
-            ->join('book_receive_user', 'user.user_id = book_receive_user.user_id')
-            ->where('book_receive_id', $book_receive_id)
-            ->where('progress', $progress)
-            ->get()->result();
+    // public function get_staff_gudang_by_progress($progress, $book_receive_id)
+    // {
+    //     return $this->db->select(['book_receive_user_id', 'book_receive_user.user_id', 'book_receive_id', 'progress', 'username', 'email'])
+    //         ->from('user')
+    //         ->join('book_receive_user', 'user.user_id = book_receive_user.user_id')
+    //         ->where('book_receive_id', $book_receive_id)
+    //         ->where('progress', $progress)
+    //         ->get()->result();
+    // }
+
+    public function fetch_library_stock($library_stock_detail_id){
+        return $this->select(['library.library_name', 'library_stock_detail*'])
+        ->join_table('library_stock_detail', 'library', 'library_stock_detail')
+        ->where('library_stock_detail_id', $library_stock_detail_id)
+        ->get();
     }
 
     public function delete_book_transfer($where){

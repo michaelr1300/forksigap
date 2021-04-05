@@ -18,7 +18,7 @@ $level              = check_level();
     </nav>
     <div class="d-flex justify-content-between align-items-center my-3">
         <div class="page-title mb-0 pb-0 h1"> Pemindahan Buku </div>
-        <a href="<?= base_url('book_request/edit/'.$book_transfer->book_transfer_id); ?>"
+        <a href="<?= base_url('book_transfer/edit/'.$book_transfer->book_transfer_id); ?>"
             class="btn btn-secondary btn-sm"><i class="fa fa-edit fa-fw"></i> Edit Pemindahan Buku</a>
     </div>
 </header>

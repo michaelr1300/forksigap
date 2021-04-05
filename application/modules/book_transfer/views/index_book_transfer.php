@@ -65,8 +65,8 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                         <thead>
                             <tr class="text-center">
                                 <th scope="col" class="pl-4">No</th>
-                                <th scope="col" style="min-width:200px;">Judul Buku</th>
-                                <th scope="col" style="min-width:300px;">Tujuan</th>
+                                <th scope="col" style="min-width:350px;">Judul Buku</th>
+                                <th scope="col" style="min-width:200px;">Tujuan</th>
                                 <th scope="col" style="min-width:100px;">Jumlah</th>
                                 <th scope="col" style="min-width:100px;">Tanggal</th>
                                 <th scope="col" style="min-width:200px;">Status</th>
