@@ -99,12 +99,10 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                             <?php if ($book_transaction->stock_in) {
                                     $stock_display = $book_transaction->stock_in;
                                     $type_display = "Masuk";
-                                    $date_display = $book_transaction->finish_date_in;
                                 }
                                 else {
                                     $stock_display = $book_transaction->stock_out;
                                     $type_display = "Keluar";
-                                    $date_display = $book_transaction->finish_date_out;
                                 } ?>
                             <tr>
                                 <td class="align-middle text-center"><?= ++$i; ?></td>
@@ -125,7 +123,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?= $type_display ?>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?= substr($date_display,0,10); ?>
+                                    <?= substr($book_transaction->date,0,10); ?>
                                 </td>
                             </tr>
                             <?php endforeach ?>
