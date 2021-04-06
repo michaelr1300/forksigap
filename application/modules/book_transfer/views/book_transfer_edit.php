@@ -60,7 +60,7 @@
                             </label>
                             <span class="form-control d-block bg-secondary"><?=get_dropdown_list_library()[$book_transfer->library_id]?></span>
                             <!-- <input type="text" class="form-control d-block" value="<?=get_dropdown_list_library()[$input->library_id]?>" disabled> -->
-                            <?= form_hidden('library_id', get_dropdown_list_library(), $input->library_id); ?>
+                            <?= form_hidden('library_id', $input->library_id); ?>
                             <?= form_error('library_id'); ?>
                         </div>
                         <?php endif?>
