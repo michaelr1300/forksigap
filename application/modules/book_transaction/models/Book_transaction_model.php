@@ -17,8 +17,6 @@ class Book_transaction_model extends MY_Model{
 
         $total = $this->select(['book_transaction.*'])
             ->join_table('book_receive', 'book_transaction', 'book_receive')
-            ->join_table('book_faktur', 'book_transaction', 'book_faktur')
-            ->join_table('faktur', 'book_faktur', 'faktur')
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
             ->when('end_date', $filters['start_date'])
@@ -51,8 +49,8 @@ class Book_transaction_model extends MY_Model{
     public function filter_excel()
     {
         return $this->select(['book.book_title', 'book_stock.book_stock_id', 
-        // 'faktur.tanggal_selesai',
-        'book_faktur.book_faktur_id', 
+        // 'invoice.tanggal_selesai',
+        'invoice_book.id', 
         // 'book_receive.book_receive_id', 
         'book_receive.finish_date', 
         'book_transaction.*'])
@@ -60,9 +58,9 @@ class Book_transaction_model extends MY_Model{
             // ->when('published_year', $filters['published_year'])
             // ->when('warehouse_present', $filters['warehouse_present'])
             ->join_table('book', 'book_transaction', 'book')
-            ->join_table('book_stock', 'book_transaction', 'book_stock')
-            ->join_table('book_faktur', 'book_transaction', 'book_faktur')
-            // ->join_table('faktur', 'book_transaction', 'faktur')
+            // ->join_table('book_stock', 'book_transaction', 'book_stock')
+            // ->join_table('invoice_book', 'book_transaction', 'invoice_book')
+            // ->join_table('invoice', 'book_transaction', 'invoice')
             ->join_table('book_receive', 'book_transaction', 'book_receive')
             ->get_all();
     }

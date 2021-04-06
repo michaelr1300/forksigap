@@ -122,7 +122,7 @@ class Book_transaction extends MY_Controller
                             break;
                         }
                     case 'D': {
-                            if($data->book_faktur_id == null && !$data->book_receive_id==null){
+                            if($data->book_invoice_id == null && !$data->book_receive_id==null){
                                 $value = $data->stock_in;
                             }
                             else{
@@ -131,7 +131,7 @@ class Book_transaction extends MY_Controller
                             break;
                     }
                     case 'E': {
-                            if($data->book_faktur_id == null  && !$data->book_receive_id==null){
+                            if($data->book_invoice_id == null  && !$data->book_receive_id==null){
                                 $value = 'Buku Masuk';
                             }
                             else{
