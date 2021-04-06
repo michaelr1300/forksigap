@@ -59,7 +59,7 @@ class Book_transaction extends MY_Controller
         return;
     }
 
-    public function generate_excel()
+    public function generate_excel($filters)
     {
         // $get_data = $this->book_transaction->filter_excel($filters);
         $spreadsheet = new Spreadsheet;
@@ -98,7 +98,7 @@ class Book_transaction extends MY_Controller
         $sheet->getColumnDimension('F')->setAutoSize(true);
 
         // $get_data = $this->book_transaction->filter_excel($filters);
-        $get_data = $this->book_transaction->filter_excel();
+        $get_data = $this->book_transaction->filter_excel($filters);
         $no = 1;
         $i = 4;
         // Column Content

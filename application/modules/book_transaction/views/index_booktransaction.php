@@ -68,7 +68,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <button class="btn btn-success" type="submit" id="excel" name="excel"
                                         value="1">Excel</button>
                                     <!-- <a class="btn btn-success" id="excel" name="excel"
-                                        href = '<?= base_url('/book_transaction/generate_excel'); ?>'>Excel</a>
+                                        href = '<?//= base_url('/book_transaction/generate_excel'); ?>'>Excel</a>
  -->
                                     <?php endif; ?>
                                 </div>
