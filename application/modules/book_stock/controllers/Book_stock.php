@@ -52,9 +52,16 @@ class Book_stock extends MY_Controller
         // $stock_history  = $get_stock['stock_history'];
         // $stock_last     = $get_stock['stock_last'];
 
-        $pages       = $this->pages;
-        $main_view   = 'book_stock/view_bookstock';
-        $this->load->view('template', compact('pages', 'main_view', 'input'));
+        // $book_stocks                = $this->book_stock->get_stock_by_id($book_stock_id);
+        $book_stock->revision      = $this->book_stock->get_stock_revision($book_stock->book_id);
+        $book_stock->library_stock = $this->book_stock->get_library_stock($book_stock->book_stock_id);
+        // $library_id = $book_stock->library_stock->library_id;
+        // $book_stock->library_stock->library       = $this->book_stock->get_library($library_id);
+        // var_dump($book_stock->library_stock);
+        
+        $pages                      = $this->pages;
+        $main_view                  = 'book_stock/view_bookstock';
+        $this->load->view('template', compact('pages', 'main_view', 'input', 'book_stock'));
         return;
     }
 

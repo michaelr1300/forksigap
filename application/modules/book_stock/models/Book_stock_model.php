@@ -99,24 +99,73 @@ class Book_stock_model extends MY_Model
         ->get('book');
     }
 
-    public function fetch_stock_by_id($book_id)
-    {
-        $stock_history    = $this->db->select('*')->from('book_stock')->where('book_id', $book_id)->order_by("UNIX_TIMESTAMP(date)", "DESC")->get()->result();
-        $stock_last       = $this->db->select('*')->from('book_stock')->where('book_id', $book_id)->order_by("UNIX_TIMESTAMP(date)", "DESC")->limit(1)->get()->row();
-        return [
-            'stock_history' => $stock_history,
-            'stock_last'    => $stock_last
-        ];
-    }
+    // public function fetch_stock_by_id($book_id)
+    // {
+    //     $stock_history    = $this->db->select('*')->from('book_stock')->where('book_id', $book_id)->order_by("UNIX_TIMESTAMP(date)", "DESC")->get()->result();
+    //     $stock_last       = $this->db->select('*')->from('book_stock')->where('book_id', $book_id)->order_by("UNIX_TIMESTAMP(date)", "DESC")->limit(1)->get()->row();
+    //     return [
+    //         'stock_history' => $stock_history,
+    //         'stock_last'    => $stock_last
+    //     ];
+    // }
 
-    public function fetch_book_stock_by_id($book_stock_id)
+    public function get_stock_by_id($book_stock_id)
     {
-        return $this->db->select('*')->from('book_stock')->where('book_stock_id', $book_stock_id)->get()->row();
+        return $this->db->select('*')
+        ->from('book_stock')
+        ->where('book_stock_id', $book_stock_id)
+        ->get()
+        ->row();
     }
 
     public function delete_book_stock($where){
         $this->db->where('book_stock_id', $where);
         $this->db->delete('book_stock');
     }
+
+    public function get_stock_revision($book_id){
+        return $this->db->select('*')
+        ->from('book_stock_revision')
+        ->where('book_stock_revision.book_id', $book_id)
+        ->order_by('book_stock_revision.book_stock_revision_id', 'DESC')
+        ->get()
+        ->result();
+    }
+
+    public function get_library($library_id){
+        return $this->db->select('*')
+        ->from('library')
+        ->where('library.library_id', $library_id)
+        ->get()
+        ->row();
+        // ->result();
+    }
+
+    public function get_library_stock($book_stock_id){
+        return $this->db->select('*')
+        ->from('library_stock_detail')
+        // ->join('library_stock_detail','library_stock_detail.library_id = library.library_id')
+        ->where('library_stock_detail.book_stock_id', $book_stock_id)
+        // ->where('library_stock_detail.library_id', $library_id)
+        ->get()
+        ->result();
+    }
+
+    // public function fetch_library_stock($book_stock_id){
+    //     return $this->select(['library.library_name', 'library.library_id',
+    //     'book_stock.book_stock_id',
+    //     'library_stock_detail.*'])
+        // ->from('library_stock_detail')
+        // ->from('library')
+        // ->from('book')
+        // ->join('book_stock', 'book_stock.book_stock_id = library_stock_detail.book_stock_id', 'inner')
+        // ->join('library_stock_detail', 'library_stock_detail.library_id = library.library_id', 'inner')
+        // ->join_table('book_stock', 'library_stock_detail', 'book_stock')
+        // ->join_table('library', 'library_stock_detail', 'library')
+        // ->where('book_stock_id', $book_stock_id)
+        // ->join('book_stock', 'book_stock.book_stock_id = library_stock_detail.book_stock_id', 'inner')
+        // ->where('library.library_id', 'library_stock_detail.library_id')
+    //     ->get();
+    // }
 
 }

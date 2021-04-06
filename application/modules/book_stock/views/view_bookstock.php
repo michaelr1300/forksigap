@@ -21,12 +21,12 @@ $level              = check_level();
         <div>
             <h1 class="page-title"> Stok Buku </h1>
         </div>
-        <!-- <div>
-            <a href="<?//= base_url("$pages/edit/$input->book_id"); ?>" class="btn btn-primary btn-sm"><i
+        <?php if($level == 'superadmin'):?>
+        <div>
+            <a href="<?= base_url("$pages/edit/$input->book_stock_id"); ?>" class="btn btn-primary btn-sm"><i
                     class="fa fa-edit fa-fw"></i> Edit Buku</a>
-            <a href="<?//= base_url("$pages/edit_hakcipta/$input->book_id"); ?>" class="btn btn-primary btn-sm"><i
-                    class="fa fa-edit fa-fw"></i> Edit Hak Cipta</a>
-        </div> -->
+        </div>
+        <?php endif?>
     </div>
 </header>
 
@@ -34,7 +34,6 @@ $level              = check_level();
     <section id="data-draft" class="card">
         <header class="card-header">
             <ul class="nav nav-tabs card-header-tabs">
-                <?php //if ($input->from_outside == 0) : ?>
                 <li class="nav-item ">
                     <a class="nav-link active show" data-toggle="tab" href="#stock-data"><i
                             class="fa fa-warehouse pr-1"></i>Detail Stok Buku</a>
@@ -43,7 +42,6 @@ $level              = check_level();
                     <a class="nav-link" data-toggle="tab" href="#chart-book"><i
                             class="fa fa-chart-line pr-1"></i>Transaksi Buku</a>
                 </li>
-                <?php //endif; ?>
             </ul>
         </header>
         <div class="card-body">
@@ -57,9 +55,6 @@ $level              = check_level();
                             <div class="col-6 text-left">
                                 <strong>Stok Buku</strong>
                             </div>
-                            <div class="col-6 text-right">
-                                Edit
-                            </div>
                         </div>
                         <hr>
                         <div class="table-responsive">
@@ -72,7 +67,6 @@ $level              = check_level();
                                             </strong></td>
                                     </tr>
                                     <tr>
-                                    <tr>
                                         <td width="160px">Stok Keseluruhan</td>
                                         <td><?= $input->warehouse_present+$input->library_present+$input->showroom_present; ?></td>
                                     </tr>
@@ -82,21 +76,46 @@ $level              = check_level();
                                     </td>
                                     </tr>
                                     <tr>
-                                        <td width="160px">Stok Perpustakaan</td>
-                                        <td><?= $input->library_present; ?></td>
-                                    </tr>
-                                    <tr>
                                         <td width="160px">Stok Showroom</td>
                                         <td><?= $input->showroom_present; ?></td>
                                     </tr>
                                     <tr>
-                                        <td width="160px">Lokasi Rak (Gudang)</td>
-                                        <td><?= $input->book_location; ?></td>
+                                        <td width="160px">Stok Perpustakaan</td>
+                                        <td><?= $input->library_present; ?></td>
                                     </tr>
+                                    <?php if($input->warehouse_present) :?>
+                                    </tr>
+                                    <td width="160px">Detail Stok Perpustakaan</td>
+                                    <td>
+                                        <table class="table table-bordered mb-0 table-responsive">
+                                            <tbody>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Nama Perpustakaan</th>
+                                                    <th>Stok</th>
+                                                </tr>
+                                                <?php $no=1; foreach($book_stock->library_stock as $library_data) : ?>
+                                                <tr>
+                                                    <td class="align-middle text-center">
+                                                        <?= $no++; ?>
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <?//=$library_data->library->library_name?>
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <?=$library_data->library_stock?>
+                                                    </td>
+                                                </tr>
+                                                <?php endforeach ?>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    </tr>
+                                    <?php endif?>
                                 </tbody>
                             </table>
                         </div>
-                        <?php //if (empty($stock_history) == FALSE) : ?>
+                        <?php if (empty($book_stock->revision) == FALSE) : ?>
                         <hr>
                         <!-- Log Revisi Stok -->
                         <p class="font-weight-bold">Log Revisi Stok</p>
@@ -107,7 +126,6 @@ $level              = check_level();
                                         <th scope="col">No</th>
                                         <th scope="col">Awal</th>
                                         <th scope="col">Perubahan</th>
-                                        <th scope="col">User</th>
                                         <th scope="col">Tanggal</th>
                                         <th scope="col">Catatan</th>
                                         <?php if ($level == 'superadmin' || $level == 'admin_gudang') : ?>
@@ -116,90 +134,41 @@ $level              = check_level();
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php// foreach ($stock_history as $history) : ?>
+                                    <?php $no=1; foreach($book_stock->revision as $revision) : ?>
                                     <tr class="text-center">
                                         <td>
-                                            <?= $i++; ?>
+                                            <?= $no++; ?>
                                         </td>
                                         <td>
-                                            <?//= $history->warehouse_past; ?>
+                                            <?= $revision->warehouse_past; ?>
                                         </td>
                                         <td>
-                                            <?php /*
-                                                            if ($history->warehouse_operator == "+") {
-                                                                echo '<div class="text-success"> ' . $history->warehouse_operator . ' ' . $history->warehouse_modifier . '</div>';
-                                                            } elseif ($history->warehouse_operator == "-") {
-                                                                echo '<div class="text-danger"> ' . $history->warehouse_operator . ' ' . $history->warehouse_modifier . '</div>';
-                                                            } */
-                                                            ?>
-                                        </td>
-                                        <td>
-                                            <?//= get_username($history->user_id); ?>
+                                            <?php 
+                                                if ($revision->operator == "+") {
+                                                    echo '<div class="text-success"> ' . $revision->operator . ' ' . $revision->warehouse_revision . '</div>';
+                                                } elseif ($revision->operator == "-") {
+                                                    echo '<div class="text-danger"> ' . $revision->operator . ' ' . $revision->warehouse_revision . '</div>';
+                                                } 
+                                            ?>
                                         </td>
                                         <td>
                                             <?//= date('d F Y H:i:s', strtotime($history->date)); ?>
                                         </td>
                                         <td>
-                                            <?//= $history->notes; ?>
+                                            <?= $revision->notes; ?>
                                         </td>
-                                        <?php if ($level == 'superadmin' || $level == 'admin_gudang') : ?>
-                                        <td>
-                                            <button title="Delete" type="button" class="btn btn-sm btn-danger"
-                                                data-toggle="modal"
-                                                data-target="#modal_delete_stock<?//= $history->book_stock_id; ?>">
-                                                <i class="fa fa-trash-alt"></i>
-                                                <span class="sr-only">Delete</span>
-                                            </button>
-                                            <!-- Modal Hapus -->
-                                            <div class="modal modal-alert fade"
-                                                id="modal_delete_stock<?//= $history->book_stock_id; ?>" tabindex="-1"
-                                                role="dialog"
-                                                aria-labelledby="modal_delete_stock<?//= $history->book_stock_id; ?>"
-                                                aria-hidden="true">
-                                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">
-                                                                <i class="fa fa-exclamation-triangle text-red mr-1"></i>
-                                                                Konfirmasi
-                                                                Hapus
-                                                            </h5>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <p>Apakah anda yakin akan menghapus data stok buku dari
-                                                                buku
-                                                                <span class="font-weight-bold">
-                                                                    <?//= $input->book_title; ?>
-                                                                </span>
-                                                                ?<br>Menghapus riwayat akan mengubah jumlah stok di
-                                                                gudang.
-                                                            </p>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-light"
-                                                                data-dismiss="modal">Close</button>
-                                                            <a href="<?//= base_url('book/delete_book_stock/' . $history->book_stock_id); ?>"
-                                                                type="button" class="btn btn-danger">
-                                                                Hapus
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- Modal Hapus -->
-                                        </td>
-                                        <?php endif; ?>
                                     </tr>
-                                    <?php //endforeach; ?>
+                                    <?php if($no==6) break;?>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
                         <?php endif; ?>
                         <!-- Log perubahan Stok -->
-                        <?php //else : ?>
-                        <!-- <p>Data hanya dapat dilihat oleh Superadmin, Admin Penerbitan, Admin Percetakan, Admin Gudang,
-                        dan Admin Pemasaran</p> -->
-                        <?php //endif; ?>
+                        <?php else : ?>
+                        <p>Data hanya dapat dilihat oleh Superadmin, Admin Penerbitan, Admin Percetakan, Admin Gudang,
+                        dan Admin Pemasaran</p>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <!--stock data-->
