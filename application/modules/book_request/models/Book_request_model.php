@@ -131,7 +131,7 @@ class Book_request_model extends MY_Model{
             'invoice.invoice_id', 'invoice.number',
             'book_request.*'])
         ->when('keyword',$filters['keyword'])
-        ->when('status',$filters['status'])
+        ->when('request_status',$filters['request_status'])
         ->when('book_request_category', $filters['book_request_category'])
         ->join_table('invoice','book_request','invoice')
         // ->join_table('book','book_request','book')
@@ -140,10 +140,10 @@ class Book_request_model extends MY_Model{
         ->paginate($page)
         ->get_all();
 
-        $total = $this->select(['invoice.invoice_id', 'invoice.number', 'invoice.status', 'book.book_title',
+        $total = $this->select(['invoice.invoice_id', 'invoice.number', 'book_request.request_status', 'book.book_title',
         'book_request.*'])
         ->when('keyword',$filters['keyword'])
-        ->when('status',$filters['status'])
+        ->when('request_status',$filters['request_status'])
         ->when('book_request_category', $filters['book_request_category'])
         ->join_table('invoice','book_request','invoice')
         // ->join_table('book','book_request','book')
@@ -160,7 +160,7 @@ class Book_request_model extends MY_Model{
     public function when($params, $data)
     {
         // jika data null, maka skip
-        if ($data != '') {
+        if ($data) {
             if($params == 'keyword'){
                 $this->group_start();
                 // $this->or_like('book_title',$data);
@@ -168,8 +168,8 @@ class Book_request_model extends MY_Model{
                 // $this->or_like('total',$data);
                 $this->group_end();
             }
-            if($params == 'status'){
-                $this->where('status', $data);
+            if($params == 'request_status'){
+                $this->where('request_status', $data);
             }
             if($params == 'book_request_category'){
                 $this->where('book_request_category', $data);
@@ -177,6 +177,7 @@ class Book_request_model extends MY_Model{
         }
         return $this;
     }
+
 
     public function get_staff_gudang()
     {

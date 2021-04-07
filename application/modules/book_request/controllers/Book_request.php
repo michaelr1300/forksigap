@@ -14,7 +14,7 @@ class Book_request extends MY_Controller
         // all filter
         $filters = [
             'keyword'           => $this->input->get('keyword', true),
-            'status'            => $this->input->get('status', true),
+            'request_status'        => $this->input->get('request_status', true),
             'book_request_category' => $this->input->get('book_request_category', true)
         ];
 
@@ -56,6 +56,7 @@ class Book_request extends MY_Controller
 
     public function view($book_request_id){
         if($this->check_level_gudang_pemasaran() == TRUE):
+        
         $pages       = $this->pages;
         $main_view   = 'book_request/book_request_view';
         $book_request       = $this->book_request->fetch_book_request_id($book_request_id);

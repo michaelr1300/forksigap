@@ -844,6 +844,7 @@ function get_book_receive_status(){
 
 function get_book_request_category(){
     return [
+        '' => '--Pilih--',
         'gudang' => 'Gudang',
         'non_gudang_showroom' => 'Non Gudang Showroom',
         'non_gudang_perpus' => 'Non Gudang Perpustakaan'

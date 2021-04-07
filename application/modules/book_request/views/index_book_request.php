@@ -2,7 +2,7 @@
 $level              = check_level();
 $per_page           = 10;
 $keyword            = $this->input->get('keyword');
-$status     = $this->input->get('status');
+$request_status             = $this->input->get('request_status');
 $book_request_category = $this->input->get('book_request_category');
 $page               = $this->uri->segment(2);
 $i                  = isset($page) ? $page * $per_page - $per_page : 0;
@@ -41,8 +41,8 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
                             <div class="col-12 col-md-4">
-                                <label for="status">Status</label>
-                                <?= form_dropdown('status', get_book_request_status(), $status, 'id="status" class="form-control custom-select d-block" title="Filter Status"'); ?>
+                                <label for="request_status">Status</label>
+                                <?= form_dropdown('request_status', get_book_request_status(), $request_status, 'id="request_status" class="form-control custom-select d-block" title="Filter Status"'); ?>
                             </div>
                             <div class="col-12 col-md-4">
                                 <label for="category">Kategori</label>
@@ -95,7 +95,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?= get_book_request_category()[$book_request->book_request_category]; ?>
                                 </td>
                                 <td class="align-middle">
-                                    <?= get_book_request_status()[$book_request->request_status ?? $book_request->status]; ?>
+                                    <?= get_book_request_status()[$book_request->request_status ?? $book_request->request_status]; ?>
                                 </td>
                                 <td class="align-middle text-right">
                                     <!-- <a href="<?//= base_url('book_request/edit/'.$book_request->book_request_id); ?>"
@@ -133,7 +133,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                                             <div class="form-group">
                                                                 <label for="order_status" class="font-weight-bold">Status Pesanan</label>
                                                                 <?= form_dropdown('order_status', get_book_request_status_edit(), $book_request->request_status, 'id="order_status" class="form-control custom-select d-block" title="Edit Status"'); ?>
-                                                                <small>Status pesanan sekarang = <?= get_book_request_status()[$book_request->request_status ?? $book_request->status]; ?></small>
+                                                                <small>Status pesanan sekarang = <?= get_book_request_status()[$book_request->request_status ?? $book_request->request_status]; ?></small>
                                                             </div>     
                                                         </div>
                                                         <div class="modal-footer">
