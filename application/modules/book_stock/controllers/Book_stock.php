@@ -12,6 +12,7 @@ class Book_stock extends MY_Controller
         $this->pages = "book_stock";
         $this->load->model('book_stock/book_stock_model', 'book_stock');
         $this->load->model('book/book_model', 'book');
+        $this->load->model('book_transaction/book_transaction_model', 'book_transaction');
     }
 
     public function index($page = NULL){
@@ -163,6 +164,22 @@ class Book_stock extends MY_Controller
         redirect($this->pages);
     }
 
+    public function api_chart_data($book_id,$year){
+        $book_transaction = $this->book_transaction->get_transaction_data($book_id,$year);
+        for ($i=1;$i<=12;$i++){
+            $chart_data['stock_in']['month_'.$i]=0;
+            $chart_data['stock_out']['month_'.$i]=0;
+        }
+        foreach ($book_transaction as $data){
+            for ($i=1;$i<=12;$i++){
+                if (substr($data->date,5,2)==$i){
+                    $chart_data['stock_in']['month_'.$i]+=$data->stock_in;
+                    $chart_data['stock_out']['month_'.$i]+=$data->stock_out;
+                }
+            }
+        }
+        return $this->send_json_output(true, (object) $chart_data);
+    }
     public function generate_excel($filters)
     {
         // $get_data = $this->book_stock->filter_excel($filters);

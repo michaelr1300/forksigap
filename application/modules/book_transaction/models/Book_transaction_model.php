@@ -19,7 +19,7 @@ class Book_transaction_model extends MY_Model{
             ->join_table('book_receive', 'book_transaction', 'book_receive')
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
-            ->when('end_date', $filters['start_date'])
+            ->when('end_date', $filters['end_date'])
             ->paginate($page)
             ->count();
         return [
@@ -27,7 +27,13 @@ class Book_transaction_model extends MY_Model{
             'total' => $total
         ];
     }
-
+    public function get_transaction_data($book_id,$year){
+        return $this->select(['book_transaction.*'])
+            ->when('book_id',$book_id)
+            ->when('start_date', $year.'-01-01')
+            ->when('end_date', $year.'-12-31')
+            ->get_all();
+    }
     public function when($params, $data)
     {
         //jika data null, maka skip
@@ -36,6 +42,9 @@ class Book_transaction_model extends MY_Model{
                 $this->group_start();
                 $this->or_like('book_title', $data);
                 $this->group_end();
+            }
+            else if ($params == 'book_id') {
+                $this->where('book_id', $data);
             }
             else if ($params == 'start_date') {
                 $this->where('date >=', $data);
