@@ -88,6 +88,19 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label for="handover_staff">Staff Bertugas
+                            </label>
+                            <div class="has-clearable">
+                                <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                </button>
+                                <?= form_input('handover_staff', $book_receive->handover_staff, 'class="form-control text" '); ?>
+                                <?= form_error('handover_staff'); ?>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="handover_end_date">Tanggal Selesai Serah Terima
                             </label>
                             <div class="has-clearable">
@@ -142,6 +155,19 @@
                                 </button>
                                 <?= form_input('wrapping_deadline', $book_receive->wrapping_deadline, 'class="form-control dates" '); ?>
                                 <?= form_error('wrapping_deadline'); ?>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="wrapping_staff">Staff Bertugas
+                            </label>
+                            <div class="has-clearable">
+                                <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                </button>
+                                <?= form_input('wrapping_staff', $book_receive->wrapping_staff, 'class="form-control text" '); ?>
+                                <?= form_error('wrapping_staff'); ?>
                             </div>
                         </div>
                         <div class="form-group">

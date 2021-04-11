@@ -171,10 +171,12 @@ class Book_receive extends MY_Controller
         $is_handover = $this->input->post('is_handover');
         $handover_start_date = $this->input->post('handover_start_date');
         $handover_end_date = $this->input->post('handover_end_date');
+        $handover_staff = $this->input->post('handover_staff');
         $handover_deadline = $this->input->post('handover_deadline');
         $is_wrapping = $this->input->post('is_wrapping');
         $wrapping_start_date = $this->input->post('wrapping_start_date');
         $wrapping_end_date = $this->input->post('wrapping_end_date');
+        $wrapping_staff = $this->input->post('wrapping_staff');
         $wrapping_deadline = $this->input->post('wrapping_deadline');
 
         $this->form_validation->set_rules('deadline', 'Deadline Penerimaan Buku', 'required');
@@ -214,10 +216,12 @@ class Book_receive extends MY_Controller
             'is_handover' => $is_handover,
             'handover_start_date' => $handover_start_date,
             'handover_end_date' => $handover_end_date,
+            'handover_staff' => $handover_staff,
             'handover_deadline' => $handover_deadline,
             'is_wrapping' => $is_wrapping,
             'wrapping_start_date' => $wrapping_start_date,
             'wrapping_end_date' => $wrapping_end_date,
+            'wrapping_staff' => $wrapping_staff,
             'wrapping_deadline' => $wrapping_deadline
         ];
 
