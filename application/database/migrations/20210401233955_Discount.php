@@ -37,7 +37,7 @@ class Migration_Discount extends CI_Migration
             ),
             array(
                 'id'            => '3',
-                'membership'    => 'penulis',
+                'membership'    => 'author',
                 'discount'      => '30'
             ),
             array(
@@ -47,7 +47,7 @@ class Migration_Discount extends CI_Migration
             ),
             array(
                 'id'            => '5',
-                'membership'    => 'biasa',
+                'membership'    => 'general',
                 'discount'      => '15'
             ),
         );
