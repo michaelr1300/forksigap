@@ -1,11 +1,10 @@
 <?php
 $level = check_level();
-if ($progress == 'preparing') {
-    $progress_text = 'penyiapan buku';
-} 
+$progress = 'preparing';
+$progress_text = 'penyiapan buku'; 
 ?>
 
-<?php if (!$book_request->{"is_{$progress}"}) : ?>
+<?php if (!$book_request->preparing_start_date || !$book_request->preparing_end_date) : ?>
 <div class="alert alert-warning alert-dismissible fade show mb-1" role="alert">
     <strong>PERHATIAN!</strong> Pastikan mengisi data-data sebelum menyetujui proses <?= $progress_text ?>.
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">

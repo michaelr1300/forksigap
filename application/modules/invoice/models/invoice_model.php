@@ -270,4 +270,103 @@ class Invoice_model extends MY_Model
         }
         return $this;
     }
+
+    // BOOK REQUEST BUAT DI GUDANG
+    // filter untuk book request gudang
+    public function filter_book_request($filters, $page)
+    {
+        $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
+            ->where('status','preparing_waiting')
+            ->or_where('status','preparing')
+            ->or_where('status','preparing_finish')
+            ->or_where('status','finish')
+            ->when_request('keyword', $filters['keyword'])
+            ->when_request('type', $filters['type'])
+            ->when_request('status', $filters['status'])
+            ->order_by('invoice_id', 'DESC')
+            ->paginate($page)
+            ->get_all();
+
+        $total = $this->select(['invoice_id', 'number'])
+            ->where('status','preparing_waiting')
+            ->or_where('status','preparing')
+            ->or_where('status','preparing_finish')
+            ->or_where('status','finish')
+            ->when_request('keyword', $filters['keyword'])
+            ->when_request('type', $filters['type'])
+            ->when_request('status', $filters['status'])
+            ->order_by('invoice_id')
+            ->count();
+
+        return [
+            'book_request'  => $book_request,
+            'total' => $total
+        ];
+    }
+
+    public function when_request($params, $data)
+    {
+        // jika data null, maka skip
+        if ($data != '') {
+            if ($params == 'keyword') {
+                $this->group_start();
+                $this->or_like('number', $data);
+                $this->group_end();
+            } 
+            if($params == 'type') {
+                if($data == 'gudang'){
+                    $this->where('type','credit');
+                    $this->where('type','online');
+                    $this->where('type','cash')->where('source','warehouse');
+                }
+                else if($data == 'non_gudang_showroom'){
+                    $this->where('type','showroom');
+                }
+                else if($data == 'non_gudang_perpus'){
+                    $this->where('type','cash')->where('source','library');
+                }
+            }
+            if($params == 'status') {
+                $this->where('status', $data);
+            }
+        }
+        return $this;
+    }
+    public function start_progress($invoice_id)
+    {
+        // transaction data agar konsisten
+        $this->db->trans_begin();
+
+        $input = [
+            'status' => 'preparing',
+            'preparing_start_date' => date('Y-m-d H:i:s')
+        ];
+
+        $this->invoice->where('invoice_id', $invoice_id)->update($input);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            return false;
+        } else {
+            $this->db->trans_commit();
+            return true;
+        }
+    }
+
+    public function finish_progress($invoice_id)
+    {
+        $input = [
+            'status' => "preparing_finish",
+            "preparing_end_date" => date('Y-m-d H:i:s')
+        ];
+        
+
+        $update_state = $this->invoice->where('invoice_id', $invoice_id)->update($input);
+
+        if ($update_state) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -97,10 +97,10 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     Lokasi Rak</th>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center" colspan="3">
                                     Stok</th>
-                                <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
+                                <!-- <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
                                     Laris/Semi
                                     Laris
-                                </th>
+                                </th> -->
                                 <?php if ($level == 'superadmin') : ?>
                                 <th style="min-width:150px;" class="align-middle text-center" rowspan="2"> Aksi </th>
                                 <?php endif; ?>
@@ -141,7 +141,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <?php endif?>
                                 <td class="align-middle text-center"><?=$book_stock->library_present?></td>
                                 <td class="align-middle text-center"><?=$book_stock->showroom_present?></td>
-                                <td class="align-middle text-center"><?=$book_stock->selling?></td>
+                                <!-- <td class="align-middle text-center"><?//=$book_stock->selling?></td> -->
                                 <?php if ($level == 'superadmin') : ?>
                                 <td style="min-width: 130px" class="align-middle text-center">
                                     <a href="<?= base_url('book_stock/edit/' . $book_stock->book_stock_id . ''

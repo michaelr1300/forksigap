@@ -68,7 +68,8 @@ $level              = check_level();
                                     </tr>
                                     <tr>
                                         <td width="160px">Stok Keseluruhan</td>
-                                        <td><?= $input->warehouse_present+$input->library_present+$input->showroom_present; ?></td>
+                                        <td><?= $input->warehouse_present+$input->library_present+$input->showroom_present; ?>
+                                        </td>
                                     </tr>
                                     <td width="160px">Stok Gudang</td>
                                     <td>
@@ -167,39 +168,25 @@ $level              = check_level();
                         <!-- Log perubahan Stok -->
                         <?php else : ?>
                         <p>Data hanya dapat dilihat oleh Superadmin, Admin Penerbitan, Admin Percetakan, Admin Gudang,
-                        dan Admin Pemasaran</p>
+                            dan Admin Pemasaran</p>
                         <?php endif; ?>
                     </div>
                 </div>
                 <!--stock data-->
 
-                <!-- book chart data -->
+                <!-- book transaction chart -->
+                <link rel="stylesheet" href="<?= base_url('assets/vendor/chart.js/new/Chart.min.css'); ?>">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/js-url/2.5.3/url.js"></script>
                 <div class="tab-pane fade" id="chart-book">
-                    <div class="row">
-                        <!-- <div class="chartjs-size-monitor">
-                            <div class="chartjs-size-monitor-expand">
-                                <div class=""></div>
-                            </div>
-                            <div class="chartjs-size-monitor-shrink">
-                                <div class=""></div>
-                            </div>
-                        </div>
-                        <div class="chartjs-size-monitor">
-                            <div class="chartjs-size-monitor-expand">
-                                <div class=""></div>
-                            </div>
-                            <div class="chartjs-size-monitor-shrink">
-                                <div class=""></div>
-                            </div>
-                        </div> -->
-                        <!-- <div class="col-12">
-                                                    <p class="font-weight-bold mb-0">Transaksi Buku</p>
-                                                </div> -->
+                    <!-- Per month chart -->
+                    <div class="row mb-4">
                         <p class="col-12 font-weight-bold">Transaksi Buku per Bulan</p>
-                        <canvas id="myChart" class="mb-3 chartjs-render-monitor" width="1420" height="532"
-                            style="display: block; height: 355px; width: 947px;"></canvas>
+                        <div class="col-3">
+                            <input type="year" id="year" name="year" class="form-control">
+                        </div>
+                        <canvas id="chart-transaction-per-month" height="35vh !important" width="100% !important">
                         <script>
-                        var ctx = document.getElementById('myChart').getContext('2d');
+                        var ctx = document.getElementById('chart-transaction-per-month').getContext('2d');
                         var myChart = new Chart(ctx, {
                             type: 'line',
                             data: {
@@ -239,20 +226,29 @@ $level              = check_level();
                             }
                         });
                         </script>
-                        <p class="font-weight-bold col-12">Transaksi Buku per Hari</p>
-                        <canvas id="myChart2" class="col chartjs-render-monitor" width="1420" height="532"
-                            style="display: block; height: 355px; width: 947px;"></canvas>
+                    </div>
+                    <!-- Per month chart -->
+                    <hr>
+                    <!-- Per day chart -->
+                    <div class="row">
+                        <p class="col-12 font-weight-bold">Transaksi Buku per Hari</p>
+                        <div class="col-3">
+                            <input type="date" id="date" name="date" class="form-control">
+                        </div>
+                        <canvas id="chart-transaction-per-day" height="35vh !important" width="100% !important">
                         <script>
-                        var ctx = document.getElementById('myChart2').getContext('2d');
-                        var myChart2 = new Chart(ctx, {
-                            type: 'line',
+                        book_id = <?=$book_stock->book_id?>
+                        today = new Date();
+                        document.getELementById('date').valueAsDate = today;
+                        date = today.toISOString().split('T')[0];
+                        var ctx_perday = document.getElementById('chart-transaction-per-day');
+                        var chart_transaction_per_day = new Chart(ctx, {
+                            type: 'bar',
                             data: {
-                                labels: ['1 Des', '2 Des', '3 Des', '4 Des', '5 Des', '6 Des', '7 Des',
-                                    '8 Des', '9 Des', '10 Des', '11 Des'
-                                ],
+                                labels: [],
                                 datasets: [{
                                     label: 'Transaksi Buku per Hari',
-                                    data: [1, 1, 2, 1, 1, 1, 2, 1, 2, 2, 4, 3],
+                                    data: [],
                                     backgroundColor: [
                                         'rgba(74, 138, 216, 0.2)'
                                         // 'rgba(54, 162, 235, 0.2)',
@@ -282,6 +278,37 @@ $level              = check_level();
                                 }
                             }
                         });
+                        var updatePerDay = function(date, book_id) {
+                            $.ajax({
+                            url: "<?=base_url('book_stock/api_chart_data/')?>"+book_id+'/'+date,
+                            type: 'GET',
+                            dataType: 'json',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                success: function(data) {
+                                    chart_transaction_per_day.data.labels = data.stock_in.month;
+                                    stock_in = data.stock_in.map(a => a);
+                                    chart_transaction_per_day.data.datasets[0].data = stock_in;
+                                    chart_transaction_per_day.update();
+                                },
+                                error: function(data){
+                                    console.log(data);
+                                }
+                            });
+                        }
+
+                        updatePerDay(date);
+
+                        $("#date").change(function() {
+                            get_url();
+                        });
+                        
+                        function get_url() {
+                            date = $("#date").val();
+                            url = "<?=base_url('book_stock/api_chart_data/') ?>"+book_id+'/'+date;
+                            updatePerDay(date);
+                        }
                         </script>
                     </div>
                 </div>

@@ -854,7 +854,7 @@ function get_book_request_category(){
 function get_book_request_status(){
     return [
         '' => '--Pilih--',
-        'not_started' => 'Belum dimulai',
+        'preparing_waiting' => 'Belum dimulai',
         'preparing' => 'Sedang disiapkan',
         'preparing_finish' => 'Selesai disiapkan',
         'finish' => 'Selesai'
@@ -862,10 +862,9 @@ function get_book_request_status(){
 }
 function get_book_request_status_edit(){
     return [
-        'not_started' => 'Belum dimulai',
+        'preparing_waiting' => 'Belum dimulai',
         'preparing' => 'Sedang disiapkan',
-        'preparing_finish' => 'Selesai disiapkan',
-        'finish' => 'Selesai'
+        'preparing_finish' => 'Selesai disiapkan'
     ];
 }
 

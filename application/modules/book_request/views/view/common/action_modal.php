@@ -1,9 +1,5 @@
 <?php $level = check_level();
-$progress_text = '';
-if ($progress == 'preparing') {
-    $progress_text = 'penyiapan buku';
-} 
-
+$progress = 'preparing';
 ?>
 <div class="modal fade" id="modal-action-<?= $progress ?>" tabindex="-1" role="dialog"
     aria-labelledby="modal-action-<?= $progress ?>" aria-hidden="true">
@@ -25,14 +21,14 @@ if ($progress == 'preparing') {
                         </div>
                         <?php
                         if (!is_admin()) {
-                            echo '<div class="font-italic">' . nl2br($book_request->{"{$progress}_notes_admin"}) . '</div>';
+                            echo '<div class="font-italic">' . nl2br($book_receive->{"{$progress}_notes_admin"}) . '</div>';
                         } else {
                             echo form_textarea([
                                 'name'  => "{$progress}_notes_admin",
                                 'class' => 'form-control',
                                 'id'    => "{$progress}_notes_admin",
                                 'rows'  => '6',
-                                'value' => $book_request->{"{$progress}_notes_admin"},
+                                'value' => $book_receive->{"{$progress}_notes_admin"},
                             ]);
                         }
                         ?>
@@ -64,9 +60,9 @@ if ($progress == 'preparing') {
 <script>
 $(document).ready(function() {
     const progress = '<?= $progress ?>'
-    const url = "<?= base_url('book_request/api_action_progress'); ?>"
+    const url = "<?= base_url('book_receive/api_action_progress'); ?>"
 
-    const bookRequestId = '<?= $book_request->book_request_id ?>'
+    const bookReceiveId = '<?= $book_receive->book_receive_id ?>'
 
     function send_action_data({
         isAccept,
@@ -76,7 +72,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: `${url}/${bookRequestId}`,
+            url: `${url}/${bookReceiveId}`,
             data: {
                 progress,
                 accept: isAccept,
