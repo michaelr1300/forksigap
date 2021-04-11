@@ -179,6 +179,34 @@ class Book_receive extends MY_Controller
 
         $this->form_validation->set_rules('deadline', 'Deadline Penerimaan Buku', 'required');
 
+        $status_waiting           = ['book_receive_status' => 'waiting'];
+        $status_handover          = ['book_receive_status' => 'handover'];
+        $status_handover_approval = ['book_receive_status' => 'handover_approval'];
+        $status_handover_finish   = ['book_receive_status' => 'handover_finish'];
+        $status_wrapping          = ['book_receive_status' => 'wrapping'];
+        $status_wrapping_approval = ['book_receive_status' => 'wrapping_approval'];
+        $status_wrapping_finish   = ['book_receive_status' => 'wrapping_finish'];
+        $status_finish            = ['book_receive_status' => 'finish'];
+
+        if (empty($handover_start_date)) {
+            $handover_start_date = empty_to_null($handover_start_date);
+        }
+        if (empty($handover_end_date)) {
+            $handover_end_date = empty_to_null($handover_end_date);
+        }
+        if (empty($handover_deadline)) {
+            $handover_deadline = empty_to_null($handover_deadline);
+        }
+        if (empty($wrapping_start_date)) {
+            $wrapping_start_date = empty_to_null($wrapping_start_date);
+        }
+        if (empty($wrapping_end_date)) {
+            $wrapping_end_date = empty_to_null($wrapping_end_date);
+        }
+        if (empty($wrapping_deadline)) {
+            $wrapping_deadline = empty_to_null($wrapping_deadline);
+        }
+
         $data = [
             'entry_date' => $entry_date,
             'deadline' => $deadline,
@@ -190,36 +218,8 @@ class Book_receive extends MY_Controller
             'is_wrapping' => $is_wrapping,
             'wrapping_start_date' => $wrapping_start_date,
             'wrapping_end_date' => $wrapping_end_date,
-            'wrapping_deadline' => $wrapping_deadline,
+            'wrapping_deadline' => $wrapping_deadline
         ];
-
-        $status_waiting           = ['book_receive_status' => 'waiting'];
-        $status_handover          = ['book_receive_status' => 'handover'];
-        $status_handover_approval = ['book_receive_status' => 'handover_approval'];
-        $status_handover_finish   = ['book_receive_status' => 'handover_finish'];
-        $status_wrapping          = ['book_receive_status' => 'wrapping'];
-        $status_wrapping_approval = ['book_receive_status' => 'wrapping_approval'];
-        $status_wrapping_finish   = ['book_receive_status' => 'wrapping_finish'];
-        $status_finish            = ['book_receive_status' => 'finish'];
-
-        if (empty($book_receive->handover_start_date)) {
-            $book_receive->handover_start_date = empty_to_null($book_receive->handover_start_date);
-        }
-        if (empty($book_receive->handover_end_date)) {
-            $book_receive->handover_end_date = empty_to_null($book_receive->handover_end_date);
-        }
-        if (empty($book_receive->handover_deadline)) {
-            $book_receive->handover_deadline = empty_to_null($book_receive->handover_deadline);
-        }
-        if (empty($book_receive->wrapping_start_date)) {
-            $book_receive->wrapping_start_date = empty_to_null($book_receive->wrapping_start_date);
-        }
-        if (empty($book_receive->wrapping_end_date)) {
-            $book_receive->wrapping_end_date = empty_to_null($book_receive->wrapping_end_date);
-        }
-        if (empty($book_receive->wrapping_deadline)) {
-            $book_receive->wrapping_deadline = empty_to_null($book_receive->wrapping_deadline);
-        }
 
         if ($this->form_validation->run() == true) {
             $this->db->set($data)->where('book_receive_id', $book_receive_id)->update('book_receive');
