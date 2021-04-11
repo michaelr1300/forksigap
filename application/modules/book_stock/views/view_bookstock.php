@@ -100,7 +100,7 @@ $level              = check_level();
                                                         <?= $no++; ?>
                                                     </td>
                                                     <td class="align-middle">
-                                                        <?//=$library_data->library->library_name?>
+                                                        <?=$library_data->library_name?>
                                                     </td>
                                                     <td class="align-middle text-center">
                                                         <?=$library_data->library_stock?>

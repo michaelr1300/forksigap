@@ -142,9 +142,9 @@ class Book_stock_model extends MY_Model
     }
 
     public function get_library_stock($book_stock_id){
-        return $this->db->select('*')
+        return $this->db->select('*','library.library_name')
         ->from('library_stock_detail')
-        // ->join('library_stock_detail','library_stock_detail.library_id = library.library_id')
+        ->join('library', "library.library_id = library_stock_detail.library_id", 'left')
         ->where('library_stock_detail.book_stock_id', $book_stock_id)
         // ->where('library_stock_detail.library_id', $library_id)
         ->get()
