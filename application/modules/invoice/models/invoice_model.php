@@ -15,6 +15,8 @@ class Invoice_model extends MY_Model
             $type = $this->input->post('new-customer-type');
             $add = [
                 'name'          => $this->input->post('new-customer-name'),
+                'address'       => $this->input->post('new-customer-address'),
+                'phone_number'  => $this->input->post('new-customer-phone-number'),
                 'type'          => $type
             ];
             $this->db->insert('customer', $add);
@@ -368,5 +370,43 @@ class Invoice_model extends MY_Model
         } else {
             return false;
         }
+    }
+
+    public function update_status($invoice_id, $status)
+    {
+        if ($status == 'confirm') {
+            $edit = [
+                'status'          => $status,
+                'confirm_date'    => date('Y-m-d H:i:s'),
+                //'user_edited'   => $_SESSION['username']
+            ];
+        }
+
+        if ($status == 'preparing_start') {
+            $edit = [
+                'status'          => $status,
+                'preparing_start_date'    => date('Y-m-d H:i:s'),
+                //'user_edited'   => $_SESSION['username']
+            ];
+        }
+
+        if ($status == 'preparing_end') {
+            $edit = [
+                'status'          => $status,
+                'preparing_end_date'    => date('Y-m-d H:i:s'),
+                //'user_edited'   => $_SESSION['username']
+            ];
+        }
+
+        if ($status == 'finish') {
+            $edit = [
+                'status'          => $status,
+                'finish_date'    => date('Y-m-d H:i:s'),
+                //'user_edited'   => $_SESSION['username']
+            ];
+        }
+
+        $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
+        return TRUE;
     }
 }

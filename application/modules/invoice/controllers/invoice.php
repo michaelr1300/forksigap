@@ -8,7 +8,7 @@ class Invoice extends MY_Controller
         $this->pages = 'invoice';
         $this->load->model('invoice_model', 'invoice');
         $this->load->model('book/Book_model', 'book');
-        $this->load->helper('invoice_helper');
+        $this->load->helper('sales_helper');
     }
 
     public function index($page = NULL)
@@ -59,13 +59,7 @@ class Invoice extends MY_Controller
             'warehouse' => 'Gudang'
         );
 
-        $customer_type = array(
-            'distributor'      => 'Distributor',
-            'reseller'      => 'Reseller',
-            'penulis'        => 'Penulis',
-            'member'        => 'Member',
-            'biasa'        => ' - '
-        );
+        $customer_type = get_customer_type();
 
         $dropdown_book_options = $this->invoice->get_ready_book_list();
 
@@ -93,7 +87,7 @@ class Invoice extends MY_Controller
                 $this->session->set_flashdata('success', 'Faktur berhasil ditambah.');
                 redirect('invoice');
             } else {
-                $this->session->set_flashdata('error', 'Faktur gagal ditambah 2.');
+                $this->session->set_flashdata('error', 'Faktur gagal ditambah.');
                 redirect($_SERVER['HTTP_REFERER'], 'refresh');
             }
         }
@@ -117,13 +111,7 @@ class Invoice extends MY_Controller
             'warehouse' => 'Gudang'
         );
 
-        $customer_type = array(
-            'distributor'      => 'Distributor',
-            'reseller'      => 'Reseller',
-            'penulis'        => 'Penulis',
-            'member'        => 'Member',
-            'biasa'        => ' - '
-        );
+        $customer_type = get_customer_type();
 
         $invoice_book = $this->invoice->fetch_invoice_book($invoice->invoice_id);
 
@@ -155,6 +143,32 @@ class Invoice extends MY_Controller
                 redirect($_SERVER['HTTP_REFERER'], 'refresh');
             }
         }
+    }
+
+    public function action($id, $invoice_status)
+    {
+        $invoice = $this->invoice->where('invoice_id', $id)->get();
+        if (!$invoice) {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
+
+        $this->db->trans_begin();
+
+        // update lembar kerja
+        $this->invoice->where('invoice_id', $id)->update([
+            'status' => $invoice_status,
+        ]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+        } else {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+        }
+
+        redirect($this->pages);
     }
 
 
