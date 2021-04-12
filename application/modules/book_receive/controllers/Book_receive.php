@@ -543,7 +543,6 @@ class Book_receive extends MY_Controller
             'finish_date' => $action == 'finish' ? now() : null
         ]);
         //insert to book stock
-        //yg book request id sama book receive id buat apa
         $book_stock = $this->book_stock->where('book_id', $book_receive->book_id)->get();
         $book_stock_print = $this->book_receive->get_print_order($book_receive->print_order_id);
         if ($book_stock) {
@@ -556,11 +555,14 @@ class Book_receive extends MY_Controller
             ]);
         }
         //insert to book transaction
-        //ini datenya dari book transaction atau ambil dari print order sama book request
+        //ini datenya dari book transaction
+        $book_stock = $this->book_stock->where('book_id', $book_receive->book_id)->get();
         $this->book_transaction->insert([
             'book_id'            => $book_receive->book_id,
             'book_receive_id'    => $book_receive->book_receive_id,
-            'stock_in'           => $book_stock_print->total_postprint
+            'book_stock_id'      => $book_stock->book_stock_id,
+            'stock_in'           => $book_stock_print->total_postprint,
+            'date'               => date("Y-m-d")
         ]);
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
