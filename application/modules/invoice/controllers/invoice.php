@@ -145,6 +145,32 @@ class Invoice extends MY_Controller
         }
     }
 
+    public function action($id, $invoice_status)
+    {
+        $invoice = $this->invoice->where('invoice_id', $id)->get();
+        if (!$invoice) {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
+
+        $this->db->trans_begin();
+
+        // update lembar kerja
+        $this->invoice->where('invoice_id', $id)->update([
+            'status' => $invoice_status,
+        ]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+        } else {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+        }
+
+        redirect($this->pages);
+    }
+
 
     public function api_get_book($book_id)
     {

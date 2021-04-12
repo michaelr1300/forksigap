@@ -25,6 +25,30 @@ $status_options = [
     'finish'            => 'Selesai',
     'cancel'            => 'Dibatalkan'
 ];
+
+function generate_invoice_action($invoice_draft_id)
+{
+    return html_escape('
+    <div class="list-group list-group-bordered" style="margin: -9px -15px;border-radius:0;">
+      <a href="' . base_url("invoice/action/{$invoice_draft_id}/confirm") . '" class="list-group-item list-group-item-action p-2">
+        <div class="list-group-item-figure">
+        <div class="tile bg-success">
+        <span class="fa fa-check"></span>
+        </div>
+        </div>
+        <div class="list-group-item-body"> Setuju </div>
+      </a>
+      <a href="' . base_url("invoice/action/{$invoice_draft_id}/cancel") . '" class="list-group-item list-group-item-action p-2">
+        <div class="list-group-item-figure">
+        <div class="tile bg-danger">
+        <span class="fa fa-ban"></span>
+        </div>
+        </div>
+        <div class="list-group-item-body"> Tolak </div>
+      </a>
+    </div>
+    ');
+}
 ?>
 
 
@@ -56,6 +80,23 @@ $status_options = [
             <section class="card card-fluid">
                 <div class="card-body p-0">
                     <div class="p-3">
+                        <div
+                            class="alert alert-info alert-dismissible fade show"
+                            role="alert"
+                        >
+                            <h5>Info</h5>
+                            <p class="m-0">Klik tombol <button class="btn btn-sm btn-secondary"><i class="fa fa-thumbs-up"></i>
+                                    Aksi</button> untuk menyetujui atau menolak faktur
+                            </p>
+                            <button
+                                type="button"
+                                class="close"
+                                data-dismiss="alert"
+                                aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
                             <div class="col-12 col-md-4 mt-2">
@@ -132,7 +173,7 @@ $status_options = [
                                         scope="col"
                                         style="width:20%;"
                                         class="pr-4"
-                                    >&nbsp</th>
+                                    > &nbsp; </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -161,14 +202,30 @@ $status_options = [
                                         <td class="align-middle pr-4">
                                             <?= get_invoice_status()[$lData->status]; ?>
                                         </td>
-                                        <td class="align-middle pr-4">
+                                        <td class="align-middle text-right d-flex">
+                                        <?php if ($lData->status == 'waiting') : ?>
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-secondary"
+                                                data-container="body"
+                                                data-toggle="popover"
+                                                data-placement="left"
+                                                data-html="true"
+                                                data-content="<?= generate_invoice_action($lData->invoice_id); ?>"
+                                                data-trigger="focus"
+                                                style="margin-right:5px;"
+                                            >
+                                                <i class="fa fa-thumbs-up">Aksi</i>
+                                            </button>
                                             <a
+                                                title="Edit"
                                                 href="<?= base_url('invoice/edit/' . $lData->invoice_id . ''); ?>"
                                                 class="btn btn-sm btn-secondary"
                                             >
                                                 <i class="fa fa-pencil-alt"></i>
                                                 <span class="sr-only">Edit</span>
                                             </a>
+                                        <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
