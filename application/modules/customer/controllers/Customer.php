@@ -7,6 +7,7 @@ class Customer extends MY_Controller
         parent::__construct();
         $this->pages = 'customer';
         $this->load->model('customer_model', 'customer');
+        $this->load->helper('sales_helper');
     }
 
     public function index($page = null)
@@ -16,13 +17,7 @@ class Customer extends MY_Controller
             'type'  => $this->input->get('type', true)
         ];
 
-        $customer_type = array(
-            'distributor'   => 'Distributor',
-            'reseller'      => 'Reseller',
-            'author'        => 'Penulis',
-            'member'        => 'Member',
-            'general'       => 'Umum'
-        );
+        $customer_type = get_customer_type();
 
         // custom per page
         $this->customer->per_page = $this->input->get('per_page', true) ?? 10;

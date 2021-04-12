@@ -15,6 +15,8 @@ class Invoice_model extends MY_Model
             $type = $this->input->post('new-customer-type');
             $add = [
                 'name'          => $this->input->post('new-customer-name'),
+                'address'       => $this->input->post('new-customer-address'),
+                'phone_number'  => $this->input->post('new-customer-phone-number'),
                 'type'          => $type
             ];
             $this->db->insert('customer', $add);

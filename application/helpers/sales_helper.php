@@ -34,3 +34,14 @@ function get_invoice_status()
         'cancel'            => 'Dibatalkan'
     ];
 }
+
+function get_customer_type()
+{
+    return [
+        'distributor'   => 'Distributor',
+        'reseller'      => 'Reseller',
+        'author'        => 'Penulis',
+        'member'        => 'Member',
+        'general'       => 'Umum'
+    ];
+}

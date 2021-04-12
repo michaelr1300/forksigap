@@ -104,22 +104,62 @@
                         </div>
                         <div
                             id="new-customer-info"
-                            class="col-md-4"
+                            class="col-md-6"
                             style="display: none"
                         >
-                            <label
-                                for="new-customer-name"
-                                class="font-weight-bold"
-                            >Nama</label>
-                            <input
-                                name="new-customer-name"
-                                id="new-customer-name"
-                                class="form-control"
-                            /><label
-                                for="new-customer-type"
-                                class="font-weight-bold"
-                            >Membership</label>
-                            <?= form_dropdown('new-customer-type', $customer_type, 0, 'id="new-customer-type" class="form-control custom-select d-block"'); ?>
+                            <div class="form-group">
+                                <label
+                                    for="new-customer-name"
+                                    class="font-weight-bold"
+                                >
+                                    Nama
+                                    <abbr title="Required">*</abbr>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="new-customer-name"
+                                    id="new-customer-name"
+                                    class="form-control"
+                                />
+                                <small id="error-name" class="d-none error-message text-danger">Nama wajib diisi!</small>
+                            </div>
+                            <div class="form-group">
+                                <label
+                                    for="new-customer-address"
+                                    class="font-weight-bold"
+                                >Alamat
+                                </label>
+                                <input
+                                    type="text"
+                                    name="new-customer-address"
+                                    id="new-customer-address"
+                                    class="form-control"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label
+                                    for="new-customer-phone-number"
+                                    class="font-weight-bold"
+                                >Nomor Telepon
+                                    <abbr title="Required">*</abbr>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="new-customer-phone-number"
+                                    id="new-customer-phone-number"
+                                    class="form-control"
+                                />
+                                <small id="error-phone-number" class="d-none error-message text-danger">Nomor telepon wajib diisi!</small>
+                            </div>
+                            <div class="form-group">
+                                <label
+                                    for="new-customer-type"
+                                    class="font-weight-bold"
+                                >Jenis Customer<abbr title="Required">*</abbr></label>
+
+                                <?= form_dropdown('new-customer-type', $customer_type, null, 'id="new-customer-type" class="form-control custom-select d-block w-100"'); ?>
+                                <small id="error-type" class="d-none error-message text-danger">Jenis customer wajib diisi!</small>
+                            </div>
                         </div>
                         <div
                             id="customer-info"

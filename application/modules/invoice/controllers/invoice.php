@@ -8,7 +8,7 @@ class Invoice extends MY_Controller
         $this->pages = 'invoice';
         $this->load->model('invoice_model', 'invoice');
         $this->load->model('book/Book_model', 'book');
-        $this->load->helper('invoice_helper');
+        $this->load->helper('sales_helper');
     }
 
     public function index($page = NULL)
@@ -59,13 +59,7 @@ class Invoice extends MY_Controller
             'warehouse' => 'Gudang'
         );
 
-        $customer_type = array(
-            'distributor'      => 'Distributor',
-            'reseller'      => 'Reseller',
-            'penulis'        => 'Penulis',
-            'member'        => 'Member',
-            'biasa'        => ' - '
-        );
+        $customer_type = get_customer_type();
 
         $dropdown_book_options = $this->invoice->get_ready_book_list();
 
@@ -93,7 +87,7 @@ class Invoice extends MY_Controller
                 $this->session->set_flashdata('success', 'Faktur berhasil ditambah.');
                 redirect('invoice');
             } else {
-                $this->session->set_flashdata('error', 'Faktur gagal ditambah 2.');
+                $this->session->set_flashdata('error', 'Faktur gagal ditambah.');
                 redirect($_SERVER['HTTP_REFERER'], 'refresh');
             }
         }
@@ -117,13 +111,7 @@ class Invoice extends MY_Controller
             'warehouse' => 'Gudang'
         );
 
-        $customer_type = array(
-            'distributor'      => 'Distributor',
-            'reseller'      => 'Reseller',
-            'penulis'        => 'Penulis',
-            'member'        => 'Member',
-            'biasa'        => ' - '
-        );
+        $customer_type = get_customer_type();
 
         $invoice_book = $this->invoice->fetch_invoice_book($invoice->invoice_id);
 
