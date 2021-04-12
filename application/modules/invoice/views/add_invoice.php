@@ -21,7 +21,7 @@
                     <form
                         id="invoice_form"
                         method="post"
-                        action="<?= base_url("invoice/add_invoice"); ?>"
+                        action="<?= base_url("invoice/add"); ?>"
                         redirect="<?= base_url("invoice"); ?>"
                     >
                         <legend>Form Tambah Faktur</legend>
@@ -121,7 +121,10 @@
                                     id="new-customer-name"
                                     class="form-control"
                                 />
-                                <small id="error-name" class="d-none error-message text-danger">Nama wajib diisi!</small>
+                                <small
+                                    id="error-name"
+                                    class="d-none error-message text-danger"
+                                >Nama wajib diisi!</small>
                             </div>
                             <div class="form-group">
                                 <label
@@ -149,7 +152,10 @@
                                     id="new-customer-phone-number"
                                     class="form-control"
                                 />
-                                <small id="error-phone-number" class="d-none error-message text-danger">Nomor telepon wajib diisi!</small>
+                                <small
+                                    id="error-phone-number"
+                                    class="d-none error-message text-danger"
+                                >Nomor telepon wajib diisi!</small>
                             </div>
                             <div class="form-group">
                                 <label
@@ -158,7 +164,10 @@
                                 >Jenis Customer<abbr title="Required">*</abbr></label>
 
                                 <?= form_dropdown('new-customer-type', $customer_type, null, 'id="new-customer-type" class="form-control custom-select d-block w-100"'); ?>
-                                <small id="error-type" class="d-none error-message text-danger">Jenis customer wajib diisi!</small>
+                                <small
+                                    id="error-type"
+                                    class="d-none error-message text-danger"
+                                >Jenis customer wajib diisi!</small>
                             </div>
                         </div>
                         <div
@@ -550,7 +559,7 @@ $(document).ready(function() {
             url: url,
             data: form.serialize(), // serializes the form's elements.
             success: function(result) {
-                //Validation Error
+                // Validation Error
                 if (!(result === "no_errors")) {
                     alert("Semua data Faktur harus diisi dan Faktur tidak boleh kosong!");
                     form_valid = "FALSE";

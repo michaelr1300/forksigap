@@ -114,7 +114,7 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             <td class="align-middle"><?= highlight_keyword($customer->name, $keyword); ?></td>
                                             <td class="align-middle"><?= highlight_keyword($customer->address, $keyword); ?></td>
                                             <td class="align-middle"><?= highlight_keyword($customer->phone_number, $keyword); ?></td>
-                                            <td class="align-middle"><?= highlight_keyword($customer->type, $keyword); ?></td>
+                                            <td class="align-middle"><?= get_customer_type()[$customer->type]; ?></td>
                                             <td class="align-middle text-right">
                                                 <button
                                                     type="button"
@@ -217,7 +217,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             id="name"
                                             class="form-control"
                                         />
-                                        <small id="error-name" class="d-none error-message text-danger">Nama wajib diisi!</small>
+                                        <small
+                                            id="error-name"
+                                            class="d-none error-message text-danger"
+                                        >Nama wajib diisi!</small>
                                     </div>
                                     <div class="form-group">
                                         <label
@@ -245,7 +248,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             id="phone-number"
                                             class="form-control"
                                         />
-                                        <small id="error-phone-number" class="d-none error-message text-danger">Nomor telepon wajib diisi!</small>
+                                        <small
+                                            id="error-phone-number"
+                                            class="d-none error-message text-danger"
+                                        >Nomor telepon wajib diisi!</small>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
@@ -256,7 +262,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                                 >Jenis Customer<abbr title="Required">*</abbr></label>
 
                                                 <?= form_dropdown('type', $customer_type, null, 'id="edit-type" class="form-control custom-select d-block"'); ?>
-                                                <small id="error-type" class="d-none error-message text-danger">Jenis customer wajib diisi!</small>
+                                                <small
+                                                    id="error-type"
+                                                    class="d-none error-message text-danger"
+                                                >Jenis customer wajib diisi!</small>
                                             </div>
                                         </div>
                                     </div>
@@ -320,7 +329,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             id="edit-name"
                                             class="form-control"
                                         />
-                                        <small id="error-edit-name" class="d-none error-message text-danger">Nama customer wajib diisi!</small>
+                                        <small
+                                            id="error-edit-name"
+                                            class="d-none error-message text-danger"
+                                        >Nama customer wajib diisi!</small>
                                     </div>
                                     <div class="form-group">
                                         <label
@@ -348,7 +360,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             id="edit-phone-number"
                                             class="form-control"
                                         />
-                                        <small id="error-edit-phone-number" class="d-none error-message text-danger">Nomor telepon customer wajib diisi!</small>
+                                        <small
+                                            id="error-edit-phone-number"
+                                            class="d-none error-message text-danger"
+                                        >Nomor telepon customer wajib diisi!</small>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
@@ -359,7 +374,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                                 >Jenis Customer<abbr title="Required">*</abbr></label>
 
                                                 <?= form_dropdown('edit-type', $customer_type, null, 'id="edit-type" class="form-control custom-select d-block"'); ?>
-                                                <small id="error-edit-type" class="d-none error-message text-danger">Jenis customer wajib diisi!</small>
+                                                <small
+                                                    id="error-edit-type"
+                                                    class="d-none error-message text-danger"
+                                                >Jenis customer wajib diisi!</small>
                                             </div>
                                         </div>
                                     </div>
@@ -419,7 +437,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             class="form-control"
                                             value="<?= $discount[0]->discount ?>"
                                         />
-                                        <small id="error-discount-distributor" class="d-none error-message text-danger">Masukkan diskon antara 0-100 untuk distributor!</small>
+                                        <small
+                                            id="error-discount-distributor"
+                                            class="d-none error-message text-danger"
+                                        >Masukkan diskon antara 0-100 untuk distributor!</small>
                                     </div>
                                     <div class="form-group">
                                         <label
@@ -437,7 +458,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             class="form-control"
                                             value="<?= $discount[1]->discount ?>"
                                         />
-                                        <small id="error-discount-reseller" class="d-none error-message text-danger">Masukkan diskon antara 0-100 untuk reseller!</small>
+                                        <small
+                                            id="error-discount-reseller"
+                                            class="d-none error-message text-danger"
+                                        >Masukkan diskon antara 0-100 untuk reseller!</small>
                                     </div>
                                     <div class="form-group">
                                         <label
@@ -455,7 +479,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             class="form-control"
                                             value="<?= $discount[2]->discount ?>"
                                         />
-                                        <small id="error-discount-author" class="d-none error-message text-danger">Masukkan diskon antara 0-100 untuk penulis!</small>
+                                        <small
+                                            id="error-discount-author"
+                                            class="d-none error-message text-danger"
+                                        >Masukkan diskon antara 0-100 untuk penulis!</small>
                                     </div>
                                     <div class="form-group">
                                         <label
@@ -473,7 +500,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             class="form-control"
                                             value="<?= $discount[3]->discount ?>"
                                         />
-                                        <small id="error-discount-member" class="d-none error-message text-danger">Masukkan diskon antara 0-100 untuk member!</small>
+                                        <small
+                                            id="error-discount-member"
+                                            class="d-none error-message text-danger"
+                                        >Masukkan diskon antara 0-100 untuk member!</small>
                                     </div>
                                     <div class="form-group">
                                         <label
@@ -491,7 +521,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             class="form-control"
                                             value="<?= $discount[4]->discount ?>"
                                         />
-                                        <small id="error-discount-general" class="d-none error-message text-danger">Masukkan diskon antara 0-100 untuk umum!</small>
+                                        <small
+                                            id="error-discount-general"
+                                            class="d-none error-message text-danger"
+                                        >Masukkan diskon antara 0-100 untuk umum!</small>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -526,7 +559,7 @@ function modalEdit(customerId) {
             $('#edit-name').val(res.name)
             $('#edit-address').val(res.address)
             $('#edit-phone-number').val(res.phone_number)
-            $("#edit-type option").removeAttr('selected'); 
+            $("#edit-type option").removeAttr('selected');
             $("#edit-type option[value=" + res.type + "]").attr('selected', 'selected');
         },
         error: function(err) {
@@ -549,14 +582,12 @@ $("#add-customer-form").submit(function(e) {
             var response = $.parseJSON(res)
 
             // No validation error
-            if(response.status){
+            if (response.status) {
                 location.href = "<?= base_url('customer'); ?>";
-            }
-            else{
+            } else {
                 // Hide all error message
                 $(".error-message").addClass('d-none');
-                for (var i = 0; i < response.input_error.length; i++) 
-                {
+                for (var i = 0; i < response.input_error.length; i++) {
                     // Show error message
                     $('#' + response.input_error[i]).removeClass('d-none');
                 }
@@ -582,14 +613,12 @@ $("#edit-customer-form").submit(function(e) {
             var response = $.parseJSON(res)
 
             // No validation error
-            if(response.status){
+            if (response.status) {
                 location.href = "<?= base_url('customer'); ?>";
-            }
-            else{
+            } else {
                 // Hide all error message
                 $(".error-message").addClass('d-none');
-                for (var i = 0; i < response.input_error.length; i++) 
-                {
+                for (var i = 0; i < response.input_error.length; i++) {
                     // Show error message
                     $('#' + response.input_error[i]).removeClass('d-none');
                 }
@@ -615,14 +644,12 @@ $("#update-discount-form").submit(function(e) {
             var response = $.parseJSON(res)
 
             // No validation error
-            if(response.status){
+            if (response.status) {
                 location.href = "<?= base_url('customer'); ?>";
-            }
-            else{
+            } else {
                 // Hide all error message
                 $(".error-message").addClass('d-none');
-                for (var i = 0; i < response.input_error.length; i++) 
-                {
+                for (var i = 0; i < response.input_error.length; i++) {
                     // Show error message
                     $('#' + response.input_error[i]).removeClass('d-none');
                 }
@@ -635,5 +662,4 @@ $("#update-discount-form").submit(function(e) {
         },
     });
 })
-
 </script>

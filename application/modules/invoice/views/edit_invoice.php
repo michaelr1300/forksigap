@@ -21,7 +21,7 @@
                     <form
                         id="invoice_form"
                         method="post"
-                        action="<?= base_url("invoice/edit_invoice/$invoice->invoice_id"); ?>"
+                        action="<?= base_url("invoice/edit/$invoice->invoice_id"); ?>"
                         redirect="<?= base_url("invoice"); ?>"
                     >
                         <legend>Form Edit Faktur</legend>
@@ -125,7 +125,10 @@
                                     id="new-customer-name"
                                     class="form-control"
                                 />
-                                <small id="error-name" class="d-none error-message text-danger">Nama wajib diisi!</small>
+                                <small
+                                    id="error-name"
+                                    class="d-none error-message text-danger"
+                                >Nama wajib diisi!</small>
                             </div>
                             <div class="form-group">
                                 <label
@@ -153,7 +156,10 @@
                                     id="new-customer-phone-number"
                                     class="form-control"
                                 />
-                                <small id="error-phone-number" class="d-none error-message text-danger">Nomor telepon wajib diisi!</small>
+                                <small
+                                    id="error-phone-number"
+                                    class="d-none error-message text-danger"
+                                >Nomor telepon wajib diisi!</small>
                             </div>
                             <div class="form-group">
                                 <label
@@ -162,30 +168,30 @@
                                 >Jenis Customer<abbr title="Required">*</abbr></label>
 
                                 <?= form_dropdown('new-customer-type', $customer_type, null, 'id="new-customer-type" class="form-control custom-select d-block w-100"'); ?>
-                                <small id="error-type" class="d-none error-message text-danger">Jenis customer wajib diisi!</small>
+                                <small
+                                    id="error-type"
+                                    class="d-none error-message text-danger"
+                                >Jenis customer wajib diisi!</small>
                             </div>
                         </div>
-                        <div
-                            id="customer-info"
-                            style="display: none;"
-                        >
+                        <div id="customer-info">
                             <table class="table table-striped table-bordered mb-0">
                                 <tbody>
                                     <tr>
                                         <td width="175px"> Nama Pembeli </td>
-                                        <td id="info-customer-name"></a></td>
+                                        <td id="info-customer-name"><?= $customer->name ?></td>
                                     </tr>
                                     <tr>
                                         <td width="175px"> Alamat </td>
-                                        <td id="info-address"></td>
+                                        <td id="info-address"><?= $customer->address ?></td>
                                     </tr>
                                     <tr>
                                         <td width="175px"> Nomor Telepon </td>
-                                        <td id="info-phone-number"></td>
+                                        <td id="info-phone-number"><?= $customer->phone_number ?></td>
                                     </tr>
                                     <tr>
                                         <td width="175px"> Tipe Membership </td>
-                                        <td id="info-type"></td>
+                                        <td id="info-type"><?= $customer->type ?></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -324,12 +330,20 @@
                                                     value="<?= $books->book_id ?>"
                                                 />
                                             </td>
-                                            <td class="align-middle"><?= $books->price ?></td>
+                                            <td class="align-middle">
+                                                <input
+                                                    type="number"
+                                                    hidden
+                                                    name="invoice_book_price[]"
+                                                    class="form-control"
+                                                    value="<?= $books->price ?>"
+                                                />
+                                            </td>
                                             <td class="align-middle"><?= $books->qty ?>
                                                 <input
                                                     type="number"
                                                     hidden
-                                                    name="invoice_qty[]"
+                                                    name="invoice_book_qty[]"
                                                     class="form-control"
                                                     value="<?= $books->qty ?>"
                                                 />
@@ -338,15 +352,15 @@
                                                 <input
                                                     type="number"
                                                     hidden
-                                                    name="invoice_discount[]"
+                                                    name="invoice_book_discount[]"
                                                     class="form-control"
                                                     value="<?= $books->discount ?>"
                                                 />
                                             </td>
                                             <td class="align-middle">
                                                 <?php
-                                                    $total = $books->qty * $books->price * (1 - $books->discount);
-                                                    echo $total;
+                                                $total = $books->qty * $books->price * (1 - $books->discount);
+                                                echo $total;
                                                 ?></td>
                                             <td class="align-middle"><button
                                                     type="button"
@@ -378,6 +392,9 @@
 
 <script>
 $(document).ready(function() {
+    console.log('<?= $discount ?>')
+    $('#discount').val('<?= $discount ?>')
+
     if ($('#type').val() == "cash") {
         $('#sourceDropdown').show()
     }
