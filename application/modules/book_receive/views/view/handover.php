@@ -125,7 +125,7 @@ $is_handover_staff_set     = $book_receive->handover_staff;
                     <?= (!$is_handover_deadline_set) ? 'disabled' : ''; ?>" id="btn-generate-pdf-handover"
                     title="Generate PDF berita acara serah terima">Generate PDF <i class="fas fa-file-pdf fa-fw"></i>
                 </a>
-                <form action="<?=base_url('book_receive/api_upload_handover/')?>" method="POST" enctype="multipart/form-data" style="display:inline;" id="handover_upload_form">
+                <form action="<?=base_url('book_receive/upload_handover/')?>" method="POST" enctype="multipart/form-data" style="display:inline;" id="handover_upload_form">
                     <label class="btn btn-outline-primary mb-0" id="btn-upload-pdf-handover"
                         title="Upload PDF berita acara serah terima disetujui"><i class="fas fa-upload fa-fw"></i>
                         <input type="file" accept=".pdf,.jpeg,.jpg,.png" class="btn btn-outline-primary" name="handover_file" id="handover_file" style="display:none" onchange="form.submit()"/>
@@ -133,11 +133,13 @@ $is_handover_staff_set     = $book_receive->handover_staff;
                     </label>
                     <input type="hidden" name="receive_id" id="receive_id" value=<?= $book_receive->book_receive_id ?>/>
                 </form>
-                <a href="<?=base_url('book_receive/download_file/bookreceive/'.$uploaded_file)?>"
-                    class="btn btn-outline-success 
-                    <?= (!$uploaded_file) ? 'disabled' : ''; ?>" id="btn-download-pdf-handover"
+                <?php if ($uploaded_file){ ?>
+                    <a href="<?=base_url('book_receive/download_file/bookreceive/'.$uploaded_file)?>"
+                    class="btn btn-outline-success" id="btn-download-pdf-handover"
                     title="Download PDF berita acara serah terima disetujui"><i class="fas fa-download fa-fw"></i> Download File Berita Acara
-                </a>
+                    </a>
+                        
+                <?php }?>
                 <?php endif; ?>
             </div>
         </div>

@@ -49,7 +49,7 @@ class Book_receive extends MY_Controller
         }
 
         $book_receive = $this->book_receive->get_book_receive($book_receive_id);
-        $filename = $filename = 'serah_terima_' . str_replace(['-', ':', ' '], ['', '', '_'], $book_receive->entry_date);
+        $filename = $filename = 'serah_terima_' .$book_receive_id.'_'. str_replace(['-', ':', ' '], ['', '', '_'], $book_receive->entry_date);
 
         if (!$book_receive) {
             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
@@ -575,13 +575,13 @@ class Book_receive extends MY_Controller
         redirect($this->pages . "/view/$book_receive_id");
     }
 
-    public function api_upload_handover()
+    public function upload_handover()
     {
         if ($this->_is_warehouse_admin() && $this->input->method() == 'post') {
             $book_receive_id = $this->input->post('receive_id');
             $book_receive = $this->book_receive->where('book_receive_id', $book_receive_id)->get();
             if (!empty($_FILES) && $book_receive) {
-                $filename = 'serah_terima_' . str_replace(['-', ':', ' '], ['', '', '_'], $book_receive->entry_date);
+                $filename = 'serah_terima_' .$book_receive_id.'_'. str_replace(['-', ':', ' '], ['', '', '_'], $book_receive->entry_date);
                 $upload   = $this->book_receive->upload_handover('handover_file', $filename);
                 if ($upload) {
                     $this->session->set_flashdata('success', 'Upload file sukses');
