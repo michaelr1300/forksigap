@@ -102,26 +102,29 @@ class Invoice extends MY_Controller
         }
 
         //View add invoice
-        $invoice_type = array(
-            'credit'      => 'Kredit',
-            'online'      => 'Online',
-            'cash'        => 'Tunai',
-            'showroom'    => 'Showroom',
-        );
-
-        $source = array(
-            'library'   => 'Perpustakaan',
-            'showroom'  => 'Showroom',
-            'warehouse' => 'Gudang'
-        );
-
-        $customer_type = get_customer_type();
-
-        $dropdown_book_options = $this->invoice->get_ready_book_list();
-
-        $pages       = $this->pages;
-        $main_view   = 'invoice/add_invoice';
-        $this->load->view('template', compact('pages', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
+        else{
+            $invoice_type = array(
+                'credit'      => 'Kredit',
+                'online'      => 'Online',
+                'cash'        => 'Tunai',
+                'showroom'    => 'Showroom',
+            );
+    
+            $source = array(
+                'library'   => 'Perpustakaan',
+                'showroom'  => 'Showroom',
+                'warehouse' => 'Gudang'
+            );
+    
+            $customer_type = get_customer_type();
+    
+            $dropdown_book_options = $this->invoice->get_ready_book_list();
+    
+            $pages       = $this->pages;
+            $main_view   = 'invoice/add_invoice';
+            $this->load->view('template', compact('pages', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
+        
+        }
     }
 
     // View Edit
@@ -180,9 +183,9 @@ class Invoice extends MY_Controller
             echo json_encode(['status' => TRUE]);
             $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
         }
-
         //view edit invoice
-        $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
+        else{
+            $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
 
         //info customer dan diskon
         $customer = $this->db->select('*')->from('customer')->where('customer_id', $invoice->customer_id)->get()->row();
@@ -211,6 +214,8 @@ class Invoice extends MY_Controller
         $pages       = $this->pages;
         $main_view   = 'invoice/edit_invoice';
         $this->load->view('template', compact('pages', 'invoice', 'invoice_book', 'customer', 'discount', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
+   
+        }
     }
 
     public function action($id, $invoice_status)

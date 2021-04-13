@@ -392,7 +392,6 @@
 
 <script>
 $(document).ready(function() {
-    console.log('<?= $discount ?>')
     $('#discount').val('<?= $discount ?>')
 
     if ($('#type').val() == "cash") {
@@ -602,8 +601,9 @@ $(document).ready(function() {
             url: url,
             data: form.serialize(), // serializes the form's elements.
             success: function(result) {
+                var response = $.parseJSON(result)
                 //Validation Error
-                if (!(result === "no_errors")) {
+                if (!(response.status == "true")) {
                     alert("Semua data Faktur harus diisi dan Faktur tidak boleh kosong!");
                     form_valid = "FALSE";
                 }
