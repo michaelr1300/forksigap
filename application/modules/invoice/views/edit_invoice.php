@@ -21,8 +21,6 @@
                     <form
                         id="invoice_form"
                         method="post"
-                        action="<?= base_url("invoice/edit/$invoice->invoice_id"); ?>"
-                        redirect="<?= base_url("invoice"); ?>"
                     >
                         <legend>Form Edit Faktur</legend>
                         <div class="form-group">
@@ -49,6 +47,10 @@
                             >Jenis Faktur<abbr title="Required">*</abbr></label>
 
                             <?= form_dropdown('type', $invoice_type, $invoice->type, 'id="type" class="form-control custom-select d-block"'); ?>
+                            <small
+                                id="error-type"
+                                class="d-none error-message text-danger"
+                            >Jenis Faktur wajib diisi!</small>
                         </div>
                         <div
                             class="form-group"
@@ -60,6 +62,10 @@
                                 class="font-weight-bold"
                             >Asal Stok<abbr title="Required">*</abbr></label>
                             <?= form_dropdown('source', $source, $invoice->source, 'id="source" class="form-control custom-select d-block"'); ?>
+                            <small
+                                id="error-source"
+                                class="d-none error-message text-danger"
+                            >Asal stok wajib diisi jika jenis faktur adalah tunai!</small>
                         </div>
                         <div class="form-group">
                             <label
@@ -84,6 +90,10 @@
                                 </div>
                             </div>
                             <?= form_error('due_date', $invoice->due_date); ?>
+                            <small
+                                id="error-due-date"
+                                class="d-none error-message text-danger"
+                            >Jatuh Tempo wajib diisi!</small>
                         </div>
                         <hr class="my-4">
                         <div class="row">
@@ -126,7 +136,7 @@
                                     class="form-control"
                                 />
                                 <small
-                                    id="error-name"
+                                    id="error-new-customer-name"
                                     class="d-none error-message text-danger"
                                 >Nama wajib diisi!</small>
                             </div>
@@ -157,7 +167,7 @@
                                     class="form-control"
                                 />
                                 <small
-                                    id="error-phone-number"
+                                    id="error-new-customer-phone-number"
                                     class="d-none error-message text-danger"
                                 >Nomor telepon wajib diisi!</small>
                             </div>
@@ -169,11 +179,15 @@
 
                                 <?= form_dropdown('new-customer-type', $customer_type, null, 'id="new-customer-type" class="form-control custom-select d-block w-100"'); ?>
                                 <small
-                                    id="error-type"
+                                    id="error-new-customer-type"
                                     class="d-none error-message text-danger"
                                 >Jenis customer wajib diisi!</small>
                             </div>
                         </div>
+                        <small
+                            id="error-customer-info"
+                            class="d-none error-message text-danger"
+                        >Data customer wajib diisi!</small>
                         <div id="customer-info">
                             <table class="table table-striped table-bordered mb-0">
                                 <tbody>
@@ -204,6 +218,10 @@
                                     class="font-weight-bold"
                                 >Judul buku</label>
                                 <?= form_dropdown('book_id', $dropdown_book_options, 0, 'id="book-id" class="form-control custom-select d-block"'); ?>
+                                <small
+                                    id="error-no-book"
+                                    class="d-none error-message text-danger"
+                                >Buku wajib diisi!</small>
                             </div>
 
                         </div>
@@ -589,29 +607,27 @@ $(document).ready(function() {
     })
 
     $("#invoice_form").submit(function(e) {
-
         e.preventDefault(); // avoid to execute the actual submit of the form.
-
         var form = $(this);
-        var url = form.attr('action');
-        var redirect = form.attr('redirect');
-        var form_valid = "TRUE";
         $.ajax({
             type: "POST",
-            url: url,
+            url: "<?= base_url("invoice/add"); ?>",
             data: form.serialize(), // serializes the form's elements.
             success: function(result) {
                 var response = $.parseJSON(result)
                 //Validation Error
-                if (!(response.status == "true")) {
-                    alert("Semua data Faktur harus diisi dan Faktur tidak boleh kosong!");
-                    form_valid = "FALSE";
+                if (response.status != true) {
+                    $(".error-message").addClass('d-none');
+                    for (var i = 0; i < response.input_error.length; i++) {
+                        // Show error message
+                        $('#' + response.input_error[i]).removeClass('d-none');
+                    }
+                } else {
+                    location.href = "<?= base_url('invoice'); ?>";
                 }
             },
-            complete: function() {
-                if (form_valid == "TRUE") {
-                    location.href = redirect;
-                }
+            error: function(req, err) {
+                console.log(err)
             }
         });
     })

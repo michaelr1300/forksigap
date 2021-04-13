@@ -4,16 +4,11 @@ class Invoice_model extends MY_Model
 {
     public $per_page = 10;
 
-    public function validate_add_invoice()
+    public function validate_invoice()
     {
         $data = array();
         $data['input_error'] = array();
         $data['status'] = TRUE;
-
-        if ($this->input->post('number') == '') {
-            $data['input_error'][] = 'error-number';
-            $data['status'] = FALSE;
-        }
 
         if ($this->input->post('due-date') == '') {
             $data['input_error'][] = 'error-due-date';
@@ -30,54 +25,29 @@ class Invoice_model extends MY_Model
             }
         }
 
-        if (!empty($this->input->post('customer-id'))) {
-        } else {
-            if (!empty($this->input->post('new-customer-type') == '')) {
+        if ($this->input->post('customer-id') == '') {
+            if ($this->input->post('new-customer-name') == '' && $this->input->post('new-customer-phone-number') == '') {
+                $data['input_error'][] = 'error-customer-info';
+                $data['status'] = FALSE;
             } else {
-                $data['input_error'][] = 'error-new-customer-type';
-                $data['status'] = FALSE;
+                if ($this->input->post('new-customer-name') == '') {
+                    $data['input_error'][] = 'error-new-customer-name';
+                    $data['status'] = FALSE;
+                }
+                if ($this->input->post('new-customer-phone-number') == '') {
+                    $data['input_error'][] = 'error-new-customer-phone-number';
+                    $data['status'] = FALSE;
+                }
+                if ($this->input->post('new-customer-type') == '') {
+                    $data['input_error'][] = 'error-new-customer-type';
+                    $data['status'] = FALSE;
+                }
             }
         }
 
-        if ($data['status'] === FALSE) {
-            echo json_encode($data);
-            exit();
-        }
-    }
-
-    public function validate_edit_invoice()
-    {
-        $data = array();
-        $data['input_error'] = array();
-        $data['status'] = TRUE;
-
-        if ($this->input->post('number') == '') {
-            $data['input_error'][] = 'error-number';
+        if (empty($this->input->post('invoice_book_id'))) {
+            $data['input_error'][] = 'error-no-book';
             $data['status'] = FALSE;
-        }
-
-        if ($this->input->post('due-date') == '') {
-            $data['input_error'][] = 'error-due-date';
-            $data['status'] = FALSE;
-        }
-
-        if ($this->input->post('type') == '') {
-            $data['input_error'][] = 'error-type';
-            $data['status'] = FALSE;
-        } else if ($this->input->post('type') == 'cash') {
-            if ($this->input->post('source') == '') {
-                $data['input_error'][] = 'error-source';
-                $data['status'] = FALSE;
-            }
-        }
-
-        if (!empty($this->input->post('customer-id'))) {
-        } else {
-            if (!empty($this->input->post('new-customer-type') == '')) {
-            } else {
-                $data['input_error'][] = 'error-new-customer-type';
-                $data['status'] = FALSE;
-            }
         }
 
         if ($data['status'] === FALSE) {

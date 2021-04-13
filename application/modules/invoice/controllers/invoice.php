@@ -49,7 +49,7 @@ class Invoice extends MY_Controller
         //post add invoice
         if ($_POST) {
             //validasi input
-            $this->invoice->validate_add_invoice();
+            $this->invoice->validate_invoice();
             $date_created       = date('Y-m-d H:i:s');
 
             //Nentuin customer id jika customer diambil dari database
@@ -84,7 +84,7 @@ class Invoice extends MY_Controller
             $invoice_id = $this->db->insert_id();
 
             // Jumlah Buku di Faktur
-            $countsize = $this->input->post('invoice_book_id');
+            $countsize = count($this->input->post('invoice_book_id'));
 
             // Masukkan buku di form faktur ke database
             for ($i = 0; $i < $countsize; $i++) {
@@ -102,28 +102,27 @@ class Invoice extends MY_Controller
         }
 
         //View add invoice
-        else{
+        else {
             $invoice_type = array(
                 'credit'      => 'Kredit',
                 'online'      => 'Online',
                 'cash'        => 'Tunai',
                 'showroom'    => 'Showroom',
             );
-    
+
             $source = array(
                 'library'   => 'Perpustakaan',
                 'showroom'  => 'Showroom',
                 'warehouse' => 'Gudang'
             );
-    
+
             $customer_type = get_customer_type();
-    
+
             $dropdown_book_options = $this->invoice->get_ready_book_list();
-    
+
             $pages       = $this->pages;
             $main_view   = 'invoice/add_invoice';
             $this->load->view('template', compact('pages', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
-        
         }
     }
 
@@ -133,7 +132,7 @@ class Invoice extends MY_Controller
         //post edit invoice
         if ($_POST) {
             //validasi input edit
-            $this->invoice->validate_edit_invoice();
+            $this->invoice->validate_invoice();
             //Nentuin customer id jika customer diambil dari database
             if (!empty($this->input->post('customer-id'))) {
                 $customer_id = $this->input->post('customer-id');
@@ -164,7 +163,7 @@ class Invoice extends MY_Controller
             $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
 
             // Jumlah Buku di Faktur
-            $countsize = $this->input->post('invoice_book_id');
+            $countsize = count($this->input->post('invoice_book_id'));
 
             //hapus invoice_book yang sudah ada 
             $this->db->where('invoice_id', $invoice_id)->delete('invoice_book');
@@ -184,37 +183,36 @@ class Invoice extends MY_Controller
             $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
         }
         //view edit invoice
-        else{
+        else {
             $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
 
-        //info customer dan diskon
-        $customer = $this->db->select('*')->from('customer')->where('customer_id', $invoice->customer_id)->get()->row();
-        $discount_data = $this->db->select('discount')->from('discount')->where('membership', $customer->type)->get()->row();
-        $discount = $discount_data->discount;
+            //info customer dan diskon
+            $customer = $this->db->select('*')->from('customer')->where('customer_id', $invoice->customer_id)->get()->row();
+            $discount_data = $this->db->select('discount')->from('discount')->where('membership', $customer->type)->get()->row();
+            $discount = $discount_data->discount;
 
-        $invoice_type = array(
-            'credit'      => 'Kredit',
-            'online'      => 'Online',
-            'cash'        => 'Tunai',
-            'showroom'    => 'Showroom',
-        );
+            $invoice_type = array(
+                'credit'      => 'Kredit',
+                'online'      => 'Online',
+                'cash'        => 'Tunai',
+                'showroom'    => 'Showroom',
+            );
 
-        $source = array(
-            'library'   => 'Perpustakaan',
-            'showroom'  => 'Showroom',
-            'warehouse' => 'Gudang'
-        );
+            $source = array(
+                'library'   => 'Perpustakaan',
+                'showroom'  => 'Showroom',
+                'warehouse' => 'Gudang'
+            );
 
-        $customer_type = get_customer_type();
+            $customer_type = get_customer_type();
 
-        $invoice_book = $this->invoice->fetch_invoice_book($invoice->invoice_id);
+            $invoice_book = $this->invoice->fetch_invoice_book($invoice->invoice_id);
 
-        $dropdown_book_options = $this->invoice->get_ready_book_list();
+            $dropdown_book_options = $this->invoice->get_ready_book_list();
 
-        $pages       = $this->pages;
-        $main_view   = 'invoice/edit_invoice';
-        $this->load->view('template', compact('pages', 'invoice', 'invoice_book', 'customer', 'discount', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
-   
+            $pages       = $this->pages;
+            $main_view   = 'invoice/edit_invoice';
+            $this->load->view('template', compact('pages', 'invoice', 'invoice_book', 'customer', 'discount', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
         }
     }
 
