@@ -145,15 +145,15 @@ $level              = check_level();
                                         </td>
                                         <td>
                                             <?php 
-                                                if ($revision->operator == "+") {
-                                                    echo '<div class="text-success"> ' . $revision->operator . ' ' . $revision->warehouse_revision . '</div>';
-                                                } elseif ($revision->operator == "-") {
-                                                    echo '<div class="text-danger"> ' . $revision->operator . ' ' . $revision->warehouse_revision . '</div>';
+                                                if ($revision->revision_type == "add") {
+                                                    echo '<div class="text-success"> ' . '+' . ' ' . $revision->warehouse_revision . '</div>';
+                                                } elseif ($revision->revision_type == "sub") {
+                                                    echo '<div class="text-danger"> ' . '+' . ' ' . $revision->warehouse_revision . '</div>';
                                                 } 
                                             ?>
                                         </td>
                                         <td>
-                                            <?//= date('d F Y H:i:s', strtotime($history->date)); ?>
+                                            <?= date('d F Y H:i:s', strtotime($revision->revision_date)); ?>
                                         </td>
                                         <td>
                                             <?= $revision->notes; ?>
@@ -168,7 +168,7 @@ $level              = check_level();
                         <!-- Log perubahan Stok -->
                         <?php else : ?>
                         <p>Data hanya dapat dilihat oleh Superadmin, Admin Penerbitan, Admin Percetakan, Admin Gudang,
-                            dan Admin Pemasaran</p>
+                        dan Admin Pemasaran</p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -184,47 +184,122 @@ $level              = check_level();
                         <div class="col-3">
                             <input type="year" id="year" name="year" class="form-control">
                         </div>
-                        <canvas id="chart-transaction-per-month" height="35vh !important" width="100% !important">
+                        <canvas id="chart-transaction-yearly" height="35vh !important" width="100% !important">
                         <script>
-                        var ctx = document.getElementById('chart-transaction-per-month').getContext('2d');
-                        var myChart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-                                    'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                                ],
-                                datasets: [{
-                                    label: 'Transaksi Buku per Bulan',
-                                    data: [12, 19, 10, 12, 15, 14, 10, 22, 18, 11, 12, 21],
-                                    backgroundColor: [
-                                        'rgba(74, 138, 216, 0.2)'
-                                        // 'rgba(54, 162, 235, 0.2)',
-                                        // 'rgba(255, 206, 86, 0.2)',
-                                        // 'rgba(75, 192, 192, 0.2)',
-                                        // 'rgba(153, 102, 255, 0.2)',
-                                        // 'rgba(255, 159, 64, 0.2)'
-                                    ],
-                                    borderColor: [
-                                        'rgba(74, 138, 216, 1)',
-                                        // 'rgba(54, 162, 235, 1)',
-                                        // 'rgba(255, 206, 86, 1)',
-                                        // 'rgba(75, 192, 192, 1)',
-                                        // 'rgba(153, 102, 255, 1)',
-                                        // 'rgba(255, 159, 64, 1)'
-                                    ],
-                                    // borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    yAxes: [{
-                                        ticks: {
-                                            beginAtZero: true
-                                        }
-                                    }]
+                        $(document).ready(function() {
+                            $.ajax({
+                                url: "<?=base_url('/book_stock/api_chart_data/')?><?=$book_stock->book_stock_id?>/2021",
+                                method: "GET",
+                                success: function(data) {
+                                    console.log(data);
+                                    // var label = [];
+                                    var value = [];
+                                    for (var i in data) {
+                                        // label.push(data[i].tahun);
+                                        value.push(data[i].stock_in);
+                                    }
+                                    console.log(value);
+                                    // var ctx = document.getElementById('chart-transaction-yearly').getContext('2d');
+                                    // var chart = new Chart(ctx, {
+                                    //     type: 'bar',
+                                    //     data: {
+                                    //         labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                                    //             'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                                    //         ],
+                                    //         datasets: [{
+                                    //             label: 'coba',
+                                    //             backgroundColor: 'rgb(252, 116, 101)',
+                                    //             borderColor: 'rgb(255, 255, 255)',
+                                    //             data: value
+                                    //         }]
+                                    //     },
+                                    //     options: {}
+                                    // });
                                 }
-                            }
+                            });
                         });
+
+                        // var ctx = document.getElementById('chart-transaction-yearly').getContext('2d');
+                        // var myChart = new Chart(ctx, {
+                        //     type: 'bar',
+                        //     data: {
+                        //         labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
+                        //             'Agustus', 'September', 'Oktober', 'November', 'Desember'
+                        //         ],
+                        //         datasets: [{
+                        //             label: 'Transaksi Buku Tahun ...',
+                        //             data: [],
+                        //             backgroundColor: [
+                        //                 'rgba(74, 138, 216, 0.2)'
+                        //                 // 'rgba(54, 162, 235, 0.2)',
+                        //                 // 'rgba(255, 206, 86, 0.2)',
+                        //                 // 'rgba(75, 192, 192, 0.2)',
+                        //                 // 'rgba(153, 102, 255, 0.2)',
+                        //                 // 'rgba(255, 159, 64, 0.2)'
+                        //             ],
+                        //             borderColor: [
+                        //                 'rgba(74, 138, 216, 1)',
+                        //                 // 'rgba(54, 162, 235, 1)',
+                        //                 // 'rgba(255, 206, 86, 1)',
+                        //                 // 'rgba(75, 192, 192, 1)',
+                        //                 // 'rgba(153, 102, 255, 1)',
+                        //                 // 'rgba(255, 159, 64, 1)'
+                        //             ],
+                        //             // borderWidth: 1
+                        //         }]
+                        //     },
+                        //     options: {
+                        //         scales: {
+                        //             yAxes: [{
+                        //                 ticks: {
+                        //                     beginAtZero: true
+                        //                 },
+                        //                 scaleLabel: {
+                        //                     display: true,
+                        //                     labelString: 'Jumlah'
+                        //                 }
+                        //             }],
+                        //             xAxes: [{
+                        //                 scaleLabel: {
+                        //                     display: true,
+                        //                     LabelString: 'Bulan'
+                        //                 }
+                        //             }],
+                        //         }
+                        //     }
+                        // });
+                        // var updatePerMonth = function(book_id) {
+                        //     $.ajax({
+                        //     url: "<?//=base_url('/book_stock/api_chart_data/')?>/<?=$book_stock->book_id?>/2021",
+                        //     type: 'GET',
+                        //     dataType: 'json',
+                        //     headers: {
+                        //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        //         },
+                        //         success: function(data) {
+                        //             // chart_transaction_yearly.data.labels = data.stock_in;
+                        //             // stock_in = data.stock_in.map(a => a);
+                        //             console.log(data.stock_in);
+                        //             chart_transaction_yearly.data.datasets[0].data = data.stock_in;
+                        //             // chart_transaction_yearly.update();
+                        //         },
+                        //         error: function(data){
+                        //             console.log(data);
+                        //         }
+                        //     });
+                        // }
+
+                        // updatePerMonth(year);
+
+                        // $("#date").change(function() {
+                        //     get_url();
+                        // });
+                        
+                        // function get_url() {
+                        //     date = $("#date").val();
+                        //     url = "<?//=base_url('book_stock/api_chart_data/') ?>"+book_id+'/'+'2021';
+                        //     updatePerDay(year);
+                        // }
                         </script>
                     </div>
                     <!-- Per month chart -->
@@ -236,7 +311,7 @@ $level              = check_level();
                             <input type="date" id="date" name="date" class="form-control">
                         </div>
                         <canvas id="chart-transaction-per-day" height="35vh !important" width="100% !important">
-                        <script>
+                        <!-- <script>
                         book_id = <?=$book_stock->book_id?>
                         today = new Date();
                         document.getELementById('date').valueAsDate = today;
@@ -278,38 +353,7 @@ $level              = check_level();
                                 }
                             }
                         });
-                        var updatePerDay = function(date, book_id) {
-                            $.ajax({
-                            url: "<?=base_url('book_stock/api_chart_data/')?>"+book_id+'/'+date,
-                            type: 'GET',
-                            dataType: 'json',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                },
-                                success: function(data) {
-                                    chart_transaction_per_day.data.labels = data.stock_in.month;
-                                    stock_in = data.stock_in.map(a => a);
-                                    chart_transaction_per_day.data.datasets[0].data = stock_in;
-                                    chart_transaction_per_day.update();
-                                },
-                                error: function(data){
-                                    console.log(data);
-                                }
-                            });
-                        }
-
-                        updatePerDay(date);
-
-                        $("#date").change(function() {
-                            get_url();
-                        });
-                        
-                        function get_url() {
-                            date = $("#date").val();
-                            url = "<?=base_url('book_stock/api_chart_data/') ?>"+book_id+'/'+date;
-                            updatePerDay(date);
-                        }
-                        </script>
+                        </script> -->
                     </div>
                 </div>
                 <!-- book transaction data -->

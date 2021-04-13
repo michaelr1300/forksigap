@@ -126,7 +126,7 @@ class Book_transfer_model extends MY_Model{
         // ->when('book_transfer_category', $filters['book_transfer_category'])
         ->join_table('book','book_transfer','book')
         ->join_table('library','book_transfer','library')
-        // ->order_by('UNIX_TIMESTAMP(entry_date)','DESC')
+        ->order_by('book_transfer_id','DESC')
         // ->order_by('status')
         ->paginate($page)
         ->get_all();
