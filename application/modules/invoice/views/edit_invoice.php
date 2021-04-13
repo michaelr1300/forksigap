@@ -21,8 +21,6 @@
                     <form
                         id="invoice_form"
                         method="post"
-                        action="<?= base_url("invoice/edit_invoice/$invoice->invoice_id"); ?>"
-                        redirect="<?= base_url("invoice"); ?>"
                     >
                         <legend>Form Edit Faktur</legend>
                         <div class="form-group">
@@ -49,6 +47,10 @@
                             >Jenis Faktur<abbr title="Required">*</abbr></label>
 
                             <?= form_dropdown('type', $invoice_type, $invoice->type, 'id="type" class="form-control custom-select d-block"'); ?>
+                            <small
+                                id="error-type"
+                                class="d-none error-message text-danger"
+                            >Jenis Faktur wajib diisi!</small>
                         </div>
                         <div
                             class="form-group"
@@ -60,6 +62,10 @@
                                 class="font-weight-bold"
                             >Asal Stok<abbr title="Required">*</abbr></label>
                             <?= form_dropdown('source', $source, $invoice->source, 'id="source" class="form-control custom-select d-block"'); ?>
+                            <small
+                                id="error-source"
+                                class="d-none error-message text-danger"
+                            >Asal stok wajib diisi jika jenis faktur adalah tunai!</small>
                         </div>
                         <div class="form-group">
                             <label
@@ -84,6 +90,10 @@
                                 </div>
                             </div>
                             <?= form_error('due_date', $invoice->due_date); ?>
+                            <small
+                                id="error-due-date"
+                                class="d-none error-message text-danger"
+                            >Jatuh Tempo wajib diisi!</small>
                         </div>
                         <hr class="my-4">
                         <div class="row">
@@ -125,7 +135,10 @@
                                     id="new-customer-name"
                                     class="form-control"
                                 />
-                                <small id="error-name" class="d-none error-message text-danger">Nama wajib diisi!</small>
+                                <small
+                                    id="error-new-customer-name"
+                                    class="d-none error-message text-danger"
+                                >Nama wajib diisi!</small>
                             </div>
                             <div class="form-group">
                                 <label
@@ -153,7 +166,10 @@
                                     id="new-customer-phone-number"
                                     class="form-control"
                                 />
-                                <small id="error-phone-number" class="d-none error-message text-danger">Nomor telepon wajib diisi!</small>
+                                <small
+                                    id="error-new-customer-phone-number"
+                                    class="d-none error-message text-danger"
+                                >Nomor telepon wajib diisi!</small>
                             </div>
                             <div class="form-group">
                                 <label
@@ -162,30 +178,34 @@
                                 >Jenis Customer<abbr title="Required">*</abbr></label>
 
                                 <?= form_dropdown('new-customer-type', $customer_type, null, 'id="new-customer-type" class="form-control custom-select d-block w-100"'); ?>
-                                <small id="error-type" class="d-none error-message text-danger">Jenis customer wajib diisi!</small>
+                                <small
+                                    id="error-new-customer-type"
+                                    class="d-none error-message text-danger"
+                                >Jenis customer wajib diisi!</small>
                             </div>
                         </div>
-                        <div
-                            id="customer-info"
-                            style="display: none;"
-                        >
+                        <small
+                            id="error-customer-info"
+                            class="d-none error-message text-danger"
+                        >Data customer wajib diisi!</small>
+                        <div id="customer-info">
                             <table class="table table-striped table-bordered mb-0">
                                 <tbody>
                                     <tr>
                                         <td width="175px"> Nama Pembeli </td>
-                                        <td id="info-customer-name"></a></td>
+                                        <td id="info-customer-name"><?= $customer->name ?></td>
                                     </tr>
                                     <tr>
                                         <td width="175px"> Alamat </td>
-                                        <td id="info-address"></td>
+                                        <td id="info-address"><?= $customer->address ?></td>
                                     </tr>
                                     <tr>
                                         <td width="175px"> Nomor Telepon </td>
-                                        <td id="info-phone-number"></td>
+                                        <td id="info-phone-number"><?= $customer->phone_number ?></td>
                                     </tr>
                                     <tr>
                                         <td width="175px"> Tipe Membership </td>
-                                        <td id="info-type"></td>
+                                        <td id="info-type"><?= $customer->type ?></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -198,6 +218,10 @@
                                     class="font-weight-bold"
                                 >Judul buku</label>
                                 <?= form_dropdown('book_id', $dropdown_book_options, 0, 'id="book-id" class="form-control custom-select d-block"'); ?>
+                                <small
+                                    id="error-no-book"
+                                    class="d-none error-message text-danger"
+                                >Buku wajib diisi!</small>
                             </div>
 
                         </div>
@@ -324,12 +348,20 @@
                                                     value="<?= $books->book_id ?>"
                                                 />
                                             </td>
-                                            <td class="align-middle"><?= $books->price ?></td>
+                                            <td class="align-middle">
+                                                <input
+                                                    type="number"
+                                                    hidden
+                                                    name="invoice_book_price[]"
+                                                    class="form-control"
+                                                    value="<?= $books->price ?>"
+                                                />
+                                            </td>
                                             <td class="align-middle"><?= $books->qty ?>
                                                 <input
                                                     type="number"
                                                     hidden
-                                                    name="invoice_qty[]"
+                                                    name="invoice_book_qty[]"
                                                     class="form-control"
                                                     value="<?= $books->qty ?>"
                                                 />
@@ -338,15 +370,15 @@
                                                 <input
                                                     type="number"
                                                     hidden
-                                                    name="invoice_discount[]"
+                                                    name="invoice_book_discount[]"
                                                     class="form-control"
                                                     value="<?= $books->discount ?>"
                                                 />
                                             </td>
                                             <td class="align-middle">
                                                 <?php
-                                                    $total = $books->qty * $books->price * (1 - $books->discount);
-                                                    echo $total;
+                                                $total = $books->qty * $books->price * (1 - $books->discount);
+                                                echo $total;
                                                 ?></td>
                                             <td class="align-middle"><button
                                                     type="button"
@@ -378,6 +410,8 @@
 
 <script>
 $(document).ready(function() {
+    $('#discount').val('<?= $discount ?>')
+
     if ($('#type').val() == "cash") {
         $('#sourceDropdown').show()
     }
@@ -573,28 +607,27 @@ $(document).ready(function() {
     })
 
     $("#invoice_form").submit(function(e) {
-
         e.preventDefault(); // avoid to execute the actual submit of the form.
-
         var form = $(this);
-        var url = form.attr('action');
-        var redirect = form.attr('redirect');
-        var form_valid = "TRUE";
         $.ajax({
             type: "POST",
-            url: url,
+            url: "<?= base_url("invoice/add"); ?>",
             data: form.serialize(), // serializes the form's elements.
             success: function(result) {
+                var response = $.parseJSON(result)
                 //Validation Error
-                if (!(result === "no_errors")) {
-                    alert("Semua data Faktur harus diisi dan Faktur tidak boleh kosong!");
-                    form_valid = "FALSE";
+                if (response.status != true) {
+                    $(".error-message").addClass('d-none');
+                    for (var i = 0; i < response.input_error.length; i++) {
+                        // Show error message
+                        $('#' + response.input_error[i]).removeClass('d-none');
+                    }
+                } else {
+                    location.href = "<?= base_url('invoice'); ?>";
                 }
             },
-            complete: function() {
-                if (form_valid == "TRUE") {
-                    location.href = redirect;
-                }
+            error: function(req, err) {
+                console.log(err)
             }
         });
     })

@@ -13,7 +13,6 @@ class Invoice extends MY_Controller
 
     public function index($page = NULL)
     {
-
         $filters = [
             'keyword'   => $this->input->get('keyword', true),
             'type'      => $this->input->get('type', true),
@@ -24,7 +23,8 @@ class Invoice extends MY_Controller
 
         $get_data = $this->invoice->filter_invoice($filters, $page);
 
-        $invoice = $get_data['invoice'];
+        //data invoice
+        $invoice    = $get_data['invoice'];
         $total      = $get_data['total'];
         $pagination = $this->invoice->make_pagination(site_url('invoice'), 2, $total);
 
@@ -39,110 +39,207 @@ class Invoice extends MY_Controller
         $main_view      = 'invoice/view_invoice';
         $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
         $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
-        
+
         $this->load->view('template', compact('pages', 'main_view', 'invoice', 'invoice_books'));
     }
 
     // View add
     public function add()
     {
-        $invoice_type = array(
-            'credit'      => 'Kredit',
-            'online'      => 'Online',
-            'cash'        => 'Tunai',
-            'showroom'    => 'Showroom',
-        );
+        //post add invoice
+        if ($_POST) {
+            //validasi input
+            $this->invoice->validate_invoice();
+            $date_created       = date('Y-m-d H:i:s');
 
-        $source = array(
-            'library'   => 'Perpustakaan',
-            'showroom'  => 'Showroom',
-            'warehouse' => 'Gudang'
-        );
-
-        $customer_type = get_customer_type();
-
-        $dropdown_book_options = $this->invoice->get_ready_book_list();
-
-        $pages       = $this->pages;
-        $main_view   = 'invoice/add_invoice';
-        $this->load->view('template', compact('pages', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
-    }
-
-    // Store data
-    public function add_invoice()
-    {
-        $this->load->library('form_validation');
-
-        $this->form_validation->set_rules('number', 'Nomor Faktur', 'required');
-        $this->form_validation->set_rules('due-date', 'Jatuh Tempo', 'required');
-        $this->form_validation->set_rules('type', 'Tipe Faktur', 'required');
-        $this->form_validation->set_rules('invoice_book_id[]', 'Buku Invoice', 'required');
-
-        if ($this->form_validation->run() == FALSE) {
-            $this->session->set_flashdata('error', 'Faktur gagal ditambah.');
-            redirect($_SERVER['HTTP_REFERER'], 'refresh');
-        } else {
-            $check = $this->invoice->add_invoice();
-            if ($check   ==  TRUE) {
-                $this->session->set_flashdata('success', 'Faktur berhasil ditambah.');
-                redirect('invoice');
-            } else {
-                $this->session->set_flashdata('error', 'Faktur gagal ditambah.');
-                redirect($_SERVER['HTTP_REFERER'], 'refresh');
+            //Nentuin customer id jika customer diambil dari database
+            if (!empty($this->input->post('customer-id'))) {
+                $customer_id = $this->input->post('customer-id');
             }
+            //Nentuin customer id jika customer dibuat baru
+            else {
+                $add = [
+                    'name'          => $this->input->post('new-customer-name'),
+                    'address'       => $this->input->post('new-customer-address'),
+                    'phone_number'  => $this->input->post('new-customer-phone-number'),
+                    'type'          => $this->input->post('new-customer-type')
+                ];
+                $this->db->insert('customer', $add);
+                $customer_id = $this->db->insert_id();
+            }
+
+            $add = [
+                'number'            => $this->input->post('number'),
+                'customer_id'       => $customer_id,
+                'due_date'          => $this->input->post('due-date'),
+                'type'              => $this->input->post('type'),
+                'source'            => $this->input->post('source'),
+                'status'            => 'waiting',
+                'issued_date'       => $date_created
+                // 'user_created'      => $user_created
+            ];
+            $this->db->insert('invoice', $add);
+
+            // ID faktur terbaru untuk diisi buku
+            $invoice_id = $this->db->insert_id();
+
+            // Jumlah Buku di Faktur
+            $countsize = count($this->input->post('invoice_book_id'));
+
+            // Masukkan buku di form faktur ke database
+            for ($i = 0; $i < $countsize; $i++) {
+                $book = [
+                    'invoice_id'    => $invoice_id,
+                    'book_id'       => $this->input->post('invoice_book_id')[$i],
+                    'qty'           => $this->input->post('invoice_book_qty')[$i],
+                    'price'         => $this->input->post('invoice_book_price')[$i],
+                    'discount'      => $this->input->post('invoice_book_discount')[$i]
+                ];
+                $this->db->insert('invoice_book', $book);
+            }
+            echo json_encode(['status' => TRUE]);
+            $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
+        }
+
+        //View add invoice
+        else {
+            $invoice_type = array(
+                'credit'      => 'Kredit',
+                'online'      => 'Online',
+                'cash'        => 'Tunai',
+                'showroom'    => 'Showroom',
+            );
+
+            $source = array(
+                'library'   => 'Perpustakaan',
+                'showroom'  => 'Showroom',
+                'warehouse' => 'Gudang'
+            );
+
+            $customer_type = get_customer_type();
+
+            $dropdown_book_options = $this->invoice->get_ready_book_list();
+
+            $pages       = $this->pages;
+            $main_view   = 'invoice/add_invoice';
+            $this->load->view('template', compact('pages', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
         }
     }
 
     // View Edit
     public function edit($invoice_id)
     {
-        $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
+        //post edit invoice
+        if ($_POST) {
+            //validasi input edit
+            $this->invoice->validate_invoice();
+            //Nentuin customer id jika customer diambil dari database
+            if (!empty($this->input->post('customer-id'))) {
+                $customer_id = $this->input->post('customer-id');
+            }
+            //Nentuin customer id jika customer dibuat baru
+            else {
+                $add = [
+                    'name'          => $this->input->post('new-customer-name'),
+                    'address'       => $this->input->post('new-customer-address'),
+                    'phone_number'  => $this->input->post('new-customer-phone-number'),
+                    'type'          => $this->input->post('new-customer-type')
+                ];
+                $this->db->insert('customer', $add);
+                $customer_id = $this->db->insert_id();
+            }
 
-        $invoice_type = array(
-            'credit'      => 'Kredit',
-            'online'      => 'Online',
-            'cash'        => 'Tunai',
-            'showroom'    => 'Showroom',
-        );
+            $edit = [
+                'number'            => $this->input->post('number'),
+                'customer_id'       => $customer_id,
+                'due_date'          => $this->input->post('due-date'),
+                'type'              => $this->input->post('type'),
+                'source'            => $this->input->post('source'),
+                'status'            => 'waiting'
+                // 'date_edited'   => date('Y-m-d H:i:s'),
+                // 'user_edited'   => $_SESSION['username']
+            ];
 
-        $source = array(
-            'library'   => 'Perpustakaan',
-            'showroom'  => 'Showroom',
-            'warehouse' => 'Gudang'
-        );
+            $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
 
-        $customer_type = get_customer_type();
+            // Jumlah Buku di Faktur
+            $countsize = count($this->input->post('invoice_book_id'));
 
-        $invoice_book = $this->invoice->fetch_invoice_book($invoice->invoice_id);
+            //hapus invoice_book yang sudah ada 
+            $this->db->where('invoice_id', $invoice_id)->delete('invoice_book');
 
-        $dropdown_book_options = $this->invoice->get_ready_book_list();
+            // Masukkan buku di form faktur ke database
+            for ($i = 0; $i < $countsize; $i++) {
+                $book = [
+                    'invoice_id'    => $invoice_id,
+                    'book_id'       => $this->input->post('invoice_book_id')[$i],
+                    'qty'           => $this->input->post('invoice_book_qty')[$i],
+                    'price'         => $this->input->post('invoice_book_price')[$i],
+                    'discount'      => $this->input->post('invoice_book_discount')[$i]
+                ];
+                $this->db->insert('invoice_book', $book);
+            }
+            echo json_encode(['status' => TRUE]);
+            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+        }
+        //view edit invoice
+        else {
+            $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
 
-        $pages       = $this->pages;
-        $main_view   = 'invoice/edit_invoice';
-        $this->load->view('template', compact('pages', 'invoice', 'invoice_book', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
+            //info customer dan diskon
+            $customer = $this->db->select('*')->from('customer')->where('customer_id', $invoice->customer_id)->get()->row();
+            $discount_data = $this->db->select('discount')->from('discount')->where('membership', $customer->type)->get()->row();
+            $discount = $discount_data->discount;
+
+            $invoice_type = array(
+                'credit'      => 'Kredit',
+                'online'      => 'Online',
+                'cash'        => 'Tunai',
+                'showroom'    => 'Showroom',
+            );
+
+            $source = array(
+                'library'   => 'Perpustakaan',
+                'showroom'  => 'Showroom',
+                'warehouse' => 'Gudang'
+            );
+
+            $customer_type = get_customer_type();
+
+            $invoice_book = $this->invoice->fetch_invoice_book($invoice->invoice_id);
+
+            $dropdown_book_options = $this->invoice->get_ready_book_list();
+
+            $pages       = $this->pages;
+            $main_view   = 'invoice/edit_invoice';
+            $this->load->view('template', compact('pages', 'invoice', 'invoice_book', 'customer', 'discount', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
+        }
     }
 
-    // Update data
-    public function edit_invoice($invoice_id)
+    public function action($id, $invoice_status)
     {
-        $this->form_validation->set_rules('number', 'Nomor Faktur', 'required');
-        $this->form_validation->set_rules('due-date', 'Jatuh Tempo', 'required');
-        $this->form_validation->set_rules('type', 'Tipe Faktur', 'required');
-        $this->form_validation->set_rules('invoice_book_id[]', 'Buku Invoice', 'required');
-
-        if ($this->form_validation->run() == FALSE) {
-            $this->session->set_flashdata('error', 'Invoice gagal diubah.');
-            redirect($_SERVER['HTTP_REFERER'], 'refresh');
-        } else {
-            $check = $this->invoice->edit_invoice($invoice_id);
-            if ($check   ==  TRUE) {
-                $this->session->set_flashdata('success', 'Invoice berhasil diubah.');
-                redirect('invoice/view/' . $invoice_id);
-            } else {
-                $this->session->set_flashdata('error', 'Invoice gagal diubah.');
-                redirect($_SERVER['HTTP_REFERER'], 'refresh');
-            }
+        $invoice = $this->invoice->where('invoice_id', $id)->get();
+        if (!$invoice) {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
         }
+
+        $this->db->trans_begin();
+
+        // update lembar kerja
+        $this->invoice->where('invoice_id', $id)->update([
+            'status' => $invoice_status,
+        ]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+        } else {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+        }
+
+        redirect($this->pages);
     }
 
 

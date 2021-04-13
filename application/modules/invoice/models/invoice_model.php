@@ -4,100 +4,56 @@ class Invoice_model extends MY_Model
 {
     public $per_page = 10;
 
-    public function add_invoice()
+    public function validate_invoice()
     {
-        $date_created       = date('Y-m-d H:i:s');
+        $data = array();
+        $data['input_error'] = array();
+        $data['status'] = TRUE;
 
-        //Nentuin customer id
-        if (!empty($this->input->post('customer-id'))) {
-            $customer_id = $this->input->post('customer-id');
-        } else {
-            $type = $this->input->post('new-customer-type');
-            $add = [
-                'name'          => $this->input->post('new-customer-name'),
-                'address'       => $this->input->post('new-customer-address'),
-                'phone_number'  => $this->input->post('new-customer-phone-number'),
-                'type'          => $type
-            ];
-            $this->db->insert('customer', $add);
-            $customer_id = $this->db->insert_id();
+        if ($this->input->post('due-date') == '') {
+            $data['input_error'][] = 'error-due-date';
+            $data['status'] = FALSE;
         }
 
-        $add = [
-            'number'            => $this->input->post('number'),
-            'customer_id'       => $customer_id,
-            'due_date'          => $this->input->post('due-date'),
-            'type'              => $this->input->post('type'),
-            'source'            => $this->input->post('source'),
-            'status'            => 'waiting',
-            'issued_date'       => $date_created
-            // 'user_created'      => $user_created
-        ];
-        $this->db->insert('invoice', $add);
-
-        // ID faktur terbaru untuk diisi buku
-        $invoice_id = $this->db->insert_id();
-
-        // Jumlah Buku di Faktur
-        $countsize = $this->input->post('invoice_book_id');
-
-        // Masukkan buku di form faktur ke database
-        for ($i = 0; $i < $countsize; $i++) {
-            $book = [
-                'invoice_id'    => $invoice_id,
-                'book_id'       => $this->input->post('invoice_book_id')[$i],
-                'qty'           => $this->input->post('invoice_book_qty')[$i],
-                'price'         => $this->input->post('invoice_book_price')[$i],
-                'discount'      => $this->input->post('invoice_book_discount')[$i]
-            ];
-            $this->db->insert('invoice_book', $book);
-        }
-        return TRUE;
-    }
-
-    public function edit_invoice($invoice_id)
-    {
-        if (!empty($this->input->post('customer-id'))) {
-            $customer_id = $this->input->post('customer-id');
-        } else {
-            $type = $this->input->post('new-customer-type');
-            $add = [
-                'name'          => $this->input->post('new-customer-name'),
-                'type'          => $type
-            ];
-            $this->db->insert('customer', $add);
-            $customer_id = $this->db->insert_id();
+        if ($this->input->post('type') == '') {
+            $data['input_error'][] = 'error-type';
+            $data['status'] = FALSE;
+        } else if ($this->input->post('type') == 'cash') {
+            if ($this->input->post('source') == '') {
+                $data['input_error'][] = 'error-source';
+                $data['status'] = FALSE;
+            }
         }
 
-        $edit = [
-            'number'            => $this->input->post('number'),
-            'customer_id'       => $customer_id,
-            'due_date'          => $this->input->post('due-date'),
-            'type'              => $this->input->post('type'),
-            'source'            => $this->input->post('source'),
-            'status'            => 'waiting'
-            // 'date_edited'   => date('Y-m-d H:i:s'),
-            // 'user_edited'   => $_SESSION['username']
-        ];
-
-        $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
-
-        // Jumlah Buku di Faktur
-        $countsize = $this->input->post('invoice_book_id');
-
-        // Masukkan buku di form faktur ke database
-        $this->db->where('invoice_id', $invoice_id)->delete('invoice_book');
-        for ($i = 0; $i < $countsize; $i++) {
-            $book = [
-                'invoice_id'    => $invoice_id,
-                'book_id'       => $this->input->post('invoice_book_id')[$i],
-                'qty'           => $this->input->post('invoice_book_qty')[$i],
-                'price'         => $this->input->post('invoice_book_price')[$i],
-                'discount'      => $this->input->post('invoice_book_discount')[$i]
-            ];
-            $this->db->insert('invoice_book', $book);
+        if ($this->input->post('customer-id') == '') {
+            if ($this->input->post('new-customer-name') == '' && $this->input->post('new-customer-phone-number') == '') {
+                $data['input_error'][] = 'error-customer-info';
+                $data['status'] = FALSE;
+            } else {
+                if ($this->input->post('new-customer-name') == '') {
+                    $data['input_error'][] = 'error-new-customer-name';
+                    $data['status'] = FALSE;
+                }
+                if ($this->input->post('new-customer-phone-number') == '') {
+                    $data['input_error'][] = 'error-new-customer-phone-number';
+                    $data['status'] = FALSE;
+                }
+                if ($this->input->post('new-customer-type') == '') {
+                    $data['input_error'][] = 'error-new-customer-type';
+                    $data['status'] = FALSE;
+                }
+            }
         }
-        return TRUE;
+
+        if (empty($this->input->post('invoice_book_id'))) {
+            $data['input_error'][] = 'error-no-book';
+            $data['status'] = FALSE;
+        }
+
+        if ($data['status'] === FALSE) {
+            echo json_encode($data);
+            exit();
+        }
     }
 
     public function fetch_invoice_id($invoice_id)
@@ -135,12 +91,12 @@ class Invoice_model extends MY_Model
     {
 
         $stock = $this->db->select('warehouse_present')
-                    ->from('book_stock')
-                    ->where('book_id', $book_id)
-                    ->order_by("book_stock_id", "DESC")
-                    ->limit(1)
-                    ->get()
-                    ->row();
+            ->from('book_stock')
+            ->where('book_id', $book_id)
+            ->order_by("book_stock_id", "DESC")
+            ->limit(1)
+            ->get()
+            ->row();
         return $stock;
     }
 
@@ -253,8 +209,6 @@ class Invoice_model extends MY_Model
         ];
     }
 
-    
-
     public function when($params, $data)
     {
         // jika data null, maka skip
@@ -278,10 +232,10 @@ class Invoice_model extends MY_Model
     public function filter_book_request($filters, $page)
     {
         $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
-            ->where('status','preparing_waiting')
-            ->or_where('status','preparing')
-            ->or_where('status','preparing_finish')
-            ->or_where('status','finish')
+            ->where('status', 'confirm')
+            ->or_where('status', 'preparing')
+            ->or_where('status', 'preparing_finish')
+            ->or_where('status', 'finish')
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
             ->when_request('status', $filters['status'])
@@ -290,10 +244,10 @@ class Invoice_model extends MY_Model
             ->get_all();
 
         $total = $this->select(['invoice_id', 'number'])
-            ->where('status','preparing_waiting')
-            ->or_where('status','preparing')
-            ->or_where('status','preparing_finish')
-            ->or_where('status','finish')
+            ->where('status', 'confirm')
+            ->or_where('status', 'preparing')
+            ->or_where('status', 'preparing_finish')
+            ->or_where('status', 'finish')
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
             ->when_request('status', $filters['status'])
@@ -314,21 +268,19 @@ class Invoice_model extends MY_Model
                 $this->group_start();
                 $this->or_like('number', $data);
                 $this->group_end();
-            } 
-            if($params == 'type') {
-                if($data == 'gudang'){
-                    $this->where('type','credit');
-                    $this->where('type','online');
-                    $this->where('type','cash')->where('source','warehouse');
-                }
-                else if($data == 'non_gudang_showroom'){
-                    $this->where('type','showroom');
-                }
-                else if($data == 'non_gudang_perpus'){
-                    $this->where('type','cash')->where('source','library');
+            }
+            if ($params == 'type') {
+                if ($data == 'gudang') {
+                    $this->where('type', 'credit');
+                    $this->where('type', 'online');
+                    $this->where('type', 'cash')->where('source', 'warehouse');
+                } else if ($data == 'non_gudang_showroom') {
+                    $this->where('type', 'showroom');
+                } else if ($data == 'non_gudang_perpus') {
+                    $this->where('type', 'cash')->where('source', 'library');
                 }
             }
-            if($params == 'status') {
+            if ($params == 'status') {
                 $this->where('status', $data);
             }
         }
@@ -361,7 +313,7 @@ class Invoice_model extends MY_Model
             'status' => "preparing_finish",
             "preparing_end_date" => date('Y-m-d H:i:s')
         ];
-        
+
 
         $update_state = $this->invoice->where('invoice_id', $invoice_id)->update($input);
 
@@ -370,5 +322,43 @@ class Invoice_model extends MY_Model
         } else {
             return false;
         }
+    }
+
+    public function update_status($invoice_id, $status)
+    {
+        if ($status == 'confirm') {
+            $edit = [
+                'status'          => $status,
+                'confirm_date'    => date('Y-m-d H:i:s'),
+                //'user_edited'   => $_SESSION['username']
+            ];
+        }
+
+        if ($status == 'preparing_start') {
+            $edit = [
+                'status'          => $status,
+                'preparing_start_date'    => date('Y-m-d H:i:s'),
+                //'user_edited'   => $_SESSION['username']
+            ];
+        }
+
+        if ($status == 'preparing_end') {
+            $edit = [
+                'status'          => $status,
+                'preparing_end_date'    => date('Y-m-d H:i:s'),
+                //'user_edited'   => $_SESSION['username']
+            ];
+        }
+
+        if ($status == 'finish') {
+            $edit = [
+                'status'          => $status,
+                'finish_date'    => date('Y-m-d H:i:s'),
+                //'user_edited'   => $_SESSION['username']
+            ];
+        }
+
+        $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
+        return TRUE;
     }
 }
