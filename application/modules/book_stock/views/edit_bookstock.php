@@ -32,6 +32,10 @@
                                     value="<?= $input->book_id; ?>" />
                             </div>
                             <div class="form-group">
+                                <label class="font-weight-bold">Stok Gudang</label>
+                                <span class ="form-control bg-secondary" readonly><?=$input->warehouse_present?></span>
+                            </div>
+                            <div class="form-group">
                                 <label for="revision_type" class="d-block font-weight-bold"> Tipe Operasi <abbr
                                         title="Required">*</abbr></label>
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">

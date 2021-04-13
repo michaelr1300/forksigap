@@ -262,7 +262,7 @@ class Invoice_model extends MY_Model
     public function filter_book_request($filters, $page)
     {
         $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
-            ->where('status', 'preparing_waiting')
+            ->where('status', 'confirm')
             ->or_where('status', 'preparing')
             ->or_where('status', 'preparing_finish')
             ->or_where('status', 'finish')
@@ -274,7 +274,7 @@ class Invoice_model extends MY_Model
             ->get_all();
 
         $total = $this->select(['invoice_id', 'number'])
-            ->where('status', 'preparing_waiting')
+            ->where('status', 'confirm')
             ->or_where('status', 'preparing')
             ->or_where('status', 'preparing_finish')
             ->or_where('status', 'finish')

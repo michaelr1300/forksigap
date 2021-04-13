@@ -152,8 +152,10 @@ class Book_request extends MY_Controller
 
         //insert to book transaction
         foreach($invoice_books as $invoice_book){
+            $book_stock = $this->book_stock->where('book_id', $invoice_book->book_id)->get();
             $this->book_transaction->insert([
                 'book_id' => $invoice_book->book_id,
+                'book_stock_id' => $book_stock->book_stock_id,
                 'book_invoice_id' => $invoice_book->invoice_id,
                 'stock_out' => $invoice_book->qty,
                 'date' => now()

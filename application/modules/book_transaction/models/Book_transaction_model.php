@@ -11,7 +11,7 @@ class Book_transaction_model extends MY_Model{
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
             ->when('end_date', $filters['end_date'])
-            ->order_by('book_transaction_id')
+            ->order_by('book_transaction_id', 'DESC')
             ->paginate($page)
             ->get_all();
 
