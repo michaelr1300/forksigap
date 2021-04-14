@@ -82,6 +82,12 @@ $menu_list = [
         'level' => 'superadmin|admin_gudang|admin_pemasaran'
     ],
     [
+        'name' => 'Pendapatan',
+        'url'  => 'earning',
+        'icon' => 'fa fa-star',
+        'level' => 'superadmin|admin_gudang|admin_keuangan'
+    ],
+    [
         'name' => 'Royalti',
         'url'  => 'royalty',
         'icon' => 'fa fa-star',
