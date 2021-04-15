@@ -123,7 +123,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?= $type_display ?>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?= substr($book_transaction->date,0,10); ?>
+                                    <?= format_datetime($book_transaction->date); ?>
                                 </td>
                             </tr>
                             <?php endforeach ?>

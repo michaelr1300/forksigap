@@ -7,6 +7,7 @@ class Book_transaction_model extends MY_Model{
     {
         $book_transactions = $this->select([            
             'book.book_title', 'book_transaction.*'])
+            ->where_not('date', NULL)
             ->join_table('book', 'book_transaction', 'book')
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
@@ -15,12 +16,12 @@ class Book_transaction_model extends MY_Model{
             ->paginate($page)
             ->get_all();
 
-        $total = $this->select(['book_transaction.*'])
-            ->join_table('book_receive', 'book_transaction', 'book_receive')
+        $total = $this->select(['book.book_title', 'book_transaction.*'])
+            ->where_not('date', NULL)
+            ->join_table('book', 'book_transaction', 'book')
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
             ->when('end_date', $filters['end_date'])
-            ->paginate($page)
             ->count();
         return [
             'book_transactions' => $book_transactions,
