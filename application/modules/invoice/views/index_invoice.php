@@ -2,18 +2,28 @@
 $level              = check_level();
 $per_page           = 10;
 $keyword            = $this->input->get('keyword');
-$type               = $this->input->get('type');
+$invoice_type       = $this->input->get('invoice_type');
+$customer_type      = $this->input->get('customer_type');
 $status             = $this->input->get('status');
 $page               = $this->uri->segment(2);
 $i                  = isset($page) ? $page * $per_page - $per_page : 0;
 
 
-$type_options = [
+$type_options1 = [
     ''  => '- Filter Kategori Faktur -',
     'credit' => 'Kredit',
     'cash' => 'Tunai',
     'online' => 'Online',
     'showroom' => 'Showroom'
+];
+
+$type_options2 = [
+    ''  => '- Filter Kategori Customer -',
+    'distributor' => 'Distributor',
+    'reseller' => 'Reseller',
+    'author' => 'Penulis',
+    'member' => 'Member',
+    'general' => 'Umum'
 ];
 
 $status_options = [
@@ -25,6 +35,30 @@ $status_options = [
     'finish'            => 'Selesai',
     'cancel'            => 'Dibatalkan'
 ];
+
+function generate_invoice_action($invoice_draft_id)
+{
+    return html_escape('
+    <div class="list-group list-group-bordered" style="margin: -9px -15px;border-radius:0;">
+      <a href="' . base_url("invoice/action/{$invoice_draft_id}/confirm") . '" class="list-group-item list-group-item-action p-2">
+        <div class="list-group-item-figure">
+        <div class="tile bg-success">
+        <span class="fa fa-check"></span>
+        </div>
+        </div>
+        <div class="list-group-item-body"> Setuju </div>
+      </a>
+      <a href="' . base_url("invoice/action/{$invoice_draft_id}/cancel") . '" class="list-group-item list-group-item-action p-2">
+        <div class="list-group-item-figure">
+        <div class="tile bg-danger">
+        <span class="fa fa-ban"></span>
+        </div>
+        </div>
+        <div class="list-group-item-body"> Tolak </div>
+      </a>
+    </div>
+    ');
+}
 ?>
 
 
@@ -56,17 +90,38 @@ $status_options = [
             <section class="card card-fluid">
                 <div class="card-body p-0">
                     <div class="p-3">
+                        <div
+                            class="alert alert-info alert-dismissible fade show"
+                            role="alert"
+                        >
+                            <h5>Info</h5>
+                            <p class="m-0">Klik tombol <button class="btn btn-sm btn-secondary"><i class="fa fa-thumbs-up"></i>
+                                    Aksi</button> untuk menyetujui atau menolak faktur
+                            </p>
+                            <button
+                                type="button"
+                                class="close"
+                                data-dismiss="alert"
+                                aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
-                            <div class="col-12 col-md-4 mt-2">
+                            <div class="col-12 col-md-3 mt-2">
                                 <label for="per_page">Data per halaman</label>
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
-                            <div class="col-12 col-md-4 mt-2">
-                                <label for="type">Jenis</label>
-                                <?= form_dropdown('type', $type_options, $type, 'id="type" class="form-control custom-select d-block" title="Invoice Type"'); ?>
+                            <div class="col-12 col-md-3 mt-2">
+                                <label for="invoice_type">Jenis</label>
+                                <?= form_dropdown('invoice_type', $type_options1, $invoice_type, 'id="invoice_type" class="form-control custom-select d-block" title="Invoice Type"'); ?>
                             </div>
-                            <div class="col-12 col-md-4 mt-2">
+                            <div class="col-12 col-md-3 mt-2">
+                                <label for="customer_type">Jenis</label>
+                                <?= form_dropdown('customer_type', $type_options2, $customer_type, 'id="customer_type" class="form-control custom-select d-block" title="Customer Type"'); ?>
+                            </div>
+                            <div class="col-12 col-md-3 mt-2">
                                 <label for="status">Status</label>
                                 <?= form_dropdown('status', $status_options, $status, 'id="status" class="form-control custom-select d-block" title="Invoice Status"'); ?>
                             </div>
@@ -113,11 +168,19 @@ $status_options = [
                                     >Nomor Faktur</th>
                                     <th
                                         scope="col"
-                                        style="width:20%;"
+                                        style="width:15%;"
                                     >Jenis</th>
                                     <th
                                         scope="col"
+                                        style="width:10%;"
+                                    >Customer</th>
+                                    <th
+                                        scope="col"
                                         style="width:15%;"
+                                    >Member</th>
+                                    <th
+                                        scope="col"
+                                        style="width:10%;"
                                     >Tanggal Dibuat</th>
                                     <th
                                         scope="col"
@@ -132,7 +195,7 @@ $status_options = [
                                         scope="col"
                                         style="width:20%;"
                                         class="pr-4"
-                                    >&nbsp</th>
+                                    > &nbsp; </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -150,7 +213,13 @@ $status_options = [
                                             </a>
                                         </td>
                                         <td class="align-middle">
-                                            <?= get_invoice_type()[$lData->type]; ?>
+                                            <?= get_invoice_type()[$lData->invoice_type]; ?>
+                                        </td>
+                                        <td class="align-middle">
+                                            <?= highlight_keyword($lData->customer_name, $keyword); ?>
+                                        </td>
+                                        <td class="align-middle">
+                                            <?= get_customer_type()[$lData->customer_type]; ?>
                                         </td>
                                         <td class="align-middle">
                                             <?= date("d/m/y", strtotime($lData->issued_date)); ?>
@@ -161,14 +230,30 @@ $status_options = [
                                         <td class="align-middle pr-4">
                                             <?= get_invoice_status()[$lData->status]; ?>
                                         </td>
-                                        <td class="align-middle pr-4">
-                                            <a
-                                                href="<?= base_url('invoice/edit/' . $lData->invoice_id . ''); ?>"
-                                                class="btn btn-sm btn-secondary"
-                                            >
-                                                <i class="fa fa-pencil-alt"></i>
-                                                <span class="sr-only">Edit</span>
-                                            </a>
+                                        <td class="align-middle text-right d-flex">
+                                            <?php if ($lData->status == 'waiting') : ?>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-secondary"
+                                                    data-container="body"
+                                                    data-toggle="popover"
+                                                    data-placement="left"
+                                                    data-html="true"
+                                                    data-content="<?= generate_invoice_action($lData->invoice_id); ?>"
+                                                    data-trigger="focus"
+                                                    style="margin-right:5px;"
+                                                >
+                                                    <i class="fa fa-thumbs-up">Aksi</i>
+                                                </button>
+                                                <a
+                                                    title="Edit"
+                                                    href="<?= base_url('invoice/edit/' . $lData->invoice_id . ''); ?>"
+                                                    class="btn btn-sm btn-secondary"
+                                                >
+                                                    <i class="fa fa-pencil-alt"></i>
+                                                    <span class="sr-only">Edit</span>
+                                                </a>
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

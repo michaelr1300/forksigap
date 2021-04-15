@@ -188,17 +188,21 @@ class Invoice_model extends MY_Model
 
     public function filter_invoice($filters, $page)
     {
-        $invoice = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type'])
+        $invoice = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'invoice.customer_id', 'name as customer_name', 'customer.type as customer_type', 'status', 'invoice.type as invoice_type'])
+            ->join('customer', 'invoice.customer_id = customer.customer_id', 'left')
             ->when('keyword', $filters['keyword'])
-            ->when('type', $filters['type'])
+            ->when('invoice_type', $filters['invoice_type'])
+            ->when('customer_type', $filters['customer_type'])
             ->when('status', $filters['status'])
             ->order_by('invoice_id', 'DESC')
             ->paginate($page)
             ->get_all();
 
-        $total = $this->select(['invoice_id', 'number'])
+        $total = $this->select(['invoice_id', 'number', 'name'])
+            ->join('customer', 'invoice.customer_id = customer.customer_id', 'left')
             ->when('keyword', $filters['keyword'])
-            ->when('type', $filters['type'])
+            ->when('invoice_type', $filters['invoice_type'])
+            ->when('customer_type', $filters['customer_type'])
             ->when('status', $filters['status'])
             ->order_by('invoice_id')
             ->count();
@@ -216,10 +220,12 @@ class Invoice_model extends MY_Model
             if ($params == 'keyword') {
                 $this->group_start();
                 $this->or_like('number', $data);
+                $this->or_like('name', $data);
                 $this->group_end();
             } else {
                 $this->group_start();
-                $this->or_like('type', $data);
+                $this->or_like('invoice.type', $data);
+                $this->or_like('customer.type', $data);
                 $this->or_like('status', $data);
                 $this->group_end();
             }
@@ -243,7 +249,7 @@ class Invoice_model extends MY_Model
             ->paginate($page)
             ->get_all();
 
-        $total = $this->select(['invoice_id', 'number'])
+        $total = $this->select('invoice_id')
             ->where('status', 'confirm')
             ->or_where('status', 'preparing')
             ->or_where('status', 'preparing_finish')
