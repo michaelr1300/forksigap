@@ -14,9 +14,10 @@ class Invoice extends MY_Controller
     public function index($page = NULL)
     {
         $filters = [
-            'keyword'   => $this->input->get('keyword', true),
-            'type'      => $this->input->get('type', true),
-            'status'    => $this->input->get('status', true)
+            'keyword'           => $this->input->get('keyword', true),
+            'invoice_type'      => $this->input->get('invoice_type', true),
+            'status'            => $this->input->get('status', true),
+            'customer_type'     => $this->input->get('customer_type', true)
         ];
 
         $this->invoice->per_page = $this->input->get('per_page', true) ?? 10;

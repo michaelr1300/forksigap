@@ -2,18 +2,28 @@
 $level              = check_level();
 $per_page           = 10;
 $keyword            = $this->input->get('keyword');
-$type               = $this->input->get('type');
+$invoice_type       = $this->input->get('invoice_type');
+$customer_type      = $this->input->get('customer_type');
 $status             = $this->input->get('status');
 $page               = $this->uri->segment(2);
 $i                  = isset($page) ? $page * $per_page - $per_page : 0;
 
 
-$type_options = [
+$type_options1 = [
     ''  => '- Filter Kategori Faktur -',
     'credit' => 'Kredit',
     'cash' => 'Tunai',
     'online' => 'Online',
     'showroom' => 'Showroom'
+];
+
+$type_options2 = [
+    ''  => '- Filter Kategori Customer -',
+    'distributor' => 'Distributor',
+    'reseller' => 'Reseller',
+    'author' => 'Penulis',
+    'member' => 'Member',
+    'general' => 'Umum'
 ];
 
 $status_options = [
@@ -99,15 +109,19 @@ function generate_invoice_action($invoice_draft_id)
                         </div>
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
-                            <div class="col-12 col-md-4 mt-2">
+                            <div class="col-12 col-md-3 mt-2">
                                 <label for="per_page">Data per halaman</label>
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
-                            <div class="col-12 col-md-4 mt-2">
-                                <label for="type">Jenis</label>
-                                <?= form_dropdown('type', $type_options, $type, 'id="type" class="form-control custom-select d-block" title="Invoice Type"'); ?>
+                            <div class="col-12 col-md-3 mt-2">
+                                <label for="invoice_type">Jenis</label>
+                                <?= form_dropdown('invoice_type', $type_options1, $invoice_type, 'id="invoice_type" class="form-control custom-select d-block" title="Invoice Type"'); ?>
                             </div>
-                            <div class="col-12 col-md-4 mt-2">
+                            <div class="col-12 col-md-3 mt-2">
+                                <label for="customer_type">Jenis</label>
+                                <?= form_dropdown('customer_type', $type_options2, $customer_type, 'id="customer_type" class="form-control custom-select d-block" title="Customer Type"'); ?>
+                            </div>
+                            <div class="col-12 col-md-3 mt-2">
                                 <label for="status">Status</label>
                                 <?= form_dropdown('status', $status_options, $status, 'id="status" class="form-control custom-select d-block" title="Invoice Status"'); ?>
                             </div>
@@ -154,11 +168,19 @@ function generate_invoice_action($invoice_draft_id)
                                     >Nomor Faktur</th>
                                     <th
                                         scope="col"
-                                        style="width:20%;"
+                                        style="width:15%;"
                                     >Jenis</th>
                                     <th
                                         scope="col"
+                                        style="width:10%;"
+                                    >Customer</th>
+                                    <th
+                                        scope="col"
                                         style="width:15%;"
+                                    >Member</th>
+                                    <th
+                                        scope="col"
+                                        style="width:10%;"
                                     >Tanggal Dibuat</th>
                                     <th
                                         scope="col"
@@ -191,7 +213,13 @@ function generate_invoice_action($invoice_draft_id)
                                             </a>
                                         </td>
                                         <td class="align-middle">
-                                            <?= get_invoice_type()[$lData->type]; ?>
+                                            <?= get_invoice_type()[$lData->invoice_type]; ?>
+                                        </td>
+                                        <td class="align-middle">
+                                            <?= highlight_keyword($lData->customer_name, $keyword); ?>
+                                        </td>
+                                        <td class="align-middle">
+                                            <?= get_customer_type()[$lData->customer_type]; ?>
                                         </td>
                                         <td class="align-middle">
                                             <?= date("d/m/y", strtotime($lData->issued_date)); ?>
@@ -203,29 +231,29 @@ function generate_invoice_action($invoice_draft_id)
                                             <?= get_invoice_status()[$lData->status]; ?>
                                         </td>
                                         <td class="align-middle text-right d-flex">
-                                        <?php if ($lData->status == 'waiting') : ?>
-                                            <button
-                                                type="button"
-                                                class="btn btn-sm btn-secondary"
-                                                data-container="body"
-                                                data-toggle="popover"
-                                                data-placement="left"
-                                                data-html="true"
-                                                data-content="<?= generate_invoice_action($lData->invoice_id); ?>"
-                                                data-trigger="focus"
-                                                style="margin-right:5px;"
-                                            >
-                                                <i class="fa fa-thumbs-up">Aksi</i>
-                                            </button>
-                                            <a
-                                                title="Edit"
-                                                href="<?= base_url('invoice/edit/' . $lData->invoice_id . ''); ?>"
-                                                class="btn btn-sm btn-secondary"
-                                            >
-                                                <i class="fa fa-pencil-alt"></i>
-                                                <span class="sr-only">Edit</span>
-                                            </a>
-                                        <?php endif; ?>
+                                            <?php if ($lData->status == 'waiting') : ?>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-secondary"
+                                                    data-container="body"
+                                                    data-toggle="popover"
+                                                    data-placement="left"
+                                                    data-html="true"
+                                                    data-content="<?= generate_invoice_action($lData->invoice_id); ?>"
+                                                    data-trigger="focus"
+                                                    style="margin-right:5px;"
+                                                >
+                                                    <i class="fa fa-thumbs-up">Aksi</i>
+                                                </button>
+                                                <a
+                                                    title="Edit"
+                                                    href="<?= base_url('invoice/edit/' . $lData->invoice_id . ''); ?>"
+                                                    class="btn btn-sm btn-secondary"
+                                                >
+                                                    <i class="fa fa-pencil-alt"></i>
+                                                    <span class="sr-only">Edit</span>
+                                                </a>
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
