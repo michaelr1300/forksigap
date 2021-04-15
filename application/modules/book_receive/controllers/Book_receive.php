@@ -335,6 +335,56 @@ class Book_receive extends MY_Controller
         redirect('book_receive/view/' . $book_receive_id);
     }
 
+    public function api_get_staff_gudang()
+    {
+        $staff_gudang = $this->book_receive->get_staff_gudang();
+        return $this->send_json_output(true, $staff_gudang);
+    }
+
+    public function api_add_staff_gudang()
+    {
+        $input = (object) $this->input->post(null, true);
+
+        if (!$input->book_receive_id || !$input->user_id || !$input->progress) {
+            return $this->send_json_output(false, $this->lang->line('toast_data_not_available'));
+        }
+
+        if (!$this->_is_warehouse_admin()) {
+            $message = $this->lang->line('toast_error_not_authorized');
+            return $this->send_json_output(false, $message);
+        }
+
+        if ($this->book_receive->check_row_staff_gudang($input->book_receive_id, $input->user_id, $input->progress) > 0) {
+            return $this->send_json_output(false, $this->lang->line('toast_data_duplicate'), 422);
+        }
+
+        if ($this->db->insert('book_receive_user', $input)) {
+            return $this->send_json_output(true, $this->lang->line('toast_add_success'));
+        } else {
+            return $this->send_json_output(false, $this->lang->line('toast_add_fail'));
+        }
+    }
+
+    public function api_delete_staff_gudang($id = null)
+    {
+        $staff_gudang = $this->db->where('book_receive_user_id', $id)->get('book_receive_user')->result();
+        if (!$staff_gudang) {
+            $message = $this->lang->line('toast_data_not_available');
+            return $this->send_json_output(false, $message, 404);
+        }
+
+        if (!$this->_is_warehouse_admin()) {
+            $message = $this->lang->line('toast_error_not_authorized');
+            return $this->send_json_output(false, $message);
+        }
+
+        if ($this->db->delete('book_receive_user', ['book_receive_user_id' => $id])) {
+            return $this->send_json_output(true, $this->lang->line('toast_delete_success'));
+        } else {
+            return $this->send_json_output(false, $this->lang->line('toast_delete_fail'));
+        }
+    }
+
     public function api_start_progress($book_receive_id)
     {
         // apakah book_receive tersedia
