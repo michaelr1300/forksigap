@@ -1,12 +1,13 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class earning extends MY_Controller
+class Earning extends MY_Controller
 {
     public function __construct()
     {
         parent::__construct();
         $this->pages = 'earning';
         $this->load->model('earning_model', 'earning');
+        $this->load->helper('sales_helper');
     }
 
     public function index()
@@ -21,7 +22,7 @@ class earning extends MY_Controller
             // 'excel'         => $this->input->get('excel', true)
         ];
         $model = [];
-        for ($month = 1; $month <= 12; $month++) {
+        for ($month = 0; $month <= 12; $month++) {
             $filters['date_month'] = $month;
             $monthly = $this->earning->filter_total($filters);
 
@@ -42,7 +43,9 @@ class earning extends MY_Controller
             ]);
         }
 
-        var_dump($model);
+        //print data april
+        var_dump($model[4]['total_earning']);
+        var_dump($model[4]['count_order']);
 
 
         $pages      = $this->pages;

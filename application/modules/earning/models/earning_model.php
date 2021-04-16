@@ -1,17 +1,20 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class earning_model extends MY_Model
+class Earning_model extends MY_Model
 {
-    protected $table    = 'invoice';
+    // protected $table    = 'invoice';
     public function filter_total($filters)
     {
-        return $this->select('(qty*price*(1-discount/100)) AS earning')
-            ->join('invoice_book', 'invoice.invoice_id = invoice_book.invoice_id')
+        return $this->db->select('(qty*price*(1-discount/100)) AS earning')
+            ->from('invoice')
+            ->join('invoice_book', 'invoice.invoice_id = invoice_book.invoice_id', 'right')
             ->order_by('invoice.invoice_id', 'ASC')
-            ->when('date_year', $filters['date_year'])
-            ->when('date_month', $filters['date_month'])
-            ->where('invoice.status', 'confirm')
-            ->get_all();
+            ->where('YEAR(invoice.issued_date)', $filters['date_year'])
+            ->where('MONTH(invoice.issued_date)', $filters['date_month'])
+            // ->when('date_year', $filters['date_year'])
+            // ->when('date_month', $filters['date_month'])
+            // ->where('invoice.status', 'confirm')
+            ->get()->result();
         //select sum((qty*price*(1-discount/100))) as earning from invoice right join invoice_book on invoice.invoice_id = invoice_book.invoice_id;
     }
 
