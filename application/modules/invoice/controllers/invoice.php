@@ -227,11 +227,22 @@ class Invoice extends MY_Controller
 
         $this->db->trans_begin();
 
-        // update lembar kerja
-        $this->invoice->where('invoice_id', $id)->update([
-            'status' => $invoice_status,
-        ]);
-
+        // Confirm Faktur
+        if ($invoice_status == 'confirm') {
+            $this->invoice->where('invoice_id', $id)->update([
+                'status' => $invoice_status,
+                'confirm_date' => now(),
+                'preparing_deadline' => date("Y-m-d H:i:s", strtotime("+ 1 day")),
+            ]);
+        } else
+        // Cancel Faktur
+        if ($invoice_status == 'cancel') {
+            $this->invoice->where('invoice_id', $id)->update([
+                'status' => $invoice_status,
+                'cancel_date' => now(),
+            ]);
+        }
+        
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
             $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
