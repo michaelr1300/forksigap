@@ -48,10 +48,10 @@ class Book_transaction_model extends MY_Model{
                 $this->where('book_id', $data);
             }
             else if ($params == 'start_date') {
-                $this->where('date >=', $data);
+                $this->where('date >=', $data.' 00:00:00');
             }
             else if ($params == 'end_date') {
-                $this->where('date <=', $data);
+                $this->where('date <=', $data.' 23:59:59');
             }
         }
         return $this;
