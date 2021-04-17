@@ -2,7 +2,6 @@
 $is_handover_started       = format_datetime($book_receive->handover_start_date);
 $is_handover_finished      = format_datetime($book_receive->handover_end_date);
 $is_handover_deadline_set  = format_datetime($book_receive->handover_deadline);
-$is_handover_staff_set     = $book_receive->handover_staff;
 $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('handover', $book_receive->book_receive_id);
 ?>
 <section id="handover-progress-wrapper" class="card">
@@ -27,7 +26,7 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
                     <button id="btn-start-handover" title="Mulai proses serah terima" type="button" class="d-inline btn 
                         <?= !$is_handover_started ? 'btn-warning' : 'btn-secondary'; ?> <?= ($is_handover_started || !$is_handover_deadline_set) ? 'btn-disabled' : ''; ?>
                         "
-                        <?= ($is_handover_started || !$is_handover_deadline_set || !$is_handover_staff_set) ? 'disabled' : ''; ?>><i
+                        <?= ($is_handover_started || !$is_handover_deadline_set || !$staff_gudang) ? 'disabled' : ''; ?>><i
                             class="fas fa-play"></i><span class="d-none d-lg-inline"> Mulai</span></button>
                     <button id="btn-finish-handover" title="Selesai proses serah terima" type="button"
                         class="d-inline btn btn-secondary <?= (!$is_handover_started || $is_wrapping) ? 'btn-disabled' : '' ?>"

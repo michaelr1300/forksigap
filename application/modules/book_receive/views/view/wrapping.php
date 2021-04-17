@@ -3,7 +3,6 @@ $is_wrapping_started       = format_datetime($book_receive->wrapping_start_date)
 $is_wrapping_finished      = format_datetime($book_receive->wrapping_end_date);
 $is_wrapping_deadline_set  = format_datetime($book_receive->wrapping_deadline);
 $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('wrapping', $book_receive->book_receive_id);
-$is_wrapping_staff_set     = $book_receive->wrapping_staff;
 ?>
 <section id="wrapping-progress-wrapper" class="card">
     <div id="wrapping-progress">
@@ -15,18 +14,11 @@ $is_wrapping_staff_set     = $book_receive->wrapping_staff;
                         'progress' => 'wrapping',
                         'staff_gudang' => $staff_gudang
                     ]);        
-
-                    // if (!$is_final) :
-                    // //modal select
-                    // $this->load->view('book_receive/view/common/select_modal', [
-                    //     'progress' => 'wrapping',
-                    //     'staff_gudang' => $staff_gudang
-                    // ]);
                 ?>
                 <div class="card-header-control">
                     <button id="btn-start-wrapping" title="Mulai proses wrapping" type="button" class="d-inline btn 
-                        <?= !$is_wrapping_started ? 'btn-warning' : 'btn-secondary'; ?> <?= ($is_wrapping_started || !$is_wrapping_deadline_set || !$is_wrapping_staff_set) ? 'btn-disabled' : ''; ?>
-                        " <?= ($is_wrapping_started || !$is_wrapping_deadline_set || !$is_wrapping_staff_set) ? 'disabled' : ''; ?>><i
+                        <?= !$is_wrapping_started ? 'btn-warning' : 'btn-secondary'; ?> <?= ($is_wrapping_started || !$is_wrapping_deadline_set || !$staff_gudang) ? 'btn-disabled' : ''; ?>
+                        " <?= ($is_wrapping_started || !$is_wrapping_deadline_set || !$staff_gudang) ? 'disabled' : ''; ?>><i
                             class="fas fa-play"></i><span class="d-none d-lg-inline"> Mulai</span></button>
                     <button id="btn-finish-wrapping" title="Selesai proses wrapping" type="button"
                         class="d-inline btn btn-secondary <?= (!$is_wrapping_started || $is_wrapping) ? 'btn-disabled' : '' ?>"
