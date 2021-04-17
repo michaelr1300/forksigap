@@ -237,11 +237,9 @@ class Invoice_model extends MY_Model
     // filter untuk book request gudang
     public function filter_book_request($filters, $page)
     {
-        $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
+        if ($filters['status']){
+            $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
             ->where('status', 'confirm')
-            ->or_where('status', 'preparing')
-            ->or_where('status', 'preparing_finish')
-            ->or_where('status', 'finish')
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
             ->when_request('status', $filters['status'])
@@ -251,15 +249,28 @@ class Invoice_model extends MY_Model
 
         $total = $this->select('invoice_id')
             ->where('status', 'confirm')
-            ->or_where('status', 'preparing')
-            ->or_where('status', 'preparing_finish')
-            ->or_where('status', 'finish')
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
             ->when_request('status', $filters['status'])
             ->order_by('invoice_id')
             ->count();
+        }
+        else {
+            $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
+            ->where('status', 'confirm')
+            ->when_request('keyword', $filters['keyword'])
+            ->when_request('type', $filters['type'])
+            ->order_by('invoice_id', 'DESC')
+            ->paginate($page)
+            ->get_all();
 
+        $total = $this->select('invoice_id')
+            ->where('status', 'confirm')
+            ->when_request('keyword', $filters['keyword'])
+            ->when_request('type', $filters['type'])
+            ->order_by('invoice_id')
+            ->count();
+        }
         return [
             'book_request'  => $book_request,
             'total' => $total
@@ -275,18 +286,10 @@ class Invoice_model extends MY_Model
                 $this->or_like('number', $data);
                 $this->group_end();
             }
-            if ($params == 'type') {
-                if ($data == 'gudang') {
-                    $this->where('type', 'credit');
-                    $this->where('type', 'online');
-                    $this->where('type', 'cash')->where('source', 'warehouse');
-                } else if ($data == 'non_gudang_showroom') {
-                    $this->where('type', 'showroom');
-                } else if ($data == 'non_gudang_perpus') {
-                    $this->where('type', 'cash')->where('source', 'library');
-                }
+            else if ($params == 'type') {
+                $this->where('type', $data);
             }
-            if ($params == 'status') {
+            else if ($params == 'status') {
                 $this->where('status', $data);
             }
         }

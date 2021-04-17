@@ -74,6 +74,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <!-- <th scope="col" style="min-width:150px;">Jumlah Permintaan</th> -->
                                 <th scope="col" style="min-width:200px;">Tanggal Pesanan</th>
                                 <th scope="col" style="min-width:200px;">Kategori Pesanan</th>
+                                <th scope="col" style="min-width:200px;">Asal Stok</th>
                                 <th scope="col" style="min-width:200px;">Status</th>
                                 <th style="min-width:100px;"> Aksi </th>
                             </tr>
@@ -92,7 +93,10 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?= format_datetime($book_request->issued_date); ?>
                                 </td>
                                 <td class="align-middle">
-                                    <?= $book_request->type . ' ' . $book_request->source?>
+                                    <?= get_book_request_category()[$book_request->type]?>
+                                </td>
+                                <td class="align-middle">
+                                    <?= get_book_request_source()[$book_request->source]?>
                                 </td>
                                 <td class="align-middle">
                                     <?= get_book_request_status()[$book_request->status]; ?>
