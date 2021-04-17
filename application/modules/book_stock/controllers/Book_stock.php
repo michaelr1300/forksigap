@@ -165,8 +165,8 @@ class Book_stock extends Warehouse_sales_controller
         redirect('book_stock/view/'.$book_stock->book_stock_id);
     }
 
-    public function api_chart_data($book_id,$year){
-        $book_transaction = $this->book_transaction->get_transaction_data($book_id,$year);
+    public function api_chart_data($book_stock_id,$year){
+        $book_transaction = $this->book_transaction->get_transaction_data($book_stock_id,$year);
         for ($i=1;$i<=12;$i++){
             $chart_data['stock_in']['month_'.$i]=0;
             $chart_data['stock_out']['month_'.$i]=0;
