@@ -33,9 +33,9 @@ class Book_transaction_model extends MY_Model{
             'total' => $total
         ];
     }
-    public function get_transaction_data($book_id,$year){
+    public function get_transaction_data($book_stock_id,$year){
         return $this->select(['book_transaction.*'])
-            ->when('book_id',$book_id)
+            ->when('book_stock_id',$book_stock_id)
             ->when('start_date', $year.'-01-01')
             ->when('end_date', $year.'-12-31')
             ->get_all();
