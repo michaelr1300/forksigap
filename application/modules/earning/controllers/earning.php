@@ -12,17 +12,16 @@ class Earning extends MY_Controller
 
     public function index()
     {
-        redirect('earning/summary?date_year=' . date('Y'));
-    }
-
-    public function summary()
-    {
         $filters = [
-            'date_year'     => $this->input->get('date_year', true)
+            'date_year'     => $this->input->get('date_year', true),
+            'invoice_type'  => $this->input->get('invoice_type', true)
             // 'excel'         => $this->input->get('excel', true)
         ];
+        if ($filters['date_year'] == NULL && $filters['invoice_type'] == NULL) {
+            $filters['date_year'] = '2021';
+        }
         $model = [];
-        for ($month = 0; $month <= 12; $month++) {
+        for ($month = 1; $month <= 12; $month++) {
             $filters['date_month'] = $month;
             $monthly = $this->earning->filter_total($filters);
 
@@ -39,21 +38,11 @@ class Earning extends MY_Controller
                 'month'             => $month,
                 'data'              => $monthly,
                 'total_earning'     => $total_earning,
-                'count_order'       => $count_invoice
+                'count_invoice'     => $count_invoice
             ]);
         }
-
-        //print data april
-        var_dump($model[4]['total_earning']);
-        var_dump($model[4]['count_order']);
-
-
         $pages      = $this->pages;
         $main_view  = 'earning/index_earning';
-        // $this->load->view('template', compact('main_view', 'pages'));
-
-        // if ($filters['excel'] == 1) {
-        //     $this->generate_excel($filters, 'total');
-        // }
+        $this->load->view('template', compact('main_view', 'pages', 'model'));
     }
 }

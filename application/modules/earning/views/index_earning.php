@@ -1,11 +1,20 @@
 <?php
 $date_year          = $this->input->get('date_year');
+$invoice_type       = $this->input->get('invoice_type');
 
 $date_year_options = [];
 
 for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
     $date_year_options[$dy] = $dy;
 }
+
+$invoice_type_options = [
+    ''  => '- Filter Kategori Faktur -',
+    'credit' => 'Kredit',
+    'cash' => 'Tunai',
+    'online' => 'Online',
+    'showroom' => 'Showroom'
+];
 ?>
 
 <link
@@ -60,6 +69,9 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                 <?= form_dropdown('date_year', $date_year_options, $date_year, 'id="date_year" class="form-control custom-select d-block" title="Filter Tahun Cetak"'); ?>
                             </div>
                             <div class="col">
+                                <?= form_dropdown('invoice_type', $invoice_type_options, $invoice_type, 'id="invoice_type" class="form-control custom-select d-block" title="Filter Tipe Invoice"'); ?>
+                            </div>
+                            <div class="col">
                                 <div
                                     class="btn-group btn-block"
                                     role="group"
@@ -104,7 +116,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                             <div class="col-md-12">
                                 <canvas id="total_year"></canvas>
                             </div>
-                            <div
+                            <!-- <div
                                 class="col-md-12"
                                 style="text-align: center;"
                             >
@@ -114,7 +126,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                             </div>
                             <div class="col-md-12">
                                 <canvas id="total_production"></canvas>
-                            </div>
+                            </div> -->
                         </div>
 
                         <div
@@ -180,73 +192,62 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
 
 <script>
 var jan_data = <?= json_encode($model[0]['data']) ?>;
-var jan_total_order = <?= $model[0]['count_order'] ?>;
-var jan_total_old = <?= $model[0]['count_total'] ?>;
-var jan_total_new = <?= $model[0]['count_total_new'] ?>;
+var jan_count_invoice = <?= $model[0]['count_invoice'] ?>;
+var jan_total_earning = <?= $model[0]['total_earning'] ?>;
 var feb_data = <?= json_encode($model[1]['data']) ?>;
-var feb_total_order = <?= $model[1]['count_order'] ?>;
-var feb_total_old = <?= $model[1]['count_total'] ?>;
-var feb_total_new = <?= $model[1]['count_total_new'] ?>;
+var feb_count_invoice = <?= $model[1]['count_invoice'] ?>;
+var feb_total_earning = <?= $model[1]['total_earning'] ?>;
 var mar_data = <?= json_encode($model[2]['data']) ?>;
-var mar_total_order = <?= $model[2]['count_order'] ?>;
-var mar_total_old = <?= $model[2]['count_total'] ?>;
-var mar_total_new = <?= $model[2]['count_total_new'] ?>;
+var mar_count_invoice = <?= $model[2]['count_invoice'] ?>;
+var mar_total_earning = <?= $model[2]['total_earning'] ?>;
 var apr_data = <?= json_encode($model[3]['data']) ?>;
-var apr_total_order = <?= $model[3]['count_order'] ?>;
-var apr_total_old = <?= $model[3]['count_total'] ?>;
-var apr_total_new = <?= $model[3]['count_total_new'] ?>;
+var apr_count_invoice = <?= $model[3]['count_invoice'] ?>;
+var apr_total_earning = <?= $model[3]['total_earning'] ?>;
 var may_data = <?= json_encode($model[4]['data']) ?>;
-var may_total_order = <?= $model[4]['count_order'] ?>;
-var may_total_old = <?= $model[4]['count_total'] ?>;
-var may_total_new = <?= $model[4]['count_total_new'] ?>;
+var may_count_invoice = <?= $model[4]['count_invoice'] ?>;
+var may_total_earning = <?= $model[4]['total_earning'] ?>;
 var jun_data = <?= json_encode($model[5]['data']) ?>;
-var jun_total_order = <?= $model[5]['count_order'] ?>;
-var jun_total_old = <?= $model[5]['count_total'] ?>;
-var jun_total_new = <?= $model[5]['count_total_new'] ?>;
+var jun_count_invoice = <?= $model[5]['count_invoice'] ?>;
+var jun_total_earning = <?= $model[5]['total_earning'] ?>;
 var jul_data = <?= json_encode($model[6]['data']) ?>;
-var jul_total_order = <?= $model[6]['count_order'] ?>;
-var jul_total_old = <?= $model[6]['count_total'] ?>;
-var jul_total_new = <?= $model[6]['count_total_new'] ?>;
+var jul_count_invoice = <?= $model[6]['count_invoice'] ?>;
+var jul_total_earning = <?= $model[6]['total_earning'] ?>;
 var aug_data = <?= json_encode($model[7]['data']) ?>;
-var aug_total_order = <?= $model[7]['count_order'] ?>;
-var aug_total_old = <?= $model[7]['count_total'] ?>;
-var aug_total_new = <?= $model[7]['count_total_new'] ?>;
+var aug_count_invoice = <?= $model[7]['count_invoice'] ?>;
+var aug_total_earning = <?= $model[7]['total_earning'] ?>;
 var sep_data = <?= json_encode($model[8]['data']) ?>;
-var sep_total_order = <?= $model[8]['count_order'] ?>;
-var sep_total_old = <?= $model[8]['count_total'] ?>;
-var sep_total_new = <?= $model[8]['count_total_new'] ?>;
+var sep_count_invoice = <?= $model[8]['count_invoice'] ?>;
+var sep_total_earning = <?= $model[8]['total_earning'] ?>;
 var oct_data = <?= json_encode($model[9]['data']) ?>;
-var oct_total_order = <?= $model[9]['count_order'] ?>;
-var oct_total_old = <?= $model[9]['count_total'] ?>;
-var oct_total_new = <?= $model[9]['count_total_new'] ?>;
+var oct_count_invoice = <?= $model[9]['count_invoice'] ?>;
+var oct_total_earning = <?= $model[9]['total_earning'] ?>;
 var nov_data = <?= json_encode($model[10]['data']) ?>;
-var nov_total_order = <?= $model[10]['count_order'] ?>;
-var nov_total_old = <?= $model[10]['count_total'] ?>;
-var nov_total_new = <?= $model[10]['count_total_new'] ?>;
+var nov_count_invoice = <?= $model[10]['count_invoice'] ?>;
+var nov_total_earning = <?= $model[10]['total_earning'] ?>;
 var dec_data = <?= json_encode($model[11]['data']) ?>;
-var dec_total_order = <?= $model[11]['count_order'] ?>;
-var dec_total_old = <?= $model[11]['count_total'] ?>;
-var dec_total_new = <?= $model[11]['count_total_new'] ?>;
+var dec_count_invoice = <?= $model[11]['count_invoice'] ?>;
+var dec_total_earning = <?= $model[11]['total_earning'] ?>;
 var base_url = '<?= base_url('print_order/view/'); ?>';
 var date_year = '<?= $this->input->get('date_year') ?>';
 
-function get_category(category) {
-    if (category == 'new') {
-        return "Cetak Baru";
-    } else if (category == 'revise') {
-        return "Cetak Ulang Revisi";
-    } else if (category == 'reprint') {
-        return "Cetak Ulang Non Revisi";
-    } else if (category == 'nonbook') {
-        return "Cetak Non Buku";
-    } else if (category == 'outsideprint') {
-        return "Cetak Di Luar";
-    } else if (category == 'from_outside') {
-        return "Cetak Dari Luar";
-    } else {
-        return null;
-    }
-}
+
+// function get_category(category) {
+//     if (category == 'new') {
+//         return "Cetak Baru";
+//     } else if (category == 'revise') {
+//         return "Cetak Ulang Revisi";
+//     } else if (category == 'reprint') {
+//         return "Cetak Ulang Non Revisi";
+//     } else if (category == 'nonbook') {
+//         return "Cetak Non Buku";
+//     } else if (category == 'outsideprint') {
+//         return "Cetak Di Luar";
+//     } else if (category == 'from_outside') {
+//         return "Cetak Dari Luar";
+//     } else {
+//         return null;
+//     }
+// }
 
 function populateTable(items, date_month) {
     $('#month_year').html(date_month + ' ' + date_year);
@@ -276,20 +277,20 @@ var total_year = new Chart(ctx, {
     data: {
         labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
         datasets: [{
-            label: 'Jumlah Judul Buku Tercetak',
+            label: 'Jumlah Judul Buku Terjual',
             data: [
-                jan_total_order,
-                feb_total_order,
-                mar_total_order,
-                apr_total_order,
-                may_total_order,
-                jun_total_order,
-                jul_total_order,
-                aug_total_order,
-                sep_total_order,
-                oct_total_order,
-                nov_total_order,
-                dec_total_order
+                jan_count_invoice,
+                feb_count_invoice,
+                mar_count_invoice,
+                apr_count_invoice,
+                may_count_invoice,
+                jun_count_invoice,
+                jul_count_invoice,
+                aug_count_invoice,
+                sep_count_invoice,
+                oct_count_invoice,
+                nov_count_invoice,
+                dec_count_invoice
             ],
             backgroundColor: [
                 'rgba(255, 153, 0, 0.8)',
@@ -351,186 +352,186 @@ var total_year = new Chart(ctx, {
     }
 });
 
-var ctx = document.getElementById("total_production").getContext('2d');
-var total_production = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
-        datasets: [{
-            label: 'Jumlah Eks Pesanan',
-            backgroundColor: [
-                'rgba(51, 51, 204, 0.8)',
-                'rgba(51, 51, 204, 0.8)',
-                'rgba(51, 51, 204, 0.8)',
-                'rgba(51, 51, 204, 0.8)',
-                'rgba(51, 51, 204, 0.8)',
-                'rgba(51, 51, 204, 0.8)',
-                'rgba(51, 51, 204, 0.8)',
-                'rgba(51, 51, 204, 0.8)',
-                'rgba(51, 51, 204, 0.8)',
-                'rgba(51, 51, 204, 0.8)',
-                'rgba(51, 51, 204, 0.8)',
-                'rgba(51, 51, 204, 0.8)'
-            ],
-            borderColor: [
-                'rgba(51, 51, 204, 0.2)',
-                'rgba(51, 51, 204, 0.2)',
-                'rgba(51, 51, 204, 0.2)',
-                'rgba(51, 51, 204, 0.2)',
-                'rgba(51, 51, 204, 0.2)',
-                'rgba(51, 51, 204, 0.2)',
-                'rgba(51, 51, 204, 0.2)',
-                'rgba(51, 51, 204, 0.2)',
-                'rgba(51, 51, 204, 0.2)',
-                'rgba(51, 51, 204, 0.2)',
-                'rgba(51, 51, 204, 0.2)',
-                'rgba(51, 51, 204, 0.2)'
-            ],
-            borderWidth: 1,
-            data: [
-                jan_total_old,
-                feb_total_old,
-                mar_total_old,
-                apr_total_old,
-                may_total_old,
-                jun_total_old,
-                jul_total_old,
-                aug_total_old,
-                sep_total_old,
-                oct_total_old,
-                nov_total_old,
-                dec_total_old
-            ],
-        }, {
-            label: 'Jumlah Eks Hasil Cetak',
-            backgroundColor: [
-                'rgba(0, 102, 0, 0.8)',
-                'rgba(0, 102, 0, 0.8)',
-                'rgba(0, 102, 0, 0.8)',
-                'rgba(0, 102, 0, 0.8)',
-                'rgba(0, 102, 0, 0.8)',
-                'rgba(0, 102, 0, 0.8)',
-                'rgba(0, 102, 0, 0.8)',
-                'rgba(0, 102, 0, 0.8)',
-                'rgba(0, 102, 0, 0.8)',
-                'rgba(0, 102, 0, 0.8)',
-                'rgba(0, 102, 0, 0.8)',
-                'rgba(0, 102, 0, 0.8)'
-            ],
-            borderColor: [
-                'rgba(0, 102, 0, 0.2)',
-                'rgba(0, 102, 0, 0.2)',
-                'rgba(0, 102, 0, 0.2)',
-                'rgba(0, 102, 0, 0.2)',
-                'rgba(0, 102, 0, 0.2)',
-                'rgba(0, 102, 0, 0.2)',
-                'rgba(0, 102, 0, 0.2)',
-                'rgba(0, 102, 0, 0.2)',
-                'rgba(0, 102, 0, 0.2)',
-                'rgba(0, 102, 0, 0.2)',
-                'rgba(0, 102, 0, 0.2)',
-                'rgba(0, 102, 0, 0.2)'
-            ],
-            borderWidth: 1,
-            data: [
-                jan_total_new,
-                feb_total_new,
-                mar_total_new,
-                apr_total_new,
-                may_total_new,
-                jun_total_new,
-                jul_total_new,
-                aug_total_new,
-                sep_total_new,
-                oct_total_new,
-                nov_total_new,
-                dec_total_new
-            ],
-        }]
+// var ctx = document.getElementById("total_production").getContext('2d');
+// var total_production = new Chart(ctx, {
+//     type: 'bar',
+//     data: {
+//         labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+//         datasets: [{
+//             label: 'Jumlah Eks Pesanan',
+//             backgroundColor: [
+//                 'rgba(51, 51, 204, 0.8)',
+//                 'rgba(51, 51, 204, 0.8)',
+//                 'rgba(51, 51, 204, 0.8)',
+//                 'rgba(51, 51, 204, 0.8)',
+//                 'rgba(51, 51, 204, 0.8)',
+//                 'rgba(51, 51, 204, 0.8)',
+//                 'rgba(51, 51, 204, 0.8)',
+//                 'rgba(51, 51, 204, 0.8)',
+//                 'rgba(51, 51, 204, 0.8)',
+//                 'rgba(51, 51, 204, 0.8)',
+//                 'rgba(51, 51, 204, 0.8)',
+//                 'rgba(51, 51, 204, 0.8)'
+//             ],
+//             borderColor: [
+//                 'rgba(51, 51, 204, 0.2)',
+//                 'rgba(51, 51, 204, 0.2)',
+//                 'rgba(51, 51, 204, 0.2)',
+//                 'rgba(51, 51, 204, 0.2)',
+//                 'rgba(51, 51, 204, 0.2)',
+//                 'rgba(51, 51, 204, 0.2)',
+//                 'rgba(51, 51, 204, 0.2)',
+//                 'rgba(51, 51, 204, 0.2)',
+//                 'rgba(51, 51, 204, 0.2)',
+//                 'rgba(51, 51, 204, 0.2)',
+//                 'rgba(51, 51, 204, 0.2)',
+//                 'rgba(51, 51, 204, 0.2)'
+//             ],
+//             borderWidth: 1,
+//             data: [
+//                 jan_total_earning,
+//                 feb_total_earning,
+//                 mar_total_earning,
+//                 apr_total_earning,
+//                 may_total_earning,
+//                 jun_total_earning,
+//                 jul_total_earning,
+//                 aug_total_earning,
+//                 sep_total_earning,
+//                 oct_total_earning,
+//                 nov_total_earning,
+//                 dec_total_earning
+//             ],
+//         }, {
+//             label: 'Jumlah Eks Hasil Cetak',
+//             backgroundColor: [
+//                 'rgba(0, 102, 0, 0.8)',
+//                 'rgba(0, 102, 0, 0.8)',
+//                 'rgba(0, 102, 0, 0.8)',
+//                 'rgba(0, 102, 0, 0.8)',
+//                 'rgba(0, 102, 0, 0.8)',
+//                 'rgba(0, 102, 0, 0.8)',
+//                 'rgba(0, 102, 0, 0.8)',
+//                 'rgba(0, 102, 0, 0.8)',
+//                 'rgba(0, 102, 0, 0.8)',
+//                 'rgba(0, 102, 0, 0.8)',
+//                 'rgba(0, 102, 0, 0.8)',
+//                 'rgba(0, 102, 0, 0.8)'
+//             ],
+//             borderColor: [
+//                 'rgba(0, 102, 0, 0.2)',
+//                 'rgba(0, 102, 0, 0.2)',
+//                 'rgba(0, 102, 0, 0.2)',
+//                 'rgba(0, 102, 0, 0.2)',
+//                 'rgba(0, 102, 0, 0.2)',
+//                 'rgba(0, 102, 0, 0.2)',
+//                 'rgba(0, 102, 0, 0.2)',
+//                 'rgba(0, 102, 0, 0.2)',
+//                 'rgba(0, 102, 0, 0.2)',
+//                 'rgba(0, 102, 0, 0.2)',
+//                 'rgba(0, 102, 0, 0.2)',
+//                 'rgba(0, 102, 0, 0.2)'
+//             ],
+//             borderWidth: 1,
+//             data: [
+//                 jan_total_new,
+//                 feb_total_new,
+//                 mar_total_new,
+//                 apr_total_new,
+//                 may_total_new,
+//                 jun_total_new,
+//                 jul_total_new,
+//                 aug_total_new,
+//                 sep_total_new,
+//                 oct_total_new,
+//                 nov_total_new,
+//                 dec_total_new
+//             ],
+//         }]
 
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                display: true,
-                ticks: {
-                    beginAtZero: true
-                }
-            }],
-            xAxes: [{
-                display: true,
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        },
-        layout: {
-            padding: {
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0
-            }
-        },
-        legend: {
-            position: 'bottom'
-        },
-        onClick: function(e) {
-            var bar = this.getElementAtEvent(e)[0];
-            var index = bar._index;
-            var datasetIndex = bar._datasetIndex;
-            if (index == 0) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(jan_data, "January");
-            } else if (index == 1) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(feb_data, "February");
-            } else if (index == 2) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(mar_data, "March");
-            } else if (index == 3) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(apr_data, "April");
-            } else if (index == 4) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(may_data, "May");
-            } else if (index == 5) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(jun_data, "June");
-            } else if (index == 6) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(jul_data, "July");
-            } else if (index == 7) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(aug_data, "August");
-            } else if (index == 8) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(sep_data, "September");
-            } else if (index == 9) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(oct_data, "October");
-            } else if (index == 10) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(nov_data, "November");
-            } else if (index == 11) {
-                $('#table_laporan').toggle();
-                $("#to_fill").empty();
-                populateTable(dec_data, "December");
-            }
-        }
-    }
-});
+//     },
+//     options: {
+//         scales: {
+//             yAxes: [{
+//                 display: true,
+//                 ticks: {
+//                     beginAtZero: true
+//                 }
+//             }],
+//             xAxes: [{
+//                 display: true,
+//                 ticks: {
+//                     beginAtZero: true
+//                 }
+//             }]
+//         },
+//         layout: {
+//             padding: {
+//                 left: 0,
+//                 right: 0,
+//                 top: 0,
+//                 bottom: 0
+//             }
+//         },
+//         legend: {
+//             position: 'bottom'
+//         },
+//         onClick: function(e) {
+//             var bar = this.getElementAtEvent(e)[0];
+//             var index = bar._index;
+//             var datasetIndex = bar._datasetIndex;
+//             if (index == 0) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(jan_data, "January");
+//             } else if (index == 1) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(feb_data, "February");
+//             } else if (index == 2) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(mar_data, "March");
+//             } else if (index == 3) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(apr_data, "April");
+//             } else if (index == 4) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(may_data, "May");
+//             } else if (index == 5) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(jun_data, "June");
+//             } else if (index == 6) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(jul_data, "July");
+//             } else if (index == 7) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(aug_data, "August");
+//             } else if (index == 8) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(sep_data, "September");
+//             } else if (index == 9) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(oct_data, "October");
+//             } else if (index == 10) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(nov_data, "November");
+//             } else if (index == 11) {
+//                 $('#table_laporan').toggle();
+//                 $("#to_fill").empty();
+//                 populateTable(dec_data, "December");
+//             }
+//         }
+//     }
+// });
 
 chart2.onclick = function(evt) {
     // console.log("preparasi");
