@@ -53,8 +53,196 @@ class Book_transfer extends MY_Controller
         }
 
         $pages       = $this->pages;
-        $main_view   = 'book_transfer/book_transfer_view';
+        $main_view   = 'book_transfer/view/view_book_transfer';
         $this->load->view('template', compact('main_view', 'pages', 'book_transfer'));
+    }
+
+    public function api_get_staff_gudang()
+    {
+        $staff_gudang = $this->book_transfer->get_staff_gudang();
+        return $this->send_json_output(true, $staff_gudang);
+    }
+
+    public function api_add_staff_gudang()
+    {
+        $input = (object) $this->input->post(null, true);
+
+        if (!$input->book_transfer_id || !$input->user_id || !$input->progress) {
+            return $this->send_json_output(false, $this->lang->line('toast_data_not_available'));
+        }
+
+        if (!$this->_is_warehouse_admin()) {
+            $message = $this->lang->line('toast_error_not_authorized');
+            return $this->send_json_output(false, $message);
+        }
+
+        if ($this->book_transfer->check_row_staff_gudang($input->book_transfer_id, $input->user_id, $input->progress) > 0) {
+            return $this->send_json_output(false, $this->lang->line('toast_data_duplicate'), 422);
+        }
+
+        if ($this->db->insert('book_transfer_user', $input)) {
+            return $this->send_json_output(true, $this->lang->line('toast_add_success'));
+        } else {
+            return $this->send_json_output(false, $this->lang->line('toast_add_fail'));
+        }
+    }
+
+    public function api_delete_staff_gudang($id = null)
+    {
+        $staff_gudang = $this->db->where('book_transfer_user_id', $id)->get('book_transfer_user')->result();
+        if (!$staff_gudang) {
+            $message = $this->lang->line('toast_data_not_available');
+            return $this->send_json_output(false, $message, 404);
+        }
+
+        if (!$this->_is_warehouse_admin()) {
+            $message = $this->lang->line('toast_error_not_authorized');
+            return $this->send_json_output(false, $message);
+        }
+
+        if ($this->db->delete('book_transfer_user', ['book_transfer_user_id' => $id])) {
+            return $this->send_json_output(true, $this->lang->line('toast_delete_success'));
+        } else {
+            return $this->send_json_output(false, $this->lang->line('toast_delete_fail'));
+        }
+    }
+
+    public function api_start_preparing($book_transfer_id)
+    {
+        // apakah book_transfer tersedia
+        $book_transfer = $this->book_transfer->where('book_transfer_id', $book_transfer_id)->get();
+        if (!$book_transfer) {
+            $message = $this->lang->line('toast_data_not_available');
+            return $this->send_json_output(false, $message, 404);
+        }
+
+        // hanya untuk user yang berkaitan dengan book_transfer ini
+        if (!$this->_is_warehouse_admin()) {
+            $message = $this->lang->line('toast_error_not_authorized');
+            return $this->send_json_output(false, $message);
+        }
+        
+        // berisi 'progress' untuk conditional dibawah
+        // $input = (object) $this->input->post(null, false);
+
+        $is_start_preparing = $this->book_transfer->start_progress($book_transfer_id);
+
+        if ($is_start_preparing) {
+            return $this->send_json_output(true, $this->lang->line('toast_edit_success'));
+        } else {
+            return $this->send_json_output(false, $this->lang->line('toast_edit_fail'));
+        }
+    }
+
+    // update book_transfer, kirim update via post
+    public function api_update($book_transfer_id = null)
+    {
+        // cek data
+        $book_transfer = $this->book_transfer->where('book_transfer_id', $book_transfer_id)->get();
+        if (!$book_transfer) {
+            $message = $this->lang->line('toast_data_not_available');
+            return $this->send_json_output(false, $message, 404);
+        }
+
+        $input = (object) $this->input->post(null, false);
+
+        // hanya untuk user yang berkaitan dengan book_transfer ini
+        if (!$this->_is_warehouse_admin()) {
+            $message = $this->lang->line('toast_error_not_authorized');
+            return $this->send_json_output(false, $message);
+        }
+
+        // untuk reset deadline
+        if (isset($input->preparing_deadline)) {
+            $input->preparing_deadline = empty_to_null($input->preparing_deadline);
+        }
+
+        // hilangkan property pembantu yang tidak ada di db
+        unset($input->progress);
+
+        if ($this->book_transfer->where('book_transfer_id', $book_transfer_id)->update($input)) {
+            return $this->send_json_output(true, $this->lang->line('toast_edit_success'));
+        } else {
+            return $this->send_json_output(false, $this->lang->line('toast_edit_fail'));
+        }
+    }
+
+    public function api_finish_preparing($book_transfer_id)
+    {
+        // apakah book_transfer tersedia
+        $book_transfer = $this->book_transfer->where('book_transfer_id', $book_transfer_id)->get();
+        if (!$book_transfer) {
+            $message = $this->lang->line('toast_data_not_available');
+            return $this->send_json_output(false, $message, 404);
+        }
+
+        // berisi 'progress' untuk conditional dibawah
+        $input = (object) $this->input->post(null, false);
+
+        // hanya untuk user yang berkaitan dengan book_transfer ini
+        if (!$this->_is_warehouse_admin()) {
+            $message = $this->lang->line('toast_error_not_authorized');
+            return $this->send_json_output(false, $message);
+        }
+        
+        // berisi 'progress' untuk conditional dibawah
+        // $input = (object) $this->input->post(null, false);
+
+        //update status
+        $is_finish_preparing = $this->book_transfer->finish_progress($book_transfer_id);
+        
+        if ($is_finish_preparing) {
+            return $this->send_json_output(true, $this->lang->line('toast_edit_success'));
+        } else {
+            return $this->send_json_output(false, $this->lang->line('toast_edit_fail'));
+        }
+    }
+
+    public function final($book_transfer_id = null, $action = null){
+        if (!$book_transfer_id || !$action) {
+            $this->session->set_flashdata('error', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
+
+        if (!$this->_is_warehouse_admin()) {
+            redirect($_SERVER['HTTP_REFERER']);
+        }
+
+        // memastikan konsistensi data
+        $this->db->trans_begin();
+
+        // apakah book transfer tersedia
+        $book_transfer = $this->book_transfer->where('book_transfer_id', $book_transfer_id)->get();
+        if (!$book_transfer) {
+            $this->session->set_flashdata('error', $this->lang->line('toast_data_not_available'));
+        }
+
+        // update book stock tapi tabel list buku yg dipindahin blm ada
+        
+        // $book_transfer_lists  = $this->book_transfer->fetch_book_transfer_list($book_transfer_id);
+        // foreach($book_transfer_lists as $book_transfer_list){
+        //     $book_stock = $this->book_stock->where('book_id', $book_transfer_list->book_id)->get();
+        //     $book_stock->warehouse_present -= $book_transfer_list->qty;
+        //     $this->book_stock->where('book_id', $book_transfer_list->book_id)->update($book_stock);
+        // }
+
+        //insert to book transaction tapi tabel list buku yg dipindahin blm ada
+        
+        // update data book_transfer
+        $this->book_transfer->where('book_transfer_id', $book_transfer_id)->update([
+            'status' => $action,
+            'finish_date' => $action == 'finish' ? now() : null
+        ]);
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+        } else {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+        }
+
+        redirect($this->pages . "/view/$book_transfer_id");
     }
 
     public function add()
@@ -89,7 +277,6 @@ class Book_transfer extends MY_Controller
 
         // insert book transfer
         $book_transfer_id = $this->book_transfer->insert($input);
-        // $book_stock_print = $this->book_receive->get_print_order($book_receive->print_order_id);
 
         if ($book_transfer_id) {
             $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
