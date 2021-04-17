@@ -18,6 +18,7 @@ class Book_request extends MY_Controller
             'keyword'              => $this->input->get('keyword', true),
             'type'                 => $this->input->get('type', true),
             'status'               => $this->input->get('status', true),
+            'source'               => $this->input->get('source', true),
         ];
 
         // custom per page
