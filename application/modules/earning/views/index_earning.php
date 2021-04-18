@@ -191,45 +191,17 @@ $invoice_type_options = [
 <script src="<?= base_url('assets/vendor/chart.js/new/Chart.bundle.min.js'); ?>"></script>
 
 <script>
-var jan_data = <?= json_encode($model[0]['data']) ?>;
-var jan_count_invoice = <?= $model[0]['count_invoice'] ?>;
-var jan_total_earning = <?= $model[0]['total_earning'] ?>;
-var feb_data = <?= json_encode($model[1]['data']) ?>;
-var feb_count_invoice = <?= $model[1]['count_invoice'] ?>;
-var feb_total_earning = <?= $model[1]['total_earning'] ?>;
-var mar_data = <?= json_encode($model[2]['data']) ?>;
-var mar_count_invoice = <?= $model[2]['count_invoice'] ?>;
-var mar_total_earning = <?= $model[2]['total_earning'] ?>;
-var apr_data = <?= json_encode($model[3]['data']) ?>;
-var apr_count_invoice = <?= $model[3]['count_invoice'] ?>;
-var apr_total_earning = <?= $model[3]['total_earning'] ?>;
-var may_data = <?= json_encode($model[4]['data']) ?>;
-var may_count_invoice = <?= $model[4]['count_invoice'] ?>;
-var may_total_earning = <?= $model[4]['total_earning'] ?>;
-var jun_data = <?= json_encode($model[5]['data']) ?>;
-var jun_count_invoice = <?= $model[5]['count_invoice'] ?>;
-var jun_total_earning = <?= $model[5]['total_earning'] ?>;
-var jul_data = <?= json_encode($model[6]['data']) ?>;
-var jul_count_invoice = <?= $model[6]['count_invoice'] ?>;
-var jul_total_earning = <?= $model[6]['total_earning'] ?>;
-var aug_data = <?= json_encode($model[7]['data']) ?>;
-var aug_count_invoice = <?= $model[7]['count_invoice'] ?>;
-var aug_total_earning = <?= $model[7]['total_earning'] ?>;
-var sep_data = <?= json_encode($model[8]['data']) ?>;
-var sep_count_invoice = <?= $model[8]['count_invoice'] ?>;
-var sep_total_earning = <?= $model[8]['total_earning'] ?>;
-var oct_data = <?= json_encode($model[9]['data']) ?>;
-var oct_count_invoice = <?= $model[9]['count_invoice'] ?>;
-var oct_total_earning = <?= $model[9]['total_earning'] ?>;
-var nov_data = <?= json_encode($model[10]['data']) ?>;
-var nov_count_invoice = <?= $model[10]['count_invoice'] ?>;
-var nov_total_earning = <?= $model[10]['total_earning'] ?>;
-var dec_data = <?= json_encode($model[11]['data']) ?>;
-var dec_count_invoice = <?= $model[11]['count_invoice'] ?>;
-var dec_total_earning = <?= $model[11]['total_earning'] ?>;
-var base_url = '<?= base_url('print_order/view/'); ?>';
-var date_year = '<?= $this->input->get('date_year') ?>';
+//assign nilai dari model ke variable javascript
+var data = [];
+var count_invoice = [];
+var total_earning = [];
+<?php for ($i = 0; $i < 12; $i++) { ?>
+    data.push(<?= json_encode($model[$i]['data']) ?>)
+    count_invoice.push(<?= $model[$i]['count_invoice'] ?>)
+    total_earning.push(<?= $model[$i]['total_earning'] ?>)
+<?php } ?>
 
+console.log(total_earning)
 
 // function get_category(category) {
 //     if (category == 'new') {
@@ -272,54 +244,22 @@ function populateTable(items, date_month) {
 }
 
 var ctx = document.getElementById("total_year").getContext('2d');
+// if ($('#invoice_type').val() == ''){}
 var total_year = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
         datasets: [{
             label: 'Jumlah Judul Buku Terjual',
-            data: [
-                jan_count_invoice,
-                feb_count_invoice,
-                mar_count_invoice,
-                apr_count_invoice,
-                may_count_invoice,
-                jun_count_invoice,
-                jul_count_invoice,
-                aug_count_invoice,
-                sep_count_invoice,
-                oct_count_invoice,
-                nov_count_invoice,
-                dec_count_invoice
-            ],
-            backgroundColor: [
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)'
-            ],
-            borderColor: [
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)'
-            ],
+            data: count_invoice,
+            backgroundColor: 'rgba(255, 153, 0, 0.8)',
+            borderColor: 'rgba(255, 153, 0, 0.2)',
+            borderWidth: 1
+        }, {
+            label: 'Jumlah Judul Buku Terjual',
+            data: count_invoice,
+            backgroundColor: 'rgba(255, 255, 0, 0.8)',
+            borderColor: 'rgba(255, 153, 0, 0.2)',
             borderWidth: 1
         }]
     },
@@ -566,16 +506,4 @@ chart2.onclick = function(evt) {
         }
     });
 }
-</script>
-<script>
-$(document).ready(function() {
-    $("#coba_ajax").click(function() {
-        $.ajax({
-            url: "http://localhost/sigap/production_report/coba",
-            success: function(result) {
-                console.log(result);
-            }
-        });
-    });
-});
 </script>
