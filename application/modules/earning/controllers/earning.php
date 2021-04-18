@@ -14,6 +14,7 @@ class Earning extends MY_Controller
     {
         $filters = [
             'date_year'     => $this->input->get('date_year', true),
+            'date_month'    => $this->input->get('date_month', true),
             'invoice_type'  => $this->input->get('invoice_type', true)
             // 'excel'         => $this->input->get('excel', true)
         ];

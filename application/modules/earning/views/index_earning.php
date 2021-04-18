@@ -1,8 +1,13 @@
 <?php
 $date_year          = $this->input->get('date_year');
 $invoice_type       = $this->input->get('invoice_type');
+$date_month         = $this->input->get('date_month');
 
 $date_year_options = [];
+
+$date_month_options = [
+    ''  => '- Bulannya Ga Mau Muncul Ini Gimana Ya -',
+];
 
 for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
     $date_year_options[$dy] = $dy;
@@ -32,7 +37,7 @@ $invoice_type_options = [
                 <a
                     href="<?= base_url('earning'); ?>"
                     class="text-muted"
-                >Laporan Produksi</a>
+                >Pendapatan</a>
             </li>
             <li class="breadcrumb-item active">
                 <a class="text-muted">Pendapatan Faktur</a>
@@ -69,6 +74,9 @@ $invoice_type_options = [
                                 <?= form_dropdown('date_year', $date_year_options, $date_year, 'id="date_year" class="form-control custom-select d-block" title="Filter Tahun Cetak"'); ?>
                             </div>
                             <div class="col">
+                                <?= form_dropdown('date_month', $date_month_options, $date_month, 'id="date_month" class="form-control custom-select d-block" title="Filter Bulan Cetak"'); ?>
+                            </div>
+                            <div class="col">
                                 <?= form_dropdown('invoice_type', $invoice_type_options, $invoice_type, 'id="invoice_type" class="form-control custom-select d-block" title="Filter Tipe Invoice"'); ?>
                             </div>
                             <div class="col">
@@ -87,13 +95,13 @@ $invoice_type_options = [
                                         type="submit"
                                         value="Submit"
                                     ><i class="fa fa-filter"></i> Filter</button>
-                                    <button
+                                    <!-- <button
                                         class="btn btn-success"
                                         type="submit"
                                         id="excel"
                                         name="excel"
                                         value="1"
-                                    >Excel</button>
+                                    >Excel</button> -->
                                 </div>
                             </div>
                         </div>
@@ -108,6 +116,9 @@ $invoice_type_options = [
                             >
                                 <b>
                                     <h5>LAPORAN PENDAPATAN FAKTUR</h5>
+                                </b>
+                                <b>
+                                    <h7>Bulan Tertentu</h7>
                                 </b>
                                 <b>
                                     <p><?= $this->input->get('date_year'); ?></p>
@@ -248,20 +259,90 @@ var ctx = document.getElementById("total_year").getContext('2d');
 var total_year = new Chart(ctx, {
     type: 'bar',
     data: {
-        labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+        labels: ["Berdasarkan filter bulan tertentu"],
         datasets: [{
-            label: 'Jumlah Judul Buku Terjual',
-            data: count_invoice,
-            backgroundColor: 'rgba(255, 153, 0, 0.8)',
-            borderColor: 'rgba(255, 153, 0, 0.2)',
+            label: 'Faktur Kredit',
+            data: [
+                // jan_count_invoice,
+                // feb_count_invoice,
+                // mar_count_invoice,
+                // apr_count_invoice,
+                // may_count_invoice,
+                // jun_count_invoice,
+                // jul_count_invoice,
+                // aug_count_invoice,
+                // sep_count_invoice,
+                // oct_count_invoice,
+                // nov_count_invoice,
+                // dec_count_invoice
+            ],
+            backgroundColor: [
+                'rgba(255, 153, 0, 0.8)',
+                // 'rgba(255, 153, 0, 0.8)',
+                // 'rgba(255, 153, 0, 0.8)',
+                // 'rgba(255, 153, 0, 0.8)',
+                // 'rgba(255, 153, 0, 0.8)',
+                // 'rgba(255, 153, 0, 0.8)',
+                // 'rgba(255, 153, 0, 0.8)',
+                // 'rgba(255, 153, 0, 0.8)',
+                // 'rgba(255, 153, 0, 0.8)',
+                // 'rgba(255, 153, 0, 0.8)',
+                // 'rgba(255, 153, 0, 0.8)',
+                // 'rgba(255, 153, 0, 0.8)'
+            ],
+            borderColor: [
+                'rgba(255, 153, 0, 0.2)',
+                // 'rgba(255, 153, 0, 0.2)',
+                // 'rgba(255, 153, 0, 0.2)',
+                // 'rgba(255, 153, 0, 0.2)',
+                // 'rgba(255, 153, 0, 0.2)',
+                // 'rgba(255, 153, 0, 0.2)',
+                // 'rgba(255, 153, 0, 0.2)',
+                // 'rgba(255, 153, 0, 0.2)',
+                // 'rgba(255, 153, 0, 0.2)',
+                // 'rgba(255, 153, 0, 0.2)',
+                // 'rgba(255, 153, 0, 0.2)',
+                // 'rgba(255, 153, 0, 0.2)'
+            ],
             borderWidth: 1
         }, {
-            label: 'Jumlah Judul Buku Terjual',
-            data: count_invoice,
-            backgroundColor: 'rgba(255, 255, 0, 0.8)',
-            borderColor: 'rgba(255, 153, 0, 0.2)',
+            label: 'Faktur Tunai',
+            data: [
+
+            ],
+            backgroundColor: [
+                'rgba(0, 102, 0, 0.8)'
+            ],
+            borderColor: [
+                'rgba(0, 102, 0, 0.2)'
+            ],
             borderWidth: 1
-        }]
+        }, {
+            label: 'Faktur Online',
+            data: [
+
+            ],
+            backgroundColor: [
+                'rgba(51, 51, 204, 0.8)'
+            ],
+            borderColor: [
+                'rgba(51, 51, 204, 0.2)'
+            ],
+            borderWidth: 1
+        }, {
+            label: 'Faktur Showroom',
+            data: [
+
+            ],
+            backgroundColor: [
+                'rgba(255, 51, 153, 0.8)'
+            ],
+            borderColor: [
+                'rgba(255, 51, 153, 0.2)'
+            ],
+            borderWidth: 1
+        }
+        ]
     },
     options: {
         scales: {
