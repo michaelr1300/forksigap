@@ -253,39 +253,46 @@ class Book_transfer extends MY_Controller
 
         if (!$_POST) {
             $input = (object) $this->book_transfer->get_default_values();
+            // dipindah ke sini dulu, soalnya validate belum bisa
+            if (!$this->book_transfer->validate() || $this->form_validation->error_array()) {
+
+                $pages       = $this->pages;
+                $main_view   = 'book_transfer/book_transfer_add';
+                $form_action = 'book_transfer/add';
+                $this->load->view('template', compact('pages', 'main_view', 'form_action', 'input'));
+                return;
+            }
         } else {
             $input = (object) $this->input->post(null, true);
             // catat orang yang menginput order cetak
         }
 
-        if (!$this->book_transfer->validate() || $this->form_validation->error_array()) {
-
-            $pages       = $this->pages;
-            $main_view   = 'book_transfer/book_transfer_add';
-            $form_action = 'book_transfer/add';
-            $this->load->view('template', compact('pages', 'main_view', 'form_action', 'input'));
-            return;
-        }
-
-        // set status awal
-        $input->status = 'waiting';
-        $input->transfer_date = now();
-
         if (empty($input->library_id)) {
             $input->library_id = empty_to_null($input->library_id);
         }
-
+        $book_transfer = (object) [
+            'status' => 'waiting',
+            'transfer_date' => now(),
+            'destination' => $input->destination,
+            'library_id' => $input->library_id
+        ];
         // insert book transfer
-        $book_transfer_id = $this->book_transfer->insert($input);
-
-        if ($book_transfer_id) {
+        $book_transfer_success = $this->book_transfer->insert($book_transfer);
+        $book_transfer_id = $this->db->insert_id();
+        foreach ($input->book_list as $books){
+            $book_transfer_list = (object)[
+                'book_transfer_id' => $book_transfer_id,
+                'book_id' => $books['book_id'],
+                'qty' => $books['qty']
+            ];
+            $book_transfer_list_success = $this->db->insert('book_transfer_list',$book_transfer_list);
+        }
+        if ($book_transfer_success && $book_transfer_list_success) {
             $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
         } else {
             $this->session->set_flashdata('error', $this->lang->line('toast_add_fail'));
         }
-        redirect('book_transfer');
-
-        // redirect('book_transfer/view/' . $book_transfer_id);
+        redirect('book_transfer/add');
     }
 
     public function api_get_book($book_id)

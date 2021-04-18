@@ -181,6 +181,10 @@ class Book_stock extends Warehouse_sales_controller
         }
         return $this->send_json_output(true, (object) $chart_data);
     }
+    public function api_get_by_book_id($book_id){
+        $book_stock = $this->book_stock->get_book_stock_by_book_id($book_id);
+        return $this->send_json_output(true, $book_stock);
+    }
     public function generate_excel($filters)
     {
         // $get_data = $this->book_stock->filter_excel($filters);
