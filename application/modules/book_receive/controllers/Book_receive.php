@@ -227,6 +227,16 @@ class Book_receive extends MY_Controller
 
         if ($this->form_validation->run() == true) {
             $this->db->set($data)->where('book_receive_id', $book_receive_id)->update('book_receive');
+            if ($is_handover == 0 || $is_wrapping == 0) {
+                $finish_date = null;
+            }
+            if ($is_handover == 0){
+                $handover_end_date = null;
+                $is_wrapping = 0;
+            }
+            if ($is_wrapping == 0){
+                $wrapping_end_date = null;
+            }
             if ($finish_date == null) {
                 if ($is_handover == 0 && $is_wrapping == 0) {
                     if (
