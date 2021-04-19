@@ -14,7 +14,7 @@ class Earning extends MY_Controller
     {
         $filters = [
             'date_year'     => $this->input->get('date_year', true),
-            'date_month'    => $this->input->get('date_month', true),
+            // 'date_month'    => $this->input->get('date_month', true),
             'invoice_type'  => $this->input->get('invoice_type', true)
             // 'excel'         => $this->input->get('excel', true)
         ];
@@ -25,6 +25,7 @@ class Earning extends MY_Controller
         for ($month = 1; $month <= 12; $month++) {
             $filters['date_month'] = $month;
             $monthly = $this->earning->filter_total($filters);
+            $count_invoice = $this->earning->filter_count($filters);
 
             $total_earning = 0;
             foreach ($monthly as $value) {
@@ -33,17 +34,31 @@ class Earning extends MY_Controller
                 }
             }
 
-            $count_invoice = count($monthly);
+            $count_invoice_book = count($monthly);
 
             array_push($model, [
-                'month'             => $month,
-                'data'              => $monthly,
-                'total_earning'     => $total_earning,
-                'count_invoice'     => $count_invoice
+                'month'                 => $month,
+                'data'                  => $monthly,
+                'total_earning'         => $total_earning,
+                'count_invoice'         => $count_invoice,
+                'count_invoice_book'    => $count_invoice_book
             ]);
         }
         $pages      = $this->pages;
         $main_view  = 'earning/index_earning';
         $this->load->view('template', compact('main_view', 'pages', 'model'));
+    }
+    public function detail()
+    {
+        $filters = [
+            'date_year'     => $this->input->get('date_year', true),
+            // 'date_month'    => $this->input->get('date_month', true),
+            'invoice_type'  => $this->input->get('invoice_type', true)
+            // 'excel'         => $this->input->get('excel', true)
+        ];
+        if ($filters['date_year'] == NULL && $filters['invoice_type'] == NULL) {
+            $filters['date_year'] = '2021';
+        }
+        echo ("Page Detail");
     }
 }

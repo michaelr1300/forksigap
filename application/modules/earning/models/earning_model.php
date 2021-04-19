@@ -2,7 +2,7 @@
 
 class Earning_model extends MY_Model
 {
-    // protected $table    = 'invoice';
+    //filter invoice
     public function filter_total($filters)
     {
         $this->db->select('(qty*price*(1-discount/100)) AS earning')
@@ -16,6 +16,19 @@ class Earning_model extends MY_Model
         }
         return $this->db->get()->result();
         //select sum((qty*price*(1-discount/100))) as earning from invoice right join invoice_book on invoice.invoice_id = invoice_book.invoice_id;
+    }
+
+    //menghitung total invoice
+    public function filter_count($filters)
+    {
+        $this->db->select('count(*) as count_invoice')
+            ->from('invoice')
+            ->where('YEAR(issued_date)', $filters['date_year'])
+            ->where('MONTH(issued_date)', $filters['date_month']);
+        if ($filters['invoice_type'] != '') {
+            $this->db->where('type', $filters['invoice_type']);
+        }
+        return $this->db->get()->result();
     }
 
     // public function when($params, $data)

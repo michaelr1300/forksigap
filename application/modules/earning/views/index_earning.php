@@ -5,9 +5,9 @@ $date_month         = $this->input->get('date_month');
 
 $date_year_options = [];
 
-$date_month_options = [
-    ''  => '- Bulannya Ga Mau Muncul Ini Gimana Ya -',
-];
+// $date_month_options = [
+//     ''  => '- Bulannya Ga Mau Muncul Ini Gimana Ya -',
+// ];
 
 for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
     $date_year_options[$dy] = $dy;
@@ -56,13 +56,13 @@ $invoice_type_options = [
                             <li class="nav-item">
                                 <a
                                     class="nav-link active"
-                                    href="<?= base_url('production_report/total?date_year=' . date('Y')); ?>"
+                                    href="<?= base_url('earning/'); ?>"
                                 >Pendapatan Faktur</a>
                             </li>
                             <li class="nav-item">
                                 <a
                                     class="nav-link"
-                                    href="<?= base_url('production_report/detail?date_year=' . date('Y')) . '&date_month=' . date('n'); ?>"
+                                    href="<?= base_url('earning/detail'); ?>"
                                 >Detail Pendapatan</a>
                             </li>
                         </ul>
@@ -73,9 +73,9 @@ $invoice_type_options = [
                             <div class="col">
                                 <?= form_dropdown('date_year', $date_year_options, $date_year, 'id="date_year" class="form-control custom-select d-block" title="Filter Tahun Cetak"'); ?>
                             </div>
-                            <div class="col">
+                            <!-- <div class="col">
                                 <?= form_dropdown('date_month', $date_month_options, $date_month, 'id="date_month" class="form-control custom-select d-block" title="Filter Bulan Cetak"'); ?>
-                            </div>
+                            </div> -->
                             <div class="col">
                                 <?= form_dropdown('invoice_type', $invoice_type_options, $invoice_type, 'id="invoice_type" class="form-control custom-select d-block" title="Filter Tipe Invoice"'); ?>
                             </div>
@@ -127,17 +127,17 @@ $invoice_type_options = [
                             <div class="col-md-12">
                                 <canvas id="total_year"></canvas>
                             </div>
-                            <!-- <div
+                            <div
                                 class="col-md-12"
                                 style="text-align: center;"
                             >
                                 <b>
-                                    <h5>HASIL CETAK PRODUKSI BUKU</h5>
+                                    <h5>JUMLAH FAKTUR TERCETAK</h5>
                                 </b>
                             </div>
                             <div class="col-md-12">
-                                <canvas id="total_production"></canvas>
-                            </div> -->
+                                <canvas id="total_invoice"></canvas>
+                            </div>
                         </div>
 
                         <div
@@ -204,15 +204,15 @@ $invoice_type_options = [
 <script>
 //assign nilai dari model ke variable javascript
 var data = [];
-var count_invoice = [];
 var total_earning = [];
+var count_invoice = [];
+var count_invoice_book = [];
 <?php for ($i = 0; $i < 12; $i++) { ?>
     data.push(<?= json_encode($model[$i]['data']) ?>)
-    count_invoice.push(<?= $model[$i]['count_invoice'] ?>)
     total_earning.push(<?= $model[$i]['total_earning'] ?>)
+    count_invoice.push(<?= $model[$i]['count_invoice'] ?>)
+    count_invoice_book.push(<?= $model[$i]['count_invoice_book'] ?>)
 <?php } ?>
-
-console.log(total_earning)
 
 // function get_category(category) {
 //     if (category == 'new') {
@@ -232,117 +232,40 @@ console.log(total_earning)
 //     }
 // }
 
-function populateTable(items, date_month) {
-    $('#month_year').html(date_month + ' ' + date_year);
-    var i = 1;
-    const table = document.getElementById("to_fill");
-    items.forEach(item => {
-        let row = table.insertRow();
-        let no = row.insertCell(0);
-        no.innerHTML = i++;
-        let title = row.insertCell(1);
-        title.innerHTML = item.title;
-        let category = row.insertCell(2);
-        category.innerHTML = get_category(item.category);
-        let total = row.insertCell(3);
-        total.innerHTML = item.total;
-        let total_new = row.insertCell(4);
-        total_new.innerHTML = item.total_new;
-        let id = row.insertCell(5);
-        id.innerHTML = "<a href='" + base_url + item.id + "'> Link Order Cetak </a>";
-    });
+// function populateTable(items, date_month) {
+//     $('#month_year').html(date_month + ' ' + date_year);
+//     var i = 1;
+//     const table = document.getElementById("to_fill");
+//     items.forEach(item => {
+//         let row = table.insertRow();
+//         let no = row.insertCell(0);
+//         no.innerHTML = i++;
+//         let title = row.insertCell(1);
+//         title.innerHTML = item.title;
+//         let category = row.insertCell(2);
+//         category.innerHTML = get_category(item.category);
+//         let total = row.insertCell(3);
+//         total.innerHTML = item.total;
+//         let total_new = row.insertCell(4);
+//         total_new.innerHTML = item.total_new;
+//         let id = row.insertCell(5);
+//         id.innerHTML = "<a href='" + base_url + item.id + "'> Link Order Cetak </a>";
+//     });
 
-}
+// }
 
 var ctx = document.getElementById("total_year").getContext('2d');
-// if ($('#invoice_type').val() == ''){}
 var total_year = new Chart(ctx, {
     type: 'bar',
     data: {
-        labels: ["Berdasarkan filter bulan tertentu"],
+        labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
         datasets: [{
-            label: 'Faktur Kredit',
-            data: [
-                // jan_count_invoice,
-                // feb_count_invoice,
-                // mar_count_invoice,
-                // apr_count_invoice,
-                // may_count_invoice,
-                // jun_count_invoice,
-                // jul_count_invoice,
-                // aug_count_invoice,
-                // sep_count_invoice,
-                // oct_count_invoice,
-                // nov_count_invoice,
-                // dec_count_invoice
-            ],
-            backgroundColor: [
-                'rgba(255, 153, 0, 0.8)',
-                // 'rgba(255, 153, 0, 0.8)',
-                // 'rgba(255, 153, 0, 0.8)',
-                // 'rgba(255, 153, 0, 0.8)',
-                // 'rgba(255, 153, 0, 0.8)',
-                // 'rgba(255, 153, 0, 0.8)',
-                // 'rgba(255, 153, 0, 0.8)',
-                // 'rgba(255, 153, 0, 0.8)',
-                // 'rgba(255, 153, 0, 0.8)',
-                // 'rgba(255, 153, 0, 0.8)',
-                // 'rgba(255, 153, 0, 0.8)',
-                // 'rgba(255, 153, 0, 0.8)'
-            ],
-            borderColor: [
-                'rgba(255, 153, 0, 0.2)',
-                // 'rgba(255, 153, 0, 0.2)',
-                // 'rgba(255, 153, 0, 0.2)',
-                // 'rgba(255, 153, 0, 0.2)',
-                // 'rgba(255, 153, 0, 0.2)',
-                // 'rgba(255, 153, 0, 0.2)',
-                // 'rgba(255, 153, 0, 0.2)',
-                // 'rgba(255, 153, 0, 0.2)',
-                // 'rgba(255, 153, 0, 0.2)',
-                // 'rgba(255, 153, 0, 0.2)',
-                // 'rgba(255, 153, 0, 0.2)',
-                // 'rgba(255, 153, 0, 0.2)'
-            ],
+            label: 'Jumlah Judul Buku Terjual',
+            data: total_earning,
+            backgroundColor: 'rgba(255, 153, 0, 0.8)',
+            borderColor: 'rgba(255, 153, 0, 0.2)',
             borderWidth: 1
-        }, {
-            label: 'Faktur Tunai',
-            data: [
-
-            ],
-            backgroundColor: [
-                'rgba(0, 102, 0, 0.8)'
-            ],
-            borderColor: [
-                'rgba(0, 102, 0, 0.2)'
-            ],
-            borderWidth: 1
-        }, {
-            label: 'Faktur Online',
-            data: [
-
-            ],
-            backgroundColor: [
-                'rgba(51, 51, 204, 0.8)'
-            ],
-            borderColor: [
-                'rgba(51, 51, 204, 0.2)'
-            ],
-            borderWidth: 1
-        }, {
-            label: 'Faktur Showroom',
-            data: [
-
-            ],
-            backgroundColor: [
-                'rgba(255, 51, 153, 0.8)'
-            ],
-            borderColor: [
-                'rgba(255, 51, 153, 0.2)'
-            ],
-            borderWidth: 1
-        }
-        ]
+        }]
     },
     options: {
         scales: {
@@ -373,218 +296,135 @@ var total_year = new Chart(ctx, {
     }
 });
 
-// var ctx = document.getElementById("total_production").getContext('2d');
-// var total_production = new Chart(ctx, {
-//     type: 'bar',
-//     data: {
-//         labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
-//         datasets: [{
-//             label: 'Jumlah Eks Pesanan',
-//             backgroundColor: [
-//                 'rgba(51, 51, 204, 0.8)',
-//                 'rgba(51, 51, 204, 0.8)',
-//                 'rgba(51, 51, 204, 0.8)',
-//                 'rgba(51, 51, 204, 0.8)',
-//                 'rgba(51, 51, 204, 0.8)',
-//                 'rgba(51, 51, 204, 0.8)',
-//                 'rgba(51, 51, 204, 0.8)',
-//                 'rgba(51, 51, 204, 0.8)',
-//                 'rgba(51, 51, 204, 0.8)',
-//                 'rgba(51, 51, 204, 0.8)',
-//                 'rgba(51, 51, 204, 0.8)',
-//                 'rgba(51, 51, 204, 0.8)'
-//             ],
-//             borderColor: [
-//                 'rgba(51, 51, 204, 0.2)',
-//                 'rgba(51, 51, 204, 0.2)',
-//                 'rgba(51, 51, 204, 0.2)',
-//                 'rgba(51, 51, 204, 0.2)',
-//                 'rgba(51, 51, 204, 0.2)',
-//                 'rgba(51, 51, 204, 0.2)',
-//                 'rgba(51, 51, 204, 0.2)',
-//                 'rgba(51, 51, 204, 0.2)',
-//                 'rgba(51, 51, 204, 0.2)',
-//                 'rgba(51, 51, 204, 0.2)',
-//                 'rgba(51, 51, 204, 0.2)',
-//                 'rgba(51, 51, 204, 0.2)'
-//             ],
-//             borderWidth: 1,
-//             data: [
-//                 jan_total_earning,
-//                 feb_total_earning,
-//                 mar_total_earning,
-//                 apr_total_earning,
-//                 may_total_earning,
-//                 jun_total_earning,
-//                 jul_total_earning,
-//                 aug_total_earning,
-//                 sep_total_earning,
-//                 oct_total_earning,
-//                 nov_total_earning,
-//                 dec_total_earning
-//             ],
-//         }, {
-//             label: 'Jumlah Eks Hasil Cetak',
-//             backgroundColor: [
-//                 'rgba(0, 102, 0, 0.8)',
-//                 'rgba(0, 102, 0, 0.8)',
-//                 'rgba(0, 102, 0, 0.8)',
-//                 'rgba(0, 102, 0, 0.8)',
-//                 'rgba(0, 102, 0, 0.8)',
-//                 'rgba(0, 102, 0, 0.8)',
-//                 'rgba(0, 102, 0, 0.8)',
-//                 'rgba(0, 102, 0, 0.8)',
-//                 'rgba(0, 102, 0, 0.8)',
-//                 'rgba(0, 102, 0, 0.8)',
-//                 'rgba(0, 102, 0, 0.8)',
-//                 'rgba(0, 102, 0, 0.8)'
-//             ],
-//             borderColor: [
-//                 'rgba(0, 102, 0, 0.2)',
-//                 'rgba(0, 102, 0, 0.2)',
-//                 'rgba(0, 102, 0, 0.2)',
-//                 'rgba(0, 102, 0, 0.2)',
-//                 'rgba(0, 102, 0, 0.2)',
-//                 'rgba(0, 102, 0, 0.2)',
-//                 'rgba(0, 102, 0, 0.2)',
-//                 'rgba(0, 102, 0, 0.2)',
-//                 'rgba(0, 102, 0, 0.2)',
-//                 'rgba(0, 102, 0, 0.2)',
-//                 'rgba(0, 102, 0, 0.2)',
-//                 'rgba(0, 102, 0, 0.2)'
-//             ],
-//             borderWidth: 1,
-//             data: [
-//                 jan_total_new,
-//                 feb_total_new,
-//                 mar_total_new,
-//                 apr_total_new,
-//                 may_total_new,
-//                 jun_total_new,
-//                 jul_total_new,
-//                 aug_total_new,
-//                 sep_total_new,
-//                 oct_total_new,
-//                 nov_total_new,
-//                 dec_total_new
-//             ],
-//         }]
-
-//     },
-//     options: {
-//         scales: {
-//             yAxes: [{
-//                 display: true,
-//                 ticks: {
-//                     beginAtZero: true
-//                 }
-//             }],
-//             xAxes: [{
-//                 display: true,
-//                 ticks: {
-//                     beginAtZero: true
-//                 }
-//             }]
-//         },
-//         layout: {
-//             padding: {
-//                 left: 0,
-//                 right: 0,
-//                 top: 0,
-//                 bottom: 0
-//             }
-//         },
-//         legend: {
-//             position: 'bottom'
-//         },
-//         onClick: function(e) {
-//             var bar = this.getElementAtEvent(e)[0];
-//             var index = bar._index;
-//             var datasetIndex = bar._datasetIndex;
-//             if (index == 0) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(jan_data, "January");
-//             } else if (index == 1) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(feb_data, "February");
-//             } else if (index == 2) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(mar_data, "March");
-//             } else if (index == 3) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(apr_data, "April");
-//             } else if (index == 4) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(may_data, "May");
-//             } else if (index == 5) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(jun_data, "June");
-//             } else if (index == 6) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(jul_data, "July");
-//             } else if (index == 7) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(aug_data, "August");
-//             } else if (index == 8) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(sep_data, "September");
-//             } else if (index == 9) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(oct_data, "October");
-//             } else if (index == 10) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(nov_data, "November");
-//             } else if (index == 11) {
-//                 $('#table_laporan').toggle();
-//                 $("#to_fill").empty();
-//                 populateTable(dec_data, "December");
-//             }
-//         }
-//     }
-// });
-
-chart2.onclick = function(evt) {
-    // console.log("preparasi");
-    $.ajax({
-        type: "POST",
-        url: "http://localhost/sigap/production_report/coba",
-        data: {
-            year: urlParams.get('date_year'),
-            month: urlParams.get('date_month')
+var ctx2 = document.getElementById("total)invoice").getContext('2d');
+var total_invoice = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+        datasets: [{
+            label: 'Jumlah Faktur Tercetak',
+            data: count_invoice,
+            backgroundColor: 'rgba(255, 255, 0, 0.8)',
+            borderColor: 'rgba(255, 153, 0, 0.2)',
+            backgroundColor: 'rgba(51, 51, 204, 0.8)',
+            borderColor: 'rgba(51, 51, 204, 0.2)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                display: true,
+                ticks: {
+                    beginAtZero: true
+                }
+            }],
+            xAxes: [{
+                display: true,
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
         },
-        success: function(result) {
-            //console.log(JSON.parse(result));
-            var detail_data = JSON.parse(result);
-            var detail_table = "";
-            for (i in detail_data) {
-                console.log(detail_data[i]);
-                var detail_row = "<tr>";
-                var base_url = "<?= base_url('print_order/view/'); ?>/";
-                var no = Number(i) + 1
-                detail_row += "<td class='align-middle text-center pl-4'>" + no + "</td>";
-                detail_row += "<td class='align-middle text-center4'>" + detail_data[i].book_title + "</td>";
-                detail_row += "<td class='align-middle text-center4'>" + categories[detail_data[i].category] + " </td>";
-                detail_row += "<td class='align-middle text-center4'>" + detail_data[i].total + "</td>";
-                detail_row += "<td class='align-middle text-center4'>" + detail_data[i].total_postprint + "</td>";
-                detail_row += "<td class='align-middle text-center4'> <a href='" + base_url + detail_data[i].print_order_id + "'> Link Order Cetak </a></td></tr>";
-                detail_table += detail_row;
+        layout: {
+            padding: {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0
             }
-            $("tbody").hide();
-            $("tbody").html(detail_table);
-            $(".laporan").fadeIn("slow");
-            $("tbody").fadeIn("slow");
+        },
+        legend: {
+            position: 'bottom'
         }
-    });
-}
+        // onClick: function(e) {
+        //     var bar = this.getElementAtEvent(e)[0];
+        //     var index = bar._index;
+        //     var datasetIndex = bar._datasetIndex;
+        //     if (index == 0) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(jan_data, "January");
+        //     } else if (index == 1) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(feb_data, "February");
+        //     } else if (index == 2) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(mar_data, "March");
+        //     } else if (index == 3) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(apr_data, "April");
+        //     } else if (index == 4) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(may_data, "May");
+        //     } else if (index == 5) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(jun_data, "June");
+        //     } else if (index == 6) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(jul_data, "July");
+        //     } else if (index == 7) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(aug_data, "August");
+        //     } else if (index == 8) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(sep_data, "September");
+        //     } else if (index == 9) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(oct_data, "October");
+        //     } else if (index == 10) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(nov_data, "November");
+        //     } else if (index == 11) {
+        //         $('#table_laporan').toggle();
+        //         $("#to_fill").empty();
+        //         populateTable(dec_data, "December");
+        //     }
+        // }
+    }
+});
+
+// chart2.onclick = function(evt) {
+//     // console.log("preparasi");
+//     $.ajax({
+//         type: "POST",
+//         url: "http://localhost/sigap/production_report/coba",
+//         data: {
+//             year: urlParams.get('date_year'),
+//             month: urlParams.get('date_month')
+//         },
+//         success: function(result) {
+//             //console.log(JSON.parse(result));
+//             var detail_data = JSON.parse(result);
+//             var detail_table = "";
+//             for (i in detail_data) {
+//                 console.log(detail_data[i]);
+//                 var detail_row = "<tr>";
+//                 var base_url = "<?= base_url('print_order/view/'); ?>/";
+//                 var no = Number(i) + 1
+//                 detail_row += "<td class='align-middle text-center pl-4'>" + no + "</td>";
+//                 detail_row += "<td class='align-middle text-center4'>" + detail_data[i].book_title + "</td>";
+//                 detail_row += "<td class='align-middle text-center4'>" + categories[detail_data[i].category] + " </td>";
+//                 detail_row += "<td class='align-middle text-center4'>" + detail_data[i].total + "</td>";
+//                 detail_row += "<td class='align-middle text-center4'>" + detail_data[i].total_postprint + "</td>";
+//                 detail_row += "<td class='align-middle text-center4'> <a href='" + base_url + detail_data[i].print_order_id + "'> Link Order Cetak </a></td></tr>";
+//                 detail_table += detail_row;
+//             }
+//             $("tbody").hide();
+//             $("tbody").html(detail_table);
+//             $(".laporan").fadeIn("slow");
+//             $("tbody").fadeIn("slow");
+//         }
+//     });
+// }
 </script>
