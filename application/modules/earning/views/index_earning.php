@@ -73,9 +73,6 @@ $invoice_type_options = [
                             <div class="col">
                                 <?= form_dropdown('date_year', $date_year_options, $date_year, 'id="date_year" class="form-control custom-select d-block" title="Filter Tahun Cetak"'); ?>
                             </div>
-                            <!-- <div class="col">
-                                <?= form_dropdown('date_month', $date_month_options, $date_month, 'id="date_month" class="form-control custom-select d-block" title="Filter Bulan Cetak"'); ?>
-                            </div> -->
                             <div class="col">
                                 <?= form_dropdown('invoice_type', $invoice_type_options, $invoice_type, 'id="invoice_type" class="form-control custom-select d-block" title="Filter Tipe Invoice"'); ?>
                             </div>
@@ -117,12 +114,9 @@ $invoice_type_options = [
                                 <b>
                                     <h5>LAPORAN PENDAPATAN FAKTUR</h5>
                                 </b>
-                                <b>
-                                    <h7>Bulan Tertentu</h7>
-                                </b>
-                                <b>
+                                <!-- <b>
                                     <p><?= $this->input->get('date_year'); ?></p>
-                                </b>
+                                </b> -->
                             </div>
                             <div class="col-md-12">
                                 <canvas id="total_year"></canvas>
@@ -139,7 +133,7 @@ $invoice_type_options = [
                                 <canvas id="total_invoice"></canvas>
                             </div>
                         </div>
-
+                        <!-- 
                         <div
                             id="table_laporan"
                             name="table_laporan"
@@ -193,8 +187,8 @@ $invoice_type_options = [
                                 </table>
                             </div>
                         </div>
+                    </div> -->
                     </div>
-                </div>
             </section>
         </div>
     </div>
@@ -202,109 +196,31 @@ $invoice_type_options = [
 <script src="<?= base_url('assets/vendor/chart.js/new/Chart.bundle.min.js'); ?>"></script>
 
 <script>
-<<<<<<< HEAD
 //assign nilai dari model ke variable javascript
-var data = [];
-var total_earning = [];
-var count_invoice = [];
-var count_invoice_book = [];
+var data = []
+var total_earning = []
+var count_invoice = []
+var count_invoice_book = []
 <?php for ($i = 0; $i < 12; $i++) { ?>
-    data.push(<?= json_encode($model[$i]['data']) ?>)
-    total_earning.push(<?= $model[$i]['total_earning'] ?>)
-    count_invoice.push(<?= $model[$i]['count_invoice'] ?>)
-    count_invoice_book.push(<?= $model[$i]['count_invoice_book'] ?>)
+    data.push(<?= json_encode($model[$i]['data']); ?>)
+    total_earning.push(<?= $model[$i]['total_earning']; ?>)
+    count_invoice.push(<?= $model[$i]['count_invoice']; ?>)
+    count_invoice_book.push(<?= $model[$i]['count_invoice_book']; ?>)
 <?php } ?>
 
-=======
-var jan_data = <?= json_encode($model[0]['data']) ?>;
-var jan_count_invoice = <?= $model[0]['count_invoice'] ?>;
-var jan_total_earning = <?= $model[0]['total_earning'] ?>;
-var feb_data = <?= json_encode($model[1]['data']) ?>;
-var feb_count_invoice = <?= $model[1]['count_invoice'] ?>;
-var feb_total_earning = <?= $model[1]['total_earning'] ?>;
-var mar_data = <?= json_encode($model[2]['data']) ?>;
-var mar_count_invoice = <?= $model[2]['count_invoice'] ?>;
-var mar_total_earning = <?= $model[2]['total_earning'] ?>;
-var apr_data = <?= json_encode($model[3]['data']) ?>;
-var apr_count_invoice = <?= $model[3]['count_invoice'] ?>;
-var apr_total_earning = <?= $model[3]['total_earning'] ?>;
-var may_data = <?= json_encode($model[4]['data']) ?>;
-var may_count_invoice = <?= $model[4]['count_invoice'] ?>;
-var may_total_earning = <?= $model[4]['total_earning'] ?>;
-var jun_data = <?= json_encode($model[5]['data']) ?>;
-var jun_count_invoice = <?= $model[5]['count_invoice'] ?>;
-var jun_total_earning = <?= $model[5]['total_earning'] ?>;
-var jul_data = <?= json_encode($model[6]['data']) ?>;
-var jul_count_invoice = <?= $model[6]['count_invoice'] ?>;
-var jul_total_earning = <?= $model[6]['total_earning'] ?>;
-var aug_data = <?= json_encode($model[7]['data']) ?>;
-var aug_count_invoice = <?= $model[7]['count_invoice'] ?>;
-var aug_total_earning = <?= $model[7]['total_earning'] ?>;
-var sep_data = <?= json_encode($model[8]['data']) ?>;
-var sep_count_invoice = <?= $model[8]['count_invoice'] ?>;
-var sep_total_earning = <?= $model[8]['total_earning'] ?>;
-var oct_data = <?= json_encode($model[9]['data']) ?>;
-var oct_count_invoice = <?= $model[9]['count_invoice'] ?>;
-var oct_total_earning = <?= $model[9]['total_earning'] ?>;
-var nov_data = <?= json_encode($model[10]['data']) ?>;
-var nov_count_invoice = <?= $model[10]['count_invoice'] ?>;
-var nov_total_earning = <?= $model[10]['total_earning'] ?>;
-var dec_data = <?= json_encode($model[11]['data']) ?>;
-var dec_count_invoice = <?= $model[11]['count_invoice'] ?>;
-var dec_total_earning = <?= $model[11]['total_earning'] ?>;
-var base_url = '<?= base_url('print_order/view/'); ?>';
-var date_year = '<?= $this->input->get('date_year') ?>';
+console.log(data)
+console.log(total_earning)
+console.log(count_invoice)
+console.log(count_invoice_book)
 
 
->>>>>>> parent of 7f9944a (array chartjs)
-// function get_category(category) {
-//     if (category == 'new') {
-//         return "Cetak Baru";
-//     } else if (category == 'revise') {
-//         return "Cetak Ulang Revisi";
-//     } else if (category == 'reprint') {
-//         return "Cetak Ulang Non Revisi";
-//     } else if (category == 'nonbook') {
-//         return "Cetak Non Buku";
-//     } else if (category == 'outsideprint') {
-//         return "Cetak Di Luar";
-//     } else if (category == 'from_outside') {
-//         return "Cetak Dari Luar";
-//     } else {
-//         return null;
-//     }
-// }
-
-// function populateTable(items, date_month) {
-//     $('#month_year').html(date_month + ' ' + date_year);
-//     var i = 1;
-//     const table = document.getElementById("to_fill");
-//     items.forEach(item => {
-//         let row = table.insertRow();
-//         let no = row.insertCell(0);
-//         no.innerHTML = i++;
-//         let title = row.insertCell(1);
-//         title.innerHTML = item.title;
-//         let category = row.insertCell(2);
-//         category.innerHTML = get_category(item.category);
-//         let total = row.insertCell(3);
-//         total.innerHTML = item.total;
-//         let total_new = row.insertCell(4);
-//         total_new.innerHTML = item.total_new;
-//         let id = row.insertCell(5);
-//         id.innerHTML = "<a href='" + base_url + item.id + "'> Link Order Cetak </a>";
-//     });
-
-// }
-
-var ctx = document.getElementById("total_year").getContext('2d');
+var ctx = document.getElementById("total_year").getContext('2d')
 var total_year = new Chart(ctx, {
     type: 'bar',
     data: {
         labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
         datasets: [{
-            label: 'Jumlah Judul Buku Terjual',
-<<<<<<< HEAD
+            label: 'Pendapatan',
             data: total_earning,
             backgroundColor: 'rgba(255, 153, 0, 0.8)',
             borderColor: 'rgba(255, 153, 0, 0.2)',
@@ -340,62 +256,16 @@ var total_year = new Chart(ctx, {
     }
 });
 
-var ctx2 = document.getElementById("total)invoice").getContext('2d');
+var ctx2 = document.getElementById("total_invoice").getContext('2d')
 var total_invoice = new Chart(ctx2, {
     type: 'bar',
     data: {
         labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
         datasets: [{
-            label: 'Jumlah Faktur Tercetak',
+            label: 'Faktur Tercetak',
             data: count_invoice,
-            backgroundColor: 'rgba(255, 255, 0, 0.8)',
-            borderColor: 'rgba(255, 153, 0, 0.2)',
             backgroundColor: 'rgba(51, 51, 204, 0.8)',
             borderColor: 'rgba(51, 51, 204, 0.2)',
-=======
-            data: [
-                jan_count_invoice,
-                feb_count_invoice,
-                mar_count_invoice,
-                apr_count_invoice,
-                may_count_invoice,
-                jun_count_invoice,
-                jul_count_invoice,
-                aug_count_invoice,
-                sep_count_invoice,
-                oct_count_invoice,
-                nov_count_invoice,
-                dec_count_invoice
-            ],
-            backgroundColor: [
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)',
-                'rgba(255, 153, 0, 0.8)'
-            ],
-            borderColor: [
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)',
-                'rgba(255, 153, 0, 0.2)'
-            ],
->>>>>>> parent of 7f9944a (array chartjs)
             borderWidth: 1
         }]
     },
@@ -425,106 +295,6 @@ var total_invoice = new Chart(ctx2, {
         legend: {
             position: 'bottom'
         }
-        // onClick: function(e) {
-        //     var bar = this.getElementAtEvent(e)[0];
-        //     var index = bar._index;
-        //     var datasetIndex = bar._datasetIndex;
-        //     if (index == 0) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(jan_data, "January");
-        //     } else if (index == 1) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(feb_data, "February");
-        //     } else if (index == 2) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(mar_data, "March");
-        //     } else if (index == 3) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(apr_data, "April");
-        //     } else if (index == 4) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(may_data, "May");
-        //     } else if (index == 5) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(jun_data, "June");
-        //     } else if (index == 6) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(jul_data, "July");
-        //     } else if (index == 7) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(aug_data, "August");
-        //     } else if (index == 8) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(sep_data, "September");
-        //     } else if (index == 9) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(oct_data, "October");
-        //     } else if (index == 10) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(nov_data, "November");
-        //     } else if (index == 11) {
-        //         $('#table_laporan').toggle();
-        //         $("#to_fill").empty();
-        //         populateTable(dec_data, "December");
-        //     }
-        // }
     }
-});
-
-// chart2.onclick = function(evt) {
-//     // console.log("preparasi");
-//     $.ajax({
-//         type: "POST",
-//         url: "http://localhost/sigap/production_report/coba",
-//         data: {
-//             year: urlParams.get('date_year'),
-//             month: urlParams.get('date_month')
-//         },
-//         success: function(result) {
-//             //console.log(JSON.parse(result));
-//             var detail_data = JSON.parse(result);
-//             var detail_table = "";
-//             for (i in detail_data) {
-//                 console.log(detail_data[i]);
-//                 var detail_row = "<tr>";
-//                 var base_url = "<?= base_url('print_order/view/'); ?>/";
-//                 var no = Number(i) + 1
-//                 detail_row += "<td class='align-middle text-center pl-4'>" + no + "</td>";
-//                 detail_row += "<td class='align-middle text-center4'>" + detail_data[i].book_title + "</td>";
-//                 detail_row += "<td class='align-middle text-center4'>" + categories[detail_data[i].category] + " </td>";
-//                 detail_row += "<td class='align-middle text-center4'>" + detail_data[i].total + "</td>";
-//                 detail_row += "<td class='align-middle text-center4'>" + detail_data[i].total_postprint + "</td>";
-//                 detail_row += "<td class='align-middle text-center4'> <a href='" + base_url + detail_data[i].print_order_id + "'> Link Order Cetak </a></td></tr>";
-//                 detail_table += detail_row;
-//             }
-//             $("tbody").hide();
-//             $("tbody").html(detail_table);
-//             $(".laporan").fadeIn("slow");
-//             $("tbody").fadeIn("slow");
-//         }
-//     });
-// }
-</script>
-<script>
-$(document).ready(function() {
-    $("#coba_ajax").click(function() {
-        $.ajax({
-            url: "http://localhost/sigap/production_report/coba",
-            success: function(result) {
-                console.log(result);
-            }
-        });
-    });
 });
 </script>

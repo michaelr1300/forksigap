@@ -40,10 +40,11 @@ class Earning extends MY_Controller
                 'month'                 => $month,
                 'data'                  => $monthly,
                 'total_earning'         => $total_earning,
-                'count_invoice'         => $count_invoice,
+                'count_invoice'         => $count_invoice[0]->count_invoice,
                 'count_invoice_book'    => $count_invoice_book
             ]);
         }
+
         $pages      = $this->pages;
         $main_view  = 'earning/index_earning';
         $this->load->view('template', compact('main_view', 'pages', 'model'));
