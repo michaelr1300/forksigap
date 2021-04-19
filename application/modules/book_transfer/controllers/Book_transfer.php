@@ -52,9 +52,10 @@ class Book_transfer extends MY_Controller
             redirect($this->pages);
         }
 
+        $book_transfer_list = $this->book_transfer->fetch_book_transfer_list($book_transfer_id);
         $pages       = $this->pages;
         $main_view   = 'book_transfer/view/view_book_transfer';
-        $this->load->view('template', compact('main_view', 'pages', 'book_transfer'));
+        $this->load->view('template', compact('main_view', 'pages', 'book_transfer', 'book_transfer_list'));
     }
 
     public function api_get_staff_gudang()
@@ -219,14 +220,52 @@ class Book_transfer extends MY_Controller
 
         // update book stock tapi tabel list buku yg dipindahin blm ada
         
-        // $book_transfer_lists  = $this->book_transfer->fetch_book_transfer_list($book_transfer_id);
-        // foreach($book_transfer_lists as $book_transfer_list){
-        //     $book_stock = $this->book_stock->where('book_id', $book_transfer_list->book_id)->get();
-        //     $book_stock->warehouse_present -= $book_transfer_list->qty;
-        //     $this->book_stock->where('book_id', $book_transfer_list->book_id)->update($book_stock);
-        // }
+        $book_transfer_lists  = $this->book_transfer->fetch_book_transfer_list($book_transfer_id);
 
-        //insert to book transaction tapi tabel list buku yg dipindahin blm ada
+        // update stok perpustakaan
+        if($book_transfer->library_id){
+            foreach($book_transfer_lists as $book_transfer_list){
+                $book_stock = $this->book_stock->where('book_id', $book_transfer_list->book_id)->get();
+                $book_stock->library_present += $book_transfer_list->qty;
+                $this->book_stock->where('book_id', $book_transfer_list->book_id)->update($book_stock);
+                // stok detail perpustakaan
+                $library_stock_detail = $this->db->select('*')
+                    ->from('library_stock_detail')
+                    ->where('book_stock_id', $book_stock->book_stock_id)
+                    ->where('library_id', $book_transfer->library_id)
+                    ->get()
+                    ->row();
+                if($library_stock_detail){
+                    $library_stock_detail->library_stock += $book_transfer_list->qty;
+                    $this->db->set('library_stock', $library_stock_detail->library_stock);
+                    $this->db->where('library_id', $library_stock_detail->library_id);
+                    $this->db->update('library_stock_detail');
+                }
+                else{
+                    $library_stock_insert = [
+                        'library_id'    => $book_transfer->library_id,
+                        'book_stock_id' => $book_stock->book_stock_id,
+                        'library_stock' => $book_transfer_list->qty,
+                    ];
+                    $this->db->insert('library_stock_detail', $library_stock_insert);                
+                }
+            }
+        }
+        // update stok showroom
+        else{
+            foreach($book_transfer_lists as $book_transfer_list){
+                $book_stock = $this->book_stock->where('book_id', $book_transfer_list->book_id)->get();
+                $book_stock->showroom_present += $book_transfer_list->qty;
+                $this->book_stock->where('book_id', $book_transfer_list->book_id)->update($book_stock);
+            }
+        }
+
+        // update book stock
+        foreach($book_transfer_lists as $book_transfer_list){
+            $book_stock = $this->book_stock->where('book_id', $book_transfer_list->book_id)->get();
+            $book_stock->warehouse_present -= $book_transfer_list->qty;
+            $this->book_stock->where('book_id', $book_transfer_list->book_id)->update($book_stock);
+        }
         
         // update data book_transfer
         $this->book_transfer->where('book_transfer_id', $book_transfer_id)->update([

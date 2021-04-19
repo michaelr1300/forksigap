@@ -164,11 +164,15 @@ class Book_transfer_model extends MY_Model{
         return $this;
     }
 
-    public function fetch_library_stock($library_stock_detail_id){
-        return $this->select(['library.library_name', 'library_stock_detail*'])
-        ->join_table('library_stock_detail', 'library', 'library_stock_detail')
-        ->where('library_stock_detail_id', $library_stock_detail_id)
-        ->get();
+    public function fetch_book_transfer_list($book_transfer_id)
+    {
+        return $this->db
+            ->select('book_transfer_list.*, book.book_id, book.book_title')
+            ->from('book_transfer_list')
+            ->join('book', 'book.book_id = book_transfer_list.book_id')
+            ->where('book_transfer_id', $book_transfer_id)
+            ->get()
+            ->result();
     }
 
     public function delete_book_transfer($where){

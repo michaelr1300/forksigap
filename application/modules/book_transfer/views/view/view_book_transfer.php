@@ -50,11 +50,11 @@ $level              = check_level();
                                         <?= $book_transfer->book_transfer_id;?>
                                     </td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <td width="200px"> Jumlah </td>
-                                    <td> <?= $book_transfer->quantity?>
+                                    <td> <?//= $book_transfer->quantity?>
                                     </td>
-                                </tr>
+                                </tr> -->
                                 <tr>
                                     <td width="200px"> Tanggal Pindah </td>
                                     <td><?= format_datetime($book_transfer->transfer_date)?>
@@ -76,6 +76,35 @@ $level              = check_level();
                                     <td width="200px"> Status </td>
                                     <td>
                                         <?= get_book_transfer_status()[$book_transfer->status]?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="200px"> Buku yang Dipindahkan</td>
+                                    <td>
+                                        <table class="table table-striped mb-0 table-responsive">
+                                            <tbody>
+                                                <tr class="text-center">
+                                                    <th scope="col">No</th>
+                                                    <th scope="col" style="width:300px;">Judul Buku</th>
+                                                    <th scope="col">Jumlah</th>
+                                                </tr>
+                                                <?php $i = 0; ?>
+                                                <?php foreach ($book_transfer_list as $book) : ?>
+                                                <?php $i++; ?>
+                                                <tr>
+                                                    <td class="align-middle text-center pl-4">
+                                                        <?= $i ?>
+                                                    </td>
+                                                    <td>
+                                                        <?= $book->book_title ?>
+                                                    </td>
+                                                    <td class="align-middle text-center">
+                                                        <?= $book->qty ?>
+                                                    </td>
+                                                </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
                                     </td>
                                 </tr>
                             </tbody>
