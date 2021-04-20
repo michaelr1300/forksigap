@@ -20,38 +20,38 @@ class Earning extends MY_Controller
         if ($filters['date_year'] == NULL && $filters['invoice_type'] == NULL) {
             $filters['date_year'] = '2021';
         }
-        $model = [];
-        for ($month = 1; $month <= 12; $month++) {
-            $filters['date_month'] = $month;
-            // if ($filters['invoice_type'] == NULL) {
-            //     $invoice_type = ['cash', 'showroom', 'credit', 'online'];
-            //     for ($i = 0; $i < 4; $i++) {
-            //         $filters['invoice_type'] = $invoice_type[$i];
-            //         $monthly[$i] = $this->earning->filter_total($filters);
-            //     }
-            // } else {
-            //     $monthly = $this->earning->filter_total($filters);
-            // }
-            $monthly = $this->earning->filter_total($filters);
 
-            $total_earning = 0;
-            foreach ($monthly as $value) {
-                if (isset($value->earning)) {
-                    $total_earning += $value->earning;
+        if ($filters['invoice_type'] == NULL) {
+            $filter_invoice_type = false;
+            $invoice_type = ['cash', 'showroom', 'credit', 'online'];
+            for ($i = 0; $i < 4; $i++) {
+                $filters['invoice_type'] = $invoice_type[$i];
+                for ($month = 1; $month <= 12; $month++) {
+                    $filters['date_month'] = $month;
+                    $monthly[$filters['invoice_type']][$month] = $this->earning->filter_total($filters);
+
+                    $total_earning[$filters['invoice_type']][$month] = 0;
+                    foreach ($monthly[$filters['invoice_type']][$month] as $value) {
+                        $total_earning[$filters['invoice_type']][$month] += $value->earning;
+                    }
                 }
             }
+        } else {
+            $filter_invoice_type = $filters['invoice_type'];
+            for ($month = 1; $month <= 12; $month++) {
+                $filters['date_month'] = $month;
+                $monthly[$filter_invoice_type][$month] = $this->earning->filter_total($filters);
 
-            array_push($model, [
-                'month'                 => $month,
-                'data'                  => $monthly,
-                'total_earning'         => $total_earning
-            ]);
+                $total_earning[$filter_invoice_type][$month] = 0;
+                foreach ($monthly[$filter_invoice_type][$month] as $value) {
+                    $total_earning[$filter_invoice_type][$month] += $value->earning;
+                }
+            }
         }
-        var_dump($model[3]['data']);
 
         $pages      = $this->pages;
         $main_view  = 'earning/index_earning';
-        // $this->load->view('template', compact('main_view', 'pages', 'model'));
+        $this->load->view('template', compact('main_view', 'pages', 'filter_invoice_type', 'total_earning'));
     }
     public function detail()
     {

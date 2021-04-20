@@ -121,17 +121,6 @@ $invoice_type_options = [
                             <div class="col-md-12">
                                 <canvas id="total_year"></canvas>
                             </div>
-                            <div
-                                class="col-md-12"
-                                style="text-align: center;"
-                            >
-                                <b>
-                                    <h5>JUMLAH FAKTUR TERCETAK</h5>
-                                </b>
-                            </div>
-                            <div class="col-md-12">
-                                <canvas id="total_invoice"></canvas>
-                            </div>
                         </div>
                         <!-- 
                         <div
@@ -196,54 +185,118 @@ $invoice_type_options = [
 <script src="<?= base_url('assets/vendor/chart.js/new/Chart.bundle.min.js'); ?>"></script>
 
 <script>
-//assign nilai dari model ke variable javascript
-var data = []
-var total_earning = []
-<?php for ($i = 0; $i < 12; $i++) { ?>
-    data.push(<?= json_encode($model[$i]['data']); ?>)
-    total_earning.push(<?= $model[$i]['total_earning']; ?>)
-<?php } ?>
+<?php if ($filter_invoice_type == false) : ?>
+    var total_earning_cash = [];
+    var total_earning_showroom = [];
+    var total_earning_credit = [];
+    var total_earning_online = [];
+    <?php for ($i = 1; $i <= 12; $i++) { ?>
+        total_earning_cash[<?= $i - 1 ?>] = '<?= $total_earning['cash'][$i] ?>'
+        total_earning_showroom[<?= $i - 1 ?>] = '<?= $total_earning['showroom'][$i] ?>'
+        total_earning_credit[<?= $i - 1 ?>] = '<?= $total_earning['credit'][$i] ?>'
+        total_earning_online[<?= $i - 1 ?>] = '<?= $total_earning['online'][$i] ?>'
+    <?php } ?>
 
-
-var ctx = document.getElementById("total_year").getContext('2d')
-var total_year = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
-        datasets: [{
-            label: 'Pendapatan',
-            data: total_earning,
-            backgroundColor: 'rgba(255, 153, 0, 0.8)',
-            borderColor: 'rgba(255, 153, 0, 0.2)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                display: true,
-                ticks: {
-                    beginAtZero: true
-                }
-            }],
-            xAxes: [{
-                display: true,
-                ticks: {
-                    beginAtZero: true
-                }
+    var ctx = document.getElementById("total_year").getContext('2d')
+    var total_year = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+            datasets: [{
+                label: 'Pendapatan Tunai',
+                data: total_earning_cash,
+                backgroundColor: 'rgba(254, 250, 8, 0.8)',
+                borderWidth: 1
+            }, {
+                label: 'Pendapatan Showroom',
+                data: total_earning_showroom,
+                backgroundColor: 'rgba(193, 80, 76, 0.8)',
+                borderWidth: 1
+            }, {
+                label: 'Pendapatan Kredit',
+                data: total_earning_credit,
+                backgroundColor: 'rgba(156, 188, 89, 0.8)',
+                borderWidth: 1
+            }, {
+                label: 'Pendapatan Online',
+                data: total_earning_online,
+                backgroundColor: 'rgba(77, 126, 177, 0.8)',
+                borderWidth: 1
             }]
         },
-        layout: {
-            padding: {
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0
+        options: {
+            scales: {
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            layout: {
+                padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0
+                }
+            },
+            legend: {
+                position: 'bottom'
             }
-        },
-        legend: {
-            position: 'bottom'
         }
-    }
-});
+    });
+
+<?php else : ?>
+    var total_earning = [];
+    <?php for ($i = 1; $i <= 12; $i++) { ?>
+        total_earning[<?= $i - 1 ?>] = '<?= $total_earning[$filter_invoice_type][$i] ?>'
+    <?php } ?>
+    var ctx = document.getElementById("total_year").getContext('2d')
+    var total_year = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+            datasets: [{
+                label: 'Pendapatan "<?= $filter_invoice_type ?>"',
+                data: total_earning,
+                backgroundColor: 'rgba(7, 146, 187, 0.8)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    display: true,
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            layout: {
+                padding: {
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 0
+                }
+            },
+            legend: {
+                position: 'bottom'
+            }
+        }
+    });
+<?php endif ?>
 </script>
