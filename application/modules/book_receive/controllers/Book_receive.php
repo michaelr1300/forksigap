@@ -101,7 +101,7 @@ class Book_receive extends MY_Controller
         $data_format['total'] = $book_receive->total ?? '';
         $data_format['total_postprint'] = $book_receive->total_postprint ?? '';
         $data_format['handover_end_date'] = date('d/m/Y', strtotime($book_receive->handover_end_date)) ?? '';
-        $data_format['staff'] = $book_receive->handover_staff;
+        // $data_format['staff'] = $book_receive->handover_staff;
         $data_format['notes'] = $book_receive->{"{$progress}_notes"} ?? '';
         $format = $this->load->view('book_receive/format_pdf_handover', $data_format, true);
         $this->pdf->loadHtml($format);
@@ -134,7 +134,7 @@ class Book_receive extends MY_Controller
         $data_format['wrapping_start_date'] = date('d/m/Y', strtotime($book_receive->wrapping_start_date)) ?? '';
         $data_format['wrapping_end_date'] = date('d/m/Y', strtotime($book_receive->wrapping_end_date)) ?? '';
         $data_format['wrapping_deadline'] = date('d/m/Y', strtotime($book_receive->wrapping_deadline)) ?? '';
-        $data_format['staff'] = $book_receive->wrapping_staff;
+        // $data_format['staff'] = $book_receive->wrapping_staff;
         $data_format['notes'] = $book_receive->{"{$progress}_notes"} ?? '';
         $format = $this->load->view('book_receive/format_pdf_wrapping', $data_format, true);
         $this->pdf->loadHtml($format);
