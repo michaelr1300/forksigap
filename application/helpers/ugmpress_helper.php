@@ -891,6 +891,7 @@ function get_book_transfer_status_edit(){
         // '' => '--Pilih--',
         'waiting' => 'Belum dimulai',
         'preparing' => 'Sedang disiapkan',
+        'preparing_finish' => 'Selesai disiapkan',
         'finish' => 'Selesai'
     ];
 }
