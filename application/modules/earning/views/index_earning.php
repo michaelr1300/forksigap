@@ -112,7 +112,7 @@ $invoice_type_options = [
                                 style="text-align: center;"
                             >
                                 <b>
-                                    <h5>LAPORAN PENDAPATAN FAKTUR</h5>
+                                    <h5>PENDAPATAN FAKTUR</h5>
                                 </b>
                                 <!-- <b>
                                     <p><?= $this->input->get('date_year'); ?></p>
@@ -121,9 +121,7 @@ $invoice_type_options = [
                             <div class="col-md-12">
                                 <canvas id="total_year"></canvas>
                             </div>
-                        </div>
-                        <!-- 
-                        <div
+                            <!-- <div
                             id="table_laporan"
                             name="table_laporan"
                             style="display:none;"
@@ -176,7 +174,8 @@ $invoice_type_options = [
                                 </table>
                             </div>
                         </div>
-                    </div> -->
+                    </div>  -->
+                        </div>
                     </div>
             </section>
         </div>

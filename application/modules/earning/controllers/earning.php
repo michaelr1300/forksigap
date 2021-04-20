@@ -57,7 +57,7 @@ class Earning extends MY_Controller
     {
         $filters = [
             'date_year'     => $this->input->get('date_year', true),
-            // 'date_month'    => $this->input->get('date_month', true),
+            'date_month'    => $this->input->get('date_month', true),
             'invoice_type'  => $this->input->get('invoice_type', true)
             // 'excel'         => $this->input->get('excel', true)
         ];
@@ -65,8 +65,13 @@ class Earning extends MY_Controller
             $filters['date_year'] = '2021';
         }
 
+        $invoice_type = ['cash', 'showroom', 'credit', 'online'];
+        for ($i = 0; $i < 4; $i++) {
+            $filters['invoice_type'] = $invoice_type[$i];
+            $details[$filters['invoice_type']] = $this->earning->filter_detail($filters)->earning;
+        }
         $pages      = $this->pages;
         $main_view  = 'earning/detail_earning';
-        $this->load->view('template', compact('main_view', 'pages'));
+        $this->load->view('template', compact('main_view', 'pages', 'details'));
     }
 }

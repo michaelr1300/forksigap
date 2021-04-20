@@ -16,18 +16,17 @@ class Earning_model extends MY_Model
         //select sum((qty*price*(1-discount/100))) as earning from invoice right join invoice_book on invoice.invoice_id = invoice_book.invoice_id;
     }
 
-    // public function when($params, $data)
-    // {
-    //     // jika data null, maka skip
-    //     if ($data) {
-    //         if ($params == 'date_year') {
-    //             $this->where('YEAR(invoice.issued_date)', $data);
-    //         }
-
-    //         if ($params == 'date_month') {
-    //             $this->where('MONTH(invoice.issued_date)', $data);
-    //         }
-    //     }
-    //     return $this;
-    // }
+    public function filter_detail($filters)
+    {
+        $this->db->select('SUM(qty*price*(1-discount/100)) AS earning')
+            ->from('invoice')
+            ->join('invoice_book', 'invoice.invoice_id = invoice_book.invoice_id', 'right')
+            ->order_by('invoice.invoice_id', 'ASC')
+            ->where('invoice.type', $filters['invoice_type'])
+            ->where('YEAR(invoice.issued_date)', $filters['date_year']);
+        if ($filters['date_month'] != '') {
+            $this->db->where('MONTH(invoice.issued_date)', $filters['date_month']);
+        }
+        return $this->db->get()->row();
+    }
 }
