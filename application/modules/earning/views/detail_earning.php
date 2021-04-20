@@ -5,9 +5,13 @@ $date_month         = $this->input->get('date_month');
 
 $date_year_options = [];
 
-// $date_month_options = [
-//     ''  => '- Bulannya Ga Mau Muncul Ini Gimana Ya -',
-// ];
+$date_month_options = [
+    ''  => 'Satu Tahun'
+];
+$month_name  = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+for ($i = 1; $i <= 12; $i++) {
+    $date_month_options[$i] = $month_name[$i - 1];
+}
 
 for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
     $date_year_options[$dy] = $dy;
@@ -46,6 +50,7 @@ $invoice_type_options = [
     </nav>
 </header>
 
+
 <div class="page-section">
     <div class="row">
         <div class="col-12">
@@ -55,13 +60,13 @@ $invoice_type_options = [
                         <ul class="nav nav-tabs card-header-tabs">
                             <li class="nav-item">
                                 <a
-                                    class="nav-link active"
+                                    class="nav-link"
                                     href="<?= base_url('earning/'); ?>"
                                 >Pendapatan Faktur</a>
                             </li>
                             <li class="nav-item">
                                 <a
-                                    class="nav-link"
+                                    class="nav-link active"
                                     href="<?= base_url('earning/detail'); ?>"
                                 >Detail Pendapatan</a>
                             </li>
@@ -72,6 +77,9 @@ $invoice_type_options = [
                         <div class="row">
                             <div class="col">
                                 <?= form_dropdown('date_year', $date_year_options, $date_year, 'id="date_year" class="form-control custom-select d-block" title="Filter Tahun Cetak"'); ?>
+                            </div>
+                            <div class="col">
+                                <?= form_dropdown('date_month', $date_month_options, $date_month, 'id="date_month" class="form-control custom-select d-block" title="Filter Tahun Cetak"'); ?>
                             </div>
                             <div class="col">
                                 <?= form_dropdown('invoice_type', $invoice_type_options, $invoice_type, 'id="invoice_type" class="form-control custom-select d-block" title="Filter Tipe Invoice"'); ?>
@@ -114,9 +122,6 @@ $invoice_type_options = [
                                 <b>
                                     <h5>LAPORAN PENDAPATAN FAKTUR</h5>
                                 </b>
-                                <!-- <b>
-                                    <p><?= $this->input->get('date_year'); ?></p>
-                                </b> -->
                             </div>
                             <div class="col-md-12">
                                 <canvas id="total_year"></canvas>
@@ -194,56 +199,3 @@ $invoice_type_options = [
     </div>
 </div>
 <script src="<?= base_url('assets/vendor/chart.js/new/Chart.bundle.min.js'); ?>"></script>
-
-<script>
-//assign nilai dari model ke variable javascript
-var data = []
-var total_earning = []
-<?php for ($i = 0; $i < 12; $i++) { ?>
-    data.push(<?= json_encode($model[$i]['data']); ?>)
-    total_earning.push(<?= $model[$i]['total_earning']; ?>)
-<?php } ?>
-
-
-var ctx = document.getElementById("total_year").getContext('2d')
-var total_year = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
-        datasets: [{
-            label: 'Pendapatan',
-            data: total_earning,
-            backgroundColor: 'rgba(255, 153, 0, 0.8)',
-            borderColor: 'rgba(255, 153, 0, 0.2)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                display: true,
-                ticks: {
-                    beginAtZero: true
-                }
-            }],
-            xAxes: [{
-                display: true,
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        },
-        layout: {
-            padding: {
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0
-            }
-        },
-        legend: {
-            position: 'bottom'
-        }
-    }
-});
-</script>

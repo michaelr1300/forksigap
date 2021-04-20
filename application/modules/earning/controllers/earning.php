@@ -14,7 +14,6 @@ class Earning extends MY_Controller
     {
         $filters = [
             'date_year'     => $this->input->get('date_year', true),
-            // 'date_month'    => $this->input->get('date_month', true),
             'invoice_type'  => $this->input->get('invoice_type', true)
             // 'excel'         => $this->input->get('excel', true)
         ];
@@ -24,8 +23,16 @@ class Earning extends MY_Controller
         $model = [];
         for ($month = 1; $month <= 12; $month++) {
             $filters['date_month'] = $month;
+            // if ($filters['invoice_type'] == NULL) {
+            //     $invoice_type = ['cash', 'showroom', 'credit', 'online'];
+            //     for ($i = 0; $i < 4; $i++) {
+            //         $filters['invoice_type'] = $invoice_type[$i];
+            //         $monthly[$i] = $this->earning->filter_total($filters);
+            //     }
+            // } else {
+            //     $monthly = $this->earning->filter_total($filters);
+            // }
             $monthly = $this->earning->filter_total($filters);
-            $count_invoice = $this->earning->filter_count($filters);
 
             $total_earning = 0;
             foreach ($monthly as $value) {
@@ -34,20 +41,17 @@ class Earning extends MY_Controller
                 }
             }
 
-            $count_invoice_book = count($monthly);
-
             array_push($model, [
                 'month'                 => $month,
                 'data'                  => $monthly,
-                'total_earning'         => $total_earning,
-                'count_invoice'         => $count_invoice[0]->count_invoice,
-                'count_invoice_book'    => $count_invoice_book
+                'total_earning'         => $total_earning
             ]);
         }
+        var_dump($model[3]['data']);
 
         $pages      = $this->pages;
         $main_view  = 'earning/index_earning';
-        $this->load->view('template', compact('main_view', 'pages', 'model'));
+        // $this->load->view('template', compact('main_view', 'pages', 'model'));
     }
     public function detail()
     {
@@ -60,6 +64,9 @@ class Earning extends MY_Controller
         if ($filters['date_year'] == NULL && $filters['invoice_type'] == NULL) {
             $filters['date_year'] = '2021';
         }
-        echo ("Page Detail");
+
+        $pages      = $this->pages;
+        $main_view  = 'earning/detail_earning';
+        $this->load->view('template', compact('main_view', 'pages'));
     }
 }
