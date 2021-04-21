@@ -186,12 +186,18 @@ $level              = check_level();
 $is_preparing_started       = format_datetime($book_request->preparing_start_date);
 $is_preparing_finished      = format_datetime($book_request->preparing_end_date);
 $is_preparing_deadline_set  = format_datetime($book_request->preparing_deadline);
-// $staff_gudang               = $this->book_request->get_staff_gudang_by_progress('preparing', $book_request->book_request_id);
+$staff_gudang               = $this->book_request->get_staff_gudang_by_progress('preparing', $book_request->invoice_id);
 ?>
 <section id="preparing-progress-wrapper" class="card">
     <div id="preparing-progress">
         <header class="card-header">
             <div class="d-flex align-items-center"><span class="mr-auto">Penyiapan Buku</span>
+                <?php if(!$is_preparing_finished) :
+                    $this->load->view('book_request/view/common/input_staff_modal', [
+                    'progress' => 'preparing',
+                    'staff_gudang' => $staff_gudang
+                    ]);        
+                ?>
                 <div class="card-header-control">
                     <button id="btn-start-preparing" title="Mulai proses preparing" type="button" class="d-inline btn 
                         <?= !$is_preparing_started ? 'btn-warning' : 'btn-secondary'; ?> <?= ($is_preparing_started || !$is_preparing_deadline_set) ? 'btn-disabled' : ''; ?>
@@ -202,7 +208,7 @@ $is_preparing_deadline_set  = format_datetime($book_request->preparing_deadline)
                         <?= !$is_preparing_started || $is_preparing_finished ? 'disabled' : '' ?>><i class="fas fa-stop"></i><span
                             class="d-none d-lg-inline"> Selesai</span></button>
                 </div>
-                <?php ?>
+                <?php endif?>
             </div>
         </header>
 
@@ -234,18 +240,7 @@ $is_preparing_deadline_set  = format_datetime($book_request->preparing_deadline)
                     <?= format_datetime($book_request->preparing_start_date); ?></strong>
             </div>
             <div class="list-group-item justify-content-between">
-                <?php if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && !$book_request->preparing_deadline))) : ?>
-                <a href="#" id="btn-modal-staff-preparing" title="Staff Bertugas" data-toggle="modal"
-                    data-target="#modal-staff-preparing">Staff Bertugas <i class="fas fa-edit fa-fw"></i></a>
-                <?php else : ?>
-                <span class="text-muted">Staff Bertugas</span>
-                <?php endif ?>
-                <strong>
-                    <span><?= $book_request->preparing_staff ?></span>
-                </strong>
-            </div>
-            <div class="list-group-item justify-content-between">
-                <?php if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && !$book_request->preparing_deadline))) : ?>
+                <?php if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && empty($book_request->preparing_deadline))) && $staff_gudang && !$is_preparing_finished) : ?>
                 <a href="#" id="btn-modal-deadline-preparing" title="Ubah deadline" data-toggle="modal"
                     data-target="#modal-deadline-preparing">Deadline <i class="fas fa-edit fa-fw"></i></a>
                 <?php else : ?>
@@ -253,7 +248,25 @@ $is_preparing_deadline_set  = format_datetime($book_request->preparing_deadline)
                 <?php endif ?>
                 <strong><?= format_datetime($book_request->preparing_deadline); ?></strong>
             </div>
-
+            <?php if($staff_gudang) : ?>
+            <div class="list-group-item justify-content-between">
+                <span class="text-muted">Staff Bertugas</span>
+                <strong>
+                    <?php foreach ($staff_gudang as $staff) : ?>
+                        <span class="badge badge-info p-1"><?= $staff->username; ?></span>
+                    <?php endforeach; ?>
+                </strong>
+                <!-- <?php //if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && !$book_request->preparing_deadline))) : ?>
+                <a href="#" id="btn-modal-staff-preparing" title="Staff Bertugas" data-toggle="modal"
+                    data-target="#modal-staff-preparing">Staff Bertugas <i class="fas fa-edit fa-fw"></i></a>
+                <?php //else : ?>
+                <span class="text-muted">Staff Bertugas</span>
+                <?php //endif ?>
+                <strong>
+                    <span><?//= $book_request->preparing_staff ?></span>
+                </strong> -->
+            </div>
+            <?php endif?>
             <div class="list-group-item justify-content-between">
                 <span class="text-muted">Tanggal selesai</span>
                 <strong>
@@ -272,7 +285,7 @@ $is_preparing_deadline_set  = format_datetime($book_request->preparing_deadline)
             $this->load->view('book_request/view/common/deadline_modal', [
                 'progress' => 'preparing'
             ]);
-            $this->load->view('book_request/view/common/input_staff_modal');
+            // $this->load->view('book_request/view/common/input_staff_modal');
 
             // modal action
             // $this->load->view('book_request/view/common/action_modal', [

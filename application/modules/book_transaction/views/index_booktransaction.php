@@ -84,7 +84,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <th scope="col" style="min-width:350px;" class="align-middle text-center">
                                     Judul</th>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center">
-                                    Stok Awal
+                                    Nomor Order
                                 </th>
                                 <th scope="col" style="min-width:150px;" class="align-middle text-center">
                                     Perubahan</th>
@@ -107,14 +107,17 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                             <tr>
                                 <td class="align-middle text-center"><?= ++$i; ?></td>
                                 <td class="align-middle">
-                                    <!-- Perlu diedit sprtinya,, -->
                                     <a href="<?= base_url('book_transaction/view/' . $book_transaction->book_transaction_id . ''); ?>"
                                         class="font-weight-bold">
                                         <?= highlight_keyword($book_transaction->book_title, $keyword); ?>
                                 </td>
                                 
                                 <td class="align-middle text-center">
-                                    <?= $book_transaction->stock_initial; ?>
+                                    <?php if($book_transaction->stock_in) : ?>
+                                    <?= $book_transaction->order_number; ?>
+                                    <?php else : ?>
+                                    <?= $book_transaction->number; ?>
+                                    <?php endif?>
                                 </td>
                                 <td class="align-middle text-center">
                                     <?= $stock_display ?>
@@ -123,7 +126,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?= $type_display ?>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?= substr($book_transaction->date,0,10); ?>
+                                    <?= format_datetime($book_transaction->date); ?>
                                 </td>
                             </tr>
                             <?php endforeach ?>

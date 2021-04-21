@@ -1,5 +1,12 @@
 <?php
 $level              = check_level();
+$date_year          = $this->input->get('date_year');
+
+$date_year_options = [];
+
+for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
+    $date_year_options[$dy] = $dy;
+}
 ?>
 <header class="page-title-bar mb-3">
     <nav aria-label="breadcrumb">
@@ -145,15 +152,15 @@ $level              = check_level();
                                         </td>
                                         <td>
                                             <?php 
-                                                if ($revision->operator == "+") {
-                                                    echo '<div class="text-success"> ' . $revision->operator . ' ' . $revision->warehouse_revision . '</div>';
-                                                } elseif ($revision->operator == "-") {
-                                                    echo '<div class="text-danger"> ' . $revision->operator . ' ' . $revision->warehouse_revision . '</div>';
+                                                if ($revision->revision_type == "add") {
+                                                    echo '<div class="text-success"> ' . '+' . ' ' . $revision->warehouse_revision . '</div>';
+                                                } elseif ($revision->revision_type == "sub") {
+                                                    echo '<div class="text-danger"> ' . '+' . ' ' . $revision->warehouse_revision . '</div>';
                                                 } 
                                             ?>
                                         </td>
                                         <td>
-                                            <?//= date('d F Y H:i:s', strtotime($history->date)); ?>
+                                            <?= date('d F Y H:i:s', strtotime($revision->revision_date)); ?>
                                         </td>
                                         <td>
                                             <?= $revision->notes; ?>
@@ -180,64 +187,131 @@ $level              = check_level();
                 <div class="tab-pane fade" id="chart-book">
                     <!-- Per month chart -->
                     <div class="row mb-4">
-                        <p class="col-12 font-weight-bold">Transaksi Buku per Bulan</p>
-                        <div class="col-3">
-                            <input type="year" id="year" name="year" class="form-control">
+                        <p class="col-12 font-weight-bold">Transaksi Buku per Tahun</p>
+                        <div class="col-4">
+                            <?= form_dropdown('date_year', $date_year_options, $date_year, 'id="date_year" class="form-control custom-select d-block" title="Filter Tahun Cetak"'); ?>
                         </div>
-                        <canvas id="chart-transaction-per-month" height="35vh !important" width="100% !important">
-                        <script>
-                        var ctx = document.getElementById('chart-transaction-per-month').getContext('2d');
-                        var myChart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-                                    'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                                ],
-                                datasets: [{
-                                    label: 'Transaksi Buku per Bulan',
-                                    data: [12, 19, 10, 12, 15, 14, 10, 22, 18, 11, 12, 21],
-                                    backgroundColor: [
-                                        'rgba(74, 138, 216, 0.2)'
-                                        // 'rgba(54, 162, 235, 0.2)',
-                                        // 'rgba(255, 206, 86, 0.2)',
-                                        // 'rgba(75, 192, 192, 0.2)',
-                                        // 'rgba(153, 102, 255, 0.2)',
-                                        // 'rgba(255, 159, 64, 0.2)'
-                                    ],
-                                    borderColor: [
-                                        'rgba(74, 138, 216, 1)',
-                                        // 'rgba(54, 162, 235, 1)',
-                                        // 'rgba(255, 206, 86, 1)',
-                                        // 'rgba(75, 192, 192, 1)',
-                                        // 'rgba(153, 102, 255, 1)',
-                                        // 'rgba(255, 159, 64, 1)'
-                                    ],
-                                    // borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    yAxes: [{
-                                        ticks: {
-                                            beginAtZero: true
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="text-center">
+                                <b>
+                                    <h5>Transaksi Buku <span>"<?=$input->book_title?>"</span></h5>
+                                    <h5>Tahun</h5>
+                                </b>
+                                <b>
+                                    <span id="date-year-title" class="mb-1"></span>
+                                </b>
+                            </div>
+                            <div class="chart-container" style="position: relative; height:80vh; width:100%">
+                                <canvas id="chart-transaction-yearly">
+                                <script>
+                                    $(document).ready(function() {
+                                        var year = new Date().getFullYear();
+                                        document.getElementById('date_year').valueAsYear = year;
+                                        var ctx_peryear = document.getElementById("chart-transaction-yearly");
+                                        var chart_transaction_per_year = new Chart(ctx_peryear, {
+                                            type: 'bar',
+                                            data: {
+                                                labels: ['Januari', 'Februari', 'Maret',
+                                                    'April', 'Mei', 'Juni', 'Juli',
+                                                    'Agustus', 'September', 'Oktober',
+                                                    'November', 'Desember'
+                                                ],
+                                                datasets: [{
+                                                        label: 'Buku Masuk',
+                                                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                                        borderColor: 'rgb(54, 162, 235)',
+                                                        borderWidth: 1,
+                                                        data: []
+                                                    },
+                                                    {
+                                                        label: 'Buku Keluar',
+                                                        backgroundColor: 'rgb(252, 116, 101)',
+                                                        borderColor: 'rgb(255, 255, 255)',
+                                                        borderWidth: 1,
+                                                        data: []
+                                                    }
+                                                ]
+                                            },
+                                            options: {
+                                                responsive: true,
+                                                scales: {
+                                                    yAxes: [{
+                                                        display: true,
+                                                        scaleLabel: {
+                                                            display: true,
+                                                            labelString: 'Jumlah Buku'
+                                                        },
+                                                        ticks: {
+                                                            beginAtZero: true
+                                                        }
+                                                    }],
+                                                    xAxes: [{
+                                                        scaleLabel: {
+                                                            display: true,
+                                                            labelString: 'Bulan'
+                                                        }
+                                                    }],
+                                                }
+                                            },
+                                        })
+                                        var update_per_year = function(year){
+                                            $.getJSON('<?=base_url('/book_stock/api_chart_data/')?><?=$book_stock->book_stock_id?>/'+year, function(data) {
+                                                // console.log(data);
+                                                var stock_in = [];
+                                                var stock_out = [];
+                                                for (var i in data) {
+                                                    stock_in.push(data[i].stock_in);
+                                                    stock_out.push(data[i].stock_out);
+                                                }
+                                                // console.log(stock_in[1]);
+                                                // console.log(stock_out[1]);
+                                                var stock_in_data = [];
+                                                $.each(stock_in[1], function(key, val) {
+                                                    stock_in_data.push(val);
+                                                })
+                                                var stock_out_data = [];
+                                                $.each(stock_out[1], function(key, val) {
+                                                    stock_out_data.push(val);
+                                                })
+                                                chart_transaction_per_year.data.datasets[0].data = stock_in_data;
+                                                chart_transaction_per_year.data.datasets[1].data = stock_out_data;
+                                                chart_transaction_per_year.update();
+                                                document.getElementById('date-year-title').innerHTML = year;
+                                                // console.log(stock_in_data);
+                                                // console.log(stock_out_data);
+                                            })
                                         }
-                                    }]
-                                }
-                            }
-                        });
-                        </script>
+
+                                        update_per_year(year);
+
+                                        $("#date_year").change(function() {
+                                            get_url();
+                                        });
+
+                                        function get_url() {
+                                            year = $("#date_year").val();
+                                            url = "<?=base_url('/book_stock/api_chart_data/')?><?=$book_stock->book_stock_id?>/"+year;
+                                            update_per_year(year);
+                                        }
+                                    });
+                                </script>
+                            </div>
+
+                        </div>
                     </div>
                     <!-- Per month chart -->
                     <hr>
                     <!-- Per day chart -->
-                    <div class="row">
+                    <!-- <div class="row">
                         <p class="col-12 font-weight-bold">Transaksi Buku per Hari</p>
                         <div class="col-3">
                             <input type="date" id="date" name="date" class="form-control">
                         </div>
                         <canvas id="chart-transaction-per-day" height="35vh !important" width="100% !important">
                         <script>
-                        book_id = <?=$book_stock->book_id?>
+                        book_id = <?//=$book_stock->book_id?>
                         today = new Date();
                         document.getELementById('date').valueAsDate = today;
                         date = today.toISOString().split('T')[0];
@@ -278,42 +352,10 @@ $level              = check_level();
                                 }
                             }
                         });
-                        var updatePerDay = function(date, book_id) {
-                            $.ajax({
-                            url: "<?=base_url('book_stock/api_chart_data/')?>"+book_id+'/'+date,
-                            type: 'GET',
-                            dataType: 'json',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                },
-                                success: function(data) {
-                                    chart_transaction_per_day.data.labels = data.stock_in.month;
-                                    stock_in = data.stock_in.map(a => a);
-                                    chart_transaction_per_day.data.datasets[0].data = stock_in;
-                                    chart_transaction_per_day.update();
-                                },
-                                error: function(data){
-                                    console.log(data);
-                                }
-                            });
-                        }
-
-                        updatePerDay(date);
-
-                        $("#date").change(function() {
-                            get_url();
-                        });
-                        
-                        function get_url() {
-                            date = $("#date").val();
-                            url = "<?=base_url('book_stock/api_chart_data/') ?>"+book_id+'/'+date;
-                            updatePerDay(date);
-                        }
                         </script>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- book transaction data -->
-
             </div>
         </div>
     </section>

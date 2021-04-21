@@ -47,6 +47,33 @@ class Book_request_model extends MY_Model{
         ->where('invoice_id',$invoice_id)
         ->get()->row();
     }
+
+    public function get_staff_gudang()
+    {
+        return $this->select(['user_id', 'username', 'level', 'email'])
+            ->where('level', 'staff_gudang')
+            ->where('is_blocked', 'n')
+            ->order_by('username', 'ASC')
+            ->get_all('user');
+    }
+
+    public function get_staff_gudang_by_progress($progress, $invoice_id)
+    {
+        return $this->db->select(['book_request_user_id', 'book_request_user.user_id', 'invoice_id', 'progress', 'username', 'email'])
+            ->from('user')
+            ->join('book_request_user', 'user.user_id = book_request_user.user_id')
+            ->where('invoice_id', $invoice_id)
+            ->where('progress', $progress)
+            ->get()->result();
+    }
+
+    public function check_row_staff_gudang($invoice_id, $user_id, $progress)
+    {
+        return $this->db
+            ->where(['invoice_id' => $invoice_id, 'user_id' => $user_id, 'progress' => $progress])
+            ->get('book_request_user')
+            ->num_rows();
+    }
     
     // public function filter_book_request($filters, $page){
     //     $book_request = $this->select(['invoice.invoice_id','invoice.number','invoice.issued_date','invoice.type','invoice.status'])

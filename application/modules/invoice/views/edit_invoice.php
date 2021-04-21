@@ -377,7 +377,7 @@
                                             </td>
                                             <td class="align-middle">
                                                 <?php
-                                                $total = $books->qty * $books->price * (1 - $books->discount/100);
+                                                $total = $books->qty * $books->price * (1 - $books->discount);
                                                 echo $total;
                                                 ?></td>
                                             <td class="align-middle"><button

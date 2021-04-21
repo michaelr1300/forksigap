@@ -1,13 +1,7 @@
 <?php
 $level = check_level();
-if ($level == 'superadmin' || $level == 'admin_gudang') {
-    $progress_text = '';
-    if ($progress == 'handover') {
-        $progress_text = 'Serah Terima';
-    } elseif ($progress == 'wrapping') {
-        $progress_text = 'Wrapping';
-    }
-}
+$progress = 'preparing';
+$progress_text = 'penyiapan buku';
 ?>
 <div class="modal fade" id="modal-deadline-<?= $progress ?>" tabindex="-1" role="dialog"
     aria-labelledby="modal-deadline-<?= $progress ?>" aria-hidden="true">
@@ -25,7 +19,7 @@ if ($level == 'superadmin' || $level == 'admin_gudang') {
                         <div>
                             <input type="text" name="<?= "{$progress}_deadline" ?>" id="<?= "{$progress}-deadline" ?>"
                                 class="form-control flatpickr_modal d-none"
-                                value="<?= $book_receive->{$progress . '_deadline'} ?>" />
+                                value="<?= $book_transfer->{$progress . '_deadline'} ?>" />
                         </div>
                     </div>
                 </fieldset>
@@ -45,8 +39,8 @@ if ($level == 'superadmin' || $level == 'admin_gudang') {
 <script>
 $(document).ready(function() {
     const progress = '<?= $progress ?>'
-    const book_receive_id = '<?= $book_receive->book_receive_id ?>'
-    const deadline = '<?= $book_receive->{"{$progress}_deadline"} ?>'
+    const book_transfer_id = '<?= $book_transfer->book_transfer_id ?>'
+    const deadline = '<?= $book_transfer->{"{$progress}_deadline"} ?>'
 
     // ketika modal tampil, pasang listener
     $(`#${progress}-progress-wrapper`).on('shown.bs.modal', `#modal-deadline-${progress}`, function() {
@@ -69,7 +63,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "<?= base_url('book_receive/api_update/'); ?>" + book_receive_id,
+            url: "<?= base_url('book_transfer/api_update/'); ?>" + book_transfer_id,
             data: {
                 [`${progress}_deadline`]: deadline,
                 progress

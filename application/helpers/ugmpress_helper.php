@@ -538,7 +538,7 @@ function get_per_page_options()
 
 function get_user_levels()
 {
-    return ['superadmin', 'admin_penerbitan', 'author', 'reviewer', 'editor', 'layouter', 'author_reviewer', 'admin_percetakan', 'staff_percetakan', 'admin_gudang', 'admin_pemasaran', 'admin_keuangan'];
+    return ['superadmin', 'admin_penerbitan', 'author', 'reviewer', 'editor', 'layouter', 'author_reviewer', 'admin_percetakan', 'staff_percetakan', 'admin_gudang', 'staff_gudang', 'admin_pemasaran', 'admin_keuangan'];
 }
 
 function filter_boolean($data)
@@ -845,16 +845,24 @@ function get_book_receive_status(){
 function get_book_request_category(){
     return [
         '' => '--Pilih--',
-        'gudang' => 'Gudang',
-        'non_gudang_showroom' => 'Non Gudang Showroom',
-        'non_gudang_perpus' => 'Non Gudang Perpustakaan'
+        'credit'      => 'Kredit',
+        'online'      => 'Online',
+        'cash'        => 'Tunai',
+        'showroom'    => 'Showroom'
     ];
 }
-
+function get_book_request_source(){
+    return [
+        '' => '-',
+        'warehouse' => 'Gudang',
+        'showroom'  => 'Showroom',
+        'library'   => 'Perpustakaan'
+    ];
+}
 function get_book_request_status(){
     return [
         '' => '--Pilih--',
-        'preparing_waiting' => 'Belum dimulai',
+        'confirm' => 'Belum dimulai',
         'preparing' => 'Sedang disiapkan',
         'preparing_finish' => 'Selesai disiapkan',
         'finish' => 'Selesai'
@@ -862,7 +870,7 @@ function get_book_request_status(){
 }
 function get_book_request_status_edit(){
     return [
-        'preparing_waiting' => 'Belum dimulai',
+        'confirm' => 'Belum dimulai',
         'preparing' => 'Sedang disiapkan',
         'preparing_finish' => 'Selesai disiapkan'
     ];
@@ -873,6 +881,7 @@ function get_book_transfer_status(){
         '' => '--Pilih--',
         'waiting' => 'Belum dimulai',
         'preparing' => 'Sedang disiapkan',
+        'preparing_finish' => 'Selesai disiapkan',
         'finish' => 'Selesai'
     ];
 }
@@ -882,6 +891,7 @@ function get_book_transfer_status_edit(){
         // '' => '--Pilih--',
         'waiting' => 'Belum dimulai',
         'preparing' => 'Sedang disiapkan',
+        'preparing_finish' => 'Selesai disiapkan',
         'finish' => 'Selesai'
     ];
 }

@@ -1,7 +1,9 @@
 <?php
 $level = check_level();
-$progress_text = 'Penyiapan Buku';
+$progress = 'preparing';
+$progress_text = 'penyiapan buku';
 ?>
+
 <button id="btn-modal-select-staff-<?= $progress; ?>" type="button"
     class="d-inline btn mr-1 <?= empty($staff_gudang) ? 'btn-warning' : 'btn-secondary'; ?>" title="Pilih Staff"><i
         class="fas fa-user-plus fa-fw"></i><span class="d-none d-lg-inline"> Pilih Staff</span></button>
@@ -62,7 +64,7 @@ $progress_text = 'Penyiapan Buku';
                                         <td class="align-middle text-center">
                                             <button title="Hapus"
                                                 class="btn btn-sm btn-danger btn-delete-staff-gudang-<?= $progress; ?>"
-                                                data="<?= $staff->book_request_user_id; ?>">
+                                                data="<?= $staff->book_transfer_user_id; ?>">
                                                 <i class="fa fa-trash-alt"></i>
                                                 <span class="sr-only">Delete</span>
                                             </button>
@@ -89,7 +91,7 @@ $progress_text = 'Penyiapan Buku';
 
 <script>
 $(document).ready(function() {
-    const invoice_id = '<?= $book_request->invoice_id ?>'
+    const book_transfer_id = '<?= $book_transfer->book_transfer_id ?>'
     const progress = '<?= $progress ?>'
 
     // get data ketika buka modal pilih penulis
@@ -109,7 +111,7 @@ $(document).ready(function() {
 
 
         // get data semua reviewer
-        $.get("<?= base_url('book_request/api_get_staff_gudang'); ?>",
+        $.get("<?= base_url('book_transfer/api_get_staff_gudang'); ?>",
             function(res) {
                 //  inisialisasi select2
                 $(`#staff-gudang-id-${progress}`).select2({
@@ -150,10 +152,10 @@ $(document).ready(function() {
         $this.attr("disabled", "disabled").html("<i class='fa fa-spinner fa-spin '></i>");
         $.ajax({
             type: "POST",
-            url: "<?= base_url('book_request/api_add_staff_gudang'); ?>",
+            url: "<?= base_url('book_transfer/api_add_staff_gudang'); ?>",
             datatype: "JSON",
             data: {
-                invoice_id,
+                book_transfer_id,
                 user_id,
                 progress
             },
@@ -180,7 +182,7 @@ $(document).ready(function() {
         let id = $(this).attr('data');
 
         $.ajax({
-            url: "<?= base_url('book_request/api_delete_staff_gudang/'); ?>" + id,
+            url: "<?= base_url('book_transfer/api_delete_staff_gudang/'); ?>" + id,
             success: function(res) {
                 showToast(true, res.data);
             },
@@ -197,12 +199,23 @@ $(document).ready(function() {
 })
 </script>
 
-<!-- <div class="modal fade" id="modal-staff-<?//= $progress; ?>" tabindex="-1" role="dialog"
-    aria-labelledby="modal-staff-preparing" aria-hidden="true">
+
+<!-- <?php
+        // $level = check_level();
+        // if ($level == 'superadmin' || $level == 'admin_gudang') :
+        //     $progress_text = '';
+        //     if ($progress == 'handover') {
+        //         $progress_text = 'Serah Terima';
+        //     } elseif ($progress == 'wrapping') {
+        //         $progress_text = 'Wrapping';
+        //     }
+        ?>
+<div class="modal fade" id="modal-staff-<?//= $progress; ?>" tabindex="-1" role="dialog"
+    aria-labelledby="modal-staff-<?//= $progress; ?>" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"> Staff gudang untuk penyiapan buku </h5>
+                <h5 class="modal-title"> Staff Gudang untuk Progress <?//= $progress_text; ?> </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -210,15 +223,15 @@ $(document).ready(function() {
             <div class="modal-body">
                 <form>
                     <fieldset>
-                        <div class="form-group" id="form-staff-preparing">
-                            <label for="staff-preparing">Nama Staff Gudang</label>
-                            <input type="text" id="preparing_staff" class="form-control">
+                        <div class="form-group" id="form-staff-<?//= $progress; ?>">
+                            <label for="staff-<?//= $progress; ?>">Nama Staff Gudang</label>
+                            <input type="text" id="<?//= $progress ?>_staff" class="form-control">
                         </div>
                     </fieldset>
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="btn-submit-staff-preparing" class="btn btn-primary" type="button">Submit</button>
+                <button id="btn-submit-staff-<?//= $progress?>" class="btn btn-primary" type="button">Submit</button>
             </div>
         </div>
     </div>
@@ -227,19 +240,21 @@ $(document).ready(function() {
 
 <script>
     $(document).ready(function() {
-        const book_request_id = '<?//= $book_request->invoice_id; ?>';
+        const book_receive_id = '<?//= $book_receive->book_receive_id; ?>';
+        const progress = '<?//= $progress; ?>';
 
         // submit progress
-        $(`#preparing-progress-wrapper`).on('click', ` #btn-submit-staff-preparing`, function() {
+        $(`#${progress}-progress-wrapper`).on('click', `#btn-submit-staff-${progress}`, function() {
             const $this = $(this);
 
             $this.attr("disabled", "disabled").html("<i class='fa fa-spinner fa-spin '></i>");
             $.ajax({
                 type: "POST",
-                url: "<?php //echo base_url('book_request/api_update/'); ?>" + book_request_id,
+                url: "<?php echo base_url('book_receive/api_update/'); ?>" + book_receive_id,
                 datatype: "JSON",
                 data: {
-                    [`preparing_staff`]: $(`#preparing_staff`).val(),
+                    progress,
+                    [`${progress}_staff`]: $(`#${progress}_staff`).val(),
                 },
                 success: function(res) {
                     showToast(true, res.data);
@@ -249,12 +264,14 @@ $(document).ready(function() {
                 },
                 complete: function() {
                     $this.removeAttr("disabled").html("Submit");
-                    $(`#preparing-progress-wrapper`).load(` #preparing-progress`);
-                    $(`#modal-staff-preparing`).modal('hide');
+                    $(`#${progress}-progress-wrapper`).load(` #${progress}-progress`);
+                    $(`#modal-staff-${progress}`).modal('hide');
                     $('body').removeClass('modal-open');
                     $('.modal-backdrop').remove();
                 }
             });
         });
     })
-</script> -->
+</script>
+<?php //endif; 
+?> -->

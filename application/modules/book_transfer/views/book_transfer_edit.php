@@ -5,10 +5,10 @@
                 <a href="<?= base_url(); ?>"><span class="fa fa-home"></span></a>
             </li>
             <li class="breadcrumb-item">
-                <a href="<?= base_url('book_request'); ?>">Permintaan Buku</a>
+                <a href="<?= base_url('book_transfer'); ?>">Pemindahan Buku</a>
             </li>
             <li class="breadcrumb-item">
-                <a class="text-muted">Form Edit</a>
+                <a class="text-muted">Form Edit Pemindahan Buku</a>
             </li>
         </ol>
     </nav>
@@ -18,75 +18,79 @@
         <div class="col-md-8">
             <section class="card">
                 <div class="card-body">
-                    <?= form_open_multipart($form_action, 'novalidate="" id="form-book-receive"'); ?>
+                    <form method="post" action='<?=base_url('book_transfer/update/' . $book_transfer->book_transfer_id)?>' id="form-book-transfer">
                     <fieldset>
                         <legend>Form Edit Pemindahan Buku</legend>
                         <?= isset($input->book_transfer_id) ? form_hidden('book_transfer_id', $input->book_transfer_id) : ''; ?>
                         <div class="form-group">
-                            <div id="prefetch">
-                                <label for="book_title" class="font-weight-bold">Judul buku<abbr
-                                        title="Required">*</abbr></label>
-                                <span class="form-control d-block bg-secondary"><?=$book_transfer->book_title?></span>
-                                <?= form_hidden('book_id', $input->book_id); ?>
-                                <?= form_error('book_id'); ?>
+                            <label for="transfer_date">Tanggal Permintaan Pemindahan Buku
+                                <?= $this->lang->line('form_book_transfer_date')?>
+                            </label>
+                            <?= form_input('transfer_date', $book_transfer->transfer_date, 'class="form-control dates"')?>
+                            <?= form_error('entry_date'); ?>
+                        </div>
+                        <div class="form-group">
+                            <label for="preparing_start_date">Tanggal Mulai Penyiapan Buku
+                            </label>
+                            <div class="has-clearable">
+                                <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                </button>
+                                <?= form_input('preparing_start_date', $book_transfer->preparing_start_date, 'class="form-control dates"'); ?>
+                                <?= form_error('preparing_start_date'); ?>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="quantity">Jumlah Buku<abbr title="Required">*</abbr></label>
-                            <?php
-                                $form_quantity = array(
-                                    'type'  => 'number',
-                                    'name'  => 'quantity',
-                                    'id'    => 'quantity',
-                                    'value' => $input->quantity,
-                                    'class' => 'form-control bg-secondary',
-                                    'min'   => '0',
-                                    'readonly' => true
-                                );
-                                ?>
-                            <?= form_input($form_quantity); ?>
-                            <?= form_error('quantity'); ?>
-                        </div>
-                        <div class="form-group">
-                            <label for="destination">Tujuan Pemindahan<abbr title="Required">*</abbr></label>
-                            <span class="form-control d-block bg-secondary"><?=get_book_transfer_destination()[$book_transfer->destination]?></span>
-                            <?= form_hidden('destination', $input->destination); ?>
-                            <?= form_error('destination'); ?>
-                        </div>
-                        <?php if($input->library_id) :?>
-                        <div class="form-group">
-                            <label for="library-id">Perpustakaan
-                                <abbr title="Required">*</abbr>
+                            <label for="preparing_deadline">Deadline Penyiapan Buku
                             </label>
-                            <span class="form-control d-block bg-secondary"><?=get_dropdown_list_library()[$book_transfer->library_id]?></span>
-                            <!-- <input type="text" class="form-control d-block" value="<?=get_dropdown_list_library()[$input->library_id]?>" disabled> -->
-                            <?= form_hidden('library_id', $input->library_id); ?>
-                            <?= form_error('library_id'); ?>
+                            <div class="has-clearable">
+                                <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                </button>
+                                <?= form_input('preparing_deadline', $book_transfer->preparing_deadline, 'class="form-control dates" '); ?>
+                                <?= form_error('preparing_deadline'); ?>
+                            </div>
                         </div>
-                        <?php endif?>
                         <div class="form-group">
-                            <label for="status">Status
-                                <abbr title="Required">*</abbr>
+                            <label for="preparing_end_date">Tanggal Selesai Penyiapan Buku
                             </label>
-                            <?php if($input->status!='finish') : ?>
-                            <?= form_dropdown('status', get_book_transfer_status_edit(), $input->status, 'id="status" class="form-control custom-select d-block"'); ?>
-                            <?= form_error('status'); ?>
-                            <?php else : ?>
-                            <span class="form-control d-block bg-secondary"><?=get_book_transfer_status()[$book_transfer->status]?></span>
-                            <?= form_hidden('status', $input->status); ?>
-                            <?= form_error('status'); ?>
-                            <?php endif?>
+                            <div class="has-clearable">
+                                <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                </button>
+                                <?= form_input('preparing_end_date', $book_transfer->preparing_end_date, 'class="form-control dates" '); ?>
+                                <?= form_error('preparing_end_date'); ?>
+                            </div>
                         </div>
                     </fieldset>
                     <hr>
                     <!-- button -->
-                    <?php if($input->status!='finish') : ?>
                     <input type="submit" class="btn btn-primary" value="Submit" />
                     <a class="btn btn-secondary" href="<?php echo base_url('book_transfer') ?>" role="button">Back</a>
-                    <?=form_close()?>
-                    <?php endif?>
+                    <?//=form_close()?>
+                    </form>
                 </div>
             </section>
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+    $("#book-id").select2({
+        placeholder: '-- Pilih --',
+        dropdownParent: $('#app-main')
+    });
+    $('.dates').flatpickr({
+        altInput: true,
+        altFormat: 'j F Y',
+        dateFormat: 'Y-m-d'
+    });
+})
+</script>
