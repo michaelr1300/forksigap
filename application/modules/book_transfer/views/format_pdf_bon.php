@@ -83,6 +83,9 @@
         border-right: 0px;
         border-bottom: 1px solid black;
     }
+    .content{
+        height: 45%
+    }
     </style>
 
 </head>
@@ -101,58 +104,60 @@
         </div>
     </div>
     <h1 style="text-align: center;"><b>BUKU KONSIYANSI<br><?= strtoupper($destination) ?></b></h1>
-    <table>
-        <tr>
-            <th>NO</th>
-            <th>JUDUL BUKU</th>
-            <th>JUMLAH</th>
-            <th></th>
-            <th>HARGA</th>
-            <th>TOTAL</th>
-        </tr>
-        <?php $i=1?>
-        <?php foreach($book_list as $books) : ?>
-        <tr>
-            <td><?=$i++?></td>
-            <td style="text-align: left;"><?= $books->book_title?></td>
-            <td><?= $books->qty?></td>
-            <td>X</td>
-            <td style="text-align: left;"> Rp <?=$books->price?></td>
-            <td style="text-align: left;"> Rp <?=$books->price * $books->qty?></td>
-        </tr>
-        <?php endforeach?>
-        <?php 
-            $total=0;
-            foreach($book_list as $books){
-                $total += $books->price;
-            }
-            $total_discount = $total * 0.1;
-            ?>
-        <tr style="border: 0px">
-            <td style="border: 0px"></td>
-            <td style="border: 0px"></td>
-            <td style="border: 0px"></td>
-            <td style="border: 0px"></td>
-            <td style="border: 0px"></td>
-            <td style="text-align: left; border: 0px">Rp <?= $total?></td>
-        </tr>
-        <tr style="border: 0px">
-            <td style="border: 0px"></td>
-            <td style="border: 0px"></td>
-            <td style="border: 0px">DISKON</td>
-            <td style="border: 0px"></td>
-            <td style="border: 0px">10%</td>
-            <td class="border-bottom"; style="text-align: left;">Rp <?=$total_discount?></td>
-        </tr>
-        <tr style="border: 0px">
-            <td style="border: 0px"></td>
-            <td style="border: 0px"></td>
-            <td style="border: 0px"><b>TOTAL</b></td>
-            <td style="border: 0px"></td>
-            <td style="border: 0px"></td>
-            <td style="text-align: left; border: 0px"><b>Rp <?= $total - $total_discount?></b></td>
-        </tr>
-    </table>
+    <div class="content">
+        <table>
+            <tr>
+                <th>NO</th>
+                <th>JUDUL BUKU</th>
+                <th>JUMLAH</th>
+                <th></th>
+                <th>HARGA</th>
+                <th>TOTAL</th>
+            </tr>
+            <?php $i=1?>
+            <?php foreach($book_list as $books) : ?>
+            <tr>
+                <td><?=$i++?></td>
+                <td style="text-align: left;"><?= $books->book_title?></td>
+                <td><?= $books->qty?></td>
+                <td>X</td>
+                <td style="text-align: left;"> Rp <?=$books->price?></td>
+                <td style="text-align: left;"> Rp <?=$books->price * $books->qty?></td>
+            </tr>
+            <?php endforeach?>
+            <?php 
+                $total=0;
+                foreach($book_list as $books){
+                    $total += $books->price;
+                }
+                $total_discount = $total * 0.1;
+                ?>
+            <tr style="border: 0px">
+                <td style="border: 0px"></td>
+                <td style="border: 0px"></td>
+                <td style="border: 0px"></td>
+                <td style="border: 0px"></td>
+                <td style="border: 0px"></td>
+                <td style="text-align: left; border: 0px">Rp <?= $total?></td>
+            </tr>
+            <tr style="border: 0px">
+                <td style="border: 0px"></td>
+                <td style="border: 0px"></td>
+                <td style="border: 0px">DISKON</td>
+                <td style="border: 0px"></td>
+                <td style="border: 0px">10%</td>
+                <td class="border-bottom"; style="text-align: left;">Rp <?=$total_discount?></td>
+            </tr>
+            <tr style="border: 0px">
+                <td style="border: 0px"></td>
+                <td style="border: 0px"></td>
+                <td style="border: 0px"><b>TOTAL</b></td>
+                <td style="border: 0px"></td>
+                <td style="border: 0px"></td>
+                <td style="text-align: left; border: 0px"><b>Rp <?= $total - $total_discount?></b></td>
+            </tr>
+        </table>
+    </div>
     <br><br>
     <div class="row">
         <div class="column left" style="text-align:center">
