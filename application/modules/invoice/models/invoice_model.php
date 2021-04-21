@@ -316,42 +316,4 @@ class Invoice_model extends MY_Model
             return false;
         }
     }
-
-    public function update_status($invoice_id, $status)
-    {
-        if ($status == 'confirm') {
-            $edit = [
-                'status'          => $status,
-                'confirm_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        if ($status == 'preparing_start') {
-            $edit = [
-                'status'          => $status,
-                'preparing_start_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        if ($status == 'preparing_end') {
-            $edit = [
-                'status'          => $status,
-                'preparing_end_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        if ($status == 'finish') {
-            $edit = [
-                'status'          => $status,
-                'finish_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
-        return TRUE;
-    }
 }
