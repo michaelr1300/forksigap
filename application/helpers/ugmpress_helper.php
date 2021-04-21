@@ -914,3 +914,19 @@ function get_book_transfer_destination(){
         'library' => 'Perpustakaan',
     ];
 }
+
+function get_book_non_sales_type(){
+    return [
+        '' => '--Pilih--',
+        'presentgift' => 'Present Gift',
+        'doorprize' => 'Doorprize'
+    ];
+}
+
+function get_book_non_sales_status(){
+    return [
+        '' => '--Pilih--',
+        'waiting' => 'Menunggu',
+        'finish' => 'Selesai'
+    ];
+}

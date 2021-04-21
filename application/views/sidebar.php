@@ -69,6 +69,11 @@ $menu_list = [
                 'url'   => 'book_transaction',
                 'level' => 'superadmin|admin_gudang'
             ],
+            [
+                'name'  => 'Buku Non Penjualan',
+                'url'   => 'book_non_sales',
+                'level' => 'superadmin|admin_gudang'
+            ],
         ]
     ],
     [
