@@ -144,6 +144,9 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <!-- <td class="align-middle text-center"><?//=$book_stock->selling?></td> -->
                                 <?php if ($level == 'superadmin') : ?>
                                 <td style="min-width: 130px" class="align-middle text-center">
+                                    <button title="Edit Lokasi Rak" type="button" class="btn btn-sm btn-secondary"
+                                        data-toggle="modal" data-target="#modal-book-shelf-<??> ?>">
+                                        <i class="fas fa-map-marker-alt"></i></i><span class="sr-only">Edit Lokasi Rak</span></button>
                                     <a href="<?= base_url('book_stock/edit/' . $book_stock->book_stock_id . ''
                                     // . $print_order->print_order_id . ''
                                     ); ?>" class="btn btn-sm btn-secondary" title="Edit Stok Buku">
