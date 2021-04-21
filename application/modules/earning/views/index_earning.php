@@ -332,7 +332,7 @@ function populateTable(data) {
     for (i = 0; i < data.length; i++) {
         var type = get_invoice_type(data[i].type)
         var status = get_invoice_status(data[i].status)
-        htmlContent += "<tr class='text-center'><td>" + (i + 1) + "</td><td>" + data[i].number + "</td><td>" + type + "</td><td>" + data[i].issued_date.substring(0, 10) + "</td><td>" + data[i].status + "</td><td> Rp " + data[i].earning + " </td></tr>"
+        htmlContent += "<tr class='text-center'><td>" + (i + 1) + "</td><td>" + data[i].number + "</td><td>" + type + "</td><td>" + data[i].issued_date.substring(0, 10) + "</td><td>" + status + "</td><td> Rp " + data[i].earning + " </td></tr>"
     }
     $('#table_content').html(htmlContent)
 }
