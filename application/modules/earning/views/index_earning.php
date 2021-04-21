@@ -68,6 +68,22 @@ $invoice_type_options = [
                         </ul>
                     </header>
                     <div class="p-3">
+                        <div
+                            class="alert alert-info alert-dismissible fade show"
+                            role="alert"
+                        >
+                            <h5>Info</h5>
+                            <p class="m-0">Klik bar pada gafik untuk menampilkan detail transaksi faktur
+                            </p>
+                            <button
+                                type="button"
+                                class="close"
+                                data-dismiss="alert"
+                                aria-label="Close"
+                            >
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
                             <div class="col">
