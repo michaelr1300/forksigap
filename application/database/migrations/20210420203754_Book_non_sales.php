@@ -18,6 +18,10 @@ class Migration_Book_non_sales extends CI_Migration
             'issued_date' => [
                 'type' => 'TIMESTAMP'
             ],
+            'type' => [
+                'type' => 'VARCHAR',
+                'constraint' => 30
+            ],
             'status' => [
                 'type' => 'VARCHAR',
                 'constraint' => 30
