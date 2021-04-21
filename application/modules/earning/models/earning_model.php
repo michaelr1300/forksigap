@@ -9,6 +9,10 @@ class Earning_model extends MY_Model
             ->from('invoice')
             ->join('invoice_book', 'invoice.invoice_id = invoice_book.invoice_id', 'right')
             ->order_by('invoice.invoice_id', 'ASC')
+            // ->group_start()
+            // ->where('invoice.status', 'finish')
+            // ->or_where('invoice.status', 'cancel')
+            // ->group_end()
             ->where('YEAR(invoice.issued_date)', $filters['date_year'])
             ->where('MONTH(invoice.issued_date)', $filters['date_month'])
             ->where('invoice.type', $filters['invoice_type']);
@@ -22,11 +26,32 @@ class Earning_model extends MY_Model
             ->from('invoice')
             ->join('invoice_book', 'invoice.invoice_id = invoice_book.invoice_id', 'right')
             ->order_by('invoice.invoice_id', 'ASC')
+            // ->group_start()
+            // ->where('invoice.status', 'finish')
+            // ->or_where('invoice.status', 'cancel')
+            // ->group_end()
             ->where('invoice.type', $filters['invoice_type'])
             ->where('YEAR(invoice.issued_date)', $filters['date_year']);
         if ($filters['date_month'] != '') {
             $this->db->where('MONTH(invoice.issued_date)', $filters['date_month']);
         }
         return $this->db->get()->row();
+    }
+
+    public function get_invoice($filters)
+    {
+        return $this->db->select('invoice.number, invoice.issued_date, invoice.type, status ,sum(price*(1-discount/100)*qty) as earning')
+            ->from('invoice')
+            ->join('invoice_book', 'invoice.invoice_id = invoice_book.invoice_id', 'right')
+            ->order_by('invoice.invoice_id', 'ASC')
+            ->group_by('invoice_book.invoice_id')
+            // ->group_start()
+            // ->where('invoice.status', 'finish')
+            // ->or_where('invoice.status', 'cancel')
+            // ->group_end()
+            ->where('YEAR(invoice.issued_date)', $filters['date_year'])
+            ->where('MONTH(invoice.issued_date)', $filters['date_month'])
+            ->where('invoice.type', $filters['invoice_type'])
+            ->get()->result();
     }
 }

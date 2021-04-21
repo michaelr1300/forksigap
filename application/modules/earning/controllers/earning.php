@@ -48,10 +48,10 @@ class Earning extends MY_Controller
                 }
             }
         }
-
+        $year = $filters['date_year'];
         $pages      = $this->pages;
         $main_view  = 'earning/index_earning';
-        $this->load->view('template', compact('main_view', 'pages', 'filter_invoice_type', 'total_earning'));
+        $this->load->view('template', compact('main_view', 'pages', 'filter_invoice_type', 'total_earning', 'year'));
     }
     public function detail()
     {
@@ -73,5 +73,16 @@ class Earning extends MY_Controller
         $pages      = $this->pages;
         $main_view  = 'earning/detail_earning';
         $this->load->view('template', compact('main_view', 'pages', 'details'));
+    }
+
+    public function api_get_invoice($year, $month, $invoice_type)
+    {
+        $filters = [
+            'date_year'     => $year,
+            'date_month'    => $month + 1,
+            'invoice_type'  => $invoice_type
+        ];
+        $result = $this->earning->get_invoice($filters);
+        return $this->send_json_output(true, $result);
     }
 }

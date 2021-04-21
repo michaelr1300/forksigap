@@ -114,16 +114,18 @@ $invoice_type_options = [
                                 <b>
                                     <h5>PENDAPATAN FAKTUR</h5>
                                 </b>
-                                <!-- <b>
-                                    <p><?= $this->input->get('date_year'); ?></p>
-                                </b> -->
+                                <b>
+                                    <p><?= $year ?></p>
+                                </b>
                             </div>
                             <div class="col-md-12">
                                 <canvas id="total_year"></canvas>
                             </div>
-                            <!-- <div
+                        </div>
+                        <div
                             id="table_laporan"
                             name="table_laporan"
+                            class="mt-5 pb-5"
                             style="display:none;"
                         >
                             <hr>
@@ -134,47 +136,47 @@ $invoice_type_options = [
                                     </p>
                                 </b>
                             </div>
-                            <div style="text-align: left;">
+                            <div style="text-align: center;">
                                 <b>
-                                    <p>LAPORAN JUDUL BUKU YANG BERHASIL DI CETAK</p>
+                                    <h2>Detail Faktur</h2>
                                 </b>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-striped mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th
-                                                scope="col"
-                                                class="pl-4 align-middle text-center"
-                                            >No</th>
-                                            <th
-                                                scope="col"
-                                                class="align-middle text-center"
-                                            >Judul Buku</th>
-                                            <th
-                                                scope="col"
-                                                class="align-middle text-center"
-                                            >Kategori Cetak</th>
-                                            <th
-                                                scope="col"
-                                                class="align-middle text-center"
-                                            >Jumlah Pesanan</th>
-                                            <th
-                                                scope="col"
-                                                class="align-middle text-center"
-                                            >Jumlah Hasil Cetak</th>
-                                            <th class="align-middle text-center">Ref</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody
-                                        id="to_fill"
-                                        class="align-middle text-center"
-                                    >
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>  -->
+                            <table class="table table-striped mb-0 table-responsive">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th
+                                            scope="col"
+                                            style="width:8%;"
+                                        >No</th>
+                                        <th
+                                            scope="col"
+                                            style="width:25%;"
+                                        >Nomor Faktur</th>
+                                        <th
+                                            scope="col"
+                                            style="width:15%;"
+                                        >Jenis Faktur</th>
+                                        <th
+                                            scope="col"
+                                            style="width:25%;"
+                                        >Tanggal Dikeluarkan</th>
+                                        <th
+                                            scope="col"
+                                            style="width:25%;"
+                                        >Status</th>
+                                        <th
+                                            scope="col"
+                                            style="width:25%;"
+                                        >Pendapatan</th>
+                                    </tr>
+                                </thead>
+                                <tbody
+                                    id="table_content"
+                                    class="align-middle text-center"
+                                >
+                                    <!-- isi tabel -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
             </section>
@@ -248,6 +250,16 @@ $invoice_type_options = [
             },
             legend: {
                 position: 'bottom'
+            },
+            onClick: function(e) {
+                var bar = this.getElementAtEvent(e)[0];
+                if (bar == null) {
+                    $('#table_laporan').hide()
+                } else {
+                    var index = bar._index //bulan
+                    var datasetIndex = bar._datasetIndex //jenis faktur
+                    appendTable('<?= $year ?>', index, datasetIndex)
+                }
             }
         }
     });
@@ -298,4 +310,43 @@ $invoice_type_options = [
         }
     });
 <?php endif ?>
+
+function appendTable(year, month, invoice_type) {
+    var type = ['cash', 'showroom', 'credit', 'online']
+    $.ajax({
+        type: "GET",
+        url: "<?= base_url('earning/api_get_invoice/'); ?>" + year + '/' + month + '/' + type[invoice_type],
+        datatype: "JSON",
+        success: function(res) {
+            populateTable(res.data)
+            $('#table_laporan').show()
+        },
+        error: function(err) {
+            console.log(err);
+        },
+    });
+}
+
+function populateTable(data) {
+    var htmlContent = ""
+    for (i = 0; i < data.length; i++) {
+        var type = get_invoice_type(data[i].type)
+        var status = get_invoice_status(data[i].status)
+        htmlContent += "<tr class='text-center'><td>" + (i + 1) + "</td><td>" + data[i].number + "</td><td>" + type + "</td><td>" + data[i].issued_date.substring(0, 10) + "</td><td>" + data[i].status + "</td><td> Rp " + data[i].earning + " </td></tr>"
+    }
+    $('#table_content').html(htmlContent)
+}
+
+function get_invoice_type(type) {
+    if (type == 'credit') return "Kredit"
+    else if (type == 'showroom') return "Showroom"
+    else if (type == 'online') return "Online"
+    else if (type == 'cash') return "Tunai"
+}
+
+function get_invoice_status(status) {
+    if (status == 'cancel') return "Dibatalkan"
+    else if (status == 'finish') return "Selesai"
+    else return status
+}
 </script>
