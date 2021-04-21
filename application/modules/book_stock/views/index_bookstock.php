@@ -92,7 +92,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     Tahun Terbit
                                 </th>
                                 <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
-                                    ISBN</th>
+                                    Penulis</th>
                                 <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
                                     Lokasi Rak</th>
                                 <th scope="col" style="min-width:100px;" class="align-middle text-center" colspan="3">
@@ -125,7 +125,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?=konversiTahun($book_stock->published_date);?>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?= $book_stock->isbn; ?></td>
+                                    <?= $book_stock->author_name; ?></td>
                                 </td>
                                 <td class="align-middle text-center">
                                     <?= $book_stock->book_location; ?></td>
@@ -145,11 +145,10 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <?php if ($level == 'superadmin') : ?>
                                 <td style="min-width: 130px" class="align-middle text-center">
                                     <div class="text-left">
-                                    <button title="Edit Rak" type="button" class="btn btn-sm btn-secondary"
+                                    <button title="Edit Lokasi Rak" type="button" class="btn btn-sm btn-secondary"
                                         data-toggle="modal" data-target="#modal-edit-rak-<?= $book_stock->book_id; ?>"><i
                                             class="fa fa-map-marker-alt"></i><span class="sr-only">Edit Lokasi Rak</span></button>
                                     <a href="<?= base_url('book_stock/edit/' . $book_stock->book_stock_id . ''
-                                    // . $print_order->print_order_id . ''
                                     ); ?>" class="btn btn-sm btn-secondary" title="Edit Stok Buku">
                                         <i class="fa fa-pencil-alt"></i>
                                         <span class="sr-only">Edit Stok Buku</span>
@@ -188,7 +187,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                                         </div>     
                                                         <div class="modal-footer">
                                                             <div class="form-group">
-                                                                <input type="submit" class="btn btn-primary" id="submit"/>
+                                                                <input type="submit" class="btn btn-primary" value="submit"/>
                                                                 <button type="button" class="btn btn-light"
                                                                     data-dismiss="modal">Close</button>
                                                             </div>
