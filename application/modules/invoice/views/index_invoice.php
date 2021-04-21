@@ -9,7 +9,7 @@ $page               = $this->uri->segment(2);
 $i                  = isset($page) ? $page * $per_page - $per_page : 0;
 
 
-$type_options1 = [
+$invoice_type_options = [
     ''  => '- Filter Kategori Faktur -',
     'credit' => 'Kredit',
     'cash' => 'Tunai',
@@ -17,7 +17,7 @@ $type_options1 = [
     'showroom' => 'Showroom'
 ];
 
-$type_options2 = [
+$customer_type_options = [
     ''  => '- Filter Kategori Customer -',
     'distributor' => 'Distributor',
     'reseller' => 'Reseller',
@@ -29,18 +29,18 @@ $type_options2 = [
 $status_options = [
     ''                  => '- Filter Status Faktur -',
     'waiting'           => 'Belum Konfirmasi',
-    'confirm'           => 'Sudan Konfirmasi',
+    'confirm'           => 'Sudah Konfirmasi',
     'preparing_start'   => 'Diproses',
     'preparing_end'     => 'Siap Diambil',
     'finish'            => 'Selesai',
     'cancel'            => 'Dibatalkan'
 ];
 
-function generate_invoice_action($invoice_draft_id)
+function generate_invoice_action($invoice_id)
 {
     return html_escape('
     <div class="list-group list-group-bordered" style="margin: -9px -15px;border-radius:0;">
-      <a href="' . base_url("invoice/action/{$invoice_draft_id}/confirm") . '" class="list-group-item list-group-item-action p-2">
+      <a href="' . base_url("invoice/action/{$invoice_id}/confirm") . '" class="list-group-item list-group-item-action p-2">
         <div class="list-group-item-figure">
         <div class="tile bg-success">
         <span class="fa fa-check"></span>
@@ -48,7 +48,7 @@ function generate_invoice_action($invoice_draft_id)
         </div>
         <div class="list-group-item-body"> Setuju </div>
       </a>
-      <a href="' . base_url("invoice/action/{$invoice_draft_id}/cancel") . '" class="list-group-item list-group-item-action p-2">
+      <a href="' . base_url("invoice/action/{$invoice_id}/cancel") . '" class="list-group-item list-group-item-action p-2">
         <div class="list-group-item-figure">
         <div class="tile bg-danger">
         <span class="fa fa-ban"></span>
@@ -114,12 +114,12 @@ function generate_invoice_action($invoice_draft_id)
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
                             <div class="col-12 col-md-3 mt-2">
-                                <label for="invoice_type">Jenis</label>
-                                <?= form_dropdown('invoice_type', $type_options1, $invoice_type, 'id="invoice_type" class="form-control custom-select d-block" title="Invoice Type"'); ?>
+                                <label for="invoice_type">Jenis Faktur</label>
+                                <?= form_dropdown('invoice_type', $invoice_type_options, $invoice_type, 'id="invoice_type" class="form-control custom-select d-block" title="Invoice Type"'); ?>
                             </div>
                             <div class="col-12 col-md-3 mt-2">
-                                <label for="customer_type">Jenis</label>
-                                <?= form_dropdown('customer_type', $type_options2, $customer_type, 'id="customer_type" class="form-control custom-select d-block" title="Customer Type"'); ?>
+                                <label for="customer_type">Jenis Customer</label>
+                                <?= form_dropdown('customer_type', $customer_type_options, $customer_type, 'id="customer_type" class="form-control custom-select d-block" title="Customer Type"'); ?>
                             </div>
                             <div class="col-12 col-md-3 mt-2">
                                 <label for="status">Status</label>

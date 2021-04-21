@@ -30,6 +30,9 @@ class Migration_update_book_transfer extends CI_Migration
     }
 
     public function down(){
-        $this->dbforge->drop_column('invoice', 'preparing_staff');
+        $this->dbforge->drop_column('book_transfer', 'preparing_deadline');
+        $this->dbforge->drop_column('book_transfer', 'preparing_start_date');
+        $this->dbforge->drop_column('book_transfer', 'preparing_end_date');
+        $this->dbforge->drop_column('book_transfer', 'finish_date');
     }
 }

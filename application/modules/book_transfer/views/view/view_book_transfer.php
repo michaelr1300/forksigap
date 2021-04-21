@@ -79,6 +79,16 @@ $level              = check_level();
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td width="200px"> File Bon </td>
+                                    <td>
+                                        <a class="btn btn-info" id="bon" name="bon" 
+                                            href = "<?= base_url('/book_transfer/generate_pdf_bon/'.$book_transfer->book_transfer_id); ?>">
+                                            <i class="fa fa-download mr-3" aria-hidden="true"></i>Download file bon
+                                        </a>
+                                    <!-- <button type="button" class="btn btn-info"><i class="fa fa-download mr-3" aria-hidden="true"></i>Download File Bon</button> -->
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td width="200px"> Buku yang Dipindahkan</td>
                                     <td>
                                         <table class="table table-striped mb-0 table-responsive">

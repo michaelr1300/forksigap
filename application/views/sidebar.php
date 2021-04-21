@@ -69,6 +69,11 @@ $menu_list = [
                 'url'   => 'book_transaction',
                 'level' => 'superadmin|admin_gudang'
             ],
+            [
+                'name'  => 'Buku Non Penjualan',
+                'url'   => 'book_non_sales',
+                'level' => 'superadmin|admin_gudang'
+            ],
         ]
     ],
     [
@@ -84,7 +89,7 @@ $menu_list = [
     [
         'name' => 'Pendapatan',
         'url'  => 'earning',
-        'icon' => 'fa fa-star',
+        'icon' => 'fas fa-money-check-alt',
         'level' => 'superadmin|admin_gudang|admin_keuangan'
     ],
     [

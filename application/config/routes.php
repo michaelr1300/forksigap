@@ -73,6 +73,7 @@ $route['book_receive/(:num)']     = 'book_receive/index/$1';
 $route['book_request/(:num)']     = 'book_request/index/$1';
 $route['book_transfer/(:num)']    = 'book_transfer/index/$1';
 $route['book_transaction/(:num)'] = 'book_transaction/index/$1';
+$route['book_non_sales/(:num)']   = 'book_non_sales/index/$1';
 $route['logistic/(:num)']         = 'logistic/index/$1';
 $route['logistic_request/(:num)'] = 'logistic_request/index/$1';
 $route['customer/(:num)']         = 'customer/index/$1';

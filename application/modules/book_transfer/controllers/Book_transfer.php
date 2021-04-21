@@ -37,9 +37,9 @@ class Book_transfer extends MY_Controller
 
     public function view($book_transfer_id)
     {
-        // if (!$this->_is_book_transfer_user()) {
-        //     redirect($this->pages);
-        // }
+        if (!$this->_is_warehouse_admin()) {
+            redirect($this->pages);
+        }
 
         if ($book_transfer_id == null) {
             redirect($this->pages);
@@ -56,6 +56,34 @@ class Book_transfer extends MY_Controller
         $pages       = $this->pages;
         $main_view   = 'book_transfer/view/view_book_transfer';
         $this->load->view('template', compact('main_view', 'pages', 'book_transfer', 'book_transfer_list'));
+    }
+    
+    public function generate_pdf_bon($book_transfer_id)
+    {
+        $book_transfer        = $this->book_transfer->fetch_book_transfer($book_transfer_id);
+        $book_transfer_list   = $this->book_transfer->fetch_book_transfer_list($book_transfer_id);
+
+        // PDF
+        $this->load->library('pdf');
+        // FORMAT DATA
+        if($book_transfer->library_id){
+            $data_format['destination'] = $book_transfer->library_name;
+        }
+        else{
+            $data_format['destination'] = 'Showroom';
+        }
+        $data_format['number']        = $book_transfer->transfer_number ?? '';
+        $data_format['transfer_date'] = $book_transfer->transfer_date ?? '';
+        $data_format['book_list']     = $book_transfer_list ?? '';
+        $format = $this->load->view('book_transfer/format_pdf_bon', $data_format, true);
+        $this->pdf->loadHtml($format);
+
+        // (Optional) Setup the paper size and orientation
+        $this->pdf->set_paper('A4', 'portrait');
+        // Render the HTML as PDF
+        $this->pdf->render();
+        $this->pdf->stream(strtolower($data_format['number'] . '_' . 'Pemindahan Buku'));
+
     }
 
     public function api_get_staff_gudang()

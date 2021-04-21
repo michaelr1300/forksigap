@@ -452,7 +452,7 @@ $(document).ready(function() {
         }
         // Jumlah buku 1 - stock
         var qty = document.getElementById('qty')
-        if ((qty.value < 1) || qty.value > qty.max) {
+        if ((parseInt(qty.value) < 1) || parseInt(qty.value) > parseInt(qty.max)) {
             alert("Jumlah buku minimal 1 dan tidak boleh melebihi stock!");
             return
         }

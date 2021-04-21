@@ -237,27 +237,10 @@ class Invoice_model extends MY_Model
     // filter untuk book request gudang
     public function filter_book_request($filters, $page)
     {
-        if ($filters['status']){
-            $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
+        $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
             ->where('status', 'confirm')
-            ->when_request('keyword', $filters['keyword'])
-            ->when_request('type', $filters['type'])
-            ->when_request('status', $filters['status'])
-            ->order_by('invoice_id', 'DESC')
-            ->paginate($page)
-            ->get_all();
-
-        $total = $this->select('invoice_id')
-            ->where('status', 'confirm')
-            ->when_request('keyword', $filters['keyword'])
-            ->when_request('type', $filters['type'])
-            ->when_request('status', $filters['status'])
-            ->order_by('invoice_id')
-            ->count();
-        }
-        else {
-            $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
-            ->where('status', 'confirm')
+            ->or_where('status', 'preparing')
+            ->or_where('status', 'preparing_finish')
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
             ->order_by('invoice_id', 'DESC')
@@ -266,11 +249,12 @@ class Invoice_model extends MY_Model
 
         $total = $this->select('invoice_id')
             ->where('status', 'confirm')
+            ->or_where('status', 'preparing')
+            ->or_where('status', 'preparing_finish')
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
             ->order_by('invoice_id')
             ->count();
-        }
         return [
             'book_request'  => $book_request,
             'total' => $total
@@ -331,43 +315,5 @@ class Invoice_model extends MY_Model
         } else {
             return false;
         }
-    }
-
-    public function update_status($invoice_id, $status)
-    {
-        if ($status == 'confirm') {
-            $edit = [
-                'status'          => $status,
-                'confirm_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        if ($status == 'preparing_start') {
-            $edit = [
-                'status'          => $status,
-                'preparing_start_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        if ($status == 'preparing_end') {
-            $edit = [
-                'status'          => $status,
-                'preparing_end_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        if ($status == 'finish') {
-            $edit = [
-                'status'          => $status,
-                'finish_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
-        return TRUE;
     }
 }

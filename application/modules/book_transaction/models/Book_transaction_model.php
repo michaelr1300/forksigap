@@ -49,8 +49,8 @@ class Book_transaction_model extends MY_Model{
                 $this->or_like('book_title', $data);
                 $this->group_end();
             }
-            else if ($params == 'book_id') {
-                $this->where('book_id', $data);
+            else if ($params == 'book_stock_id') {
+                $this->where('book_stock_id', $data);
             }
             else if ($params == 'start_date') {
                 $this->where('date >=', $data.' 00:00:00');
