@@ -144,6 +144,10 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <!-- <td class="align-middle text-center"><?//=$book_stock->selling?></td> -->
                                 <?php if ($level == 'superadmin') : ?>
                                 <td style="min-width: 130px" class="align-middle text-center">
+                                    <div class="text-left">
+                                    <button title="Edit Rak" type="button" class="btn btn-sm btn-secondary"
+                                        data-toggle="modal" data-target="#modal-edit-rak-<?= $book_stock->book_id; ?>"><i
+                                            class="fa fa-map-marker-alt"></i><span class="sr-only">Edit Lokasi Rak</span></button>
                                     <a href="<?= base_url('book_stock/edit/' . $book_stock->book_stock_id . ''
                                     // . $print_order->print_order_id . ''
                                     ); ?>" class="btn btn-sm btn-secondary" title="Edit Stok Buku">
@@ -153,6 +157,48 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <button title="Delete" type="button" class="btn btn-sm btn-danger"
                                         data-toggle="modal" data-target="#modal-hapus-<?= $book_stock->book_id; ?>"><i
                                             class="fa fa-trash-alt"></i><span class="sr-only">Delete</span></button>
+                                    
+                                    <div class="text-left">
+                                        <div class="modal modal-alert fade"
+                                            id="modal-edit-rak-<?= $book_stock->book_id; ?>" tabindex="-1"
+                                            role="dialog"
+                                            aria-labelledby="modal-edit-rak-<?= $book_stock->book_id; ?>"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">
+                                                            <i class="fa fa-map-marker-alt text-black mr-1"></i>
+                                                            Edit Lokasi Rak
+                                                        </h5>
+                                                    </div>
+                                                    <form action="<?=base_url('book_stock/edit_book_location/')?>" method='post'>
+                                                        <div class="modal-body">
+                                                            <div class="form-group">
+                                                                <label class="font-weight-bold">Judul Buku</label>
+                                                                    <input type="text" class="form-control" value="<?= $book_stock->book_title; ?>" disabled />
+                                                                    <input type="hidden" class="form-control" id="book_stock_id" name="book_stock_id"
+                                                                    value="<?= $book_stock->book_stock_id; ?>" />
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="book_location">Lokasi Rak Buku</label>
+                                                                <?= form_input('book_location', $book_stock->book_location, 'class="form-control" id="book_location" '); ?>
+                                                                <?= form_error('book_location'); ?>
+                                                            </div>
+                                                        </div>     
+                                                        <div class="modal-footer">
+                                                            <div class="form-group">
+                                                                <input type="submit" class="btn btn-primary" id="submit"/>
+                                                                <button type="button" class="btn btn-light"
+                                                                    data-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="text-left">
                                         <div class="modal modal-alert fade"
                                             id="modal-hapus-<?= $book_stock->book_id; ?>" tabindex="-1" role="dialog"

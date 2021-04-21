@@ -96,7 +96,31 @@ class Book_stock extends Warehouse_sales_controller
         //     return; 
         // }
     }
-    
+
+    public function edit_book_location(){
+        if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
+            $book_title = $this->input->post('book_title');
+            $book_stock_id = $this->input->post('book_stock_id');
+            $new_location = $this->input->post('book_location');
+            $book_stock = $this->book_stock->where('book_stock_id', $book_stock_id)->get();
+            if (!$book_stock) {
+                $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            }
+            else {
+                $book_stock->book_location = $new_location;
+                if ($this->book_stock->where('book_stock_id', $book_stock_id)->update($book_stock)) {
+                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+                } else {
+                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_fail'));
+                }
+            }
+        }
+        else {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_edit_fail'));
+        }
+        redirect($this->pages);
+    }
+   
     public function delete($book_stock_id = null)
     {
         if (!$this->_is_warehouse_admin()) {
