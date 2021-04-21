@@ -2,7 +2,7 @@
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class Book_stock extends Warehouse_sales_controller
+class Book_stock extends MY_Controller
 {
     public $per_page = 10;
 
@@ -131,25 +131,24 @@ class Book_stock extends Warehouse_sales_controller
 
     public function edit_book_stock(){
         if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
-            $revision_type = $this->input->post('revision_type');
+            $operator = $this->input->post('warehouse_operator');
             $book_id = $this->input->post('book_id');
             $quantity = $this->input->post('warehouse_modifier');
             $notes = $this->input->post('notes');
             $book_stock = $this->book_stock->where('book_id', $book_id)->get();
             $book_stock_revision = (object) [
-                'book_id'            => $book_id,
-                'warehouse_past'     => $book_stock->warehouse_present,
+                'book_id'         => $book_id,
+                'warehouse_past'  => $book_stock->warehouse_present,
                 'warehouse_present'  => 0,
                 'warehouse_revision' => $quantity,
-                'revision_type'      => $revision_type,
-                'notes'              => $notes,
-                'revision_date'      => now()
+                'operator'          => $operator,
+                'notes'            => $notes
             ];
             if (!$book_stock) {
                 $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
             }
             else {
-                if ($revision_type=="add") $book_stock->warehouse_present += $quantity;
+                if ($operator=="+") $book_stock->warehouse_present += $quantity;
                 else $book_stock->warehouse_present -= $quantity;
                 $book_stock_revision->warehouse_present = $book_stock->warehouse_present;
                 if ($this->book_stock->where('book_id', $book_id)->update($book_stock) && $this->db->insert('book_stock_revision',$book_stock_revision)) {
@@ -162,11 +161,11 @@ class Book_stock extends Warehouse_sales_controller
         else {
             $this->session->set_flashdata('warning', $this->lang->line('toast_edit_fail'));
         }
-        redirect('book_stock/view/'.$book_stock->book_stock_id);
+        redirect($this->pages);
     }
 
-    public function api_chart_data($book_stock_id,$year){
-        $book_transaction = $this->book_transaction->get_transaction_data($book_stock_id,$year);
+    public function api_chart_data($book_id,$year){
+        $book_transaction = $this->book_transaction->get_transaction_data($book_id,$year);
         for ($i=1;$i<=12;$i++){
             $chart_data['stock_in']['month_'.$i]=0;
             $chart_data['stock_out']['month_'.$i]=0;
@@ -180,10 +179,6 @@ class Book_stock extends Warehouse_sales_controller
             }
         }
         return $this->send_json_output(true, (object) $chart_data);
-    }
-    public function api_get_by_book_id($book_id){
-        $book_stock = $this->book_stock->get_book_stock_by_book_id($book_id);
-        return $this->send_json_output(true, $book_stock);
     }
     public function generate_excel($filters)
     {

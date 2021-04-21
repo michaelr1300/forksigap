@@ -19,8 +19,10 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
+                    <?//= form_open_multipart($form_action, 'novalidate="" id="form-print-order"'); ?>
                     <fieldset>
                         <legend>Form Edit Stok Buku</legend>
+                        <!-- <?//=isset($input->print_order_id) ? form_hidden('print_order_id', $input->print_order_id) : ''; ?> -->
                         <div class="alert alert-warning">
                             <strong>PERHATIAN!</strong> Fitur ini berfungsi untuk mengubah stok buku.
                         </div>
@@ -32,19 +34,15 @@
                                     value="<?= $input->book_id; ?>" />
                             </div>
                             <div class="form-group">
-                                <label class="font-weight-bold">Stok Gudang</label>
-                                <span class ="form-control bg-secondary" readonly><?=$input->warehouse_present?></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="revision_type" class="d-block font-weight-bold"> Tipe Operasi <abbr
+                                <label for="type" class="d-block font-weight-bold"> Tipe Operasi <abbr
                                         title="Required">*</abbr></label>
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                     <label class="btn btn-secondary active">
-                                        <input type="radio" name="revision_type" value="add" checked="checked"
+                                        <input type="radio" name="warehouse_operator" value="+" checked="checked"
                                             class="custom-control-input" /> Tambah
                                     </label>
                                     <label class="btn btn-secondary ">
-                                        <input type="radio" name="revision_type" value="sub"
+                                        <input type="radio" name="warehouse_operator" value="-"
                                             class="custom-control-input" /> Kurang
                                     </label>
                                 </div>
@@ -57,6 +55,11 @@
                                 <input type="hidden" name="warehouse_past" id="warehouse_past"
                                     value="<?//= $input->stock_warehouse; ?>">
                             </div>
+                            <!-- <div class="form-group">
+                                <label class="font-weight-bold" for="date">Tanggal
+                                    Input<abbr title="Required">*</abbr></label>
+                                <input type="date" name="date" id="date" value="" class="form-control dates" />
+                            </div> -->
                             <div class="form-group">
                                 <label class="font-weight-bold" for="notes">Catatan</label>
                                 <textarea rows="6" class="form-control summernote-basic" id="notes"

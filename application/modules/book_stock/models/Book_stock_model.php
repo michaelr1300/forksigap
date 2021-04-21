@@ -91,13 +91,6 @@ class Book_stock_model extends MY_Model
         ->get();
     }
 
-    public function get_book_stock_by_book_id($book_id){
-        return $this->select(['book.isbn','book.book_title','book_stock.*'])
-        ->where('book_stock.book_id', $book_id)
-        ->join_table('book','book_stock','book')
-        ->get();
-    }
-
     public function get_book($book_id)
     {
         return $this->select('book.*')
