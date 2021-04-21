@@ -157,10 +157,10 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                         $total_credit = 0;
                                         $total_online = 0; ?>
                                     <?php else : ?>
-                                        <?php $total_cash = $details['cash'] / $total * 100 ?>
-                                        <?php $total_showroom = $details['showroom'] / $total * 100 ?>
-                                        <?php $total_credit = $details['credit'] / $total * 100 ?>
-                                        <?php $total_online = $details['online'] / $total * 100 ?>
+                                        <?php $total_cash = round($details['cash'] / $total * 100, 2) ?>
+                                        <?php $total_showroom = round($details['showroom'] / $total * 100, 2) ?>
+                                        <?php $total_credit = round($details['credit'] / $total * 100, 2) ?>
+                                        <?php $total_online = round($details['online'] / $total * 100, 2) ?>
                                     <?php endif ?>
                                     <tr class="text-center">
                                         <td><?= intval($details['cash']) . '(' . $total_cash . '%)' ?></td>
