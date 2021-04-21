@@ -84,7 +84,7 @@ $menu_list = [
     [
         'name' => 'Pendapatan',
         'url'  => 'earning',
-        'icon' => 'fa fa-star',
+        'icon' => 'fas fa-money-check-alt',
         'level' => 'superadmin|admin_gudang|admin_keuangan'
     ],
     [

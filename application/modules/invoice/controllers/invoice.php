@@ -40,11 +40,11 @@ class Invoice extends MY_Controller
         $main_view      = 'invoice/view_invoice';
         $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
         $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
+        $invoice->customer = $this->invoice->get_customer($invoice->customer_id);
 
         $this->load->view('template', compact('pages', 'main_view', 'invoice', 'invoice_books'));
     }
 
-    // View add
     public function add()
     {
         //post add invoice
@@ -127,7 +127,6 @@ class Invoice extends MY_Controller
         }
     }
 
-    // View Edit
     public function edit($invoice_id)
     {
         //post edit invoice
