@@ -65,8 +65,9 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                         <thead>
                             <tr class="text-center">
                                 <th scope="col" class="pl-4">No</th>
-                                <th scope="col" style="min-width:350px;">Nomor Bon</th>
+                                <th scope="col" style="min-width:350px;">Judul Buku</th>
                                 <th scope="col" style="min-width:200px;">Tujuan</th>
+                                <th scope="col" style="min-width:100px;">Jumlah</th>
                                 <th scope="col" style="min-width:100px;">Tanggal</th>
                                 <th scope="col" style="min-width:200px;">Status</th>
                                 <th style="min-width:100px;"> Aksi </th>
@@ -76,10 +77,10 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                             <?php foreach ($book_transfer as $book_transfer) : ?>
                             <tr class="text-center">
                                 <td class="align-middle pl-4"><?= ++$i; ?></td>
-                                <td class="text-center align-middle">
+                                <td class="text-left align-middle">
                                     <a href="<?= base_url('book_transfer/view/' . $book_transfer->book_transfer_id . ''); ?>"
                                         class="font-weight-bold">
-                                        <?= highlight_keyword($book_transfer->book_transfer_id, $keyword); ?>
+                                        <?= highlight_keyword($book_transfer->book_title, $keyword); ?>
                                     </a>
                                 </td>
                                 <?php if ($book_transfer->destination=='library'): ?>
@@ -91,6 +92,9 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?= get_book_transfer_destination()[$book_transfer->destination]; ?>
                                 </td>
                                 <?php endif; ?>
+                                <td class="align-middle">
+                                    <?= $book_transfer->quantity; ?>
+                                </td>
                                 <td class="align-middle">
                                     <?= format_datetime($book_transfer->transfer_date); ?>
                                 </td>

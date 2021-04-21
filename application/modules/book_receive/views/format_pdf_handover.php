@@ -101,11 +101,11 @@
     <br><br><br>
     <div class="row">
         <div class="column left" style="text-align:center">
-            <h2>PEMBERI<br><br><br><br><br><br><br>..........................</h2>
+            <h2>PEMBERI<br><br><br><br><br><br><br>nama_staf_percetakan</h2>
         </div>
         <div class="column middle" style="text-align:center"></div>
         <div class="column right" style="text-align:center">
-            <h2>PENERIMA<br><br><br><br><br><br><br>..........................</h2>
+            <h2>PENERIMA<br><br><br><br><br><br><br><?=$staff?></h2>
         </div>
     </div>
 </body>
