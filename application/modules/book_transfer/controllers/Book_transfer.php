@@ -326,7 +326,8 @@ class Book_transfer extends MY_Controller
                 $pages       = $this->pages;
                 $main_view   = 'book_transfer/book_transfer_add';
                 $form_action = 'book_transfer/add';
-                $this->load->view('template', compact('pages', 'main_view', 'form_action', 'input'));
+                $book_transfer_available = $this->book_transfer->get_ready_book_list();
+                $this->load->view('template', compact('pages', 'main_view', 'form_action', 'book_transfer_available', 'input'));
                 return;
             }
         } else {
@@ -334,9 +335,7 @@ class Book_transfer extends MY_Controller
             // catat orang yang menginput order cetak
         }
 
-        if (empty($input->library_id)) {
-            $input->library_id = empty_to_null($input->library_id);
-        }
+        $input->library_id = empty_to_null($input->library_id);
         $book_transfer = (object) [
             'status' => 'waiting',
             'transfer_date' => now(),
