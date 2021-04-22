@@ -227,6 +227,30 @@ class Book_transfer_model extends MY_Model{
         return $options;
     }
 
+    public function get_transfer_number(){
+        $data = $this->select(['transfer_number'])
+        ->order_by('transfer_number', 'DESC')
+        ->get('book_transfer');
+        $current_year = date('Y');
+        if ($data){
+            $year = substr($data->transfer_number,0,4);
+            $number = substr($data->transfer_number,5);
+            if ($current_year == $year){
+                $new_number = (int)$number++;
+                $new_number = str_pad((string) $number, 5, '0', STR_PAD_LEFT);
+            }
+            else {
+                $new_number = '00001';
+            }
+            $new_transfer_number = $current_year."-".$new_number;
+        }
+        else {
+            $new_transfer_number = $current_year."-00001";
+        }
+        // return 00001
+        return $new_transfer_number;
+    }
+
     public function get_staff_gudang()
     {
         return $this->select(['user_id', 'username', 'level', 'email'])

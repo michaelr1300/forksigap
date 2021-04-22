@@ -79,7 +79,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <td class="text-center align-middle">
                                     <a href="<?= base_url('book_transfer/view/' . $book_transfer->book_transfer_id . ''); ?>"
                                         class="font-weight-bold">
-                                        <?= highlight_keyword($book_transfer->book_transfer_id, $keyword); ?>
+                                        <?= highlight_keyword($book_transfer->transfer_number, $keyword); ?>
                                     </a>
                                 </td>
                                 <?php if ($book_transfer->destination=='library'): ?>

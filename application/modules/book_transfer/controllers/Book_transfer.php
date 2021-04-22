@@ -336,7 +336,9 @@ class Book_transfer extends MY_Controller
         }
 
         $input->library_id = empty_to_null($input->library_id);
+        $transfer_number = $this->book_transfer->get_transfer_number();
         $book_transfer = (object) [
+            'transfer_number' => $transfer_number,
             'status' => 'waiting',
             'transfer_date' => now(),
             'destination' => $input->destination,
