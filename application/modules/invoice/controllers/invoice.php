@@ -242,6 +242,31 @@ class Invoice extends MY_Controller
         redirect($this->pages);
     }
 
+    public function generate_pdf($invoice_id)
+    {
+        // $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
+        // $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
+        // PDF
+        $this->load->library('pdf');
+
+        // $data_format['book_title'] = $invoice_book->book_title ?? '';
+        // $data_format['quantity'] = $invoice_book->qty ?? '';
+        // $data_format['discount'] = $invoice_book->discount ?? '';
+        // $data_format['price'] = $invoice_book->price ?? '';
+        // $data_format['total_price_temporary'] = $invoice_book->price * $invoice_book->qty ?? '';
+        // $data_format['invoice_discount'] = $invoice_book->price * $invoice_book->qty * ($invoice_book->discount/100) ?? '';
+        // $data_format['total_price'] = $invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount/100) ?? '';
+
+        $format = $this->load->view('invoice/view_invoice_pdf');
+        $this->pdf->loadHtml($format);
+
+        // (Optional) Setup the paper size and orientation
+        $this->pdf->set_paper('A4', 'potrait');
+
+        // Render the HTML as PDF
+        $this->pdf->render();
+        // $this->pdf->stream("".$invoice_id.".pdf", array('Attachment' => 1));
+    }
 
     public function api_get_book($book_id)
     {

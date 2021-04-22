@@ -196,7 +196,12 @@ $level              = check_level();
 				
                 <div id="card-button" class="d-flex justify-content-end">
                 <a class="btn btn-outline-warning" style="margin-right:10px;" href="<?= base_url ('invoice/edit/$invoice->invoice_id') ?>">Edit Faktur<i class="fas fa-edit fa-fw" aria-hidden="true"></i></a>
-                    <a class="btn btn-outline-danger" href="<?php echo base_url('invoice/pdf') ?>">Generate PDF<i class="fas fa-file-pdf fa-fw"></i></a>
+                <a
+                        href="<?= base_url('invoice/generate_pdf/' . $invoice->invoice_id . "/print") ?>"
+                        class="btn btn-outline-danger"
+                        id="btn-generate-pdf-print"
+                        title="Generate PDF"
+                    >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
                     <!-- Faktur Belum dikonfirmasi -->
                     <?php if ($invoice->status == 'waiting') : ?>
                         <?php if($level == 'superadmin' || $level == 'admin_pemasaran'): ?>
