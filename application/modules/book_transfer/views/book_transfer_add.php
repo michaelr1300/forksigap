@@ -23,7 +23,6 @@
                             <legend>Form Pemindahan Buku</legend>
                             <div class="form-group">
                                 <label for="destination">Tujuan Pemindahan<abbr title="Required">*</abbr></label>
-                                <!-- <input type="number" name="qty" id="qty" class="form-control" min="1" /> -->
                                 <select name="destination" id="destination" class="form-control">
                                     <option value="showroom">Showroom</option>
                                     <option value="library">Perpustakaan</option>
@@ -41,13 +40,6 @@
                                     <label for='book-id'>Judul Buku</label>
                                     <?= form_dropdown('book_id', $book_transfer_available, 0, 'id="book-id" class="form-control custom-select d-block"'); ?>
                                     <?= form_error('book_id'); ?>
-
-                                    <!-- <select class="form-control" name="book_tittle" id="book_tittle" required>
-                                        <option value="">No Selected</option>
-                                        <?php //foreach($book as $row):?>
-                                        <option value="<?php //echo $row->book_id;?>"><?php echo $row->book_tittle;?></option>
-                                        <?php //endforeach;?>
-                                    </select> -->
                                 </div>
                                 <div class="form-group col-2 mb-0">
                                     <label for="add-book">Tambah Buku</label>
@@ -57,21 +49,27 @@
                                 </div>
                             </div>
                             <br>
-                            <table class="table table-striped" id="book-list">
+                            <table class="table table-striped mb-0 table-responsive" id="book-list">
 		                    	<thead>
 		                    		<tr>
-		                    			<th style="text-align: center; width:5%">No</th>
-		                    			<th style="text-align: center; width:40%">Judul Buku</th>
-                                        <th style="text-align: center; width:10%">ISBN</th>
-                                        <th style="text-align: center; width:15%">Stok</th>
-		                    			<th style="text-align: center; width:15%">Jumlah</th>
-		                    			<th style="text-align: center; width:15%">Aksi</th>
-		                    		</tr>
+		                    			<th scope="col" style="min-width:50px">No</th>
+		                    			<th scope="col" style="min-width:400px">Judul Buku</th>
+                                        <th scope="col" style="min-width:200px">Penulis</th>
+                                        <th scope="col" style="min-width:100px">Stok Gudang</th>
+		                    			<th scope="col" style="min-width:100px">Jumlah</th>
+                                        <th scope="col" style="min-width:150px">Harga</th>
+		                    			<th scope="col" style="min-width:100px">Aksi</th>
+		                    		</tr> 
 		                    	</thead>
 		                    	<tbody id="book-list-content">
 
 		                    	</tbody>
 		                    </table>
+                            <br>
+                            <div class="form-group" id="input-discount">
+                                <label for="discount">Diskon (%)</label>
+                                <input name="discount" value="0" class='form-control quantity col-2' id="discount" type="number" min="0" max="100">
+                            </div>
                         </fieldset>
                         <hr>
                             <!-- button -->
@@ -121,14 +119,16 @@ $(document).ready(function() {
                 datatype: "JSON",
                 success: function(res) {
                     var stock = res.data.warehouse_present
-                    var isbn = res.data.isbn
-                    var row1 = "<tr><th style='vertical-align: middle;text-align: center'>"+ number +"</th>"
+                    var author = res.data.author_name
+                    var price = res.data.harga
+                    var row1 = "<tr><th style='vertical-align: middle'>"+ number +"</th>"
                     var row2 = "<td style='vertical-align: middle'>" + book_name + "<input type='text' hidden name='book_id' class='book_id' value='"+book_id+"'></td>"
-                    var row3 = "<td style='vertical-align: middle'>" + isbn + "</td>"
-                    var row4 = "<td style='vertical-align: middle;text-align: center' class='stock'>"+stock+"</td>"
+                    var row3 = "<td style='vertical-align: middle'>" + author + "</td>"
+                    var row4 = "<td style='vertical-align: middle' class='stock'>"+stock+"</td>"
                     var row5 = "<td style='vertical-align: middle'><input type='number' value=0 min=1 max='"+stock+"'class='form-control quantity' name='quantity'></td>"
-                    var row6 = "<td style='vertical-align: middle;text-align: center'></button><button type='button' class='btn btn-danger btn-md remove-book'>Hapus</td></tr>"
-                    var html = row1+row2+row3+row4+row5+row6
+                    var row6 = "<td style='vertical-align: middle' class='price'>"+price+"</td>"
+                    var row7 = "<td style='vertical-align: middle'></button><button type='button' class='btn btn-danger btn-md remove-book'>Hapus</td></tr>"
+                    var html = row1+row2+row3+row4+row5+row6+row7
                     $("#book-list-content").append(html);
                 },
                 error: function(err) {
@@ -153,6 +153,7 @@ $(document).ready(function() {
         data = {
             'destination': $("#destination").val(),
             'library_id': $("#library-id").val(),
+            'discount': $("#discount").val(),
             'book_list': []
         }
         $("#book-list-content tr").each(function(){
@@ -162,7 +163,7 @@ $(document).ready(function() {
             }
             data['book_list'].push(book_data)
         })
-        console.log(data)
+        // console.log(data)
         $.ajax({
             type: "POST",
             url: "<?= base_url("book_transfer/add"); ?>",

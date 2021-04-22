@@ -349,7 +349,8 @@ class Book_transfer extends MY_Controller
             $book_transfer_list = (object)[
                 'book_transfer_id' => $book_transfer_id,
                 'book_id' => $books['book_id'],
-                'qty' => $books['qty']
+                'qty' => $books['qty'],
+                'discount' => $input->discount
             ];
             $book_transfer_list_success = $this->db->insert('book_transfer_list',$book_transfer_list);
         }
