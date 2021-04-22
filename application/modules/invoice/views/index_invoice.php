@@ -31,7 +31,7 @@ $status_options = [
     'waiting'           => 'Belum Konfirmasi',
     'confirm'           => 'Sudah Konfirmasi',
     'preparing_start'   => 'Diproses',
-    'preparing_end'     => 'Siap Diambil',
+    'preparing_finish'  => 'Siap Diambil',
     'finish'            => 'Selesai',
     'cancel'            => 'Dibatalkan'
 ];
