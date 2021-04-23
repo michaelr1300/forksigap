@@ -244,8 +244,8 @@ class Invoice extends MY_Controller
 
     public function generate_pdf($invoice_id)
     {
-        // $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
-        // $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
+         $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
+         $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
         // PDF
         $this->load->library('pdf');
 
@@ -256,8 +256,9 @@ class Invoice extends MY_Controller
         // $data_format['total_price_temporary'] = $invoice_book->price * $invoice_book->qty ?? '';
         // $data_format['invoice_discount'] = $invoice_book->price * $invoice_book->qty * ($invoice_book->discount/100) ?? '';
         // $data_format['total_price'] = $invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount/100) ?? '';
-
-        $format = $this->load->view('invoice/view_invoice_pdf');
+        $data_format['number'] = $invoice->number ?? '';
+        
+        $format = $this->load->view('invoice/view_invoice_pdf', $data_format, true);
         $this->pdf->loadHtml($format);
 
         // (Optional) Setup the paper size and orientation
@@ -265,7 +266,7 @@ class Invoice extends MY_Controller
 
         // Render the HTML as PDF
         $this->pdf->render();
-        // $this->pdf->stream("".$invoice_id.".pdf", array('Attachment' => 1));
+        // $this->pdf->stream(strtolower($data_format['number'] . '_' . 'Invoice'));
     }
 
     public function api_get_book($book_id)

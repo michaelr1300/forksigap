@@ -144,7 +144,7 @@
                             <td>
                                 Kepada Yth.<br>
                                 Andrew Mulya<br><br>
-                                No Faktur : P210321/000300
+                                No Faktur : <?= $invoice->number ?>
                             </td>
                             
                             <td style="padding-left: 400px;">
@@ -173,16 +173,24 @@
                             <th class="align-middle invoice-table">Jumlah</th>
                         </tr>
                     </thead>
-                    
+                    <?php $i = 1; ?>
+                    <?php foreach ($invoice_books as $invoice_book) : ?>
                     <tr class="invoice-table">
-                        <td class="invoice-table">1</td>
+                        <td class="invoice-table"><?=$i++?></td>
                         <td class="invoice-table">A152</td>
-                        <td class="invoice-table"><?= $book_title; ?></td>
-                        <td class="invoice-table"><?= $quantity; ?></td>
-                        <td class="invoice-table" style="text-align: right;"><?= $discount; ?></td>
-                        <td class="invoice-table" style="text-align: right;"><?= $price; ?></td>
-                        <td class="invoice-table" style="text-align: right;"><?= $total_price_temporary; ?></td>
+                        <td class="invoice-table"><?= $invoice_book->book_title ?></td>
+                        <td class="invoice-table"><?= $invoice_book->qty ?></td>
+                        <td class="invoice-table" style="text-align: right;"><?= $invoice_book->discount ?></td>
+                        <td class="invoice-table" style="text-align: right;"><?= $invoice_book->price ?></td>
+                        <td class="invoice-table" style="text-align: right;"><?= $invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount/100) ?></td>
                     </tr>
+                    <?php endforeach?>
+                    <?php 
+                        $total=0;
+                        foreach($invoice_books as $invoice_book){
+                            $total += $invoice_book->price;
+                        }
+                    ?>
                 </table>
             </tr>
             <tr>
@@ -191,29 +199,29 @@
                         <td width="64%"></td>
                         <td width="10%"></td>
                         <td width="12%" style="text-align: right;"></td>
-                        <td width="15%" style="text-align: right;"><?= $total_price_temporary; ?></td>
+                        <td width="15%" style="text-align: right;"><?= $total ?></td>
                     </tr>
                     <tr>
                         <td width="64%"></td>
                         <td width="10%">Diskon</td>
-                        <td width="12%" style="text-align: right;"><?= $discount; ?> %</td>
-                        <td width="15%" style="text-align: right; border-bottom: 1px solid black"><?= $invoice_discount; ?></td>
+                        <td width="12%" style="text-align: right;">0 %</td>
+                        <td width="15%" style="text-align: right; border-bottom: 1px solid black">0</td>
                     </tr>
                     <tr>
                         <td width="64%"></td>
                         <td width="10%"></td>
                         <td width="12%"></td>
-                        <td width="15%" style="text-align: right;"><?= $total_price; ?></td>
+                        <td width="15%" style="text-align: right;"><?= $total ?></td>
                     </tr>
                     <tr>
                         <td width="64%"></td>
                         <td width="22%" colspan="2">Ongkos Kirim</td>
-                        <td width="15%" style="text-align: right; border-bottom: 1px solid black">12.000.000</td>
+                        <td width="15%" style="text-align: right; border-bottom: 1px solid black">21000</td>
                     </tr>
                     <tr>
                         <td width="64%"></td>
                         <td width="22%" colspan="2"><b>Jumlah</b></td>
-                        <td width="15%" style="text-align: right; border-bottom: 4px double black"><b><?= $total_price; ?></b></td>
+                        <td width="15%" style="text-align: right; border-bottom: 4px double black"><b>harga + ongkir</b></td>
                     </tr>
                     <tr>
                         <td colspan="4" style="text-align: right;"><i><b>Dua belas juta rupiah</b></i></td>
@@ -221,7 +229,7 @@
                     <tr>
                         <td width="64%"></td>
                         <td width="22%" colspan="2">Bayar</td>
-                        <td width="15%" style="text-align: right;"><?= $total_price; ?></td>
+                        <td width="15%" style="text-align: right;">harga + ongkir</td>
                     </tr>
                     <tr>
                         <td width="64%"></td>
