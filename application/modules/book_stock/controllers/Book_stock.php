@@ -281,6 +281,133 @@ class Book_stock extends Warehouse_sales_controller
         die();
     }
 
+    public function generate_retur()
+    {
+        // $get_data = $this->book_stock->filter_excel($filters);
+        $spreadsheet = new Spreadsheet;
+        $sheet_1 = $spreadsheet->getActiveSheet()->setTitle('stok retur');
+        $filename = 'STOK RETUR_'.date('Y m d');
+
+        // Column Title
+        $sheet_1->setCellValue('A1', 'STOK RETUR');
+        $spreadsheet->getActiveSheet()
+                    ->getStyle('A1')
+                    ->getFont()
+                    ->setBold(true);
+        $sheet_1->setCellValue('A3', 'No');
+        $sheet_1->setCellValue('B3', 'Judul');
+        $sheet_1->setCellValue('C3', 'Stok Retur');
+        $spreadsheet->getActiveSheet()
+                    ->getStyle('A3:C3')
+                    ->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()
+                    ->setARGB('A6A6A6');
+        $spreadsheet->getActiveSheet()
+                    ->getStyle('A3:C3')
+                    ->getFont()
+                    ->setBold(true);
+
+        // Auto width
+        // $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet_1->getColumnDimension('B')->setAutoSize(true);
+        $sheet_1->getColumnDimension('C')->setAutoSize(true);
+
+        $get_data = $this->book_stock->retur_stock();
+        $no = 1;
+        $i = 4;
+        // Column Content
+        foreach ($get_data as $data) {
+            foreach (range('A', 'C') as $v) {
+                switch ($v) {
+                    case 'A': {
+                            $value = $no++;
+                            break;
+                        }
+                    case 'B': {
+                            $value = $data->book_title;
+                            break;
+                        }
+                    case 'C': {
+                            $value = $data->retur_stock;
+                            break;
+                        }
+                }
+                $sheet_1->setCellValue($v . $i, $value);
+            }
+            $i++;
+        }
+
+        // Create new sheet
+        $spreadsheet->createSheet();
+        // Zero based, so set the second tab as active sheet
+        $spreadsheet->setActiveSheetIndex(1);
+        $sheet_2 = $spreadsheet->getActiveSheet()->setTitle('log retur');
+        // Column Title
+        $sheet_2->setCellValue('A1', 'LOG RETUR');
+        $spreadsheet->getActiveSheet()
+                    ->getStyle('A1')
+                    ->getFont()
+                    ->setBold(true);
+        $sheet_2->setCellValue('A3', 'No');
+        $sheet_2->setCellValue('B3', 'Judul Buku');
+        $sheet_2->setCellValue('C3', 'Jumlah Retur');
+        $sheet_2->setCellValue('D3', 'Tanggal');
+        $spreadsheet->getActiveSheet()
+                    ->getStyle('A3:D3')
+                    ->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()
+                    ->setARGB('A6A6A6');
+        $spreadsheet->getActiveSheet()
+                    ->getStyle('A3:D3')
+                    ->getFont()
+                    ->setBold(true);
+
+        // Auto width
+        // $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet_2->getColumnDimension('B')->setAutoSize(true);
+        $sheet_2->getColumnDimension('C')->setAutoSize(true);
+        $sheet_2->getColumnDimension('D')->setAutoSize(true);
+
+        $get_data = $this->book_stock->log_retur();
+        $no = 1;
+        $i = 4;
+        // Column Content
+        foreach ($get_data as $data) {
+            foreach (range('A', 'D') as $v) {
+                switch ($v) {
+                    case 'A': {
+                            $value = $no++;
+                            break;
+                        }
+                    case 'B': {
+                            $value = $data->book_title;
+                            break;
+                        }
+                    case 'C': {
+                            $value = $data->warehouse_revision;
+                            break;
+                        }
+                    case 'D': {
+                        $value = format_datetime($data->revision_date);
+                        break;
+                        }
+                }
+                $sheet_2->setCellValue($v . $i, $value);
+            }
+            $i++;
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        die();
+    }
+
     private function _is_warehouse_admin()
     {
         if ($this->level == 'superadmin' || $this->level == 'admin_gudang') {

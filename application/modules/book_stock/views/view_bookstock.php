@@ -126,15 +126,17 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                         <?php if (empty($book_stock->revision) == FALSE) : ?>
                         <hr>
                         <!-- Log Revisi Stok -->
-                        <p class="font-weight-bold">Log Revisi Stok</p>
+                        <p class="font-weight-bold">Log Revisi Stok Gudang</p>
                         <div class="table-responsive" style="max-height:500px;">
                             <table class="table table-striped table-bordered mb-0">
                                 <thead>
                                     <tr class="text-center">
                                         <th scope="col">No</th>
-                                        <th scope="col">Awal</th>
+                                        <th scope="col">Stok Awal</th>
                                         <th scope="col">Perubahan</th>
+                                        <th scope="col">Stok Akhir</th>
                                         <th scope="col">Tanggal</th>
+                                        <th scope="col">Tipe</th>
                                         <th scope="col">Catatan</th>
                                         <?php if ($level == 'superadmin' || $level == 'admin_gudang') : ?>
                                         <th scope="col"></th>
@@ -155,12 +157,18 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                                 if ($revision->revision_type == "add") {
                                                     echo '<div class="text-success"> ' . '+' . ' ' . $revision->warehouse_revision . '</div>';
                                                 } elseif ($revision->revision_type == "sub") {
-                                                    echo '<div class="text-danger"> ' . '+' . ' ' . $revision->warehouse_revision . '</div>';
+                                                    echo '<div class="text-danger"> ' . '-' . ' ' . $revision->warehouse_revision . '</div>';
                                                 } 
                                             ?>
                                         </td>
                                         <td>
+                                            <?= $revision->warehouse_present; ?>
+                                        </td>
+                                        <td>
                                             <?= date('d F Y H:i:s', strtotime($revision->revision_date)); ?>
+                                        </td>
+                                        <td>
+                                            <?= get_book_stock_revision_type()[$revision->type]; ?>
                                         </td>
                                         <td>
                                             <?= $revision->notes; ?>

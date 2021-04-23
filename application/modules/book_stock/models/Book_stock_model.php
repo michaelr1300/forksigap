@@ -175,6 +175,38 @@ class Book_stock_model extends MY_Model
         ->result();
     }
 
+    public function retur_stock()
+    {
+        return $this->select(['book.book_title', 'author.author_name', 'book.published_date', 
+            'book_stock.book_stock_id', 'book_stock.book_id', 'book_stock.retur_stock'])
+            ->join_table('book', 'book_stock', 'book')
+            ->join_table('draft', 'book', 'draft')
+            // ->join_table('category', 'draft', 'category')
+            ->join_table('draft_author', 'draft', 'draft')
+            ->join_table('author', 'draft_author', 'author')
+            ->where_not('retur_stock', NULL)
+            ->order_by('book.book_title')
+            ->get_all();
+    }
+
+    public function log_retur()
+    {
+        return $this->db->select(['book.book_title', 'book_stock_revision.*'])
+            ->from('book_stock_revision')
+            // ->join('book_stock', 'book_stock.book_stock_id = book_stock_revision.book_stock_id')
+            ->join('book', 'book.book_id = book_stock_revision.book_id')
+            // ->join_table('book', 'book_stock', 'book')
+            // ->join_table('book', 'book_stock', 'book')
+            // ->join_table('draft', 'book', 'draft')
+            // ->join_table('category', 'draft', 'category')
+            // ->join_table('draft_author', 'draft', 'draft')
+            // ->join_table('author', 'draft_author', 'author')
+            ->where('book_stock_revision.type', 'retur')
+            ->order_by('book_stock_revision_id', 'DESC')
+            ->get()
+            ->result();
+    }
+
     // public function fetch_library_stock($book_stock_id){
     //     return $this->select(['library.library_name', 'library.library_id',
     //     'book_stock.book_stock_id',

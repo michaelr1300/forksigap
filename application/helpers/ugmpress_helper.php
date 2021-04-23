@@ -825,6 +825,14 @@ function get_warehouse_stock(){
     ];
 }
 
+function get_book_stock_revision_type(){
+    return [
+        ''  => '',
+        'retur' => 'Retur',
+        'revision' => 'Revisi Jumlah Stok'
+    ];
+}
+
 function get_book_receive_status(){
     return [
         '' => '--Pilih--',

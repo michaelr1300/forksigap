@@ -62,19 +62,19 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <label for="status">Pencarian</label>
                                 <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Nama" class="form-control"'); ?>
                             </div>
-                            <div class="col-12 col-lg-4">
+                            <div class="col-12 col-lg-6">
                                 <label>&nbsp;</label>
                                 <div class="btn-group btn-block" role="group" aria-label="Filter button">
-                                    <button class="btn btn-secondary" type="button"
+                                    <button class="btn btn-secondary col-3" type="button"
                                         onclick="location.href = '<?= base_url($pages); ?>'"> Reset</button>
-                                    <button class="btn btn-primary" type="submit" value="Submit"><i
+                                    <button class="btn btn-primary col-3" type="submit" value="Submit"><i
                                             class="fa fa-filter"></i> Filter</button>
                                     <?php if ($level == "superadmin" || $level == "admin_gudang") : ?>
-                                    <button class="btn btn-success" type="submit" id="excel" name="excel"
-                                        value="1">Excel</button>
-                                    <!-- <a class="btn btn-success" id="excel" name="excel"
-                                        href = '<?//= base_url('/book_stock/generate_excel'); ?>'>Excel</a>
- -->
+                                    <button class="btn btn-success col-3" type="submit" id="excel" name="excel"
+                                        value="1" data-toggle="tooltip" data-placement="top" title="Download excel stok buku"><i class="fas fa-file-excel mr-2"></i>Stok Buku</button>
+                                    <button class="btn btn-success col-3" id="excel" name="excel" type="button" onclick="location.href='<?=base_url('/book_stock/generate_retur');?>'" 
+                                        data-toggle="tooltip" data-placement="top" title="Download excel stok retur"
+                                        ><i class="fas fa-file-excel mr-2"></i>Stok Retur</button>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -116,7 +116,6 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                             <tr>
                                 <td class="align-middle text-center"><?= ++$i; ?></td>
                                 <td class="align-middle">
-                                    <!-- Perlu diedit sprtinya,, -->
                                     <a href="<?= base_url('book_stock/view/' . $book_stock->book_stock_id . ''); ?>"
                                         class="font-weight-bold">
                                         <?= highlight_keyword($book_stock->book_title, $keyword); ?>
@@ -144,7 +143,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <!-- <td class="align-middle text-center"><?//=$book_stock->selling?></td> -->
                                 <?php if ($level == 'superadmin') : ?>
                                 <td style="min-width: 130px" class="align-middle text-center">
-                                    <div class="text-left">
+                                    <div class="text-center">
                                     <button title="Edit Lokasi Rak" type="button" class="btn btn-sm btn-secondary"
                                         data-toggle="modal" data-target="#modal-edit-rak-<?= $book_stock->book_id; ?>"><i
                                             class="fa fa-map-marker-alt"></i><span class="sr-only">Edit Lokasi Rak</span></button>
@@ -187,9 +186,9 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                                         </div>     
                                                         <div class="modal-footer">
                                                             <div class="form-group">
-                                                                <input type="submit" class="btn btn-primary" value="submit"/>
                                                                 <button type="button" class="btn btn-light"
                                                                     data-dismiss="modal">Close</button>
+                                                                    <input type="submit" class="btn btn-primary" value="Submit"/>
                                                             </div>
                                                         </div>
                                                     </form>
