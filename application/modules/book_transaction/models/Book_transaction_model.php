@@ -64,18 +64,13 @@ class Book_transaction_model extends MY_Model{
     public function filter_excel($filters)
     {
         return $this->select(['book.book_title', 'book_stock.book_stock_id', 
-        // 'invoice.tanggal_selesai',
-        // 'invoice_book.id', 
-        // 'book_receive.book_receive_id', 
-        // 'book_receive.finish_date', 
         'book_transaction.*'])
         ->when('keyword', $filters['keyword'])
         ->when('start_date', $filters['start_date'])
         ->when('end_date', $filters['end_date'])
-        // ->join_table('book_transaction', 'book_stock', 'book_transaction')
         ->join_table('book', 'book_transaction', 'book')
         ->join_table('book_stock', 'book_transaction', 'book_stock')
-        // ->join_table('book_receive', 'book_stock', 'book_receive')
+        ->order_by('book_transaction_id', 'DESC')
         ->get_all();
     }
 }

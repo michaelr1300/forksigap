@@ -74,18 +74,17 @@ class Book_transaction extends MY_Controller
                     ->setBold(true);
         $sheet->setCellValue('A3', 'No');
         $sheet->setCellValue('B3', 'Judul Buku');
-        $sheet->setCellValue('C3', 'Stok Awal');
-        $sheet->setCellValue('D3', 'Perubahan');
-        $sheet->setCellValue('E3', 'Jenis Transaksi');
-        $sheet->setCellValue('F3', 'Tanggal Transaksi');
+        $sheet->setCellValue('C3', 'Perubahan');
+        $sheet->setCellValue('D3', 'Jenis Transaksi');
+        $sheet->setCellValue('E3', 'Tanggal Transaksi');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:F3')
+                    ->getStyle('A3:E3')
                     ->getFill()
                     ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                     ->getStartColor()
                     ->setARGB('A6A6A6');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:F3')
+                    ->getStyle('A3:E3')
                     ->getFont()
                     ->setBold(true);
 
@@ -95,7 +94,6 @@ class Book_transaction extends MY_Controller
         $sheet->getColumnDimension('C')->setAutoSize(true);
         $sheet->getColumnDimension('D')->setAutoSize(true);
         $sheet->getColumnDimension('E')->setAutoSize(true);
-        $sheet->getColumnDimension('F')->setAutoSize(true);
 
         // $get_data = $this->book_transaction->filter_excel($filters);
         $get_data = $this->book_transaction->filter_excel($filters);
@@ -107,7 +105,7 @@ class Book_transaction extends MY_Controller
         // tanggal transaksi (finish_date faktur/book_receive))
 
         foreach ($get_data as $data) {
-            foreach (range('A', 'F') as $v) {
+            foreach (range('A', 'E') as $v) {
                 switch ($v) {
                     case 'A': {
                             $value = $no++;
@@ -118,11 +116,7 @@ class Book_transaction extends MY_Controller
                             break;
                         }
                     case 'C': {
-                            $value = $data->stock_initial;
-                            break;
-                        }
-                    case 'D': {
-                            if($data->book_invoice_id == null && !$data->book_receive_id==null){
+                            if($data->book_receive_id){
                                 $value = $data->stock_in;
                             }
                             else{
@@ -130,16 +124,16 @@ class Book_transaction extends MY_Controller
                             }
                             break;
                     }
-                    case 'E': {
-                            if($data->book_invoice_id == null  && !$data->book_receive_id==null){
-                                $value = 'Buku Masuk';
+                    case 'D': {
+                            if($data->book_receive_id){
+                                $value = 'Masuk';
                             }
                             else{
-                                $value = 'Buku Keluar';
+                                $value = 'Keluar';
                             }
                             break;
                     }
-                    case 'F': {
+                    case 'E': {
                             $value = $data->date;
                         break;
                     }
