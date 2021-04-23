@@ -6,17 +6,17 @@
     <title>Faktur UGM Press</title>
     
     <style>
-    .invoice-box {
-        max-width: 800px;
-        margin: auto;
-        height:297mm;
-        width:210mm;
-        padding: 30px;
-       /** box-shadow: 0 0 10px rgba(0, 0, 0, .15); **/
+    body {
         font-size: 12px;
         line-height: 24px;
         font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
         color: #333;
+    }
+
+    .invoice-box {
+        margin: auto;
+        padding: 30px;
+       /** box-shadow: 0 0 10px rgba(0, 0, 0, .15); **/
     }
     
     .invoice-box table {
@@ -98,172 +98,151 @@
         border: 1px solid black;
         border-collapse: collapse;
     }
-        
-    /** RTL **/
-/**    .rtl {
-        direction: rtl;
-        font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-    }
-    
-    .rtl table {
-        text-align: right;
-    }
-    
-    .rtl table tr td:nth-child(2) {
-        text-align: left;
-    }
-**/
     </style>
 </head>
 <body>
-    <div class="invoice-box">
-        <table cellpadding="0" cellspacing="0"> 
-            <tr class="top">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                            <td class="title">
-                                <img src="https://lh3.googleusercontent.com/p/AF1QipMRVQsDOf2j7ms65hEKQu-N5Zu5bE3XBioRhvb-=s1600-w400" style="width:100%; max-width:120px;">
-                            </td>
-                            
-                            <td style="padding-right: 230px;">
-                                GADJAH MADA UNIVERSITY PRESS<br>
-                                Jl. Grafika No.1, Kampus UGM<br>
-                                P.O. Box 14 Bulaksumur, Yogyakarta 55281<br>
-                                Telp/Fax (0274)-561037<br>
-                                NPWP:01.246.578.7-542.000 - E-mail : ugmpress@ugm.ac.id
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            
-            <tr class="information">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                            <td>
-                                Kepada Yth.<br>
-                                Andrew Mulya<br><br>
-                                No Faktur : <?= $invoice->number ?>
-                            </td>
-                            
-                            <td style="padding-left: 400px;">
-                                Yogyakarta, 1 Maret 2021<br>
-                                Jatuh Tempo : 8 Maret 2021
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            
-            <tr class="main">
-                <table class="invoice-table">
-                    <thead class="invoice-table" style="text-align: center;">
-                        <tr class="invoice-table">
-                            <th scope="col" width="5%" class="align-middle invoice-table" rowspan="2">No</th>
-                            <th scope="col" width="5%" class="align-middle invoice-table" rowspan="2">Kode</th>
-                            <th scope="col" width="54%" class="align-middle invoice-table" rowspan="2">Judul</th>
-                            <th scope="col" width="5%" class="align-middle invoice-table" rowspan="2">Jml (eks)</th>
-                            <th scope="col" width="5%" class="align-middle invoice-table" rowspan="2">Disc (%)</th>
-                            <th scope="col" width="26%" class="align-middle invoice-table" colspan="2">Harga</th>
-                        </tr>
-                        
-                        <tr>
-                            <th class="align-middle invoice-table">Satuan</th>
-                            <th class="align-middle invoice-table">Jumlah</th>
-                        </tr>
-                    </thead>
-                    <?php $i = 1; ?>
-                    <?php foreach ($invoice_books as $invoice_book) : ?>
-                    <tr class="invoice-table">
-                        <td class="invoice-table"><?=$i++?></td>
-                        <td class="invoice-table">A152</td>
-                        <td class="invoice-table"><?= $invoice_book->book_title ?></td>
-                        <td class="invoice-table"><?= $invoice_book->qty ?></td>
-                        <td class="invoice-table" style="text-align: right;"><?= $invoice_book->discount ?></td>
-                        <td class="invoice-table" style="text-align: right;"><?= $invoice_book->price ?></td>
-                        <td class="invoice-table" style="text-align: right;"><?= $invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount/100) ?></td>
-                    </tr>
-                    <?php endforeach?>
-                    <?php 
-                        $total=0;
-                        foreach($invoice_books as $invoice_book){
-                            $total += $invoice_book->price;
-                        }
-                    ?>
-                </table>
-            </tr>
+    <table style="width: 100%;">
+        <tr>
+            <td style="width:20%;">
+                <img src="https://lh3.googleusercontent.com/p/AF1QipMRVQsDOf2j7ms65hEKQu-N5Zu5bE3XBioRhvb-=s1600-w400" style="width:100%; max-width:120px;">
+            </td>
+            <td style="width:80%">
+                <b>GADJAH MADA UNIVERSITY PRESS</b><br>
+                Jl. Sendok, Karanggayam CT VIII<br>
+                Caturtunggal Depok, Sleman, D.I. Yogyakarta 55281<br>
+                Telp/Fax (0274)-561037<br>
+                NPWP:01.246.578.7-542.000 - E-mail : ugmpress.ugm.ac.id | gmupress@ugm.ac.id 
+            </td>
+        </tr>
+    </table>
+    
+    <table style="width: 100%; margin-top: 4em;">
+        <tr class="information">
+            <td style="width:70%;">
+                Kepada Yth.<br>
+                Nama Customer<br>
+                Alamat Customer<br><br>
+                No Faktur : <?= $invoice->number ?>
+            </td>
+            <td style="width:30%; vertical-align: top;">
+                Yogyakarta, 1 Maret 2021<br>
+                Jatuh Tempo : 8 Maret 2021
+            </td>
+        </tr>
+    </table>
 
-            <table>
-                <tr>
-                    <td width="64%"></td>
-                    <td width="10%"></td>
-                    <td width="12%" style="text-align: right;"></td>
-                    <td width="15%" style="text-align: right;"><?= $total ?></td>
-                </tr>
-                <tr>
-                    <td width="64%"></td>
-                    <td width="10%">Diskon</td>
-                    <td width="12%" style="text-align: right;">0 %</td>
-                    <td width="15%" style="text-align: right; border-bottom: 1px solid black">0</td>
-                </tr>
-                <tr>
-                    <td width="64%"></td>
-                    <td width="10%"></td>
-                    <td width="12%"></td>
-                    <td width="15%" style="text-align: right;"><?= $total ?></td>
-                </tr>
-                <tr>
-                    <td width="64%"></td>
-                    <td width="22%" colspan="2">Ongkos Kirim</td>
-                    <td width="15%" style="text-align: right; border-bottom: 1px solid black">21000</td>
-                </tr>
-                <tr>
-                    <td width="64%"></td>
-                    <td width="22%" colspan="2"><b>Jumlah</b></td>
-                    <td width="15%" style="text-align: right; border-bottom: 4px double black"><b>harga + ongkir</b></td>
-                </tr>
-                <tr>
-                    <td colspan="4" style="text-align: right;"><i><b>Dua belas juta rupiah</b></i></td>
-                </tr>
-                <tr>
-                    <td width="64%"></td>
-                    <td width="22%" colspan="2">Bayar</td>
-                    <td width="15%" style="text-align: right;">harga + ongkir</td>
-                </tr>
-                <tr>
-                    <td width="64%"></td>
-                    <td width="22%" colspan="2">Kurang</td>
-                    <td width="15%" style="text-align: right;">0</td>
-                </tr>
-            </table>
-            
-            <tr class="information">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                            <td width="64%">
-                                <b>Keterangan :</b><br>
-                                Bukti pembayaran mohon dikirimkan melalui email: ugmpress@ugm.ac.id<br>
-                                atau whatsapp: 081228478888<br>
-                                Pembayaran dapat dilakukan melalui :<br>
-                                1. Mandiri Cab. UGM Yogyakarta 137-00-0455085-7<br>
-                                <a style="padding-left: 14px;">a/n Gadjah Mada University Press</a><br>
-                                2. BNI Cab. UGM Yogyakarta : 0039226571<br>
-                                <a style="padding-left: 14px;">a/n GAMA PRESS</a>
-                            </td>
-                            
-                            <td width="36%" style="text-align: center;">
-                                a.n. Ka. Pemasaran<br><br><br><br><br><br><br>
-                                <i>Adm. Pemasaran</i>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
+    <table class="invoice-table" style="width: 100%;">
+        <thead class="invoice-table" style="text-align: center;">
+            <tr class="invoice-table">
+                <th scope="col" width="5%" class="align-middle invoice-table" rowspan="2">No</th>
+                <th scope="col" width="5%" class="align-middle invoice-table" rowspan="2">Kode</th>
+                <th scope="col" width="54%" class="align-middle invoice-table" rowspan="2">Judul</th>
+                <th scope="col" width="5%" class="align-middle invoice-table" rowspan="2">Jml (eks)</th>
+                <th scope="col" width="5%" class="align-middle invoice-table" rowspan="2">Disc (%)</th>
+                <th scope="col" width="26%" class="align-middle invoice-table" colspan="2">Harga</th>
             </tr>
-        </table>
-    </div>
+            
+            <tr>
+                <th class="align-middle invoice-table">Satuan</th>
+                <th class="align-middle invoice-table">Jumlah</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php $i = 1; ?>
+            <?php foreach ($invoice_books as $invoice_book) : ?>
+            <tr class="invoice-table">
+                <td class="invoice-table"><?=$i++?></td>
+                <td class="invoice-table">A152</td>
+                <td class="invoice-table"><?= $invoice_book->book_title ?></td>
+                <td class="invoice-table" style="text-align: right;"><?= $invoice_book->qty ?></td>
+                <td class="invoice-table" style="text-align: right;"><?= $invoice_book->discount ?></td>
+                <td class="invoice-table" style="text-align: right;"><?= $invoice_book->price ?></td>
+                <td class="invoice-table" style="text-align: right;"><?= $invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount/100) ?></td>
+            </tr>
+            <?php endforeach?>
+
+            <?php 
+                $total=0;
+                foreach($invoice_books as $invoice_book){
+                    $total += $invoice_book->price;
+                }
+            ?>
+        </tbody>
+    </table>
+    
+    <table style="width: 100%;">
+        <tr>
+            <td style="width:50%"></td>
+            <td style="width:10%"></td>
+            <td style="width:10%"></td>
+            <td style="width:10%"></td>
+        </tr>
+        <tr>
+            <td scope="col"></td>
+            <td scope="col">Diskon</td>
+            <td scope="col" style="text-align: right;">0%</td>
+            <td scope="col" style="text-align: right; border-bottom: 1px solid black">0</td>
+        </tr>
+        <tr>
+            <td scope="col"></td>
+            <td scope="col"></td>
+            <td scope="col" style="text-align: right;"></td>
+            <td scope="col" style="text-align: right;"><?php $total?></td>
+        </tr>
+        <tr>
+            <td scope="col"></td>
+            <td scope="col">Ongkos Kirim</td>
+            <td scope="col" style="text-align: right;">0</td>
+            <td scope="col" style="text-align: right; border-bottom: 1px solid black">Total + Ongkir</td>
+        </tr>
+        <tr>
+            <td scope="col"></td>
+            <td scope="col"><b>Jumlah</b></td>
+            <td scope="col" style="text-align: right;"></td>
+            <td scope="col" style="text-align: right; border-bottom: 4px double black"><b><?php $total?></b></td>
+        </tr>
+        <tr>
+            <td scope="col"></td>
+            <td scope="col"></td>
+            <td scope="col" colspan="2" style="text-align: right;"><b>Total dalam huruf</b></td>
+        </tr>
+        <tr>
+            <td scope="col"></td>
+            <td scope="col">Bayar</td>
+            <td scope="col" style="text-align: right;"></td>
+            <td scope="col" style="text-align: right;"><?php $total?></td>
+        </tr>
+        <tr>
+            <td scope="col"></td>
+            <td scope="col">Kurang</td>
+            <td scope="col" style="text-align: right;"></td>
+            <td scope="col" style="text-align: right;">0</td>
+        </tr>
+    </table>
+    
+    <table style="width: 100%;">
+        <tr>
+            <td style="width:50%"></td>
+            <td style="width:20%"></td>
+        </tr>
+        <tr class="information">
+            <td >
+                <b>Keterangan :</b><br>
+                Bukti pembayaran mohon dikirimkan melalui email: ugmpress@ugm.ac.id<br>
+                atau whatsapp: 081228478888<br>
+                Pembayaran dapat dilakukan melalui :<br>
+                1. Mandiri Cab. UGM Yogyakarta 137-00-0455085-7<br>
+                <a style="padding-left: 14px;">a/n Gadjah Mada University Press</a><br>
+                2. BNI Cab. UGM Yogyakarta : 0039226571<br>
+                <a style="padding-left: 14px;">a/n GAMA PRESS</a>
+            </td>
+            
+            <td style="text-align: center;">
+                a.n. Ka. Pemasaran<br><br><br><br><br><br><br>
+                <i>Adm. Pemasaran</i>
+            </td>
+        </tr>
+    </table>
 </body>
 
 </html>
