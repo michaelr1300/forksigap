@@ -248,6 +248,8 @@ class Invoice extends MY_Controller
          $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
         // PDF
         $this->load->library('pdf');
+        $data_format['invoice'] = $invoice ?? '';
+        $data_format['invoice_books'] = $invoice_books ?? '';
 
         // $data_format['book_title'] = $invoice_book->book_title ?? '';
         // $data_format['quantity'] = $invoice_book->qty ?? '';
@@ -266,6 +268,8 @@ class Invoice extends MY_Controller
 
         // Render the HTML as PDF
         $this->pdf->render();
+        
+        $this->pdf->stream("dompdf_out.pdf", array("Attachment" => false));
         // $this->pdf->stream(strtolower($data_format['number'] . '_' . 'Invoice'));
     }
 

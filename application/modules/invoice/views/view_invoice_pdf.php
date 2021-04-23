@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Faktur UGM Press</title>
     
     <style>
@@ -193,51 +194,51 @@
                     ?>
                 </table>
             </tr>
-            <tr>
-                <table>
-                    <tr>
-                        <td width="64%"></td>
-                        <td width="10%"></td>
-                        <td width="12%" style="text-align: right;"></td>
-                        <td width="15%" style="text-align: right;"><?= $total ?></td>
-                    </tr>
-                    <tr>
-                        <td width="64%"></td>
-                        <td width="10%">Diskon</td>
-                        <td width="12%" style="text-align: right;">0 %</td>
-                        <td width="15%" style="text-align: right; border-bottom: 1px solid black">0</td>
-                    </tr>
-                    <tr>
-                        <td width="64%"></td>
-                        <td width="10%"></td>
-                        <td width="12%"></td>
-                        <td width="15%" style="text-align: right;"><?= $total ?></td>
-                    </tr>
-                    <tr>
-                        <td width="64%"></td>
-                        <td width="22%" colspan="2">Ongkos Kirim</td>
-                        <td width="15%" style="text-align: right; border-bottom: 1px solid black">21000</td>
-                    </tr>
-                    <tr>
-                        <td width="64%"></td>
-                        <td width="22%" colspan="2"><b>Jumlah</b></td>
-                        <td width="15%" style="text-align: right; border-bottom: 4px double black"><b>harga + ongkir</b></td>
-                    </tr>
-                    <tr>
-                        <td colspan="4" style="text-align: right;"><i><b>Dua belas juta rupiah</b></i></td>
-                    </tr>
-                    <tr>
-                        <td width="64%"></td>
-                        <td width="22%" colspan="2">Bayar</td>
-                        <td width="15%" style="text-align: right;">harga + ongkir</td>
-                    </tr>
-                    <tr>
-                        <td width="64%"></td>
-                        <td width="22%" colspan="2">Kurang</td>
-                        <td width="15%" style="text-align: right;">0</td>
-                    </tr>
-                </table>
-            </tr>
+
+            <table>
+                <tr>
+                    <td width="64%"></td>
+                    <td width="10%"></td>
+                    <td width="12%" style="text-align: right;"></td>
+                    <td width="15%" style="text-align: right;"><?= $total ?></td>
+                </tr>
+                <tr>
+                    <td width="64%"></td>
+                    <td width="10%">Diskon</td>
+                    <td width="12%" style="text-align: right;">0 %</td>
+                    <td width="15%" style="text-align: right; border-bottom: 1px solid black">0</td>
+                </tr>
+                <tr>
+                    <td width="64%"></td>
+                    <td width="10%"></td>
+                    <td width="12%"></td>
+                    <td width="15%" style="text-align: right;"><?= $total ?></td>
+                </tr>
+                <tr>
+                    <td width="64%"></td>
+                    <td width="22%" colspan="2">Ongkos Kirim</td>
+                    <td width="15%" style="text-align: right; border-bottom: 1px solid black">21000</td>
+                </tr>
+                <tr>
+                    <td width="64%"></td>
+                    <td width="22%" colspan="2"><b>Jumlah</b></td>
+                    <td width="15%" style="text-align: right; border-bottom: 4px double black"><b>harga + ongkir</b></td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: right;"><i><b>Dua belas juta rupiah</b></i></td>
+                </tr>
+                <tr>
+                    <td width="64%"></td>
+                    <td width="22%" colspan="2">Bayar</td>
+                    <td width="15%" style="text-align: right;">harga + ongkir</td>
+                </tr>
+                <tr>
+                    <td width="64%"></td>
+                    <td width="22%" colspan="2">Kurang</td>
+                    <td width="15%" style="text-align: right;">0</td>
+                </tr>
+            </table>
+            
             <tr class="information">
                 <td colspan="2">
                     <table>
