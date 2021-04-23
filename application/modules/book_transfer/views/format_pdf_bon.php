@@ -24,7 +24,6 @@
     th{
         text-align: center;
         border: 1px solid black;
-        text-align: center;
     }
     tr {
         font-family: 'Calibri', sans-serif;
@@ -35,7 +34,7 @@
 
     td {
         border: 1px solid black;
-        text-align: center;
+        /* text-align: center; */
     }
 
     p {
@@ -86,6 +85,25 @@
     .content{
         height: 45%
     }
+    .wrapper {
+        display : flex;
+        align-items : center;
+        background-color: #00FF00;
+        height: 100px;
+        }
+
+    .price{
+        /* top: 50%; */
+        transform: translateY(50%);
+        text-align: right;
+        float: right;
+    }
+
+    span{
+        text-align: right;
+        float: right;
+    }
+    
     </style>
 
 </head>
@@ -97,13 +115,14 @@
             <p><b>UGM PRESS</b></p>
         </div>
         <div class="column">
-        <p>
-            <b>GADJAH MADA UNIVERSITY PRESS</b>
-            <br>Jl. Grafika No. 1, Kampus UGM
-            <br>No. Telp 0274-561037, Email: gmupress@ugm.ac.id</p>
+            <p>
+                <b>GADJAH MADA UNIVERSITY PRESS</b>
+                <br>Jl. Sendok, Karanggayam CT VIII Caturtunggal Depok, Sleman, D.I. Yogyakarta 55281
+                <br>Telp/Fax.: 0274-561037, Email: ugmpress.ugm.ac.id | gmupress@ugm.ac.id 
+            </p>
         </div>
     </div>
-    <h1 style="text-align: center;"><b>BUKU KONSIYANSI<br><?= strtoupper($destination) ?></b></h1>
+    <h1 style="text-align: center;"><b>BUKU KONSINYASI<br><?= strtoupper($destination) ?></b></h1>
     <div class="content">
         <table>
             <tr>
@@ -114,39 +133,36 @@
                 <th>HARGA</th>
                 <th>TOTAL</th>
             </tr>
-            <?php $i=1?>
+            <?php $i=1; $total=0;?>
             <?php foreach($book_list as $books) : ?>
             <tr>
                 <td><?=$i++?></td>
-                <td style="text-align: left;"><?= $books->book_title?></td>
-                <td><?= $books->qty?></td>
-                <td>X</td>
-                <td style="text-align: left;"> Rp <?=$books->price?></td>
-                <td style="text-align: left;"> Rp <?=$books->price * $books->qty?></td>
+                <td><?= $books->book_title?></td>
+                <td style="text-align: center;"><?= $books->qty?></td>
+                <td style="text-align: center;">X</td>
+                <td> Rp
+                    <div class="price"><?=number_format($books->price, 0, ",", ".")?></div>
+                </td>
+                <td> Rp <div class="price"><?=number_format($books->price * $books->qty, 0, ",", ".")?></div></td>
+                <?php $total+=($books->price*$books->qty); ?>
             </tr>
             <?php endforeach?>
-            <?php 
-                $total=0;
-                foreach($book_list as $books){
-                    $total += $books->price;
-                }
-                $total_discount = $total * (0.01* $discount);
-                ?>
+            <?php  $total_discount = $total * (0.01* $discount);?>
             <tr style="border: 0px">
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
-                <td style="text-align: left; border: 0px">Rp <?= $total?></td>
+                <td style="border: 0px">Rp <span><?= number_format($total, 0, ",", ".")?><span></td>
             </tr>
             <tr style="border: 0px">
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px">DISKON</td>
                 <td style="border: 0px"></td>
-                <td style="border: 0px"><?= $discount?>%</td>
-                <td class="border-bottom"; style="text-align: left;">Rp <?=$total_discount?></td>
+                <td style="border: 0px; text-align: center;"><?= $discount?>%</td>
+                <td class="border-bottom" style="text-align: left;">Rp <span><?= number_format($total_discount, 0, ",", ".")?></span></td>
             </tr>
             <tr style="border: 0px">
                 <td style="border: 0px"></td>
@@ -154,7 +170,7 @@
                 <td style="border: 0px"><b>TOTAL</b></td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
-                <td style="text-align: left; border: 0px"><b>Rp <?= $total - $total_discount?></b></td>
+                <td style="border: 0px; font-weight: bold;">Rp <span><?= number_format($total-$total_discount, 0, ",", ".") ?></span></td>
             </tr>
         </table>
     </div>
@@ -168,11 +184,6 @@
             <p>Yogyakarta, <?=date('d F Y', strtotime($transfer_date))?><br><br><br><br><br><br><br>..........................</h2>
         </div>
     </div>
-
-    <!-- <div style="text-align: center;">
-        <p>Manajer UGM Press<br><br><br><br><br><br><br>Dr. I Wayan Mustika, S.T., M.Eng</h2>
-    </div> -->
-
 </body>
 
 </html>
