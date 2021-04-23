@@ -107,6 +107,19 @@ class Invoice_model extends MY_Model
         return $stock;
     }
 
+    public function fetch_showroom_stock($book_id)
+    {
+
+        $stock = $this->db->select('showroom_present')
+            ->from('book_stock')
+            ->where('book_id', $book_id)
+            ->order_by("book_stock_id", "DESC")
+            ->limit(1)
+            ->get()
+            ->row();
+        return $stock;
+    }
+
     public function get_ready_book_list()
     {
         $books = $this->db
@@ -122,6 +135,39 @@ class Invoice_model extends MY_Model
                 $book->stock = 0;
             else
                 $book->stock = $stock->warehouse_present;
+        }
+
+        // Buku stock 0 tidak ditampilkan
+        foreach ($books as $key => $book) {
+            if ($book->stock == 0) {
+                unset($books[$key]);
+            }
+        }
+
+        // Input buku ke array untuk dropdown
+        $options = ['' => '-- Pilih --'];
+        foreach ($books as $book) {
+            $options += [$book->book_id => $book->book_title];
+        }
+
+        return $options;
+    }
+
+    public function get_ready_book_list_showroom()
+    {
+        $books = $this->db
+            ->select('book_id, book_title')
+            ->order_by('book_title', 'ASC')
+            ->from('book')
+            ->get()
+            ->result();
+        foreach ($books as $book) {
+            // Tambahkan data stock ke buku
+            $stock = $this->fetch_showroom_stock($book->book_id);
+            if ($stock == NULL)
+                $book->stock = 0;
+            else
+                $book->stock = $stock->showroom_present;
         }
 
         // Buku stock 0 tidak ditampilkan

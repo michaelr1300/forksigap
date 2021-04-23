@@ -132,7 +132,7 @@ class Invoice extends MY_Controller
     {
         $customer_type = get_customer_type();
 
-        $dropdown_book_options = $this->invoice->get_ready_book_list();
+        $dropdown_book_options = $this->invoice->get_ready_book_list_showroom();
 
         $pages       = $this->pages;
         $main_view   = 'invoice/add_showroom';
