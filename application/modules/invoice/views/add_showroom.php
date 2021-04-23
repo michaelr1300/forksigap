@@ -23,51 +23,25 @@
                         method="post"
                         action="<?= base_url("invoice/add"); ?>"
                     >
-                        <legend>Form Tambah Faktur</legend>
-                        <div class="form-group">
-                            <label
-                                for="type"
-                                class="font-weight-bold"
-                            >Jenis Faktur<abbr title="Required">*</abbr></label>
-
-                            <?= form_dropdown('type', $invoice_type, 0, 'id="type" class="form-control custom-select d-block"'); ?>
-                            <small
-                                id="error-type"
-                                class="d-none error-message text-danger"
-                            >Jenis Faktur wajib diisi!</small>
-                        </div>
-                        <div
-                            class="form-group"
-                            style="display: none;"
-                            id='source-dropdown'
-                        >
-                            <label
-                                for="source"
-                                class="font-weight-bold"
-                            >Asal Stok<abbr title="Required">*</abbr></label>
-                            <?= form_dropdown('source', $source, 0, 'id="source" class="form-control custom-select d-block"'); ?>
-                            <small
-                                id="error-source"
-                                class="d-none error-message text-danger"
-                            >Asal stok wajib diisi jika jenis faktur adalah tunai!</small>
-                        </div>
-                        <div
-                            class="form-group"
-                            id="source-library-dropdown"
-                            style="display:none"
-                        >
-                            <label
-                                for="source-library-id"
-                                class="font-weight-bold"
-                            >Asal Perpustakaan<abbr title="Required">*</abbr></label>
-                            <?= form_dropdown('source-library-id', get_dropdown_list_library(), 0, 'id="source-library-id" class="form-control custom-select d-block"'); ?>
-                            <small
-                                id="error-source-library"
-                                class="d-none error-message text-danger"
-                            >Asal perpustakaan wajib diisi jika asal stok faktur adalah perpustakaan!</small>
-                        </div>
+                        <legend>Form Tambah Faktur Showroom</legend>
+                        <!-- jenis faktur -->
                         <div
                             id="invoice-type"
+                            style="display: none;"
+                        >
+                            <div class="form-group">
+                                <input
+                                    type="text"
+                                    name="type"
+                                    id="type"
+                                    class="form-control"
+                                    value="showroom"
+                                    readonly
+                                />
+                            </div>
+                        </div>
+                        <div
+                            id="invoice-number"
                             style="display: none;"
                         >
                             <div class="form-group">
@@ -79,32 +53,6 @@
                                     hidden
                                 />
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label
-                                for="due-date"
-                                class="font-weight-bold"
-                            >
-                                Jatuh Tempo
-                                <abbr title="Required">*</abbr></label>
-                            <div class="input-group mb-3">
-                                <input
-                                    name="due-date"
-                                    id="due-date"
-                                    class="form-control dates"
-                                />
-                                <div class="input-group-append">
-                                    <button
-                                        class="btn btn-outline-secondary"
-                                        type="button"
-                                        id="due_clear"
-                                    >Clear</button>
-                                </div>
-                            </div>
-                            <small
-                                id="error-due-date"
-                                class="d-none error-message text-danger"
-                            >Jatuh Tempo wajib diisi!</small>
                         </div>
                         <hr class="my-4">
                         <div class="row">
@@ -375,9 +323,7 @@
 
 <script>
 $(document).ready(function() {
-    $('#type').val('')
-    $('#source').val('')
-
+    get_showroom_number()
     $('#tambahCustomer').click(function() {
         var value = $('#tambahCustomer').val()
         if (value == "Customer Baru") {
@@ -561,6 +507,20 @@ $(document).ready(function() {
         });
     })
 
+    function get_showroom_number() {
+        $.ajax({
+            type: "GET",
+            url: "<?= base_url('invoice/api_get_last_invoice_number/showroom'); ?>",
+            datatype: "JSON",
+            success: function(res) {
+                $('#number').val(res.data)
+            },
+            error: function(err) {
+                $('#invoice-type').hide()
+            },
+        });
+    }
+
     $('#type').change(function(e) {
         const type = e.target.value
         if (type == 'cash') {
@@ -571,18 +531,7 @@ $(document).ready(function() {
             $('#source').val('')
             $('#source-library-id').val('').trigger('change')
         }
-        $.ajax({
-            type: "GET",
-            url: "<?= base_url('invoice/api_get_last_invoice_number/'); ?>" + type,
-            datatype: "JSON",
-            success: function(res) {
-                $('#invoice-type').show()
-                $('#number').val(res.data)
-            },
-            error: function(err) {
-                $('#invoice-type').hide()
-            },
-        });
+
     })
 
     $('#source').change(function() {
@@ -597,7 +546,6 @@ $(document).ready(function() {
     $("#invoice_form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
-        console.log(form.serialize())
         $.ajax({
             type: "POST",
             url: "<?= base_url("invoice/add"); ?>",

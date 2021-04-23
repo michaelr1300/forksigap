@@ -87,6 +87,12 @@ $menu_list = [
         'level' => 'superadmin|admin_gudang|admin_pemasaran'
     ],
     [
+        'name' => 'Showroom',
+        'url'  => 'invoice/add_showroom',
+        'icon' => 'fa fa-file',
+        'level' => 'superadmin|admin_gudang|admin_pemasaran'
+    ],
+    [
         'name' => 'Pendapatan',
         'url'  => 'earning',
         'icon' => 'fas fa-money-check-alt',

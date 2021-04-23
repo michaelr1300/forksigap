@@ -128,6 +128,17 @@ class Invoice extends MY_Controller
         }
     }
 
+    public function add_showroom()
+    {
+        $customer_type = get_customer_type();
+
+        $dropdown_book_options = $this->invoice->get_ready_book_list();
+
+        $pages       = $this->pages;
+        $main_view   = 'invoice/add_showroom';
+        $this->load->view('template', compact('pages', 'main_view', 'customer_type', 'dropdown_book_options'));
+    }
+
     public function edit($invoice_id)
     {
         //post edit invoice
@@ -232,12 +243,11 @@ class Invoice extends MY_Controller
         if ($invoice_status == 'confirm') {
             // M T W T F S S
             // 1 2 3 4 5 6 7
-            if (date('N')<5){
+            if (date('N') < 5) {
                 $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ 1 day"));
-            }
-            else {
-                $add_day = 8-date('N');
-                $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ ".$add_day. "day"));
+            } else {
+                $add_day = 8 - date('N');
+                $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ " . $add_day . "day"));
             }
             $this->invoice->where('invoice_id', $id)->update([
                 'status' => $invoice_status,
@@ -245,14 +255,14 @@ class Invoice extends MY_Controller
                 'preparing_deadline' => $preparing_deadline
             ]);
         } else
-        // Cancel Faktur
-        if ($invoice_status == 'cancel') {
-            $this->invoice->where('invoice_id', $id)->update([
-                'status' => $invoice_status,
-                'cancel_date' => now(),
-            ]);
-        }
-        
+            // Cancel Faktur
+            if ($invoice_status == 'cancel') {
+                $this->invoice->where('invoice_id', $id)->update([
+                    'status' => $invoice_status,
+                    'cancel_date' => now(),
+                ]);
+            }
+
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
             $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));

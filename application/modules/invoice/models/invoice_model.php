@@ -10,11 +10,6 @@ class Invoice_model extends MY_Model
         $data['input_error'] = array();
         $data['status'] = TRUE;
 
-        if ($this->input->post('due-date') == '') {
-            $data['input_error'][] = 'error-due-date';
-            $data['status'] = FALSE;
-        }
-
         if ($this->input->post('type') == '') {
             $data['input_error'][] = 'error-type';
             $data['status'] = FALSE;
@@ -22,7 +17,12 @@ class Invoice_model extends MY_Model
             if ($this->input->post('source') == '') {
                 $data['input_error'][] = 'error-source';
                 $data['status'] = FALSE;
-            } 
+            }
+        } else if ($this->input->post('type') == 'credit' || $this->input->post('type') == 'online') {
+            if ($this->input->post('due-date') == '') {
+                $data['input_error'][] = 'error-due-date';
+                $data['status'] = FALSE;
+            }
         }
 
         if ($this->input->post('source') == 'library') {
@@ -276,11 +276,9 @@ class Invoice_model extends MY_Model
                 $this->group_start();
                 $this->or_like('number', $data);
                 $this->group_end();
-            }
-            else if ($params == 'type') {
+            } else if ($params == 'type') {
                 $this->where('type', $data);
-            }
-            else if ($params == 'status') {
+            } else if ($params == 'status') {
                 $this->where('status', $data);
             }
         }
