@@ -557,13 +557,12 @@ class Book_receive extends MY_Controller
         }
         //insert to book transaction
         //ini datenya dari book transaction
-        $book_stock = $this->book_stock->where('book_id', $book_receive->book_id)->get();
         $this->book_transaction->insert([
             'book_id'            => $book_receive->book_id,
             'book_receive_id'    => $book_receive->book_receive_id,
             'book_stock_id'      => $book_stock->book_stock_id,
             'stock_in'           => $book_stock_print->total_postprint,
-            'date'               => date("Y-m-d")
+            'date'               => now()
         ]);
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
