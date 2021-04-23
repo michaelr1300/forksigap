@@ -55,10 +55,10 @@
                         <div
                             class="form-group"
                             style="display: none;"
-                            id='source-dropdown'
+                            id='sourceDropdown'
                         >
                             <label
-                                for="source"
+                                for="type"
                                 class="font-weight-bold"
                             >Asal Stok<abbr title="Required">*</abbr></label>
                             <?= form_dropdown('source', $source, $invoice->source, 'id="source" class="form-control custom-select d-block"'); ?>
@@ -66,21 +66,6 @@
                                 id="error-source"
                                 class="d-none error-message text-danger"
                             >Asal stok wajib diisi jika jenis faktur adalah tunai!</small>
-                        </div>
-                        <div 
-                            class="form-group" 
-                            id="source-library-dropdown" 
-                            style="display:none"
-                        >
-                            <label
-                                for="source-library-id"
-                                class="font-weight-bold"
-                            >Asal Perpustakaan<abbr title="Required">*</abbr></label>
-                            <?= form_dropdown('source-library-id', get_dropdown_list_library(), $invoice->source_library_id, 'id="source-library-id" class="form-control custom-select d-block"'); ?>
-                            <small
-                                id="error-source-library"
-                                class="d-none error-message text-danger"
-                            >Asal perpustakaan wajib diisi jika asal stok faktur adalah perpustakaan!</small>
                         </div>
                         <div class="form-group">
                             <label
@@ -392,7 +377,7 @@
                                             </td>
                                             <td class="align-middle">
                                                 <?php
-                                                $total = $books->qty * $books->price * (1 - $books->discount/100);
+                                                $total = $books->qty * $books->price * (1 - $books->discount);
                                                 echo $total;
                                                 ?></td>
                                             <td class="align-middle"><button
@@ -428,10 +413,7 @@ $(document).ready(function() {
     $('#discount').val('<?= $discount ?>')
 
     if ($('#type').val() == "cash") {
-        $('#source-dropdown').show()
-    }
-    if ($('#source').val() == "library") {
-        $('#source-library-dropdown').show()
+        $('#sourceDropdown').show()
     }
 
     //hilangin buku yg sudah ada
@@ -474,10 +456,6 @@ $(document).ready(function() {
         dropdownParent: $('#app-main')
     });
     $("#book-id").select2({
-        placeholder: '-- Pilih --',
-        dropdownParent: $('#app-main')
-    });
-    $("#source-library-id").select2({
         placeholder: '-- Pilih --',
         dropdownParent: $('#app-main')
     });
@@ -609,12 +587,10 @@ $(document).ready(function() {
     $('#type').change(function(e) {
         const type = e.target.value
         if (type == 'cash') {
-            $('#source-dropdown').show()
+            $('#sourceDropdown').show()
         } else {
-            $('#source-dropdown').hide()
+            $('#sourceDropdown').hide()
             $('#source').val('')
-            $('#source-library-dropdown').hide()
-            $('#source-library-id').val('').trigger('change')
         }
         $.ajax({
             type: "GET",
@@ -630,22 +606,12 @@ $(document).ready(function() {
         });
     })
 
-    $('#source').change(function(){
-        if ($("#source").val()=="library"){
-            $("#source-library-dropdown").show()
-        }
-        else {
-            $("#source-library-dropdown").hide()
-            $('#source-library-id').val('').trigger('change')
-        }
-    })
-
     $("#invoice_form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
         $.ajax({
             type: "POST",
-            url: "<?= base_url("invoice/edit/" .$invoice->invoice_id); ?>",
+            url: "<?= base_url("invoice/add"); ?>",
             data: form.serialize(), // serializes the form's elements.
             success: function(result) {
                 var response = $.parseJSON(result)

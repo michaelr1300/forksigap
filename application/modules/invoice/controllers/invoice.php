@@ -75,7 +75,6 @@ class Invoice extends MY_Controller
                 'due_date'          => $this->input->post('due-date'),
                 'type'              => $this->input->post('type'),
                 'source'            => $this->input->post('source'),
-                'source_library_id' => $this->input->post('source-library-id'),
                 'status'            => 'waiting',
                 'issued_date'       => $date_created
                 // 'user_created'      => $user_created
@@ -156,7 +155,6 @@ class Invoice extends MY_Controller
                 'due_date'          => $this->input->post('due-date'),
                 'type'              => $this->input->post('type'),
                 'source'            => $this->input->post('source'),
-                'source_library_id' => $this->input->post('source-library-id'),
                 'status'            => 'waiting'
                 // 'date_edited'   => date('Y-m-d H:i:s'),
                 // 'user_edited'   => $_SESSION['username']
