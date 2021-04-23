@@ -35,12 +35,26 @@
                                 <label class="font-weight-bold">Stok Gudang</label>
                                 <span class ="form-control bg-secondary" readonly><?=$input->warehouse_present?></span>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group"> 
+                                <label for="type" class="d-block font-weight-bold"> Jenis Perubahan <abbr
+                                        title="Required">*</abbr></label>
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary active">
+                                        <input type="radio" name="type" value="revision" id="revision" checked = "checked"
+                                            class="custom-control-input" /> Revisi Stok
+                                    </label>
+                                    <label class="btn btn-secondary ">
+                                        <input type="radio" name="type" value="return" id = "return"
+                                            class="custom-control-input" /> Retur Buku 
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="revisi-buku"> 
                                 <label for="revision_type" class="d-block font-weight-bold"> Tipe Operasi <abbr
                                         title="Required">*</abbr></label>
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                     <label class="btn btn-secondary active">
-                                        <input type="radio" name="revision_type" value="add" checked="checked"
+                                        <input type="radio" name="revision_type" value="add"
                                             class="custom-control-input" /> Tambah
                                     </label>
                                     <label class="btn btn-secondary ">
@@ -70,3 +84,24 @@
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+    $('#return').click(function(){
+        if($(this).is(':checked')){
+            $("#revisi-buku").hide()
+        }
+        else {
+            $("#revisi-buku").show()
+        }
+    })
+    $('#revision').click(function(){
+        if($(this).is(':checked')){
+            $("#revisi-buku").show()
+        }
+        else {
+            $("#revisi-buku").hide()
+        }
+    })
+});
+</script>

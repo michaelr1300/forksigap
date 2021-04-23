@@ -158,7 +158,9 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                                     echo '<div class="text-success"> ' . '+' . ' ' . $revision->warehouse_revision . '</div>';
                                                 } elseif ($revision->revision_type == "sub") {
                                                     echo '<div class="text-danger"> ' . '-' . ' ' . $revision->warehouse_revision . '</div>';
-                                                } 
+                                                } else {
+                                                    echo '<div class="text-danger"> ' . '-' . ' ' . $revision->warehouse_revision . '</div>';
+                                                }
                                             ?>
                                         </td>
                                         <td>
@@ -168,7 +170,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                             <?= date('d F Y H:i:s', strtotime($revision->revision_date)); ?>
                                         </td>
                                         <td>
-                                            <?= get_book_stock_revision_type()[$revision->type]; ?>
+                                            <?= get_book_revision_type()[$revision->type]; ?>
                                         </td>
                                         <td>
                                             <?= $revision->notes; ?>

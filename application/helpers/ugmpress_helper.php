@@ -938,3 +938,10 @@ function get_book_non_sales_status(){
         'finish' => 'Selesai'
     ];
 }
+
+function get_book_revision_type(){
+    return [
+        'revision' => 'Revisi Stok',
+        'return' => 'Retur Buku'
+    ];
+}
