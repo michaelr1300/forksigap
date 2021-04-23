@@ -236,7 +236,7 @@ class Book_transfer_model extends MY_Model{
             $year = substr($data->transfer_number,0,4);
             $number = substr($data->transfer_number,5);
             if ($current_year == $year){
-                $new_number = (int)$number++;
+                $new_number = (int)++$number;
                 $new_number = str_pad((string) $new_number, 5, '0', STR_PAD_LEFT);
             }
             else {
