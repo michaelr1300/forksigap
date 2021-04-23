@@ -182,6 +182,7 @@ class Book_stock extends Warehouse_sales_controller
                 }
                 elseif ($type == "return"){
                     $book_stock->warehouse_present -= $quantity;
+                    $book_stock->retur_stock += $quantity;
                     $book_stock_revision->warehouse_present = $book_stock->warehouse_present;
                 }
                 
