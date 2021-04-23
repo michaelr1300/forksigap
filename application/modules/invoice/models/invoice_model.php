@@ -22,6 +22,13 @@ class Invoice_model extends MY_Model
             if ($this->input->post('source') == '') {
                 $data['input_error'][] = 'error-source';
                 $data['status'] = FALSE;
+            } 
+        }
+
+        if ($this->input->post('source') == 'library') {
+            if ($this->input->post('source-library-id') == '') {
+                $data['input_error'][] = 'error-source-library';
+                $data['status'] = FALSE;
             }
         }
 
