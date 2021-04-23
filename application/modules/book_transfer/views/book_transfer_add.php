@@ -126,7 +126,7 @@ $(document).ready(function() {
                     var row3 = "<td style='vertical-align: middle'>" + author + "</td>"
                     var row4 = "<td style='vertical-align: middle' class='stock'>"+stock+"</td>"
                     var row5 = "<td style='vertical-align: middle'><input type='number' value=0 min=1 max='"+stock+"'class='form-control quantity' name='quantity'></td>"
-                    var row6 = "<td style='vertical-align: middle' class='price'>"+price+"</td>"
+                    var row6 = "<td style='vertical-align: middle' class='price'>"+price+"<input type='number' hidden name='price' class='price' value='"+price+"'></td>"
                     var row7 = "<td style='vertical-align: middle'></button><button type='button' class='btn btn-danger btn-md remove-book'>Hapus</td></tr>"
                     var html = row1+row2+row3+row4+row5+row6+row7
                     $("#book-list-content").append(html);
@@ -159,6 +159,7 @@ $(document).ready(function() {
         $("#book-list-content tr").each(function(){
             book_data = {
                 'book_id': $(this).find("input.book_id").val(),
+                'price': Number($(this).find("input.price").val()),
                 'qty': Number($(this).find("input.quantity").val())
             }
             data['book_list'].push(book_data)

@@ -130,7 +130,7 @@
                 foreach($book_list as $books){
                     $total += $books->price;
                 }
-                $total_discount = $total * 0.1;
+                $total_discount = $total * (0.01* $discount);
                 ?>
             <tr style="border: 0px">
                 <td style="border: 0px"></td>
@@ -145,7 +145,7 @@
                 <td style="border: 0px"></td>
                 <td style="border: 0px">DISKON</td>
                 <td style="border: 0px"></td>
-                <td style="border: 0px">10%</td>
+                <td style="border: 0px"><?= $discount?>%</td>
                 <td class="border-bottom"; style="text-align: left;">Rp <?=$total_discount?></td>
             </tr>
             <tr style="border: 0px">

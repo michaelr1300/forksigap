@@ -72,6 +72,7 @@ class Book_transfer extends MY_Controller
         else{
             $data_format['destination'] = 'Showroom';
         }
+        $data_format['discount']      = $book_transfer->discount ?? '';
         $data_format['number']        = $book_transfer->transfer_number ?? '';
         $data_format['transfer_date'] = $book_transfer->transfer_date ?? '';
         $data_format['book_list']     = $book_transfer_list ?? '';
@@ -342,7 +343,8 @@ class Book_transfer extends MY_Controller
             'status' => 'waiting',
             'transfer_date' => now(),
             'destination' => $input->destination,
-            'library_id' => $input->library_id
+            'library_id' => $input->library_id,
+            'discount' => $input->discount
         ];
         // insert book transfer
         $book_transfer_success = $this->book_transfer->insert($book_transfer);
@@ -352,7 +354,8 @@ class Book_transfer extends MY_Controller
                 'book_transfer_id' => $book_transfer_id,
                 'book_id' => $books['book_id'],
                 'qty' => $books['qty'],
-                'discount' => $input->discount
+                // 'discount' => $input->discount,
+                'price' => $books['price']
             ];
             $book_transfer_list_success = $this->db->insert('book_transfer_list',$book_transfer_list);
         }
