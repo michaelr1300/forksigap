@@ -256,7 +256,7 @@ class Invoice extends MY_Controller
         $data_format['customer'] = $customer ?? '';
         
         $html = $this->load->view('invoice/view_invoice_pdf', $data_format, true);
-        $file_name = strtolower($invoice->number . '_Invoice');
+        $file_name = $invoice->number . '_Invoice';
 
         $this->pdf->generate_pdf_a4_portrait($html, $file_name);
     }

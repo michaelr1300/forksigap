@@ -240,7 +240,7 @@
             <td style="width:50%"></td>
             <td style="width:10%"></td>
             <td style="width:10%"></td>
-            <td style="width:10%"></td>
+            <td style="width:10%; text-align: right;"><?= $total ?></td>
         </tr>
         <tr>
             <td scope="col"></td>
@@ -264,7 +264,7 @@
             <td
                 scope="col"
                 style="text-align: right;"
-            ><?php $total ?></td>
+            ><?= $total ?></td>
         </tr>
         <tr>
             <td scope="col"></td>
@@ -272,11 +272,11 @@
             <td
                 scope="col"
                 style="text-align: right;"
-            >0</td>
+            ></td>
             <td
                 scope="col"
                 style="text-align: right; border-bottom: 1px solid black"
-            >Total + Ongkir</td>
+            >0</td>
         </tr>
         <tr>
             <td scope="col"></td>
@@ -288,7 +288,7 @@
             <td
                 scope="col"
                 style="text-align: right; border-bottom: 4px double black"
-            ><b><?php $total ?></b></td>
+            ><b>Total + ongkir</b></td>
         </tr>
         <tr>
             <td scope="col"></td>
@@ -309,7 +309,7 @@
             <td
                 scope="col"
                 style="text-align: right;"
-            ><?php $total ?></td>
+            ><?= $total ?></td>
         </tr>
         <tr>
             <td scope="col"></td>
