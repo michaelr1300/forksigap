@@ -5,7 +5,7 @@
                 <a href="<?= base_url(); ?>"><span class="fa fa-home"></span></a>
             </li>
             <li class="breadcrumb-item">
-                <a href="<?= base_url('invoice'); ?>">Faktur</a>
+                <a href="<?= base_url('proforma'); ?>">Proforma</a>
             </li>
             <li class="breadcrumb-item">
                 <a class="text-muted">Form</a>
@@ -19,55 +19,13 @@
             <section class="card">
                 <div class="card-body">
                     <form
-                        id="invoice_form"
+                        id="proforma_form"
                         method="post"
-                        action="<?= base_url("invoice/add"); ?>"
+                        action="<?= base_url("proforma/add"); ?>"
                     >
-                        <legend>Form Tambah Faktur</legend>
-                        <div class="form-group">
-                            <label
-                                for="type"
-                                class="font-weight-bold"
-                            >Jenis Faktur<abbr title="Required">*</abbr></label>
-
-                            <?= form_dropdown('type', $invoice_type, 0, 'id="type" class="form-control custom-select d-block"'); ?>
-                            <small
-                                id="error-type"
-                                class="d-none error-message text-danger"
-                            >Jenis Faktur wajib diisi!</small>
-                        </div>
+                        <legend>Form Tambah Proforma</legend>
                         <div
-                            class="form-group"
-                            style="display: none;"
-                            id='source-dropdown'
-                        >
-                            <label
-                                for="source"
-                                class="font-weight-bold"
-                            >Asal Stok<abbr title="Required">*</abbr></label>
-                            <?= form_dropdown('source', $source, 0, 'id="source" class="form-control custom-select d-block"'); ?>
-                            <small
-                                id="error-source"
-                                class="d-none error-message text-danger"
-                            >Asal stok wajib diisi jika jenis faktur adalah tunai!</small>
-                        </div>
-                        <div
-                            class="form-group"
-                            id="source-library-dropdown"
-                            style="display:none"
-                        >
-                            <label
-                                for="source-library-id"
-                                class="font-weight-bold"
-                            >Asal Perpustakaan<abbr title="Required">*</abbr></label>
-                            <?= form_dropdown('source-library-id', get_dropdown_list_library(), 0, 'id="source-library-id" class="form-control custom-select d-block"'); ?>
-                            <small
-                                id="error-source-library"
-                                class="d-none error-message text-danger"
-                            >Asal perpustakaan wajib diisi jika asal stok faktur adalah perpustakaan!</small>
-                        </div>
-                        <div
-                            id="invoice-type"
+                            id="proforma-number"
                             style="display: none;"
                         >
                             <div class="form-group">
@@ -349,7 +307,7 @@
                                         >&nbsp;</th>
                                     </tr>
                                 </thead>
-                                <tbody id="invoice_items">
+                                <tbody id="proforma_items">
                                     <!-- Items -->
                                 </tbody>
                             </table>
@@ -377,6 +335,21 @@
 $(document).ready(function() {
     $('#type').val('')
     $('#source').val('')
+    get_proforma_number()
+
+    function get_proforma_number() {
+        $.ajax({
+            type: "GET",
+            url: "<?= base_url('proforma/api_get_last_proforma_number/'); ?>",
+            datatype: "JSON",
+            success: function(res) {
+                $('#number').val(res.data)
+            },
+            error: function(err) {
+                console.log(err)
+            },
+        });
+    }
 
     $('#tambahCustomer').click(function() {
         var value = $('#tambahCustomer').val()
@@ -416,34 +389,30 @@ $(document).ready(function() {
         placeholder: '-- Pilih --',
         dropdownParent: $('#app-main')
     });
-    $("#source-library-id").select2({
-        placeholder: '-- Pilih --',
-        dropdownParent: $('#app-main')
-    });
 
-    function add_book_to_invoice() {
+    function add_book_to_proforma() {
         var bookId = document.getElementById('book-id');
 
         html = '<tr class="text-center">';
 
         // Judul option yang di select
         html += '<td class="align-middle text-left font-weight-bold">' + bookId.options[bookId.selectedIndex].text;
-        html += '<input type="text" hidden name="invoice_book_id[]" class="form-control" value="' + bookId.value + '"/>';
+        html += '<input type="text" hidden name="proforma_book_id[]" class="form-control" value="' + bookId.value + '"/>';
         html += '</td>';
 
         // Harga
         html += '<td class="align-middle">' + $('#info-price').text();
-        html += '<input type="number" hidden name="invoice_book_price[]" class="form-control" value="' + $('#info-price').text() + '"/>';
+        html += '<input type="number" hidden name="proforma_book_price[]" class="form-control" value="' + $('#info-price').text() + '"/>';
         html += '</td>';
 
         // Jumlah
         html += '<td class="align-middle">' + document.getElementById('qty').value;
-        html += '<input type="number" hidden name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '"/>';
+        html += '<input type="number" hidden name="proforma_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '"/>';
         html += '</td>';
 
         // Diskon
         html += '<td class="align-middle">' + document.getElementById('discount').value + '%';
-        html += '<input type="number" hidden name="invoice_book_discount[]" class="form-control" value="' + document.getElementById('discount').value + '"/>';
+        html += '<input type="number" hidden name="proforma_book_discount[]" class="form-control" value="' + document.getElementById('discount').value + '"/>';
         html += '</td>';
 
         // Total
@@ -453,7 +422,7 @@ $(document).ready(function() {
         // Button Hapus
         html += '<td class="align-middle"><button type="button" class="btn btn-danger remove">Hapus</button></td></tr>';
 
-        $('#invoice_items').append(html);
+        $('#proforma_items').append(html);
         $('#book-id option[value="' + bookId.value + '"]').remove()
     }
 
@@ -481,7 +450,7 @@ $(document).ready(function() {
             alert("Masukkan diskon antara 0 - 100!");
             return
         } else {
-            add_book_to_invoice();
+            add_book_to_proforma();
             reset_book();
         }
     });
@@ -498,7 +467,7 @@ $(document).ready(function() {
         const bookId = e.target.value
         $.ajax({
             type: "GET",
-            url: "<?= base_url('invoice/api_get_book/'); ?>" + bookId,
+            url: "<?= base_url('proforma/api_get_book/'); ?>" + bookId,
             datatype: "JSON",
             success: function(res) {
                 var published_date = new Date(res.data.published_date);
@@ -524,7 +493,7 @@ $(document).ready(function() {
         var customerType = $(this).val()
         $.ajax({
             type: "GET",
-            url: "<?= base_url('invoice/api_get_discount/'); ?>" + customerType,
+            url: "<?= base_url('proforma/api_get_discount/'); ?>" + customerType,
             datatype: "JSON",
             success: function(res) {
                 $('#discount').val(res.data.discount)
@@ -545,7 +514,7 @@ $(document).ready(function() {
         $('#new-customer-type').val('')
         $.ajax({
             type: "GET",
-            url: "<?= base_url('invoice/api_get_customer/'); ?>" + customerId,
+            url: "<?= base_url('proforma/api_get_customer/'); ?>" + customerId,
             datatype: "JSON",
             success: function(res) {
                 $('#customer-info').show()
@@ -561,46 +530,13 @@ $(document).ready(function() {
         });
     })
 
-    $('#type').change(function(e) {
-        const type = e.target.value
-        if (type == 'cash') {
-            $('#source-dropdown').show()
-        } else {
-            $('#source-dropdown').hide()
-            $('#source-library-dropdown').hide()
-            $('#source').val('')
-            $('#source-library-id').val('').trigger('change')
-        }
-        $.ajax({
-            type: "GET",
-            url: "<?= base_url('invoice/api_get_last_invoice_number/'); ?>" + type,
-            datatype: "JSON",
-            success: function(res) {
-                $('#invoice-type').show()
-                $('#number').val(res.data)
-            },
-            error: function(err) {
-                $('#invoice-type').hide()
-            },
-        });
-    })
-
-    $('#source').change(function() {
-        if ($("#source").val() == "library") {
-            $("#source-library-dropdown").show()
-        } else {
-            $("#source-library-dropdown").hide()
-            $('#source-library-id').val('').trigger('change')
-        }
-    })
-
-    $("#invoice_form").submit(function(e) {
+    $("#proforma_form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
         console.log(form.serialize())
         $.ajax({
             type: "POST",
-            url: "<?= base_url("invoice/add"); ?>",
+            url: "<?= base_url("proforma/add"); ?>",
             data: form.serialize(), // serializes the form's elements.
             success: function(result) {
                 var response = $.parseJSON(result)
@@ -612,7 +548,7 @@ $(document).ready(function() {
                         $('#' + response.input_error[i]).removeClass('d-none');
                     }
                 } else {
-                    location.href = "<?= base_url('invoice'); ?>";
+                    location.href = "<?= base_url('proforma'); ?>";
                 }
             },
             error: function(req, err) {

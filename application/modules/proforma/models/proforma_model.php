@@ -4,33 +4,11 @@ class Proforma_model extends MY_Model
 {
     public $per_page = 10;
 
-    public function validate_invoice()
+    public function validate_proforma()
     {
         $data = array();
         $data['input_error'] = array();
         $data['status'] = TRUE;
-
-        if ($this->input->post('type') == '') {
-            $data['input_error'][] = 'error-type';
-            $data['status'] = FALSE;
-        } else if ($this->input->post('type') == 'cash') {
-            if ($this->input->post('source') == '') {
-                $data['input_error'][] = 'error-source';
-                $data['status'] = FALSE;
-            }
-        } else if ($this->input->post('type') == 'credit' || $this->input->post('type') == 'online') {
-            if ($this->input->post('due-date') == '') {
-                $data['input_error'][] = 'error-due-date';
-                $data['status'] = FALSE;
-            }
-        }
-
-        if ($this->input->post('source') == 'library') {
-            if ($this->input->post('source-library-id') == '') {
-                $data['input_error'][] = 'error-source-library';
-                $data['status'] = FALSE;
-            }
-        }
 
         if ($this->input->post('customer-id') == '') {
             if ($this->input->post('new-customer-name') == '' && $this->input->post('new-customer-phone-number') == '') {
@@ -52,7 +30,7 @@ class Proforma_model extends MY_Model
             }
         }
 
-        if (empty($this->input->post('invoice_book_id'))) {
+        if (empty($this->input->post('proforma_book_id'))) {
             $data['input_error'][] = 'error-no-book';
             $data['status'] = FALSE;
         }
