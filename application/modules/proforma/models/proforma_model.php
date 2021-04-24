@@ -2,7 +2,6 @@
 
 class Proforma_model extends MY_Model
 {
-    protected $table = 'invoice';
     public $per_page = 10;
 
     public function validate_invoice()
@@ -64,23 +63,23 @@ class Proforma_model extends MY_Model
         }
     }
 
-    public function fetch_invoice_id($invoice_id)
+    public function fetch_proforma_id($proforma_id)
     {
         return $this->db
             ->select('*')
-            ->from('invoice')
-            ->where('invoice_id', $invoice_id)
+            ->from('proforma')
+            ->where('proforma_id', $proforma_id)
             ->get()
             ->row();
     }
 
-    public function fetch_invoice_book($invoice_id)
+    public function fetch_proforma_book($proforma_id)
     {
         return $this->db
-            ->select('invoice_book.*, book.book_title, book.harga')
-            ->from('invoice_book')
-            ->join('book', 'book.book_id = invoice_book.book_id')
-            ->where('invoice_id', $invoice_id)
+            ->select('proforma_book.*, book.book_title, book.harga')
+            ->from('proforma_book')
+            ->join('book', 'book.book_id = proforma_book.book_id')
+            ->where('proforma_id', $proforma_id)
             ->get()
             ->result();
     }
@@ -217,52 +216,34 @@ class Proforma_model extends MY_Model
         return $this->db->get()->row();
     }
 
-    public function get_last_invoice_number($type)
+    public function get_last_proforma_number()
     {
-        $initial = '';
-        switch ($type) {
-            case 'credit':
-                $initial = 'K';
-                break;
-            case 'cash':
-                $initial = 'T';
-                break;
-            case 'online':
-                $initial = 'O';
-                break;
-            case 'showroom':
-                $initial = 'S';
-                break;
-        }
+        $initial = 'P';
         $date_created       = substr(date('Ymd'), 2);
-        $data = $this->db->select('*')->where('type', $type)->count_all_results('invoice') + 1;
-        $invoiceNumber = $initial . $date_created . '-' . str_pad($data, 6, 0, STR_PAD_LEFT);
-        return $invoiceNumber;
+        $data = $this->db->select('*')->count_all_results('proforma') + 1;
+        $proforma_number = $initial . $date_created . '-' . str_pad($data, 6, 0, STR_PAD_LEFT);
+        return $proforma_number;
     }
 
-    public function filter_invoice($filters, $page)
+    public function filter_proforma($filters, $page)
     {
-        $invoice = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'invoice.customer_id', 'name as customer_name', 'customer.type as customer_type', 'status', 'invoice.type as invoice_type'])
-            ->join('customer', 'invoice.customer_id = customer.customer_id', 'left')
+        $proforma = $this->select(['proforma_id', 'number', 'issued_date', 'due_date', 'proforma.customer_id', 'name as customer_name', 'customer.type as customer_type'])
+            ->join('customer', 'proforma.customer_id = customer.customer_id', 'left')
             ->when('keyword', $filters['keyword'])
-            ->when('invoice_type', $filters['invoice_type'])
             ->when('customer_type', $filters['customer_type'])
-            ->when('status', $filters['status'])
-            ->order_by('invoice_id', 'DESC')
+            ->order_by('proforma_id', 'DESC')
             ->paginate($page)
             ->get_all();
 
-        $total = $this->select(['invoice_id', 'number', 'name'])
-            ->join('customer', 'invoice.customer_id = customer.customer_id', 'left')
+        $total = $this->select(['proforma_id'])
+            ->join('customer', 'proforma.customer_id = customer.customer_id', 'left')
             ->when('keyword', $filters['keyword'])
-            ->when('invoice_type', $filters['invoice_type'])
             ->when('customer_type', $filters['customer_type'])
-            ->when('status', $filters['status'])
-            ->order_by('invoice_id')
+            ->order_by('proforma_id')
             ->count();
 
         return [
-            'invoice'  => $invoice,
+            'proforma' => $proforma,
             'total' => $total
         ];
     }
@@ -278,9 +259,7 @@ class Proforma_model extends MY_Model
                 $this->group_end();
             } else {
                 $this->group_start();
-                $this->or_like('invoice.type', $data);
                 $this->or_like('customer.type', $data);
-                $this->or_like('status', $data);
                 $this->group_end();
             }
         }

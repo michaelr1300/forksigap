@@ -13,37 +13,34 @@ class Proforma extends MY_Controller
 
     public function index($page = NULL)
     {
-        echo ('proforma');
-        // $filters = [
-        //     'keyword'           => $this->input->get('keyword', true),
-        //     'invoice_type'      => $this->input->get('invoice_type', true),
-        //     'status'            => $this->input->get('status', true),
-        //     'customer_type'     => $this->input->get('customer_type', true)
-        // ];
+        $filters = [
+            'keyword'           => $this->input->get('keyword', true),
+            'customer_type'     => $this->input->get('customer_type', true)
+        ];
 
-        // $this->proforma->per_page = $this->input->get('per_page', true) ?? 10;
+        $this->proforma->per_page = $this->input->get('per_page', true) ?? 10;
 
-        // $get_data = $this->proforma->filter_invoice($filters, $page);
+        $get_data = $this->proforma->filter_proforma($filters, $page);
 
-        // //data invoice
-        // $proforma    = $get_data['invoice'];
-        // $total      = $get_data['total'];
-        // $pagination = $this->proforma->make_pagination(site_url('proforma'), 2, $total);
+        //data invoice
+        $proforma    = $get_data['proforma'];
+        $total      = $get_data['total'];
+        $pagination = $this->proforma->make_pagination(site_url('proforma'), 2, $total);
 
-        // $pages      = $this->pages;
-        // $main_view  = 'proforma/index_proforma';
-        // $this->load->view('template', compact('pages', 'main_view', 'proforma', 'pagination', 'total'));
+        $pages      = $this->pages;
+        $main_view  = 'proforma/index_proforma';
+        $this->load->view('template', compact('pages', 'main_view', 'proforma', 'pagination', 'total'));
     }
 
-    public function view($invoice_id)
+    public function view($proforma_id)
     {
         $pages          = $this->pages;
-        $main_view      = 'invoice/view_invoice';
-        $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
-        $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
-        $invoice->customer = $this->invoice->get_customer($invoice->customer_id);
+        $main_view      = 'proforma/view_proforma';
+        $proforma       = $this->proforma->fetch_proforma_id($proforma_id);
+        $proforma_books  = $this->proforma->fetch_proforma_book($proforma_id);
+        $proforma->customer = $this->proforma->get_customer($proforma->customer_id);
 
-        $this->load->view('template', compact('pages', 'main_view', 'invoice', 'invoice_books'));
+        $this->load->view('template', compact('pages', 'main_view', 'proforma', 'proforma_books'));
     }
 
     public function add()
@@ -239,9 +236,9 @@ class Proforma extends MY_Controller
     }
 
     // Auto generate nomor faktur berdasar jenis faktur
-    public function api_get_last_invoice_number($type)
+    public function api_get_last_proforma_number()
     {
-        $number = $this->invoice->get_last_invoice_number($type);
+        $number = $this->proforma->get_last_proforma_number();
         return $this->send_json_output(true, $number);
     }
 }

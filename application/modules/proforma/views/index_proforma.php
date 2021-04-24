@@ -1,65 +1,20 @@
-<!-- <?php
-        $level              = check_level();
-        $per_page           = 10;
-        $keyword            = $this->input->get('keyword');
-        $invoice_type       = $this->input->get('invoice_type');
-        $customer_type      = $this->input->get('customer_type');
-        $status             = $this->input->get('status');
-        $page               = $this->uri->segment(2);
-        $i                  = isset($page) ? $page * $per_page - $per_page : 0;
+<?php
+$level              = check_level();
+$per_page           = 10;
+$keyword            = $this->input->get('keyword');
+$customer_type      = $this->input->get('customer_type');
+$page               = $this->uri->segment(2);
+$i                  = isset($page) ? $page * $per_page - $per_page : 0;
 
-
-        $invoice_type_options = [
-            ''  => '- Filter Kategori Faktur -',
-            'credit' => 'Kredit',
-            'cash' => 'Tunai',
-            'online' => 'Online',
-            'showroom' => 'Showroom'
-        ];
-
-        $customer_type_options = [
-            ''  => '- Filter Kategori Customer -',
-            'distributor' => 'Distributor',
-            'reseller' => 'Reseller',
-            'author' => 'Penulis',
-            'member' => 'Member',
-            'general' => 'Umum'
-        ];
-
-        $status_options = [
-            ''                  => '- Filter Status Faktur -',
-            'waiting'           => 'Belum Konfirmasi',
-            'confirm'           => 'Sudah Konfirmasi',
-            'preparing_start'   => 'Diproses',
-            'preparing_finish'  => 'Siap Diambil',
-            'finish'            => 'Selesai',
-            'cancel'            => 'Dibatalkan'
-        ];
-
-        function generate_invoice_action($invoice_id)
-        {
-            return html_escape('
-    <div class="list-group list-group-bordered" style="margin: -9px -15px;border-radius:0;">
-      <a href="' . base_url("invoice/action/{$invoice_id}/confirm") . '" class="list-group-item list-group-item-action p-2">
-        <div class="list-group-item-figure">
-        <div class="tile bg-success">
-        <span class="fa fa-check"></span>
-        </div>
-        </div>
-        <div class="list-group-item-body"> Setuju </div>
-      </a>
-      <a href="' . base_url("invoice/action/{$invoice_id}/cancel") . '" class="list-group-item list-group-item-action p-2">
-        <div class="list-group-item-figure">
-        <div class="tile bg-danger">
-        <span class="fa fa-ban"></span>
-        </div>
-        </div>
-        <div class="list-group-item-body"> Tolak </div>
-      </a>
-    </div>
-    ');
-        }
-        ?>
+$customer_type_options = [
+    ''  => '- Filter Kategori Customer -',
+    'distributor' => 'Distributor',
+    'reseller' => 'Reseller',
+    'author' => 'Penulis',
+    'member' => 'Member',
+    'general' => 'Umum'
+];
+?>
 
 
 <header class="page-title-bar">
@@ -69,7 +24,7 @@
                 <a href="<?= base_url(); ?>"><span class="fa fa-home"></span></a>
             </li>
             <li class="breadcrumb-item active">
-                <a class="text-muted">Faktur</a>
+                <a class="text-muted">Proforma</a>
             </li>
         </ol>
     </nav>
@@ -96,7 +51,7 @@
                         >
                             <h5>Info</h5>
                             <p class="m-0">Klik tombol <button class="btn btn-sm btn-secondary"><i class="fa fa-thumbs-up"></i>
-                                    Aksi</button> untuk menyetujui atau menolak faktur
+                                    Aksi</button> untuk membuat faktur tunai atau menghapus proforma
                             </p>
                             <button
                                 type="button"
@@ -114,22 +69,14 @@
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
                             <div class="col-12 col-md-3 mt-2">
-                                <label for="invoice_type">Jenis Faktur</label>
-                                <?= form_dropdown('invoice_type', $invoice_type_options, $invoice_type, 'id="invoice_type" class="form-control custom-select d-block" title="Invoice Type"'); ?>
-                            </div>
-                            <div class="col-12 col-md-3 mt-2">
                                 <label for="customer_type">Jenis Customer</label>
                                 <?= form_dropdown('customer_type', $customer_type_options, $customer_type, 'id="customer_type" class="form-control custom-select d-block" title="Customer Type"'); ?>
                             </div>
                             <div class="col-12 col-md-3 mt-2">
-                                <label for="status">Status</label>
-                                <?= form_dropdown('status', $status_options, $status, 'id="status" class="form-control custom-select d-block" title="Invoice Status"'); ?>
-                            </div>
-                            <div class="col-12 col-md-8 mt-2">
                                 <label for="status">Pencarian</label>
-                                <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Nama, Tipe, Kategori" class="form-control"'); ?>
+                                <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Nomor, Nama Customer" class="form-control"'); ?>
                             </div>
-                            <div class="col-12 col-md-4 mt-2">
+                            <div class="col-12 col-md-3 mt-2">
                                 <label>&nbsp;</label>
                                 <div
                                     class="btn-group btn-block"
@@ -165,11 +112,7 @@
                                     <th
                                         scope="col"
                                         style="width:30%;"
-                                    >Nomor Faktur</th>
-                                    <th
-                                        scope="col"
-                                        style="width:15%;"
-                                    >Jenis</th>
+                                    >Nomor Proforma</th>
                                     <th
                                         scope="col"
                                         style="width:10%;"
@@ -190,30 +133,22 @@
                                         scope="col"
                                         style="width:20%;"
                                         class="pr-4"
-                                    >Status</th>
-                                    <th
-                                        scope="col"
-                                        style="width:20%;"
-                                        class="pr-4"
                                     > &nbsp; </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($invoice as $lData) : ?>
+                                <?php foreach ($proforma as $lData) : ?>
                                     <tr class="text-center">
                                         <td class="align-middle pl-4">
                                             <?= ++$i; ?>
                                         </td>
                                         <td class="text-center align-middle">
                                             <a
-                                                href="<?= base_url("$pages/view/$lData->invoice_id"); ?>"
+                                                href="<?= base_url("$pages/view/$lData->proforma_id"); ?>"
                                                 class="font-weight-bold"
                                             >
                                                 <?= highlight_keyword($lData->number, $keyword); ?>
                                             </a>
-                                        </td>
-                                        <td class="align-middle">
-                                            <?= get_invoice_type()[$lData->invoice_type]; ?>
                                         </td>
                                         <td class="align-middle">
                                             <?= highlight_keyword($lData->customer_name, $keyword); ?>
@@ -227,10 +162,7 @@
                                         <td class="align-middle">
                                             <?= date("d/m/y", strtotime($lData->due_date)); ?>
                                         </td>
-                                        <td class="align-middle pr-4">
-                                            <?= get_invoice_status()[$lData->status]; ?>
-                                        </td>
-                                        <td class="align-middle text-right d-flex">
+                                        <!-- <td class="align-middle text-right d-flex">
                                             <?php if ($lData->status == 'waiting') : ?>
                                                 <button
                                                     type="button"
@@ -239,7 +171,7 @@
                                                     data-toggle="popover"
                                                     data-placement="left"
                                                     data-html="true"
-                                                    data-content="<?= generate_invoice_action($lData->invoice_id); ?>"
+                                                    data-content="<?= generate_invoice_action($lData->proforma); ?>"
                                                     data-trigger="focus"
                                                     style="margin-right:5px;"
                                                 >
@@ -254,7 +186,7 @@
                                                     <span class="sr-only">Edit</span>
                                                 </a>
                                             <?php endif; ?>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -265,4 +197,4 @@
             </section>
         </div>
     </div>
-</div> -->
+</div>

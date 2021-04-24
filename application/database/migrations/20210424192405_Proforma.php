@@ -15,10 +15,6 @@ class Migration_Proforma extends CI_Migration
                 'type' => 'VARCHAR',
                 'constraint' => 50,
             ],
-            'type' => [
-                'type' => 'VARCHAR',
-                'constraint' => 25,
-            ],
             'source' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
@@ -35,12 +31,7 @@ class Migration_Proforma extends CI_Migration
             'issued_date' => [
                 'type' => 'DATETIME',
                 'null' => TRUE,
-            ],
-            'preparing_staff' => [
-                'type' => 'VARCHAR',
-                'constraint' => 100,
-                'null' => TRUE
-            ],
+            ]
         ]);
         $this->dbforge->add_key('proforma_id', TRUE);
         $this->dbforge->create_table('proforma');
