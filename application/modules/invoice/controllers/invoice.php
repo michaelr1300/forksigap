@@ -246,31 +246,16 @@ class Invoice extends MY_Controller
     {
          $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
          $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
+
         // PDF
         $this->load->library('pdf');
         $data_format['invoice'] = $invoice ?? '';
         $data_format['invoice_books'] = $invoice_books ?? '';
-
-        // $data_format['book_title'] = $invoice_book->book_title ?? '';
-        // $data_format['quantity'] = $invoice_book->qty ?? '';
-        // $data_format['discount'] = $invoice_book->discount ?? '';
-        // $data_format['price'] = $invoice_book->price ?? '';
-        // $data_format['total_price_temporary'] = $invoice_book->price * $invoice_book->qty ?? '';
-        // $data_format['invoice_discount'] = $invoice_book->price * $invoice_book->qty * ($invoice_book->discount/100) ?? '';
-        // $data_format['total_price'] = $invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount/100) ?? '';
-        $data_format['number'] = $invoice->number ?? '';
         
-        $format = $this->load->view('invoice/view_invoice_pdf', $data_format, true);
-        $this->pdf->loadHtml($format);
+        $html = $this->load->view('invoice/view_invoice_pdf', $data_format, true);
+        $file_name = strtolower($invoice->number . '_Invoice');
 
-        // (Optional) Setup the paper size and orientation
-        $this->pdf->set_paper('A4', 'potrait');
-
-        // Render the HTML as PDF
-        $this->pdf->render();
-        
-        $this->pdf->stream("dompdf_out.pdf", array("Attachment" => false));
-        // $this->pdf->stream(strtolower($data_format['number'] . '_' . 'Invoice'));
+        $this->pdf->generate_pdf_a4_portrait($html, $file_name);
     }
 
     public function api_get_book($book_id)
