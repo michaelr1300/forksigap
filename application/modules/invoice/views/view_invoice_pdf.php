@@ -140,10 +140,9 @@
                 No Faktur : <?= $invoice->number ?>
             </td>
             <td style="width:30%; vertical-align: top;">
-                <?php $issued_date = strtotime($invoice->issued_date) ?>
-                <?php $due_date = strtotime($invoice->due_date) ?>
-                Yogyakarta, <?= date("d-m-Y", $issued_date) ?><br>
-                Jatuh Tempo : <?= date("d-m-Y", $due_date) ?>
+                <?php $month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"] ?>
+                Yogyakarta, <?= date("d", strtotime($invoice->issued_date)) . " " . $month[intval(date("m", strtotime($invoice->issued_date)))] . " " . date("Y", strtotime($invoice->issued_date)) ?><br>
+                Jatuh Tempo : <?= date("d", strtotime($invoice->due_date)) . " " . $month[intval(date("m", strtotime($invoice->due_date)))] . " " . date("Y", strtotime($invoice->due_date)) ?>
             </td>
         </tr>
     </table>
