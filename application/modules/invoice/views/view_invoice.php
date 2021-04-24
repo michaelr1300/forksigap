@@ -24,24 +24,6 @@ $level              = check_level();
         id="data-invoice"
         class="card"
     >
-        <!-- <header class="card-header">
-            <ul class="nav nav-tabs card-header-tabs">
-                <li class="nav-item">
-                    <a
-                        class="nav-link active show"
-                        data-toggle="tab"
-                        href="#logistic-data"
-                    ><i class="fa fa-info-circle"></i> Detail Invoice</a>
-                </li>
-                <li class="nav-item">
-                    <a
-                        class="nav-link"
-                        data-toggle="tab"
-                        href="#stock-data"
-                    ><i class="fa fa-poll"></i> Stok Logistik</a>
-                </li>
-            </ul>
-        </header> -->
         <div class="card-body">
             <?php //=isset($input->draft_id) ? form_hidden('draft_id', $input->draft_id) : ''; ?>
             <div class="tab-content">
@@ -61,14 +43,13 @@ $level              = check_level();
                                     <td width="200px"> Tipe </td>
                                     <td><?= get_invoice_type()[$invoice->type]; ?></td>
                                 </tr>
-                                <!-- <tr>
+                                <tr>
                                     <td width="200px"> Nama Customer </td>
-                                    <td><?= $invoice->customer_name ?></td>
+                                    <td><?= $invoice->customer->name ?></td>
                                 </tr>
-								-->
                                 <tr>
                                     <td width="200px"> Nomor Customer </td>
-                                    <td><?= $invoice->customer_id ?></td>
+                                    <td><?= $invoice->customer->phone_number ?></td>
                                 </tr>
                                 <tr>
                                     <td width="200px"> Tanggal Jatuh Tempo </td>
@@ -84,10 +65,6 @@ $level              = check_level();
                                 <tr>
                                     <td width="200px"> Tanggal dibuat </td>
                                     <td><?= $invoice->issued_date ?></td>
-                                </tr>
-                                <tr>
-                                    <td width="200px"> User </td>
-                                    <td>$invoice->user_created</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -170,7 +147,7 @@ $level              = check_level();
                             <td class="align-middle pl-4">
                                 <?= $i ?>
                             </td>
-                            <td class="align-middle">
+                            <td class="text-left align-middle">
                                 <?= $invoice_book->book_title ?>
                             </td>
                             <td class="align-middle">
@@ -195,187 +172,12 @@ $level              = check_level();
 				<br>
 				
                 <div id="card-button" class="d-flex justify-content-end">
-                <a class="btn btn-outline-warning" style="margin-right:10px;" href="<?= base_url ('invoice/edit/$invoice->invoice_id') ?>">Edit Faktur<i class="fas fa-edit fa-fw" aria-hidden="true"></i></a>
-                <a
+                    <a
                         href="<?= base_url('invoice/generate_pdf/' . $invoice->invoice_id . "/print") ?>"
                         class="btn btn-outline-danger"
                         id="btn-generate-pdf-print"
                         title="Generate PDF"
                     >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
-                    <!-- Faktur Belum dikonfirmasi -->
-                    <?php if ($invoice->status == 'waiting') : ?>
-                        <?php if($level == 'superadmin' || $level == 'admin_pemasaran'): ?>
-                            <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#modal-confirm-invoice">Konfirmasi</button>
-                            <!-- Modal -->
-                            <div class="modal fade" id="modal-confirm-invoice" role="dialog"aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered"role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Konfirmasi Faktur?</h5>
-                                        </div>
-                                        <div class="modal-body">
-                                            <b> Pastikan faktur telah sesuai dengan pesanan! </b> <br>
-                                            <br>Faktur yang telah dikonfirmasi tidak dapat diubah lagi dan akan diteruskan ke bagian gudang untuk proses pengambilan buku.
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button id="btn-modal-confirm-invoice" data-dismiss="modal" type="button" class="btn btn-primary">Konfirmasi</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <script>
-                                $(document).ready(function() {
-                                    const invoice_id = '<?= $invoice->invoice_id ?>'
-                                    const status = 'confirm'
-                                    $('#data-invoice').on('click', '#btn-modal-confirm-invoice', function(){
-                                        $.ajax({
-                                            type: "POST",
-                                            url: "<?= base_url('invoice/update_status'); ?>",
-                                            data: {
-                                                'invoice_id' : invoice_id,
-                                                'status' : status
-                                            },
-                                            success: function(res) {
-                                                showToast(true, res.data);
-                                                location.reload();
-                                            },
-                                            error: function(err) {
-                                                showToast(false, err.responseJSON.message);
-                                            },
-                                            complete: function(data)
-                                            {
-                                                console.log(data);
-                                            }
-                                        });
-                                    })
-                                }) 
-                            </script>
-                        <?php endif ?>
-                    <?php endif ?>
-                    
-                    <!-- Faktur Sudah Dikonfirmasi -->
-                    <?php if ($invoice->status == 'confirm') : ?>
-                        <?php if($level == 'superadmin' || $level == 'admin_gudang'): ?>
-                            <button role="button" id="btn-invoice-start"  class="btn btn-primary ml-2">Mulai</button>
-                            <button role="button" id="btn-invoice-end"  class="btn btn-secondary btn-disabled ml-2" disabled>Selesai</button>
-                            <!-- Modal -->
-                            <script>
-                                $(document).ready(function() {
-                                    const invoice_id = '<?= $invoice->invoice_id ?>'
-                                    const status = 'preparing_start'
-                                    $('#card-button').on('click', '#btn-invoice-start', function(){
-                                        $.ajax({
-                                            type: "POST",
-                                            url: "<?= base_url('invoice/update_status'); ?>",
-                                            data: {
-                                                'invoice_id' : invoice_id,
-                                                'status' : status
-                                            },
-                                            success: function(res) {
-                                                showToast(true, res.data);
-                                                location.reload();
-                                            },
-                                            error: function(err) {
-                                                showToast(false, err.responseJSON.message);
-                                            },
-                                            complete: function(data)
-                                            {
-                                                console.log(data);
-                                            }
-                                        });
-                                    })
-                                }) 
-                            </script>
-                        <?php endif ?>
-                    <?php endif ?>
-
-                    <!-- Faktur Sedang Disiapkan -->
-                    <?php if ($invoice->status == 'preparing_start') : ?>
-                        <?php if($level == 'superadmin' || $level == 'admin_gudang'): ?>
-                            <button role="button" id="btn-invoice-start" class="btn btn-secondary btn-disabled ml-2" disabled>Mulai</button>
-                            <button role="button" id="btn-invoice-end" class="btn btn-primary ml-2">Selesai</button>
-                            <!-- Modal -->
-                            <script>
-                                $(document).ready(function() {
-                                    const invoice_id = '<?= $invoice->invoice_id ?>'
-                                    const status = 'preparing_end'
-                                    $('#card-button').on('click', '#btn-invoice-end', function(){
-                                        $.ajax({
-                                            type: "POST",
-                                            url: "<?= base_url('invoice/update_status'); ?>",
-                                            data: {
-                                                'invoice_id' : invoice_id,
-                                                'status' : status
-                                            },
-                                            success: function(res) {
-                                                showToast(true, res.data);
-                                                location.reload();
-                                            },
-                                            error: function(err) {
-                                                showToast(false, err.responseJSON.message);
-                                            },
-                                            complete: function(data)
-                                            {
-                                                console.log(data);
-                                            }
-                                        });
-                                    })
-                                }) 
-                            </script>
-                        <?php endif ?>
-                    <?php endif ?>
-
-                    <!-- Faktur Selesai Diproses -->
-                    <?php if ($invoice->status == 'preparing_end') : ?>
-                        <?php if($level == 'superadmin' || $level == 'admin_pemasaran'): ?>
-                            <button type="button" class="btn btn-primary ml-2" data-toggle="modal" data-target="#modal-finish-invoice">Selesai</button>
-                            <!-- Modal -->
-                            <div class="modal fade" id="modal-finish-invoice" role="dialog"aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered"role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Selesai Proses Faktur?</h5>
-                                        </div>
-                                        <div class="modal-body">
-                                            <b> Pastikan pesanan buku telah diambil bagian pemasaran! </b> <br>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button id="btn-modal-finish-invoice" data-dismiss="modal" type="button" class="btn btn-primary">Selesai</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <script>
-                                $(document).ready(function() {
-                                    const invoice_id = '<?= $invoice->invoice_id ?>'
-                                    const status = 'finish'
-                                    $('#data-invoice').on('click', '#btn-modal-finish-invoice', function(){
-                                        $.ajax({
-                                            type: "POST",
-                                            url: "<?= base_url('invoice/update_status'); ?>",
-                                            data: {
-                                                'invoice_id' : invoice_id,
-                                                'status' : status
-                                            },
-                                            success: function(res) {
-                                                showToast(true, res.data);
-                                                location.reload();
-                                            },
-                                            error: function(err) {
-                                                showToast(false, err.responseJSON.message);
-                                            },
-                                            complete: function(data)
-                                            {
-                                                console.log(data);
-                                            }
-                                        });
-                                    })
-                                }) 
-                            </script>
-                        <?php endif ?>
-                    <?php endif ?>
                 </div>
 
                 
