@@ -43,6 +43,49 @@ class Proforma extends MY_Controller
         $this->load->view('template', compact('pages', 'main_view', 'proforma', 'proforma_books'));
     }
 
+    public function action($id, $proforma_status)
+    {
+        $proforma = $this->proforma->where('proforma_id', $id)->get();
+        if (!$proforma) {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
+
+        $this->db->trans_begin();
+
+        // Confirm Faktur
+        if ($proforma_status == 'confirm') {
+            // M T W T F S S
+            // 1 2 3 4 5 6 7
+            // if (date('N') < 5) {
+            //     $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ 1 day"));
+            // } else {
+            //     $add_day = 8 - date('N');
+            //     $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ " . $add_day . "day"));
+            // }
+            // $this->invoice->where('invoice_id', $id)->update([
+            //     'status' => $invoice_status,
+            //     'confirm_date' => now(),
+            //     'preparing_deadline' => $preparing_deadline
+            // ]);
+        } else if ($proforma_status == 'cancel') {
+            // $this->invoice->where('invoice_id', $id)->update([
+            //     'status' => $proforma_status,
+            //     'cancel_date' => now(),
+            // ]);
+        }
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+        } else {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+        }
+
+        redirect($this->pages);
+    }
+
     public function add()
     {
         //post add proforma

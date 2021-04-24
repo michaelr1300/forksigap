@@ -14,6 +14,29 @@ $customer_type_options = [
     'member' => 'Member',
     'general' => 'Umum'
 ];
+function generate_proforma_action($proforma_id)
+{
+    return html_escape('
+    <div class="list-group list-group-bordered" style="margin: -9px -15px;border-radius:0;">
+      <a href="' . base_url("proforma/action/{$proforma_id}/confirm") . '" class="list-group-item list-group-item-action p-2">
+        <div class="list-group-item-figure">
+        <div class="tile bg-success">
+        <span class="fa fa-check"></span>
+        </div>
+        </div>
+        <div class="list-group-item-body"> Buat Faktur </div>
+      </a>
+      <a href="' . base_url("proforma/action/{$proforma_id}/cancel") . '" class="list-group-item list-group-item-action p-2">
+        <div class="list-group-item-figure">
+        <div class="tile bg-danger">
+        <span class="fa fa-ban"></span>
+        </div>
+        </div>
+        <div class="list-group-item-body"> Hapus Proforma </div>
+      </a>
+    </div>
+    ');
+}
 ?>
 
 
@@ -101,7 +124,7 @@ $customer_type_options = [
                     <?php if ($total == 0) : ?>
                         <p class="text-center">Data tidak tersedia</p>
                     <?php else : ?>
-                        <table class="table table-striped mb-0 table-responsive">
+                        <table class="table table-striped mb-0 table-fluid">
                             <thead>
                                 <tr class="text-center">
                                     <th
@@ -111,7 +134,7 @@ $customer_type_options = [
                                     >No</th>
                                     <th
                                         scope="col"
-                                        style="width:30%;"
+                                        style="width:25%;"
                                     >Nomor Proforma</th>
                                     <th
                                         scope="col"
@@ -123,15 +146,15 @@ $customer_type_options = [
                                     >Member</th>
                                     <th
                                         scope="col"
-                                        style="width:10%;"
+                                        style="width:20%;"
                                     >Tanggal Dibuat</th>
                                     <th
                                         scope="col"
-                                        style="width:15%;"
+                                        style="width:20%;"
                                     >Jatuh Tempo</th>
                                     <th
                                         scope="col"
-                                        style="width:20%;"
+                                        style="width:15%;"
                                         class="pr-4"
                                     > &nbsp; </th>
                                 </tr>
@@ -162,31 +185,29 @@ $customer_type_options = [
                                         <td class="align-middle">
                                             <?= date("d/m/y", strtotime($lData->due_date)); ?>
                                         </td>
-                                        <!-- <td class="align-middle text-right d-flex">
-                                            <?php if ($lData->status == 'waiting') : ?>
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-sm btn-secondary"
-                                                    data-container="body"
-                                                    data-toggle="popover"
-                                                    data-placement="left"
-                                                    data-html="true"
-                                                    data-content="<?= generate_invoice_action($lData->proforma); ?>"
-                                                    data-trigger="focus"
-                                                    style="margin-right:5px;"
-                                                >
-                                                    <i class="fa fa-thumbs-up">Aksi</i>
-                                                </button>
-                                                <a
-                                                    title="Edit"
-                                                    href="<?= base_url('invoice/edit/' . $lData->invoice_id . ''); ?>"
-                                                    class="btn btn-sm btn-secondary"
-                                                >
-                                                    <i class="fa fa-pencil-alt"></i>
-                                                    <span class="sr-only">Edit</span>
-                                                </a>
-                                            <?php endif; ?>
-                                        </td> -->
+                                        <td class="align-middle text-right d-flex">
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-secondary"
+                                                data-container="body"
+                                                data-toggle="popover"
+                                                data-placement="left"
+                                                data-html="true"
+                                                data-content="<?= generate_proforma_action($lData->proforma_id); ?>"
+                                                data-trigger="focus"
+                                                style="margin-right:5px;"
+                                            >
+                                                <i class="fa fa-thumbs-up">Aksi</i>
+                                            </button>
+                                            <a
+                                                title="Edit"
+                                                href="<?= base_url('proforma/edit/' . $lData->proforma_id . ''); ?>"
+                                                class="btn btn-sm btn-secondary"
+                                            >
+                                                <i class="fa fa-pencil-alt"></i>
+                                                <span class="sr-only">Edit</span>
+                                            </a>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
