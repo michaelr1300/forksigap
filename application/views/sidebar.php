@@ -81,6 +81,12 @@ $menu_list = [
         'level' => 'superadmin|admin_gudang|admin_pemasaran|admin_keuangan'
     ],
     [
+        'name' => 'Proforma',
+        'url'  => 'proforma',
+        'icon' => 'fa fa-file-archive',
+        'level' => 'superadmin|admin_gudang|admin_pemasaran'
+    ],
+    [
         'name' => 'Faktur',
         'url'  => 'invoice',
         'icon' => 'fa fa-file-invoice',
