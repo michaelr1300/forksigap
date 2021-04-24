@@ -141,9 +141,9 @@
             </td>
             <td style="width:30%; vertical-align: top;">
                 <?php $issued_date = strtotime($invoice->issued_date) ?>
-                <?php $due_date = strtotime($invoice->due) ?>
-                Yogyakarta, <?= date("Y-m-d", $issued_date) ?><br>
-                Jatuh Tempo : <?= date("Y-m-d", $due_date) ?>
+                <?php $due_date = strtotime($invoice->due_date) ?>
+                Yogyakarta, <?= date("d-m-Y", $issued_date) ?><br>
+                Jatuh Tempo : <?= date("d-m-Y", $due_date) ?>
             </td>
         </tr>
     </table>
