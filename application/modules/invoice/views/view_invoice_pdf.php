@@ -120,13 +120,14 @@
         <tr class="information">
             <td style="width:70%;">
                 Kepada Yth.<br>
-                Nama Customer<br>
-                Alamat Customer<br><br>
+                <?= $customer->name ?><br>
+                <?= $customer->address ?><br>
+                <?= $customer->phone_number ?><br><br>
                 No Faktur : <?= $invoice->number ?>
             </td>
             <td style="width:30%; vertical-align: top;">
-                Yogyakarta, 1 Maret 2021<br>
-                Jatuh Tempo : 8 Maret 2021
+                Yogyakarta, <?= $invoice->issued_date ?><br>
+                Jatuh Tempo : <?= $invoice->due_date ?>
             </td>
         </tr>
     </table>

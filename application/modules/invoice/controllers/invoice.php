@@ -39,6 +39,7 @@ class Invoice extends MY_Controller
         $main_view      = 'invoice/view_invoice';
         $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
         $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
+        $invoice->customer = $this->invoice->get_customer($invoice->customer_id);
 
         $this->load->view('template', compact('pages', 'main_view', 'invoice', 'invoice_books'));
     }
@@ -244,13 +245,15 @@ class Invoice extends MY_Controller
 
     public function generate_pdf($invoice_id)
     {
-         $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
-         $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
+        $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
+        $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
+        $customer       = $this->invoice->get_customer($invoice->customer_id);
 
         // PDF
         $this->load->library('pdf');
         $data_format['invoice'] = $invoice ?? '';
         $data_format['invoice_books'] = $invoice_books ?? '';
+        $data_format['customer'] = $customer ?? '';
         
         $html = $this->load->view('invoice/view_invoice_pdf', $data_format, true);
         $file_name = strtolower($invoice->number . '_Invoice');

@@ -171,6 +171,8 @@ $level              = check_level();
                 </table>
 				<br>
 				
+                
+
                 <div id="card-button" class="d-flex justify-content-end">
                     <a
                         href="<?= base_url('invoice/generate_pdf/' . $invoice->invoice_id . "/print") ?>"
@@ -179,7 +181,7 @@ $level              = check_level();
                         title="Generate PDF"
                     >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
                 </div>
-
+                
                 
             </div>
         </div>
