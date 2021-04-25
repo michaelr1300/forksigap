@@ -50,29 +50,63 @@ class Proforma extends MY_Controller
             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
             redirect($this->pages);
         }
-
         $this->db->trans_begin();
 
-        // Confirm Faktur
+        // Confirm Proforma
         if ($proforma_status == 'confirm') {
-            // M T W T F S S
-            // 1 2 3 4 5 6 7
-            // if (date('N') < 5) {
-            //     $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ 1 day"));
-            // } else {
-            //     $add_day = 8 - date('N');
-            //     $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ " . $add_day . "day"));
-            // }
-            // $this->invoice->where('invoice_id', $id)->update([
-            //     'status' => $invoice_status,
-            //     'confirm_date' => now(),
-            //     'preparing_deadline' => $preparing_deadline
-            // ]);
+            //cek stok gudang dengan proforma_book
+            $books = $this->proforma->fetch_proforma_book($id);
+            foreach ($books as $book) {
+                $stock = $this->proforma->compare_stock($book->book_id);
+                $qty = intval($book->qty);
+                $stock = intval($stock->warehouse_present);
+                if ($qty > $stock) {
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+                }
+            }
+            //fetch data proforma dan nomor invoice terbaru
+            $proforma       = $this->proforma->fetch_proforma_id($id);
+            $invoice_number = $this->proforma->get_last_proforma_number(true);
+
+            //pemindahan data dari proforma ke faktur
+            $date_created       = date('Y-m-d H:i:s');
+            $add = [
+                'number'            => $invoice_number,
+                'customer_id'       => $proforma->customer_id,
+                'due_date'          => $proforma->due_date,
+                'type'              => 'cash',
+                'source'            => 'warehouse',
+                'status'            => 'waiting',
+                'issued_date'       => $date_created
+                // 'user_created'      => $user_created
+            ];
+            $this->db->insert('invoice', $add);
+
+            // ID faktur terbaru untuk diisi buku
+            $invoice_id = $this->db->insert_id();
+
+            //pemindahan data dari proforma_book ke invoice_book
+            foreach ($books as $book) {
+                $add_book = [
+                    'invoice_id'    => $invoice_id,
+                    'book_id'       => $book->book_id,
+                    'qty'           => $book->qty,
+                    'price'         => $book->price,
+                    'discount'      => $book->discount
+                ];
+                $this->db->insert('invoice_book', $add_book);
+            }
+
+            //delete data proforma
+            // $this->db->where('proforma_id', $id)->delete('proforma');
+            // $this->db->where('proforma_id', $id)->delete('proforma_book');
+            $redirect = true;
         } else if ($proforma_status == 'cancel') {
-            // $this->invoice->where('invoice_id', $id)->update([
-            //     'status' => $proforma_status,
-            //     'cancel_date' => now(),
-            // ]);
+            //delete data proforma
+            $this->db->where('proforma_id', $id)->delete('proforma');
+            $this->db->where('proforma_id', $id)->delete('proforma_book');
+            $redirect = false;
         }
 
         if ($this->db->trans_status() === false) {
@@ -82,8 +116,8 @@ class Proforma extends MY_Controller
             $this->db->trans_commit();
             $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
         }
-
-        redirect($this->pages);
+        if ($redirect) redirect('invoice/view/' . $invoice_id);
+        else redirect($this->pages);
     }
 
     public function add()

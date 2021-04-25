@@ -180,6 +180,15 @@ class Proforma_model extends MY_Model
         return $book;
     }
 
+    public function compare_stock($book_id)
+    {
+        $this->db->select('warehouse_present')
+            ->from('book_stock')
+            ->order_by('book_stock_id', 'DESC')
+            ->where('book_id', $book_id);
+        return $this->db->get()->row();
+    }
+
     public function get_discount($type)
     {
         return $this->select('discount')->where('membership', $type)->get('discount');
@@ -194,13 +203,18 @@ class Proforma_model extends MY_Model
         return $this->db->get()->row();
     }
 
-    public function get_last_proforma_number()
+    public function get_last_proforma_number($convert = false)
     {
-        $initial = 'P';
         $date_created       = substr(date('Ymd'), 2);
-        $data = $this->db->select('*')->count_all_results('proforma') + 1;
-        $proforma_number = $initial . $date_created . '-' . str_pad($data, 6, 0, STR_PAD_LEFT);
-        return $proforma_number;
+        if ($convert == true) {
+            $initial = 'T';
+            $data = $this->db->select('*')->where('type', 'cash')->count_all_results('invoice') + 1;
+        } else {
+            $initial = 'P';
+            $data = $this->db->select('*')->count_all_results('proforma') + 1;
+        }
+        $number = $initial . $date_created . '-' . str_pad($data, 6, 0, STR_PAD_LEFT);
+        return $number;
     }
 
     public function filter_proforma($filters, $page)
@@ -287,42 +301,5 @@ class Proforma_model extends MY_Model
             }
         }
         return $this;
-    }
-    public function start_progress($invoice_id)
-    {
-        // transaction data agar konsisten
-        $this->db->trans_begin();
-
-        $input = [
-            'status' => 'preparing',
-            'preparing_start_date' => date('Y-m-d H:i:s')
-        ];
-
-        $this->invoice->where('invoice_id', $invoice_id)->update($input);
-
-        if ($this->db->trans_status() === false) {
-            $this->db->trans_rollback();
-            return false;
-        } else {
-            $this->db->trans_commit();
-            return true;
-        }
-    }
-
-    public function finish_progress($invoice_id)
-    {
-        $input = [
-            'status' => "preparing_finish",
-            "preparing_end_date" => date('Y-m-d H:i:s')
-        ];
-
-
-        $update_state = $this->invoice->where('invoice_id', $invoice_id)->update($input);
-
-        if ($update_state) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }
