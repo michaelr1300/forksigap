@@ -66,7 +66,7 @@
 		                    		<tr>
 		                    			<th style="text-align: center; width:5%">No</th>
 		                    			<th style="text-align: center; width:40%">Judul Buku</th>
-                                        <th style="text-align: center; width:10%">ISBN</th>
+                                        <th style="text-align: center; width:10%">Penulis</th>
                                         <th style="text-align: center; width:15%">Stok</th>
 		                    			<th style="text-align: center; width:15%">Jumlah</th>
 		                    			<th style="text-align: center; width:15%">Aksi</th>
@@ -130,10 +130,10 @@ $(document).ready(function() {
                     }
                     else {
                         var stock = res.data.warehouse_present
-                        var isbn = res.data.isbn
+                        var author = res.data.author_name
                         var row1 = "<tr><th style='vertical-align: middle;text-align: center'>"+ number +"</th>"
                         var row2 = "<td style='vertical-align: middle'>" + book_name + "<input type='text' hidden name='book_id' class='book_id' value='"+book_id+"'></td>"
-                        var row3 = "<td style='vertical-align: middle'>" + isbn + "</td>"
+                        var row3 = "<td style='vertical-align: middle'>" + author + "</td>"
                         var row4 = "<td style='vertical-align: middle;text-align: center' class='stock'>"+stock+"</td>"
                         var row5 = "<td style='vertical-align: middle'><input type='number' value=0 min=1 max='"+stock+"'class='form-control quantity' name='quantity'></td>"
                         var row6 = "<td style='vertical-align: middle;text-align: center'></button><button type='button' class='btn btn-danger btn-md remove-book'>Hapus</td></tr>"

@@ -6,7 +6,6 @@ $status             = $this->input->get('status');
 $page               = $this->uri->segment(2);
 $i                  = isset($page) ? $page * $per_page - $per_page : 0;
 ?>
-?>
 
 <header class="page-title-bar">
     <nav aria-label="breadcrumb">

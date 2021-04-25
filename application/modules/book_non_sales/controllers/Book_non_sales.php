@@ -59,12 +59,13 @@ class Book_non_sales extends MY_Controller
         if($non_sales_now){
             // ambil nomor terbaru
             $latest = $this->book_non_sales->get_latest_number();
-            $latest_number = (int) substr($latest->number, 5);
-            $input->number = $year_now.'-'.++$latest_number;
+            $latest_number = (int) substr(++$latest->number, 5);
+            $latest_number = str_pad((string) $latest_number, 5, '0', STR_PAD_LEFT);
+            $input->number = $year_now.'-'.$latest_number;
         }
         // permintaan pertama di tahun ini
         else{
-            $input->number = $year_now.'-1';
+            $input->number = $year_now.'-00001';
         }
         $book_non_sales = (object) [
             'issued_date' => now(),
@@ -140,25 +141,24 @@ class Book_non_sales extends MY_Controller
 
     public function generate_pdf_bon($book_non_sales_id)
     {
-        $book_non_sales        = $this->book_non_sales->fetch_book_non_sales($book_non_sales_id);
-        $book_non_sales_list   = $this->book_non_sales->fetch_book_non_sales_list($book_non_sales_id);
-
-        // PDF
-        $this->load->library('pdf');
-        // FORMAT DATA
-        $data_format['number']        = $book_non_sales->number ?? '';
-        $data_format['date']          = $book_non_sales->issued_date ?? '';
-        $data_format['type']          = $book_non_sales->type ?? '';
-        $data_format['book_list']     = $book_non_sales_list ?? '';
-        $format = $this->load->view('book_non_sales/format_pdf_non_sales', $data_format, true);
-        $this->pdf->loadHtml($format);
-
-        // (Optional) Setup the paper size and orientation
-        $this->pdf->set_paper('A4', 'landscape');
-        // Render the HTML as PDF
-        $this->pdf->render();
-        $this->pdf->stream(strtolower($data_format['number'] . '_' . $data_format['type']));
-
+        if(!$this->_is_warehouse_admin()){
+            redirect($_SERVER['HTTP_REFERER']);
+        }
+        else{
+            $book_non_sales        = $this->book_non_sales->fetch_book_non_sales($book_non_sales_id);
+            $book_non_sales_list   = $this->book_non_sales->fetch_book_non_sales_list($book_non_sales_id);
+    
+            // PDF
+            $this->load->library('pdf');
+            // FORMAT DATA
+            $data_format['number']        = $book_non_sales->number ?? '';
+            $data_format['date']          = $book_non_sales->issued_date ?? '';
+            $data_format['type']          = $book_non_sales->type ?? '';
+            $data_format['book_list']     = $book_non_sales_list ?? '';
+            $html = $this->load->view('book_non_sales/format_pdf_non_sales', $data_format, true);        $file_name = $data_format['number'].'_Pemindahan Buku';
+            $file_name = $data_format['number'].'_Pemindahan Buku';
+            $this->pdf->generate_pdf_a4_landscape($html, $file_name);
+        }
     }
 
     public function finish($book_non_sales_id)

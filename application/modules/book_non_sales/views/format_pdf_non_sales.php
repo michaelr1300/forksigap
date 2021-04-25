@@ -18,7 +18,7 @@
         margin-right: 50px; */
         width: 100%;
         border-collapse: collapse;
-        margin-top:25px
+        margin-top:16px
     }
 
     th{
@@ -116,8 +116,7 @@
 <body>
     <div class="row">
         <div class="column left-header">
-            <div class="image-logo"></div>
-            <p><b>UGM PRESS</b></p>
+            <img src="<?=base_url('assets/images/logo_ugm_press.jpg')?>" alt="logo" style="width:100%; max-width:90px;">
         </div>
         <div class="column">
         <p>
@@ -126,6 +125,7 @@
             <br>Telp/Fax.: 0274-561037, Email: ugmpress.ugm.ac.id | gmupress@ugm.ac.id </p>
         </div>
     </div>
+    <br>
     <h1><b>BON PERMINTAAN BUKU NON JUAL</h1>
     <div class="row">
         <div class="column left-50">
@@ -160,8 +160,8 @@
     <br><br>
     <div class="row" style="margin-left:50px; margin-right:50px">
         <div class="column left" style="text-align:left">
-            <p>Tanggal, <?=date('d F Y', strtotime($date))?> </p>
-            <p>Yang Menerima<br><br><br><br><br><br><br>..........................</h2>
+            <p>Tanggal, <?=date('d F Y', strtotime($date))?> <br>
+            Yang Menerima<br><br><br><br><br><br><br>..........................</h2>
         </div>
         <div class="column middle" style="text-align:left"></div>
         <div class="column right" style="text-align:left">
