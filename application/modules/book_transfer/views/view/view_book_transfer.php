@@ -12,7 +12,7 @@ $level              = check_level();
                 <a href="<?= base_url('book_transfer'); ?>">Pemindahan Buku</a>
             </li>
             <li class="breadcrumb-item">
-                <a class="text-muted"><?= $book_transfer->book_title; ?></a>
+                <a class="text-muted"><?= $book_transfer->transfer_number; ?></a>
             </li>
         </ol>
     </nav>

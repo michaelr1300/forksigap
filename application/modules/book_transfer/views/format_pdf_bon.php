@@ -34,6 +34,7 @@
 
     td {
         border: 1px solid black;
+        height: 28px;
         /* text-align: center; */
     }
 
@@ -70,7 +71,7 @@
         width: 20%;
     }
 
-    .image-logo{
+    .logo{
         width:40px;height:10px;
         background-image:url('/assets/images/logo_ugm_press.jpg');
         background-repeat:no-repeat;
@@ -111,8 +112,7 @@
 <body>
     <div class="row">
         <div class="column left-header">
-            <div class="image-logo"></div>
-            <p><b>UGM PRESS</b></p>
+            <img src="<?=base_url('assets/images/logo_ugm_press.jpg')?>" alt="logo" style="width:100%; max-width:90px;">
         </div>
         <div class="column">
             <p>
@@ -154,7 +154,7 @@
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
-                <td style="border: 0px">Rp <span><?= number_format($total, 0, ",", ".")?><span></td>
+                <td style="border: 0px">Rp <div class="price"><?= number_format($total, 0, ",", ".")?></div></td>
             </tr>
             <tr style="border: 0px">
                 <td style="border: 0px"></td>
@@ -162,7 +162,7 @@
                 <td style="border: 0px">DISKON</td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px; text-align: center;"><?= $discount?>%</td>
-                <td class="border-bottom" style="text-align: left;">Rp <span><?= number_format($total_discount, 0, ",", ".")?></span></td>
+                <td class="border-bottom" style="text-align: left;">Rp <div class="price"><?= number_format($total_discount, 0, ",", ".")?></div></td>
             </tr>
             <tr style="border: 0px">
                 <td style="border: 0px"></td>
@@ -170,7 +170,7 @@
                 <td style="border: 0px"><b>TOTAL</b></td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
-                <td style="border: 0px; font-weight: bold;">Rp <span><?= number_format($total-$total_discount, 0, ",", ".") ?></span></td>
+                <td style="border: 0px; font-weight: bold;">Rp <div class="price"><?= number_format($total-$total_discount, 0, ",", ".") ?></div></td>
             </tr>
         </table>
     </div>
