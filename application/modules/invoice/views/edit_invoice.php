@@ -253,6 +253,10 @@
                                             <td id="info-book-title"></td>
                                         </tr>
                                         <tr>
+                                            <td width="175px"> Penulis Buku </td>
+                                            <td id="info-book-author"></td>
+                                        </tr>
+                                        <tr>
                                             <td width="175px"> ISBN </td>
                                             <td id="info-isbn"></td>
                                         </tr>
@@ -566,6 +570,7 @@ $(document).ready(function() {
 
                 $('#book-info').show()
                 $('#info-book-title').html(res.data.book_title)
+                $('#info-book-author').html(res.data.author_name)
                 $('#info-isbn').html(res.data.isbn)
                 $('#info-price').html(res.data.harga)
                 $('#info-year').html(published_date.getFullYear())

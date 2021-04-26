@@ -180,10 +180,14 @@ class Invoice_model extends MY_Model
 
     public function get_book($book_id)
     {
-        $book = $this->select('book.*')
+        $book = $this->db->select('book.*, author.author_name')
+            ->from('book')
+            ->join('draft_author', 'draft_author.draft_id = book.draft_id')
+            ->join('author', 'draft_author.author_id = author.author_id')
             ->where('book_id', $book_id)
-            ->get('book');
-
+            ->get()
+            ->row();
+            
         $stock = $this->fetch_warehouse_stock($book_id);
 
         if ($stock == NULL) {
