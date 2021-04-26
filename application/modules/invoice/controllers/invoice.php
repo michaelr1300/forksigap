@@ -42,7 +42,7 @@ class Invoice extends MY_Controller
         $pages          = $this->pages;
         $main_view      = 'invoice/view_invoice';
         $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
-        $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
+        $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);        
         $invoice->customer = $this->invoice->get_customer($invoice->customer_id);
 
         $this->load->view('template', compact('pages', 'main_view', 'invoice', 'invoice_books'));

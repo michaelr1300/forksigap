@@ -151,7 +151,7 @@ $level              = check_level();
                                 <?= $invoice_book->book_title ?>
                             </td>
                             <td class="align-middle">
-                                Penulis
+                                <?= $invoice_book->author_name ?>
                             </td>
                             <td class="align-middle">
                                 Rp <?= $invoice_book->price ?>
