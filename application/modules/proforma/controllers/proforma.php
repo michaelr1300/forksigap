@@ -13,45 +13,119 @@ class Proforma extends MY_Controller
 
     public function index($page = NULL)
     {
-        echo ('proforma');
-        // $filters = [
-        //     'keyword'           => $this->input->get('keyword', true),
-        //     'invoice_type'      => $this->input->get('invoice_type', true),
-        //     'status'            => $this->input->get('status', true),
-        //     'customer_type'     => $this->input->get('customer_type', true)
-        // ];
+        $filters = [
+            'keyword'           => $this->input->get('keyword', true),
+            'customer_type'     => $this->input->get('customer_type', true)
+        ];
 
-        // $this->proforma->per_page = $this->input->get('per_page', true) ?? 10;
+        $this->proforma->per_page = $this->input->get('per_page', true) ?? 10;
 
-        // $get_data = $this->proforma->filter_invoice($filters, $page);
+        $get_data = $this->proforma->filter_proforma($filters, $page);
 
-        // //data invoice
-        // $proforma    = $get_data['invoice'];
-        // $total      = $get_data['total'];
-        // $pagination = $this->proforma->make_pagination(site_url('proforma'), 2, $total);
+        //data proforma
+        $proforma    = $get_data['proforma'];
+        $total      = $get_data['total'];
+        $pagination = $this->proforma->make_pagination(site_url('proforma'), 2, $total);
 
-        // $pages      = $this->pages;
-        // $main_view  = 'proforma/index_proforma';
-        // $this->load->view('template', compact('pages', 'main_view', 'proforma', 'pagination', 'total'));
+        $pages      = $this->pages;
+        $main_view  = 'proforma/index_proforma';
+        $this->load->view('template', compact('pages', 'main_view', 'proforma', 'pagination', 'total'));
     }
 
-    public function view($invoice_id)
+    public function view($proforma_id)
     {
         $pages          = $this->pages;
-        $main_view      = 'invoice/view_invoice';
-        $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
-        $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
-        $invoice->customer = $this->invoice->get_customer($invoice->customer_id);
+        $main_view      = 'proforma/view_proforma';
+        $proforma       = $this->proforma->fetch_proforma_id($proforma_id);
+        $proforma_books  = $this->proforma->fetch_proforma_book($proforma_id);
+        $proforma->customer = $this->proforma->get_customer($proforma->customer_id);
 
-        $this->load->view('template', compact('pages', 'main_view', 'invoice', 'invoice_books'));
+        $this->load->view('template', compact('pages', 'main_view', 'proforma', 'proforma_books'));
+    }
+
+    public function action($id, $proforma_status)
+    {
+        $proforma = $this->proforma->where('proforma_id', $id)->get();
+        if (!$proforma) {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
+        $this->db->trans_begin();
+
+        // Confirm Proforma
+        if ($proforma_status == 'confirm') {
+            //cek stok gudang dengan proforma_book
+            $books = $this->proforma->fetch_proforma_book($id);
+            foreach ($books as $book) {
+                $stock = $this->proforma->compare_stock($book->book_id);
+                $qty = intval($book->qty);
+                $stock = intval($stock->warehouse_present);
+                if ($qty > $stock) {
+                    $this->db->trans_rollback();
+                    $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+                }
+            }
+            //fetch data proforma dan nomor invoice terbaru
+            $proforma       = $this->proforma->fetch_proforma_id($id);
+            $invoice_number = $this->proforma->get_last_proforma_number(true);
+
+            //pemindahan data dari proforma ke faktur
+            $date_created       = date('Y-m-d H:i:s');
+            $add = [
+                'number'            => $invoice_number,
+                'customer_id'       => $proforma->customer_id,
+                'due_date'          => $proforma->due_date,
+                'type'              => 'cash',
+                'source'            => 'warehouse',
+                'status'            => 'waiting',
+                'issued_date'       => $date_created
+                // 'user_created'      => $user_created
+            ];
+            $this->db->insert('invoice', $add);
+
+            // ID faktur terbaru untuk diisi buku
+            $invoice_id = $this->db->insert_id();
+
+            //pemindahan data dari proforma_book ke invoice_book
+            foreach ($books as $book) {
+                $add_book = [
+                    'invoice_id'    => $invoice_id,
+                    'book_id'       => $book->book_id,
+                    'qty'           => $book->qty,
+                    'price'         => $book->price,
+                    'discount'      => $book->discount
+                ];
+                $this->db->insert('invoice_book', $add_book);
+            }
+
+            //delete data proforma
+            // $this->db->where('proforma_id', $id)->delete('proforma');
+            // $this->db->where('proforma_id', $id)->delete('proforma_book');
+            $redirect = true;
+        } else if ($proforma_status == 'cancel') {
+            //delete data proforma
+            $this->db->where('proforma_id', $id)->delete('proforma');
+            $this->db->where('proforma_id', $id)->delete('proforma_book');
+            $redirect = false;
+        }
+
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+        } else {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+        }
+        if ($redirect) redirect('invoice/view/' . $invoice_id);
+        else redirect($this->pages);
     }
 
     public function add()
     {
-        //post add invoice
+        //post add proforma
         if ($_POST) {
             //validasi input
-            $this->invoice->validate_invoice();
+            $this->proforma->validate_proforma();
             $date_created       = date('Y-m-d H:i:s');
 
             //Nentuin customer id jika customer diambil dari database
@@ -74,67 +148,50 @@ class Proforma extends MY_Controller
                 'number'            => $this->input->post('number'),
                 'customer_id'       => $customer_id,
                 'due_date'          => $this->input->post('due-date'),
-                'type'              => $this->input->post('type'),
-                'source'            => $this->input->post('source'),
-                'source_library_id' => $this->input->post('source-library-id'),
-                'status'            => 'waiting',
                 'issued_date'       => $date_created
                 // 'user_created'      => $user_created
             ];
-            $this->db->insert('invoice', $add);
+            $this->db->insert('proforma', $add);
 
             // ID faktur terbaru untuk diisi buku
-            $invoice_id = $this->db->insert_id();
+            $proforma_id = $this->db->insert_id();
 
             // Jumlah Buku di Faktur
-            $countsize = count($this->input->post('invoice_book_id'));
+            $countsize = count($this->input->post('proforma_book_id'));
 
             // Masukkan buku di form faktur ke database
             for ($i = 0; $i < $countsize; $i++) {
                 $book = [
-                    'invoice_id'    => $invoice_id,
-                    'book_id'       => $this->input->post('invoice_book_id')[$i],
-                    'qty'           => $this->input->post('invoice_book_qty')[$i],
-                    'price'         => $this->input->post('invoice_book_price')[$i],
-                    'discount'      => $this->input->post('invoice_book_discount')[$i]
+                    'proforma_id'    => $proforma_id,
+                    'book_id'       => $this->input->post('proforma_book_id')[$i],
+                    'qty'           => $this->input->post('proforma_book_qty')[$i],
+                    'price'         => $this->input->post('proforma_book_price')[$i],
+                    'discount'      => $this->input->post('proforma_book_discount')[$i]
                 ];
-                $this->db->insert('invoice_book', $book);
+                $this->db->insert('proforma_book', $book);
             }
             echo json_encode(['status' => TRUE]);
             $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
         }
 
-        //View add invoice
+        //View add proforma
         else {
-            $invoice_type = array(
-                'credit'      => 'Kredit',
-                'online'      => 'Online',
-                'cash'        => 'Tunai',
-                'showroom'    => 'Showroom',
-            );
-
-            $source = array(
-                'library'   => 'Perpustakaan',
-                'showroom'  => 'Showroom',
-                'warehouse' => 'Gudang'
-            );
-
             $customer_type = get_customer_type();
 
-            $dropdown_book_options = $this->invoice->get_ready_book_list();
+            $dropdown_book_options = $this->proforma->get_ready_book_list();
 
             $pages       = $this->pages;
-            $main_view   = 'invoice/add_invoice';
-            $this->load->view('template', compact('pages', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
+            $main_view   = 'proforma/add_proforma';
+            $this->load->view('template', compact('pages', 'main_view', 'customer_type', 'dropdown_book_options'));
         }
     }
 
-    public function edit($invoice_id)
+    public function edit($proforma_id)
     {
-        //post edit invoice
+        //post edit proforma
         if ($_POST) {
             //validasi input edit
-            $this->invoice->validate_invoice();
+            $this->proforma->validate_proforma();
             //Nentuin customer id jika customer diambil dari database
             if (!empty($this->input->post('customer-id'))) {
                 $customer_id = $this->input->post('customer-id');
@@ -155,93 +212,76 @@ class Proforma extends MY_Controller
                 'number'            => $this->input->post('number'),
                 'customer_id'       => $customer_id,
                 'due_date'          => $this->input->post('due-date'),
-                'type'              => $this->input->post('type'),
-                'source'            => $this->input->post('source'),
-                'source_library_id' => $this->input->post('source-library-id'),
-                'status'            => 'waiting'
                 // 'date_edited'   => date('Y-m-d H:i:s'),
                 // 'user_edited'   => $_SESSION['username']
             ];
 
-            $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
+            $this->db->set($edit)->where('proforma_id', $proforma_id)->update('proforma');
 
             // Jumlah Buku di Faktur
-            $countsize = count($this->input->post('invoice_book_id'));
+            $countsize = count($this->input->post('proforma_book_id'));
 
-            //hapus invoice_book yang sudah ada 
-            $this->db->where('invoice_id', $invoice_id)->delete('invoice_book');
+            //hapus proforma_book yang sudah ada 
+            $this->db->where('proforma_id', $proforma_id)->delete('proforma_book');
 
             // Masukkan buku di form faktur ke database
             for ($i = 0; $i < $countsize; $i++) {
                 $book = [
-                    'invoice_id'    => $invoice_id,
-                    'book_id'       => $this->input->post('invoice_book_id')[$i],
-                    'qty'           => $this->input->post('invoice_book_qty')[$i],
-                    'price'         => $this->input->post('invoice_book_price')[$i],
-                    'discount'      => $this->input->post('invoice_book_discount')[$i]
+                    'proforma_id'    => $proforma_id,
+                    'book_id'       => $this->input->post('proforma_book_id')[$i],
+                    'qty'           => $this->input->post('proforma_book_qty')[$i],
+                    'price'         => $this->input->post('proforma_book_price')[$i],
+                    'discount'      => $this->input->post('proforma_book_discount')[$i]
                 ];
-                $this->db->insert('invoice_book', $book);
+                $this->db->insert('proforma_book', $book);
             }
             echo json_encode(['status' => TRUE]);
             $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
         }
-        //view edit invoice
+        //view edit proforma
         else {
-            $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
+            $proforma      = $this->proforma->fetch_proforma_id($proforma_id);
 
             //info customer dan diskon
-            $customer = $this->db->select('*')->from('customer')->where('customer_id', $invoice->customer_id)->get()->row();
+            $customer = $this->db->select('*')->from('customer')->where('customer_id', $proforma->customer_id)->get()->row();
             $discount_data = $this->db->select('discount')->from('discount')->where('membership', $customer->type)->get()->row();
             $discount = $discount_data->discount;
 
-            $invoice_type = array(
-                'credit'      => 'Kredit',
-                'online'      => 'Online',
-                'cash'        => 'Tunai',
-                'showroom'    => 'Showroom',
-            );
-
-            $source = array(
-                'library'   => 'Perpustakaan',
-                'showroom'  => 'Showroom',
-                'warehouse' => 'Gudang'
-            );
-
             $customer_type = get_customer_type();
 
-            $invoice_book = $this->invoice->fetch_invoice_book($invoice->invoice_id);
+            $proforma_book = $this->proforma->fetch_proforma_book($proforma->proforma_id);
 
-            $dropdown_book_options = $this->invoice->get_ready_book_list();
+            $dropdown_book_options = $this->proforma->get_ready_book_list();
 
             $pages       = $this->pages;
-            $main_view   = 'invoice/edit_invoice';
-            $this->load->view('template', compact('pages', 'invoice', 'invoice_book', 'customer', 'discount', 'main_view', 'invoice_type', 'source', 'customer_type', 'dropdown_book_options'));
+            $main_view   = 'proforma/edit_proforma';
+            $this->load->view('template', compact('pages', 'proforma', 'proforma_book', 'customer', 'discount', 'main_view', 'customer_type', 'dropdown_book_options'));
         }
     }
 
     public function api_get_book($book_id)
     {
-        $book = $this->invoice->get_book($book_id);
+        $book = $this->proforma->get_book($book_id);
         return $this->send_json_output(true, $book);
     }
 
     public function api_get_customer($customer_id)
     {
-        $customer =  $this->invoice->get_customer($customer_id);
+        $customer =  $this->proforma->get_customer($customer_id);
         return $this->send_json_output(true, $customer);
     }
 
     // Auto fill diskon berdasar jenis customer
     public function api_get_discount($customerType)
     {
-        $discount = $this->invoice->get_discount($customerType);
+        $discount = $this->proforma->get_discount($customerType);
         return $this->send_json_output(true, $discount);
     }
 
     // Auto generate nomor faktur berdasar jenis faktur
-    public function api_get_last_invoice_number($type)
+    public function api_get_last_proforma_number()
     {
-        $number = $this->invoice->get_last_invoice_number($type);
+        $number = $this->proforma->get_last_proforma_number();
         return $this->send_json_output(true, $number);
     }
 }

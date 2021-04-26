@@ -2,36 +2,13 @@
 
 class Proforma_model extends MY_Model
 {
-    protected $table = 'invoice';
     public $per_page = 10;
 
-    public function validate_invoice()
+    public function validate_proforma()
     {
         $data = array();
         $data['input_error'] = array();
         $data['status'] = TRUE;
-
-        if ($this->input->post('type') == '') {
-            $data['input_error'][] = 'error-type';
-            $data['status'] = FALSE;
-        } else if ($this->input->post('type') == 'cash') {
-            if ($this->input->post('source') == '') {
-                $data['input_error'][] = 'error-source';
-                $data['status'] = FALSE;
-            }
-        } else if ($this->input->post('type') == 'credit' || $this->input->post('type') == 'online') {
-            if ($this->input->post('due-date') == '') {
-                $data['input_error'][] = 'error-due-date';
-                $data['status'] = FALSE;
-            }
-        }
-
-        if ($this->input->post('source') == 'library') {
-            if ($this->input->post('source-library-id') == '') {
-                $data['input_error'][] = 'error-source-library';
-                $data['status'] = FALSE;
-            }
-        }
 
         if ($this->input->post('customer-id') == '') {
             if ($this->input->post('new-customer-name') == '' && $this->input->post('new-customer-phone-number') == '') {
@@ -53,7 +30,7 @@ class Proforma_model extends MY_Model
             }
         }
 
-        if (empty($this->input->post('invoice_book_id'))) {
+        if (empty($this->input->post('proforma_book_id'))) {
             $data['input_error'][] = 'error-no-book';
             $data['status'] = FALSE;
         }
@@ -64,23 +41,23 @@ class Proforma_model extends MY_Model
         }
     }
 
-    public function fetch_invoice_id($invoice_id)
+    public function fetch_proforma_id($proforma_id)
     {
         return $this->db
             ->select('*')
-            ->from('invoice')
-            ->where('invoice_id', $invoice_id)
+            ->from('proforma')
+            ->where('proforma_id', $proforma_id)
             ->get()
             ->row();
     }
 
-    public function fetch_invoice_book($invoice_id)
+    public function fetch_proforma_book($proforma_id)
     {
         return $this->db
-            ->select('invoice_book.*, book.book_title, book.harga')
-            ->from('invoice_book')
-            ->join('book', 'book.book_id = invoice_book.book_id')
-            ->where('invoice_id', $invoice_id)
+            ->select('proforma_book.*, book.book_title, book.harga')
+            ->from('proforma_book')
+            ->join('book', 'book.book_id = proforma_book.book_id')
+            ->where('proforma_id', $proforma_id)
             ->get()
             ->result();
     }
@@ -203,6 +180,15 @@ class Proforma_model extends MY_Model
         return $book;
     }
 
+    public function compare_stock($book_id)
+    {
+        $this->db->select('warehouse_present')
+            ->from('book_stock')
+            ->order_by('book_stock_id', 'DESC')
+            ->where('book_id', $book_id);
+        return $this->db->get()->row();
+    }
+
     public function get_discount($type)
     {
         return $this->select('discount')->where('membership', $type)->get('discount');
@@ -217,52 +203,39 @@ class Proforma_model extends MY_Model
         return $this->db->get()->row();
     }
 
-    public function get_last_invoice_number($type)
+    public function get_last_proforma_number($convert = false)
     {
-        $initial = '';
-        switch ($type) {
-            case 'credit':
-                $initial = 'K';
-                break;
-            case 'cash':
-                $initial = 'T';
-                break;
-            case 'online':
-                $initial = 'O';
-                break;
-            case 'showroom':
-                $initial = 'S';
-                break;
-        }
         $date_created       = substr(date('Ymd'), 2);
-        $data = $this->db->select('*')->where('type', $type)->count_all_results('invoice') + 1;
-        $invoiceNumber = $initial . $date_created . '-' . str_pad($data, 6, 0, STR_PAD_LEFT);
-        return $invoiceNumber;
+        if ($convert == true) {
+            $initial = 'T';
+            $data = $this->db->select('*')->where('type', 'cash')->count_all_results('invoice') + 1;
+        } else {
+            $initial = 'P';
+            $data = $this->db->select('*')->count_all_results('proforma') + 1;
+        }
+        $number = $initial . $date_created . '-' . str_pad($data, 6, 0, STR_PAD_LEFT);
+        return $number;
     }
 
-    public function filter_invoice($filters, $page)
+    public function filter_proforma($filters, $page)
     {
-        $invoice = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'invoice.customer_id', 'name as customer_name', 'customer.type as customer_type', 'status', 'invoice.type as invoice_type'])
-            ->join('customer', 'invoice.customer_id = customer.customer_id', 'left')
+        $proforma = $this->select(['proforma_id', 'number', 'issued_date', 'due_date', 'proforma.customer_id', 'name as customer_name', 'customer.type as customer_type'])
+            ->join('customer', 'proforma.customer_id = customer.customer_id', 'left')
             ->when('keyword', $filters['keyword'])
-            ->when('invoice_type', $filters['invoice_type'])
             ->when('customer_type', $filters['customer_type'])
-            ->when('status', $filters['status'])
-            ->order_by('invoice_id', 'DESC')
+            ->order_by('proforma_id', 'DESC')
             ->paginate($page)
             ->get_all();
 
-        $total = $this->select(['invoice_id', 'number', 'name'])
-            ->join('customer', 'invoice.customer_id = customer.customer_id', 'left')
+        $total = $this->select(['proforma_id'])
+            ->join('customer', 'proforma.customer_id = customer.customer_id', 'left')
             ->when('keyword', $filters['keyword'])
-            ->when('invoice_type', $filters['invoice_type'])
             ->when('customer_type', $filters['customer_type'])
-            ->when('status', $filters['status'])
-            ->order_by('invoice_id')
+            ->order_by('proforma_id')
             ->count();
 
         return [
-            'invoice'  => $invoice,
+            'proforma' => $proforma,
             'total' => $total
         ];
     }
@@ -278,9 +251,7 @@ class Proforma_model extends MY_Model
                 $this->group_end();
             } else {
                 $this->group_start();
-                $this->or_like('invoice.type', $data);
                 $this->or_like('customer.type', $data);
-                $this->or_like('status', $data);
                 $this->group_end();
             }
         }
@@ -330,42 +301,5 @@ class Proforma_model extends MY_Model
             }
         }
         return $this;
-    }
-    public function start_progress($invoice_id)
-    {
-        // transaction data agar konsisten
-        $this->db->trans_begin();
-
-        $input = [
-            'status' => 'preparing',
-            'preparing_start_date' => date('Y-m-d H:i:s')
-        ];
-
-        $this->invoice->where('invoice_id', $invoice_id)->update($input);
-
-        if ($this->db->trans_status() === false) {
-            $this->db->trans_rollback();
-            return false;
-        } else {
-            $this->db->trans_commit();
-            return true;
-        }
-    }
-
-    public function finish_progress($invoice_id)
-    {
-        $input = [
-            'status' => "preparing_finish",
-            "preparing_end_date" => date('Y-m-d H:i:s')
-        ];
-
-
-        $update_state = $this->invoice->where('invoice_id', $invoice_id)->update($input);
-
-        if ($update_state) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }
