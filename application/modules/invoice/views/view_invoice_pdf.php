@@ -125,7 +125,7 @@
                 Jl. Sendok, Karanggayam CT VIII<br>
                 Caturtunggal Depok, Sleman, D.I. Yogyakarta 55281<br>
                 Telp/Fax (0274)-561037<br>
-                NPWP:01.246.578.7-542.000 - E-mail : ugmpress.ugm.ac.id | gmupress@ugm.ac.id
+                NPWP:01.246.578.7-542.000 - E-mail : ugmpress.ugm.ac.id | ugmpress@ugm.ac.id
             </td>
         </tr>
     </table>
