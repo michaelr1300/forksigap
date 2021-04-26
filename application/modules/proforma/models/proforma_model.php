@@ -180,15 +180,6 @@ class Proforma_model extends MY_Model
         return $book;
     }
 
-    public function compare_stock($book_id)
-    {
-        $this->db->select('warehouse_present')
-            ->from('book_stock')
-            ->order_by('book_stock_id', 'DESC')
-            ->where('book_id', $book_id);
-        return $this->db->get()->row();
-    }
-
     public function get_discount($type)
     {
         return $this->select('discount')->where('membership', $type)->get('discount');
