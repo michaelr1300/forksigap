@@ -51,57 +51,60 @@ class Proforma extends MY_Controller
             redirect($this->pages);
         }
         $this->db->trans_begin();
+        $flag = true;
 
         // Confirm Proforma
         if ($proforma_status == 'confirm') {
             //cek stok gudang dengan proforma_book
             $books = $this->proforma->fetch_proforma_book($id);
             foreach ($books as $book) {
-                $stock = $this->proforma->compare_stock($book->book_id);
+                $stock = $this->proforma->fetch_warehouse_stock($book->book_id);
                 $qty = intval($book->qty);
                 $stock = intval($stock->warehouse_present);
                 if ($qty > $stock) {
-                    $this->db->trans_rollback();
-                    $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+                    $flag = false;
                 }
             }
-            //fetch data proforma dan nomor invoice terbaru
-            $proforma       = $this->proforma->fetch_proforma_id($id);
-            $invoice_number = $this->proforma->get_last_proforma_number(true);
+            if ($flag) {
+                $proforma       = $this->proforma->fetch_proforma_id($id);
+                $invoice_number = $this->proforma->get_last_proforma_number(true);
 
-            //pemindahan data dari proforma ke faktur
-            $date_created       = date('Y-m-d H:i:s');
-            $add = [
-                'number'            => $invoice_number,
-                'customer_id'       => $proforma->customer_id,
-                'due_date'          => $proforma->due_date,
-                'type'              => 'cash',
-                'source'            => 'warehouse',
-                'status'            => 'waiting',
-                'issued_date'       => $date_created
-                // 'user_created'      => $user_created
-            ];
-            $this->db->insert('invoice', $add);
-
-            // ID faktur terbaru untuk diisi buku
-            $invoice_id = $this->db->insert_id();
-
-            //pemindahan data dari proforma_book ke invoice_book
-            foreach ($books as $book) {
-                $add_book = [
-                    'invoice_id'    => $invoice_id,
-                    'book_id'       => $book->book_id,
-                    'qty'           => $book->qty,
-                    'price'         => $book->price,
-                    'discount'      => $book->discount
+                //pemindahan data dari proforma ke faktur
+                $date_created       = date('Y-m-d H:i:s');
+                $add = [
+                    'number'            => $invoice_number,
+                    'customer_id'       => $proforma->customer_id,
+                    'due_date'          => $proforma->due_date,
+                    'type'              => 'cash',
+                    'source'            => 'warehouse',
+                    'status'            => 'waiting',
+                    'issued_date'       => $date_created
+                    // 'user_created'      => $user_created
                 ];
-                $this->db->insert('invoice_book', $add_book);
-            }
+                $this->db->insert('invoice', $add);
 
-            //delete data proforma
-            // $this->db->where('proforma_id', $id)->delete('proforma');
-            // $this->db->where('proforma_id', $id)->delete('proforma_book');
-            $redirect = true;
+                // ID faktur terbaru untuk diisi buku
+                $invoice_id = $this->db->insert_id();
+
+                //pemindahan data dari proforma_book ke invoice_book
+                foreach ($books as $book) {
+                    $add_book = [
+                        'invoice_id'    => $invoice_id,
+                        'book_id'       => $book->book_id,
+                        'qty'           => $book->qty,
+                        'price'         => $book->price,
+                        'discount'      => $book->discount
+                    ];
+                    $this->db->insert('invoice_book', $add_book);
+                }
+
+                //delete data proforma
+                // $this->db->where('proforma_id', $id)->delete('proforma');
+                // $this->db->where('proforma_id', $id)->delete('proforma_book');
+                $redirect = true;
+            }
+            //fetch data proforma dan nomor invoice terbaru
+
         } else if ($proforma_status == 'cancel') {
             //delete data proforma
             $this->db->where('proforma_id', $id)->delete('proforma');
@@ -109,13 +112,19 @@ class Proforma extends MY_Controller
             $redirect = false;
         }
 
-        if ($this->db->trans_status() === false) {
+        if (!$flag) {
             $this->db->trans_rollback();
-            $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+            $this->session->set_flashdata('error', $this->lang->line('toast_convert_empty'));
         } else {
-            $this->db->trans_commit();
-            $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+            if ($this->db->trans_status() === false) {
+                $this->db->trans_rollback();
+                $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+            } else {
+                $this->db->trans_commit();
+                $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+            }
         }
+
         if ($redirect) redirect('invoice/view/' . $invoice_id);
         else redirect($this->pages);
     }
