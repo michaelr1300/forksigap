@@ -124,7 +124,19 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?=konversiTahun($book_stock->published_date);?>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?= $book_stock->author_name; ?></td>
+                                <?= isset($book_stock->author_name) ? highlight_keyword($book_stock->author_name, $keyword) : '-'; ?>
+                                    <button
+                                        type="button"
+                                        class="btn btn-link btn-sm m-0 p-0 <?= count($book_stock->authors) <= 1 ? 'd-none' : ''; ?>"
+                                        data-container="body"
+                                        data-toggle="popover"
+                                        data-placement="right"
+                                        data-html="true"
+                                        data-trigger="hover"
+                                        data-content='<?= expand($book_stock->authors); ?>'
+                                    >
+                                        <i class="fa fa-users"></i>
+                                    </button>
                                 </td>
                                 <td class="align-middle text-center">
                                     <?= $book_stock->book_location; ?></td>

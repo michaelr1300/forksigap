@@ -19,7 +19,7 @@ class Book_stock_model extends MY_Model
     public function filter_book_stock($filters, $page)
     {
         $book_stocks = $this->select([
-            'author.author_name',
+            'author.author_name', 'draft.draft_id',
             'book_stock_id', 'book.book_id',
             'book.book_title', 'book.published_date',
             'book_stock.*'])
@@ -32,6 +32,7 @@ class Book_stock_model extends MY_Model
             ->when('published_year', $filters['published_year'])
             ->when('warehouse_present', $filters['warehouse_present'])
             ->order_by('warehouse_present')
+            ->group_by('draft.draft_id')
             ->paginate($page)
             ->get_all();
 
@@ -46,6 +47,14 @@ class Book_stock_model extends MY_Model
             ->join_table('author', 'draft_author', 'author')
             ->order_by('warehouse_present')
             ->count();
+        foreach ($book_stocks as $b) {
+            if ($b->draft_id) {
+                $b->authors = $this->get_id_and_name('author', 'draft_author', $b->draft_id, 'draft');
+            } else {
+                $b->authors = [];
+            }
+        }
+    
         return [
             'book_stocks' => $book_stocks,
             'total' => $total
