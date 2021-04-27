@@ -13,12 +13,22 @@
         margin-bottom: 0;
     }
 
-    table {
+    table{
+        border: 0;
+        margin-left: -2px;
+    }
+
+    .book-list{
         /* margin-left: 50px;
         margin-right: 50px; */
         width: 100%;
         border-collapse: collapse;
         margin-top:16px
+    }
+
+    .td-book-list {
+        border: 1px solid black;
+        text-align: center;
     }
 
     th{
@@ -31,11 +41,6 @@
         font-weight: lighter;
         font-size: 14px;
         color: black;
-    }
-
-    td {
-        border: 1px solid black;
-        text-align: center;
     }
 
     p {
@@ -129,9 +134,23 @@
     <h1><b>BON PERMINTAAN BUKU NON JUAL</h1>
     <div class="row">
         <div class="column left-50">
-            <p>NAMA :  
-            <br>SEKSI :  
-            <br>JENIS : <?=get_book_non_sales_type()[$type]?> </p>
+            <table>
+                <tr>
+                    <td>NAMA</td>
+                    <td>:</td>
+                    <td><?=$name?></td>
+                </tr>
+                <tr>
+                    <td>ALAMAT</td>
+                    <td>:</td>
+                    <td><?=$address?></td>
+                </tr>
+                <tr>
+                    <td>JENIS</td>
+                    <td>:</td>
+                    <td><?=get_book_non_sales_type()[$type]?></td>
+                </tr>
+            </table>
         </div>
         <div class="column middle-10">
             <p><b>Nomor Bon : </b></p>   
@@ -141,7 +160,7 @@
         </div>
     </div>
     <div class="content">
-    <table>
+    <table class="book-list">
         <tr>
             <th>NO</th>
             <th>JUDUL BUKU</th>
@@ -150,9 +169,9 @@
         <?php $i=1?>
         <?php foreach($book_list as $books) : ?>
         <tr>
-            <td><?=$i++?></td>
-            <td style="text-align: left;"><?= $books->book_title?></td>
-            <td><?= $books->qty?></td>
+            <td class="td-book-list"><?=$i++?></td>
+            <td class="td-book-list" style="text-align: left;"><?= $books->book_title?></td>
+            <td class="td-book-list"><?= $books->qty?></td>
         </tr>
         <?php endforeach?>
     </table>

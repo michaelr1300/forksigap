@@ -72,7 +72,9 @@ class Book_non_sales extends MY_Controller
             'issued_date' => now(),
             'number' => $input->number,
             'status' => 'waiting',
-            'type' => $input->type
+            'type' => $input->type,
+            'name' => $input->name,
+            'address' => $input->address
         ];
         // insert book non sales
         $book_non_sales_success = $this->book_non_sales->insert($book_non_sales);
@@ -155,6 +157,8 @@ class Book_non_sales extends MY_Controller
             $data_format['number']        = $book_non_sales->number ?? '';
             $data_format['date']          = $book_non_sales->issued_date ?? '';
             $data_format['type']          = $book_non_sales->type ?? '';
+            $data_format['name']          = $book_non_sales->name ?? '';
+            $data_format['address']       = $book_non_sales->address ?? '';
             $data_format['book_list']     = $book_non_sales_list ?? '';
             $html = $this->load->view('book_non_sales/format_pdf_non_sales', $data_format, true);        $file_name = $data_format['number'].'_Pemindahan Buku';
             $file_name = $data_format['number'].'_Pemindahan Buku';

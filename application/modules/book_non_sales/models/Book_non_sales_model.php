@@ -29,6 +29,8 @@ class Book_non_sales_model extends MY_Model
             'type'              => '',
             'status'            => '',
             'number'            => '',
+            'name'              => '',
+            'address'           => '',
         ];
     }
 

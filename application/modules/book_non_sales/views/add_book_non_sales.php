@@ -26,6 +26,21 @@
                                 <input type="text" class="form-control" id="number">
                             </div> -->
                             <div class="form-group">
+                                <label for="name">Nama<abbr title="Required">*</abbr></label>
+                                <input type="text" id="name" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Alamat<abbr title="Required">*</abbr></label>
+                                <?= form_textarea([
+                                'name'  => "address",
+                                'class' => 'form-control',
+                                'id'    => "address",
+                                'rows'  => '3',
+                                'value' => $input->address
+                            ]); ?>
+                            <?= form_error('address'); ?>
+                            </div>
+                            <div class="form-group">
                                 <label for="type">Tipe Permintaan Non Penjualan<abbr title="Required">*</abbr></label>
                                 <select name="type" id="type" class="form-control custom-select d-block">
                                     <option value="presentgift">Present Gift</option>
@@ -79,7 +94,6 @@
                         <hr>
                             <!-- button -->
                         <input type="submit" class="btn btn-primary ml-auto" value="Submit" />
-                        <!-- <a class="btn btn-secondary" href="<?php// echo base_url('book_non_sales') ?>" role="button">Back</a> -->
                     </form>
                 </div>
             </section>
@@ -152,7 +166,8 @@ $(document).ready(function() {
         e.preventDefault();
         data = {
             'type': $("#type").val(),
-            // 'number': $("#number").val(),
+            'name': $("#name").val(),
+            'address': $("#address").val(),
             'book_list': []
         }
         $("#book-list-content tr").each(function(){
