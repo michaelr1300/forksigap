@@ -436,7 +436,7 @@ $(document).ready(function() {
         html += '</td>';
 
         // Harga
-        html += '<td class="align-middle">' + $('#info-price').text();
+        html += '<td class="align-middle"> Rp ' + $('#info-price').text();
         html += '<input type="number" hidden name="invoice_book_price[]" class="form-control" value="' + $('#info-price').text() + '"/>';
         html += '</td>';
 
@@ -452,7 +452,7 @@ $(document).ready(function() {
 
         // Total
         var totalPrice = (parseFloat($('#info-price').text())) * (parseFloat($('#qty').val())) * (1 - (parseFloat($('#discount').val()) / 100));
-        html += '<td class="align-middle">' + totalPrice + '</td>';
+        html += '<td class="align-middle"> Rp ' + parseFloat(totalPrice).toFixed(0) + '</td>';
 
         // Button Hapus
         html += '<td class="align-middle"><button type="button" class="btn btn-danger remove">Hapus</button></td></tr>';

@@ -321,7 +321,7 @@
                                                     value="<?= $books->book_id ?>"
                                                 />
                                             </td>
-                                            <td class="align-middle">
+                                            <td class="align-middle">Rp <?= $books->price ?>
                                                 <input
                                                     type="number"
                                                     hidden
@@ -351,7 +351,7 @@
                                             <td class="align-middle">
                                                 <?php
                                                 $total = $books->qty * $books->price * (1 - $books->discount / 100);
-                                                echo $total;
+                                                echo 'Rp ' . $total;
                                                 ?></td>
                                             <td class="align-middle"><button
                                                     type="button"
