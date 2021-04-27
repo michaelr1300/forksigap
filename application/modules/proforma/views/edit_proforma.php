@@ -310,6 +310,7 @@
                                 </thead>
                                 <tbody id="proforma_items">
                                     <!-- Items -->
+                                    <?php $index = 0; ?>
                                     <?php foreach ($proforma_book as $books) : ?>
                                         <tr class="text-center">
                                             <td class="align-middle text-left font-weight-bold"><?= $books->book_title ?>
@@ -358,6 +359,11 @@
                                                     class="btn btn-danger remove"
                                                 >Hapus</button></td>
                                         </tr>
+                                        <?php if (!empty($_SESSION['error-' . $index])) {
+                                            echo '<p class="message"> ' . $_SESSION['error-' . $index] . '</p>';
+                                            unset($_SESSION['error-0']);
+                                        } ?>
+                                        <?php $index++; ?>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>

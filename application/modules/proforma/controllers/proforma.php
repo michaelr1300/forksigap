@@ -57,13 +57,17 @@ class Proforma extends MY_Controller
         if ($proforma_status == 'confirm') {
             //cek stok gudang dengan proforma_book
             $books = $this->proforma->fetch_proforma_book($id);
+            $count = 0;
             foreach ($books as $book) {
                 $stock = $this->proforma->fetch_warehouse_stock($book->book_id);
                 $qty = intval($book->qty);
                 $stock = intval($stock->warehouse_present);
                 if ($qty > $stock) {
                     $flag = false;
+                    $error_code = 'error-' . $count;
+                    $_SESSION[$error_code] = 'Buku ' . $book->book_title . ' kosong';
                 }
+                $count++;
             }
             if ($flag) {
                 $proforma       = $this->proforma->fetch_proforma_id($id);
@@ -115,6 +119,7 @@ class Proforma extends MY_Controller
         if (!$flag) {
             $this->db->trans_rollback();
             $this->session->set_flashdata('error', $this->lang->line('toast_convert_empty'));
+            redirect('proforma/edit/' . $id);
         } else {
             if ($this->db->trans_status() === false) {
                 $this->db->trans_rollback();
