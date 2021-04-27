@@ -42,7 +42,7 @@
                             <div class="row">
                                 <div class="form-group col-10 mb-0">
                                     <label for='book-id'>Judul Buku</label>
-                                    <?= form_dropdown('book_id', get_dropdown_list_book(), $input->book_id, 'id="book-id" class="form-control custom-select d-block"'); ?>
+                                    <?= form_dropdown('book_id', $book_non_sales_available, 0, 'id="book-id" class="form-control custom-select d-block"'); ?>
                                     <?= form_error('book_id'); ?>
 
                                     <!-- <select class="form-control" name="book_tittle" id="book_tittle" required>
@@ -58,7 +58,6 @@
                                     class="form-control btn btn-primary text-white">
                                     Tambah Buku</button>
                                 </div>
-                                <small id="no-stock-warning" class="form-group col-12 text-danger" style="display:inline"></small>
                             </div>
                             <br>
                             <table class="table table-striped" id="book-list">
@@ -124,22 +123,16 @@ $(document).ready(function() {
                 url: "<?= base_url('book_stock/api_get_by_book_id/'); ?>" + book_id,
                 datatype: "JSON",
                 success: function(res) {
-                    if (!res.data || res.data.warehouse_present<1){
-                        $("#no-stock-warning").html('Stok buku tersebut kosong')
-                        // console.log("Stok kosong")
-                    }
-                    else {
-                        var stock = res.data.warehouse_present
-                        var author = res.data.author_name
-                        var row1 = "<tr><th style='vertical-align: middle;text-align: center'>"+ number +"</th>"
-                        var row2 = "<td style='vertical-align: middle'>" + book_name + "<input type='text' hidden name='book_id' class='book_id' value='"+book_id+"'></td>"
-                        var row3 = "<td style='vertical-align: middle'>" + author + "</td>"
-                        var row4 = "<td style='vertical-align: middle;text-align: center' class='stock'>"+stock+"</td>"
-                        var row5 = "<td style='vertical-align: middle'><input type='number' value=0 min=1 max='"+stock+"'class='form-control quantity' name='quantity'></td>"
-                        var row6 = "<td style='vertical-align: middle;text-align: center'></button><button type='button' class='btn btn-danger btn-md remove-book'>Hapus</td></tr>"
-                        var html = row1+row2+row3+row4+row5+row6
-                        $("#book-list-content").append(html);
-                    }
+                    var stock = res.data.warehouse_present
+                    var author = res.data.author_name
+                    var row1 = "<tr><th style='vertical-align: middle;text-align: center'>"+ number +"</th>"
+                    var row2 = "<td style='vertical-align: middle'>" + book_name + "<input type='text' hidden name='book_id' class='book_id' value='"+book_id+"'></td>"
+                    var row3 = "<td style='vertical-align: middle'>" + author + "</td>"
+                    var row4 = "<td style='vertical-align: middle;text-align: center' class='stock'>"+stock+"</td>"
+                    var row5 = "<td style='vertical-align: middle'><input type='number' value=0 min=1 max='"+stock+"'class='form-control quantity' name='quantity'></td>"
+                    var row6 = "<td style='vertical-align: middle;text-align: center'></button><button type='button' class='btn btn-danger btn-md remove-book'>Hapus</td></tr>"
+                    var html = row1+row2+row3+row4+row5+row6
+                    $("#book-list-content").append(html);
                 },
                 error: function(err) {
                     console.log(err);

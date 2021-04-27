@@ -45,7 +45,8 @@ class Book_non_sales extends MY_Controller
                 $pages       = $this->pages;
                 $main_view   = 'book_non_sales/add_book_non_sales';
                 $form_action = 'book_non_sales/add';
-                $this->load->view('template', compact('pages', 'main_view', 'form_action', 'input'));
+                $book_non_sales_available = $this->book_non_sales->get_ready_book_list();
+                $this->load->view('template', compact('pages', 'main_view', 'book_non_sales_available', 'form_action', 'input'));
                 return;
             }
         } else {
