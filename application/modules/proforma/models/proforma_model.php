@@ -196,13 +196,14 @@ class Proforma_model extends MY_Model
 
     public function get_last_proforma_number($convert = false)
     {
+        $year = date("Y");
         $date_created       = substr(date('Ymd'), 2);
         if ($convert == true) {
             $initial = 'T';
-            $data = $this->db->select('*')->where('type', 'cash')->count_all_results('invoice') + 1;
+            $data = $this->db->select('*')->where('type', 'cash')->where('YEAR(issued_date)', $year)->count_all_results('invoice') + 1;
         } else {
             $initial = 'P';
-            $data = $this->db->select('*')->count_all_results('proforma') + 1;
+            $data = $this->db->select('*')->where('YEAR(issued_date)', $year)->count_all_results('proforma') + 1;
         }
         $number = $initial . $date_created . '-' . str_pad($data, 6, 0, STR_PAD_LEFT);
         return $number;

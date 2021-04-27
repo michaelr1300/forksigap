@@ -218,6 +218,7 @@ class Invoice_model extends MY_Model
 
     public function get_last_invoice_number($type)
     {
+        $year = date("Y");
         $initial = '';
         switch ($type) {
             case 'credit':
@@ -234,7 +235,7 @@ class Invoice_model extends MY_Model
                 break;
         }
         $date_created       = substr(date('Ymd'), 2);
-        $data = $this->db->select('*')->where('type', $type)->count_all_results('invoice') + 1;
+        $data = $this->db->select('*')->where('type', $type)->where('YEAR(issued_date)', $year)->count_all_results('invoice') + 1;
         $invoiceNumber = $initial . $date_created . '-' . str_pad($data, 6, 0, STR_PAD_LEFT);
         return $invoiceNumber;
     }
