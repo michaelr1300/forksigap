@@ -120,6 +120,12 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                     </td>
                                     </tr>
                                     <?php endif?>
+                                    <?php if($input->retur_stock) :?>
+                                    <tr>
+                                        <td width="160px">Stok Retur</td>
+                                        <td><?=$input->retur_stock?></td>
+                                    </tr>
+                                    <?php endif?>
                                 </tbody>
                             </table>
                         </div>

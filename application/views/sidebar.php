@@ -40,41 +40,41 @@ $menu_list = [
         'level' => 'superadmin|admin_gudang|admin_pemasaran|staff_gudang'
     ],
     [
-        'name'  => 'Buku Gudang',
-        'icon'  => 'fa fa-warehouse',
+        'name'  => 'Stok Buku',
+        'url'   => 'book_stock',
+        'icon'  => 'fas fa-boxes',
         'level' => 'superadmin|admin_gudang|admin_pemasaran',
-        'child' => [
-            [
-                'name'  => 'Stok Buku',
-                'url'   => 'book_stock',
-                'level' => 'superadmin|admin_gudang'
-            ],
-            [
-                'name'  => 'Penerimaan Buku',
-                'url'   => 'book_receive',
-                'level' => 'superadmin|admin_gudang'
-            ],
-            [
-                'name'  => 'Pesanan Buku',
-                'url'   => 'book_request',
-                'level' => 'superadmin|admin_gudang|admin_pemasaran'
-            ],
-            [
-                'name'  => 'Pemindahan Buku',
-                'url'   => 'book_transfer',
-                'level' => 'superadmin|admin_gudang|admin_pemasaran'
-            ],
-            [
-                'name'  => 'Transaksi Buku',
-                'url'   => 'book_transaction',
-                'level' => 'superadmin|admin_gudang'
-            ],
-            [
-                'name'  => 'Buku Non Penjualan',
-                'url'   => 'book_non_sales',
-                'level' => 'superadmin|admin_gudang'
-            ],
-        ]
+    ],
+    [
+        'name'  => 'Penerimaan Buku',
+        'url'   => 'book_receive',
+        'icon'  => 'fas fa-file-import',
+        'level' => 'superadmin|admin_gudang'
+    ],
+    [
+        'name'  => 'Pesanan Buku',
+        'url'   => 'book_request',
+        'icon'  => 'fa fa-file-invoice',
+        'level' => 'superadmin|admin_gudang|admin_pemasaran'
+    ],
+    [
+        'name'  => 'Pemindahan Buku',
+        'url'   => 'book_transfer',
+        'icon'  => 'fas fa-dolly',
+        'level' => 'superadmin|admin_gudang|admin_pemasaran'
+    ],
+    [
+        'name'  => 'Transaksi Buku',
+        'url'   => 'book_transaction',
+        'icon'  => 'fas fa-exchange-alt',
+        'level' => 'superadmin|admin_gudang'
+
+    ],
+    [
+        'name'  => 'Buku Non Penjualan',
+        'url'   => 'book_non_sales',
+        'icon'  => 'fas fa-gifts',
+        'level' => 'superadmin|admin_gudang'
     ],
     [
         'title' => 'Pemasaran',

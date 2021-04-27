@@ -210,7 +210,7 @@ class Book_stock_model extends MY_Model
             // ->join_table('category', 'draft', 'category')
             // ->join_table('draft_author', 'draft', 'draft')
             // ->join_table('author', 'draft_author', 'author')
-            ->where('book_stock_revision.type', 'retur')
+            ->where('book_stock_revision.type', 'return')
             ->order_by('book_stock_revision_id', 'DESC')
             ->get()
             ->result();
