@@ -308,6 +308,8 @@
                                         >&nbsp;</th>
                                     </tr>
                                 </thead>
+                                <div id="alert-container">
+                                </div>
                                 <tbody id="proforma_items">
                                     <!-- Items -->
                                     <?php $index = 0; ?>
@@ -359,10 +361,6 @@
                                                     class="btn btn-danger remove"
                                                 >Hapus</button></td>
                                         </tr>
-                                        <?php if (!empty($_SESSION['error-' . $index])) {
-                                            echo '<p class="message"> ' . $_SESSION['error-' . $index] . '</p>';
-                                            unset($_SESSION['error-0']);
-                                        } ?>
                                         <?php $index++; ?>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -434,6 +432,26 @@ $(document).ready(function() {
         placeholder: '-- Pilih --',
         dropdownParent: $('#app-main')
     });
+
+    appendAlert()
+
+    function appendAlert() {
+        var content = ""
+        <?php $index = 0;
+        $index2 = 0;
+        foreach ($proforma_book as $books) :
+            if (!empty($_SESSION['error-' . $index])) { ?>
+                content += '<div class ="alert alert-danger"><?= $_SESSION['error-' . $index] ?></div>'
+        <?php
+            }
+            $index++;
+        endforeach; ?>
+        <?php foreach ($proforma_book as $books) :
+            unset($_SESSION['error-' . $index2]);
+            $index2++;
+        endforeach; ?>
+        $('#alert-container').html(content)
+    }
 
     function add_book_to_proforma() {
         var bookId = document.getElementById('book-id');

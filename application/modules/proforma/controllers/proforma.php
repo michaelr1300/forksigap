@@ -65,7 +65,7 @@ class Proforma extends MY_Controller
                 if ($qty > $stock) {
                     $flag = false;
                     $error_code = 'error-' . $count;
-                    $_SESSION[$error_code] = 'Buku ' . $book->book_title . ' kosong';
+                    $_SESSION[$error_code] = 'Stok ' . $book->book_title . ' :' . $stock;
                 }
                 $count++;
             }
