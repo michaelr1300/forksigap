@@ -6,7 +6,7 @@ class Royalty extends MY_Controller
     {
         parent::__construct();
         $this->pages = 'royalty';
-        $this->load->model('royalty_model', 'royalty');
+        $this->load->model('royalty_model', 'invoice');
         $this->load->model('book/Book_model', 'book');
         $this->load->helper('sales_helper');
     }
@@ -15,19 +15,13 @@ class Royalty extends MY_Controller
     {
         // $filters = [
         //     'keyword'           => $this->input->get('keyword', true),
-        //     'date_year'         => $this->input->get('date_year', true),
-        //     'period_time'       => $this->input->get('period_time', true)
+        //     'invoice_type'      => $this->input->get('invoice_type', true),
+        //     'status'            => $this->input->get('status', true),
+        //     'customer_type'     => $this->input->get('customer_type', true)
         // ];
 
-        $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
-        $authors = $this->db->select('author_id, author_name, author_degree_front, author_degree_back')->from('author')->get()->result();
-        foreach ($authors as $author) {
-            // $drafts = $this->db->select('draft_id')->from('draft_author')->where('author_id', $author->author_id)->get()->result();
-            // foreach ($drafts as $draft) {
-            //     $books = $this->db->select('book_title')->from('book')->where('draft_id', $draft->draft_id)->get()->result();
-            //     var_dump($books);
-            // }
-        }
+        // $this->invoice->per_page = $this->input->get('per_page', true) ?? 10;
+
         // $get_data = $this->invoice->filter_invoice($filters, $page);
 
         // //data invoice
@@ -37,7 +31,7 @@ class Royalty extends MY_Controller
 
         $pages      = $this->pages;
         $main_view  = 'royalty/index_royalty';
-        // $this->load->view('template', compact('pages', 'main_view'));
+        $this->load->view('template', compact('pages', 'main_view'));
     }
 
     public function view()
@@ -50,6 +44,7 @@ class Royalty extends MY_Controller
 
         $this->load->view('template', compact('pages', 'main_view'));
     }
+
 }
 
 //     public function edit($invoice_id)
