@@ -10,9 +10,9 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
 
 $date_year_options = [];
 
-$period_time_options =[
-    '' => ' Januari - Juni ',
-    '' => ' Juli - Desember '
+$period_time_options = [
+    '1' => ' Januari - Juni ',
+    '2' => ' Juli - Desember '
 ];
 
 for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
@@ -131,99 +131,101 @@ function royalti_action()
                         <h7>Periode $periode_bang_andrew_mulya</h7><br>
                         <h7>Tahun Lahirnya Keqing</h7>
                     </div>
-                        <table class="table table-striped mb-0 table-responsive">
-                            <thead>
-                                <tr class="text-center">
-                                    <th
-                                        scope="col"
-                                        style="width:5%;"
-                                        class="pl-4"
-                                    >No</th>
-                                    <th
-                                        scope="col"
-                                        style="width:35%;"
-                                    >Nama</th>
-                                    <th
-                                        scope="col"
-                                        style="width:15%;"
-                                    >NIP</th>
-                                    <th
-                                        scope="col"
-                                        style="width:15%;"
-                                    >Institusi</th>
-                                    <th
-                                        scope="col"
-                                        style="width:15%;"
-                                    >Jumlah Royalti</th>
-                                    <th
-                                        scope="col"
-                                        style="width:20%;"
-                                        class="pr-4"
-                                    >Status</th>
-                                    <th
-                                        scope="col"
-                                        style="width:20%;"
-                                        class="pr-4"
-                                    > &nbsp; </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    <tr class="text-center">
-                                        <td class="align-middle pl-4">
-                                            1
-                                        </td>
-                                        <td class="text-center align-middle">
-                                            <a
-                                                href="<?= base_url("$pages/view/"); ?>"
-                                                class="font-weight-bold"
-                                            >
-                                            Abdul
-                                            </a>
-                                        </td>
-                                        <td class="align-middle">
-                                        tes
-                                        </td>
-                                        <td class="align-middle">
-                                        tes
-                                        </td>
-                                        <td class="align-middle">
-                                        tes
-                                        </td>
-                                        <td class="align-middle">
-                                        Sudah Dibayar
-                                        </td>
-                                        <td class="align-middle text-right d-flex">
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-sm btn-secondary"
-                                                    data-container="body"
-                                                    data-toggle="popover"
-                                                    data-placement="left"
-                                                    data-html="true"
-                                                    data-content="<?= royalti_action(); ?>"
-                                                    data-trigger="focus"
-                                                    style="margin-right:5px;"
-                                                >
-                                                    <i class="fa fa-thumbs-up">Aksi</i>
-                                                </button>
-                                        </td>
-                                    </tr>
-                                    <tr style="text-align:center;">
-                                        <td scope="col"
-                                            class="align-middle"
-                                            colspan="4"
-                                        >
-                                        <b>Total</b>
-                                        </td>
-                                        <td scope="col"
-                                            class="align-middle"
-                                            colspan="3"
-                                        >
-                                        <b>Rp 11.000.000</b>
-                                        </td>
-                                    </tr>
-                            </tbody>
-                        </table>
+                    <table class="table table-striped mb-0 table-responsive">
+                        <thead>
+                            <tr class="text-center">
+                                <th
+                                    scope="col"
+                                    style="width:5%;"
+                                    class="pl-4"
+                                >No</th>
+                                <th
+                                    scope="col"
+                                    style="width:35%;"
+                                >Nama</th>
+                                <th
+                                    scope="col"
+                                    style="width:15%;"
+                                >NIP</th>
+                                <th
+                                    scope="col"
+                                    style="width:15%;"
+                                >Institusi</th>
+                                <th
+                                    scope="col"
+                                    style="width:15%;"
+                                >Jumlah Royalti</th>
+                                <th
+                                    scope="col"
+                                    style="width:20%;"
+                                    class="pr-4"
+                                >Status</th>
+                                <th
+                                    scope="col"
+                                    style="width:20%;"
+                                    class="pr-4"
+                                > &nbsp; </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="text-center">
+                                <td class="align-middle pl-4">
+                                    1
+                                </td>
+                                <td class="text-center align-middle">
+                                    <a
+                                        href="<?= base_url("$pages/view/"); ?>"
+                                        class="font-weight-bold"
+                                    >
+                                        Abdul
+                                    </a>
+                                </td>
+                                <td class="align-middle">
+                                    tes
+                                </td>
+                                <td class="align-middle">
+                                    tes
+                                </td>
+                                <td class="align-middle">
+                                    tes
+                                </td>
+                                <td class="align-middle">
+                                    Sudah Dibayar
+                                </td>
+                                <td class="align-middle text-right d-flex">
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-secondary"
+                                        data-container="body"
+                                        data-toggle="popover"
+                                        data-placement="left"
+                                        data-html="true"
+                                        data-content="<?= royalti_action(); ?>"
+                                        data-trigger="focus"
+                                        style="margin-right:5px;"
+                                    >
+                                        <i class="fa fa-thumbs-up">Aksi</i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr style="text-align:center;">
+                                <td
+                                    scope="col"
+                                    class="align-middle"
+                                    colspan="4"
+                                >
+                                    <b>Total</b>
+                                </td>
+                                <td
+                                    scope="col"
+                                    class="align-middle"
+                                    colspan="3"
+                                >
+                                    <b>Rp 11.000.000</b>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <!-- <?= $pagination ?? null; ?> -->
                 </div>
             </section>
