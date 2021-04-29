@@ -7,13 +7,17 @@ class Book_transaction_model extends MY_Model{
         $book_transactions = $this->select([ 
             'print_order.print_order_id','print_order.order_number',
             'book_receive.book_receive_id',
-            'invoice.invoice_id', 'invoice.number',           
+            'invoice.invoice_id', 'invoice.number as invoice_number', 
+            'book_non_sales.book_non_sales_id', 'book_non_sales.number as book_non_sales_number',
+            'book_transfer.book_transfer_id', 'book_transfer.transfer_number',         
             'book.book_title', 'book_transaction.*'])
             ->where_not('date', NULL)
             ->join_table('book', 'book_transaction', 'book')
             ->join_table('book_receive', 'book_transaction', 'book_receive')
             ->join_table('print_order', 'book_receive', 'print_order')
             ->join_table('invoice', 'book_transaction', 'invoice')
+            ->join_table('book_transfer', 'book_transaction', 'book_transfer')
+            ->join_table('book_non_sales', 'book_transaction', 'book_non_sales')
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
             ->when('end_date', $filters['end_date'])

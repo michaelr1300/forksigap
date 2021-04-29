@@ -111,12 +111,15 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                         class="font-weight-bold">
                                         <?= highlight_keyword($book_transaction->book_title, $keyword); ?>
                                 </td>
-                                
                                 <td class="align-middle text-center">
                                     <?php if($book_transaction->stock_in) : ?>
                                     <?= $book_transaction->order_number; ?>
-                                    <?php else : ?>
-                                    <?= $book_transaction->number; ?>
+                                    <?php elseif ($book_transaction->invoice_number): ?>
+                                    <?= $book_transaction->invoice_number; ?>
+                                    <?php elseif ($book_transaction->transfer_number): ?>
+                                    <?= $book_transaction->transfer_number; ?>
+                                    <?php elseif ($book_transaction->book_non_sales_number): ?>
+                                    <?= $book_transaction->book_non_sales_number; ?>
                                     <?php endif?>
                                 </td>
                                 <td class="align-middle text-center">

@@ -7,6 +7,7 @@ class Book_non_sales extends MY_Controller
         parent::__construct();
         $this->pages = 'book_non_sales';
         $this->load->model('book_non_sales_model', 'book_non_sales');
+        $this->load->model('book_transaction/book_transaction_model', 'book_transaction');
         $this->load->model('book_stock/book_stock_model', 'book_stock');
     }
 
@@ -86,6 +87,14 @@ class Book_non_sales extends MY_Controller
                 'book_id' => $books['book_id'],
                 'qty' => $books['qty']
             ];
+            $book_stock = $this->book_stock->where('book_id', $books['book_id'])->get();
+            $this->book_transaction->insert([
+                'book_id' => $books['book_id'],
+                'book_stock_id' => $book_stock->book_stock_id,
+                'book_non_sales_id' => $book_non_sales_id,
+                'stock_out' => $books['qty'],
+                'date' => now()
+            ]);
             $book_non_sales_list_success = $this->db->insert('book_non_sales_list',$book_non_sales_list);
         }
 

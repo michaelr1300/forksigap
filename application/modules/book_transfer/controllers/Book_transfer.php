@@ -7,6 +7,7 @@ class Book_transfer extends MY_Controller
         parent::__construct();
         $this->pages = 'book_transfer';
         $this->load->model('book_transfer_model', 'book_transfer');
+        $this->load->model('book_transaction/book_transaction_model', 'book_transaction');
         $this->load->model('book_stock/book_stock_model', 'book_stock');
         $this->load->model('library/library_model', 'library');
     }
@@ -354,9 +355,17 @@ class Book_transfer extends MY_Controller
                 'book_transfer_id' => $book_transfer_id,
                 'book_id' => $books['book_id'],
                 'qty' => $books['qty'],
-                // 'discount' => $input->discount,
                 'price' => $books['price']
             ];
+            //insert to book transaction
+            $book_stock = $this->book_stock->where('book_id', $books['book_id'])->get();
+            $this->book_transaction->insert([
+                'book_id' => $books['book_id'],
+                'book_stock_id' => $book_stock->book_stock_id,
+                'book_transfer_id' => $book_transfer_id,
+                'stock_out' => $books['qty'],
+                'date' => now()
+            ]);
             $book_transfer_list_success = $this->db->insert('book_transfer_list',$book_transfer_list);
         }
         if ($book_transfer_success && $book_transfer_list_success) {
