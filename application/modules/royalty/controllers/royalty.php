@@ -6,7 +6,7 @@ class Royalty extends MY_Controller
     {
         parent::__construct();
         $this->pages = 'royalty';
-        $this->load->model('royalty_model', 'invoice');
+        $this->load->model('royalty_model', 'royalty');
         $this->load->model('book/Book_model', 'book');
         $this->load->helper('sales_helper');
     }
@@ -19,6 +19,10 @@ class Royalty extends MY_Controller
         //     'status'            => $this->input->get('status', true),
         //     'customer_type'     => $this->input->get('customer_type', true)
         // ];
+        $authors = $this->db->select('count(author_id)')->from('author')->get()->result();
+        foreach ($authors as $author) {
+            $books =  $this->royalty->get_book($author->author_id);
+        }
 
         // $this->invoice->per_page = $this->input->get('per_page', true) ?? 10;
 
@@ -31,7 +35,7 @@ class Royalty extends MY_Controller
 
         $pages      = $this->pages;
         $main_view  = 'royalty/index_royalty';
-        $this->load->view('template', compact('pages', 'main_view'));
+        // $this->load->view('template', compact('pages', 'main_view'));
     }
 
     public function view()
@@ -44,7 +48,6 @@ class Royalty extends MY_Controller
 
         $this->load->view('template', compact('pages', 'main_view'));
     }
-
 }
 
 //     public function edit($invoice_id)
