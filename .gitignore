@@ -40,3 +40,5 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 /tests/results/
 node_modules
 application/controllers/Migrate.php
+application/modules/royalty/controllers/Royalty.php
+application/modules/royalty/models/Royalty_model.php
