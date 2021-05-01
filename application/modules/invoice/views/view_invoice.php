@@ -174,16 +174,23 @@ $level              = check_level();
                 
 
                 <div id="card-button" class="d-flex justify-content-end">
-                    <a
+                    <button onclick="check_delivery()">
+                        Generate PDF
+                    </button>
+                    <!-- <a
                         href="<?= base_url('invoice/generate_pdf/' . $invoice->invoice_id . "/print") ?>"
                         class="btn btn-outline-danger"
                         id="btn-generate-pdf-print"
                         title="Generate PDF"
-                    >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
+                    >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a> -->
                 </div>
-                
-                
             </div>
         </div>
     </section>
 </div>
+
+<script>
+    function check_delivery(){
+        console.log("test")
+    }
+</script>
