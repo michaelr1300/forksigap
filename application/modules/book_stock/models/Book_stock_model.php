@@ -160,6 +160,7 @@ class Book_stock_model extends MY_Model
         return $this->db->select('*')
         ->from('book_stock_revision')
         ->where('book_stock_revision.book_id', $book_id)
+        ->where('book_stock_revision.type', 'revision')
         ->order_by('book_stock_revision.book_stock_revision_id', 'DESC')
         ->get()
         ->result();

@@ -164,8 +164,9 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                                     echo '<div class="text-success"> ' . '+' . ' ' . $revision->warehouse_revision . '</div>';
                                                 } elseif ($revision->revision_type == "sub") {
                                                     echo '<div class="text-danger"> ' . '-' . ' ' . $revision->warehouse_revision . '</div>';
-                                                } else {
-                                                    echo '<div class="text-danger"> ' . '-' . ' ' . $revision->warehouse_revision . '</div>';
+                                                }
+                                                else {
+                                                    echo '<div class="text"> ' . ' ' . $revision->warehouse_revision . '</div>';
                                                 }
                                             ?>
                                         </td>

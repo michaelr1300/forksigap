@@ -40,7 +40,7 @@
                                         title="Required">*</abbr></label>
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                     <label class="btn btn-secondary active">
-                                        <input type="radio" name="type" value="revision" id="revision" checked = "checked"
+                                        <input type="radio" name="type" value="revision" id="revision" 
                                             class="custom-control-input" /> Revisi Stok
                                     </label>
                                     <label class="btn btn-secondary ">
@@ -49,7 +49,7 @@
                                     </label>
                                 </div>
                             </div>
-                            <div class="form-group" id="revisi-buku"> 
+                            <div class="form-group" id="revisi-buku" style="display:none"> 
                                 <label for="revision_type" class="d-block font-weight-bold"> Tipe Operasi <abbr
                                         title="Required">*</abbr></label>
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -63,6 +63,36 @@
                                     </label>
                                 </div>
                             </div>
+                            
+                            <div class="form-group" id="retur-buku" style="display:none"> 
+                                <label for="revision_type" class="d-block font-weight-bold"> Tipe Retur <abbr
+                                        title="Required">*</abbr></label>
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary active">
+                                        <input type="radio" name="revision_type" value="sub"
+                                            class="custom-control-input" /> Tambah Stok Retur
+                                    </label>
+                                    <label class="btn btn-secondary ">
+                                        <input type="radio" name="revision_type" value="delete"
+                                            class="custom-control-input" /> Penghapusan Stok Retur
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group" id="date" style="display:none">
+                            <label for="date" class="d-block font-weight-bold">Tanggal Retur <abbr
+                                title="Required">*</abbr> </label>
+                            <div class="has-clearable">
+                                <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                </button>
+                                <input type="date" class="form-control dates" name="date"
+                                    id="date" />
+                            </div>
+                            </div>
+
                             <div class="form-group">
                                 <label class="font-weight-bold" for="warehouse_modifier">Perubahan<abbr
                                         title="Required">*</abbr></label>
@@ -90,18 +120,31 @@ $(document).ready(function() {
     $('#return').click(function(){
         if($(this).is(':checked')){
             $("#revisi-buku").hide()
+            $("#retur-buku").show()
+            $("#date").show()
         }
         else {
             $("#revisi-buku").show()
+            $("#retur-buku").hide()
+            $("#date").hide()
         }
-    })
+    });
     $('#revision').click(function(){
         if($(this).is(':checked')){
             $("#revisi-buku").show()
+            $("#retur-buku").hide()
+            $("#date").hide()
         }
         else {
             $("#revisi-buku").hide()
+            $("#retur-buku").show()
+            $("#date").show()
         }
-    })
+    });
+    $('.dates').flatpickr({
+        altInput: true,
+        altFormat: 'j F Y',
+        dateFormat: 'Y-m-d'
+    });
 });
 </script>
