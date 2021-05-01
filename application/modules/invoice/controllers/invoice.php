@@ -243,12 +243,15 @@ class Invoice extends MY_Controller
         redirect($this->pages);
     }
 
-    public function generate_pdf($invoice_id)
+    public function generate_pdf($invoice_id, $ongkir=false)
     {
         $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
         $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
         $customer       = $this->invoice->get_customer($invoice->customer_id);
-
+        if ($ongkir != false){
+            $invoice->delivery_fee = $ongkir;
+            $this->db->set('delivery_fee', $ongkir)->where('invoice_id', $invoice_id)->update('invoice');
+        }
         // PDF
         $this->load->library('pdf');
         $data_format['invoice'] = $invoice ?? '';

@@ -251,7 +251,7 @@
             <td
                 scope="col"
                 style="text-align: right; border-bottom: 1px solid black"
-            >0</td>
+            ><?= $invoice->delivery_fee ?></td>
         </tr>
         <tr>
             <td scope="col"></td>
@@ -263,7 +263,7 @@
             <td
                 scope="col"
                 style="text-align: right; border-bottom: 4px double black"
-            ><b>Total + ongkir</b></td>
+            ><b><?= $total + $invoice->delivery_fee ?></b></td>
         </tr>
         <tr>
             <td scope="col"></td>
