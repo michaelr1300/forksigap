@@ -538,7 +538,7 @@ function get_per_page_options()
 
 function get_user_levels()
 {
-    return ['superadmin', 'admin_penerbitan', 'author', 'reviewer', 'editor', 'layouter', 'author_reviewer', 'admin_percetakan', 'staff_percetakan', 'admin_gudang', 'admin_pemasaran', 'admin_keuangan'];
+    return ['superadmin', 'admin_penerbitan', 'author', 'reviewer', 'editor', 'layouter', 'author_reviewer', 'admin_percetakan', 'staff_percetakan', 'admin_gudang', 'staff_gudang', 'admin_pemasaran', 'admin_keuangan'];
 }
 
 function filter_boolean($data)
@@ -825,6 +825,14 @@ function get_warehouse_stock(){
     ];
 }
 
+function get_book_stock_revision_type(){
+    return [
+        ''  => '',
+        'retur' => 'Retur',
+        'revision' => 'Revisi Jumlah Stok'
+    ];
+}
+
 function get_book_receive_status(){
     return [
         '' => '--Pilih--',
@@ -845,12 +853,20 @@ function get_book_receive_status(){
 function get_book_request_category(){
     return [
         '' => '--Pilih--',
-        'gudang' => 'Gudang',
-        'non_gudang_showroom' => 'Non Gudang Showroom',
-        'non_gudang_perpus' => 'Non Gudang Perpustakaan'
+        'credit'      => 'Kredit',
+        'online'      => 'Online',
+        'cash'        => 'Tunai',
+        'showroom'    => 'Showroom'
     ];
 }
-
+function get_book_request_source(){
+    return [
+        '' => '-',
+        'warehouse' => 'Gudang',
+        'showroom'  => 'Showroom',
+        'library'   => 'Perpustakaan'
+    ];
+}
 function get_book_request_status(){
     return [
         '' => '--Pilih--',
@@ -873,6 +889,7 @@ function get_book_transfer_status(){
         '' => '--Pilih--',
         'waiting' => 'Belum dimulai',
         'preparing' => 'Sedang disiapkan',
+        'preparing_finish' => 'Selesai disiapkan',
         'finish' => 'Selesai'
     ];
 }
@@ -882,6 +899,7 @@ function get_book_transfer_status_edit(){
         // '' => '--Pilih--',
         'waiting' => 'Belum dimulai',
         'preparing' => 'Sedang disiapkan',
+        'preparing_finish' => 'Selesai disiapkan',
         'finish' => 'Selesai'
     ];
 }
@@ -902,5 +920,28 @@ function get_book_transfer_destination(){
         '' => '--Pilih--',
         'showroom' => 'Showroom',
         'library' => 'Perpustakaan',
+    ];
+}
+
+function get_book_non_sales_type(){
+    return [
+        '' => '--Pilih--',
+        'presentgift' => 'Present Gift',
+        'doorprize' => 'Doorprize'
+    ];
+}
+
+function get_book_non_sales_status(){
+    return [
+        '' => '--Pilih--',
+        'waiting' => 'Menunggu',
+        'finish' => 'Selesai'
+    ];
+}
+
+function get_book_revision_type(){
+    return [
+        'revision' => 'Revisi Stok',
+        'return' => 'Retur Buku'
     ];
 }

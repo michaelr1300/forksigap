@@ -24,5 +24,19 @@ class Pdf extends Dompdf
         $dompdf->render();
         $dompdf->stream($file_name.'.pdf',array("Attachment"=>0));
     }
+    
+    public function generate_pdf_a4_landscape($html, $file_name) {
+        $dompdf = new Dompdf();
+
+        $options = new Options();
+        $options->setIsRemoteEnabled(true);
+
+        $dompdf->setOptions($options);
+
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->loadHtml($html);
+        $dompdf->render();
+        $dompdf->stream($file_name.'.pdf',array("Attachment"=>0));
+    }
 
 }

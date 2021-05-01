@@ -15,7 +15,8 @@
 		"fzaninotto/faker": "^1.9",
 		"nesbot/carbon": "^2.31",
 		"dompdf/dompdf": "^0.8.6",
-		"phpoffice/phpspreadsheet": "^1.17"
+		"phpoffice/phpspreadsheet": "^1.17",
+		"mike42/escpos-php": "^3.0"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"

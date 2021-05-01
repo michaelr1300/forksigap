@@ -18,6 +18,7 @@ class Book_request extends MY_Controller
             'keyword'              => $this->input->get('keyword', true),
             'type'                 => $this->input->get('type', true),
             'status'               => $this->input->get('status', true),
+            'source'               => $this->input->get('source', true),
         ];
 
         // custom per page
@@ -33,7 +34,7 @@ class Book_request extends MY_Controller
     }
 
     public function edit($invoice_id){
-        if($this->check_level_gudang() == TRUE):
+        if($this->_is_warehouse_admin() == TRUE):
         $pages        = $this->pages;
         $main_view    = 'book_request/book_request_edit';
         $book_request = $this->invoice->fetch_invoice_id($invoice_id);
@@ -60,6 +61,56 @@ class Book_request extends MY_Controller
         return;
     }
 
+    public function api_get_staff_gudang()
+    {
+        $staff_gudang = $this->book_request->get_staff_gudang();
+        return $this->send_json_output(true, $staff_gudang);
+    }
+
+    public function api_add_staff_gudang()
+    {
+        $input = (object) $this->input->post(null, true);
+
+        if (!$input->invoice_id || !$input->user_id || !$input->progress) {
+            return $this->send_json_output(false, $this->lang->line('toast_data_not_available'));
+        }
+
+        if (!$this->_is_warehouse_admin()) {
+            $message = $this->lang->line('toast_error_not_authorized');
+            return $this->send_json_output(false, $message);
+        }
+
+        if ($this->book_request->check_row_staff_gudang($input->invoice_id, $input->user_id, $input->progress) > 0) {
+            return $this->send_json_output(false, $this->lang->line('toast_data_duplicate'), 422);
+        }
+
+        if ($this->db->insert('book_request_user', $input)) {
+            return $this->send_json_output(true, $this->lang->line('toast_add_success'));
+        } else {
+            return $this->send_json_output(false, $this->lang->line('toast_add_fail'));
+        }
+    }
+
+    public function api_delete_staff_gudang($id = null)
+    {
+        $staff_gudang = $this->db->where('book_request_user_id', $id)->get('book_request_user')->result();
+        if (!$staff_gudang) {
+            $message = $this->lang->line('toast_data_not_available');
+            return $this->send_json_output(false, $message, 404);
+        }
+
+        if (!$this->_is_warehouse_admin()) {
+            $message = $this->lang->line('toast_error_not_authorized');
+            return $this->send_json_output(false, $message);
+        }
+
+        if ($this->db->delete('book_request_user', ['book_request_user_id' => $id])) {
+            return $this->send_json_output(true, $this->lang->line('toast_delete_success'));
+        } else {
+            return $this->send_json_output(false, $this->lang->line('toast_delete_fail'));
+        }
+    }
+
     public function api_start_preparing($invoice_id)
     {
         // apakah book_request tersedia
@@ -70,7 +121,7 @@ class Book_request extends MY_Controller
         }
 
         // hanya untuk user yang berkaitan dengan book_request ini
-        if (!$this->check_level_gudang()) {
+        if (!$this->_is_warehouse_admin()) {
             $message = $this->lang->line('toast_error_not_authorized');
             return $this->send_json_output(false, $message);
         }
@@ -100,7 +151,7 @@ class Book_request extends MY_Controller
         $input = (object) $this->input->post(null, false);
 
         // hanya untuk user yang berkaitan dengan book_request ini
-        if (!$this->check_level_gudang()) {
+        if (!$this->_is_warehouse_admin()) {
             $message = $this->lang->line('toast_error_not_authorized');
             return $this->send_json_output(false, $message);
         }
@@ -131,7 +182,7 @@ class Book_request extends MY_Controller
         $input = (object) $this->input->post(null, false);
 
         // hanya untuk user yang berkaitan dengan book_request ini
-        if (!$this->check_level_gudang()) {
+        if (!$this->_is_warehouse_admin()) {
             $message = $this->lang->line('toast_error_not_authorized');
             return $this->send_json_output(false, $message);
         }
@@ -194,7 +245,7 @@ class Book_request extends MY_Controller
     // }
 
     public function edit_book_request(){
-        if($this->check_level_gudang_pemasaran() == TRUE && $this->input->method()=='post'){
+        if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
             $order_number = $this->input->post('number');
             $invoice_id = $this->input->post('invoice_id');
             $new_status = $this->input->post('status');
@@ -218,7 +269,7 @@ class Book_request extends MY_Controller
     }
 
     public function delete_book_request($book_request_id){
-        if($this->check_level_gudang_pemasaran() == TRUE){
+        if($this->_is_warehouse_admin() == TRUE){
             $book_request = $this->book_request->where('book_request_id', $book_request_id)->get();
             if (!$book_request) {
                 $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
@@ -235,7 +286,7 @@ class Book_request extends MY_Controller
     }
 
     public function action_request($book_request_id){
-        if($this->check_level_gudang() == TRUE):
+        if($this->_is_warehouse_admin() == TRUE):
         $this->load->library('form_validation');
         $this->form_validation->set_rules('flag', 'Aksi', 'required|max_length[1]');
         $this->form_validation->set_rules('request_notes_admin', 'Catatan', 'required|max_length[1000]');
@@ -257,7 +308,7 @@ class Book_request extends MY_Controller
     }
 
     public function action_final($book_request_id){
-        if($this->check_level_gudang() == TRUE):
+        if($this->_is_warehouse_admin() == TRUE):
         $this->load->library('form_validation');
         $this->form_validation->set_rules('stock_in_warehouse', 'Stok dalam gudang', 'required|max_length[10]');
         $this->form_validation->set_rules('stock_out_warehouse', 'Stok luar gudang', 'required|max_length[10]');
@@ -289,7 +340,7 @@ class Book_request extends MY_Controller
         }
     }
 
-    public function check_level_gudang(){
+    public function _is_warehouse_admin(){
         if($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_gudang'){
             return TRUE;
         }else{

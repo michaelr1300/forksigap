@@ -15,56 +15,61 @@
 </header>
 <div class="page-section">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <section class="card">
                 <div class="card-body">
-                    <form action="<?= base_url("book_transfer/add"); ?>" method="post">
+                    <form id="form_transfer" action="<?= base_url("book_transfer/add"); ?>" method="post">
                         <fielsdet>
                             <legend>Form Pemindahan Buku</legend>
                             <div class="form-group">
-                                <label for='book-id'>Judul Buku</label>
-                                <?= form_dropdown('book_id', get_dropdown_list_book(), $input->book_id, 'id="book-id" class="form-control custom-select d-block"'); ?>
-                                <?= form_error('book_id'); ?>
-
-                                <!-- <select class="form-control" name="book_tittle" id="book_tittle" required>
-                                    <option value="">No Selected</option>
-                                    <?php //foreach($book as $row):?>
-                                    <option value="<?php //echo $row->book_id;?>"><?php echo $row->book_tittle;?></option>
-                                    <?php //endforeach;?>
-                                </select> -->
-                            </div>
-                            <div class="form-group">
-                                <label for="quantity">Jumlah Buku<abbr title="Required">*</abbr></label>
-                                <?php
-                                $form_quantity = array(
-                                    'type'  => 'number',
-                                    'name'  => 'quantity',
-                                    'id'    => 'quantity',
-                                    'value' => $input->quantity,
-                                    'class' => 'form-control',
-                                    'min'   => '0'
-                                );
-                                ?>
-                                <?= form_input($form_quantity); ?>
-                                <?= form_error('quantity'); ?>
-                                <!-- <input type="number" name="qty" id="qty" class="form-control" min="1" /> -->
-                            </div>
-                            <div class="form-group">
                                 <label for="destination">Tujuan Pemindahan<abbr title="Required">*</abbr></label>
-                                <!-- <input type="number" name="qty" id="qty" class="form-control" min="1" /> -->
                                 <select name="destination" id="destination" class="form-control">
                                     <option value="showroom">Showroom</option>
                                     <option value="library">Perpustakaan</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="library-id">Perpustakaan
+                            <div class="form-group" id="input-perpustakaan" style="display:none">
+                                <label for="library-id">Tujuan Perpustakaan
                                     <abbr title="Required">*</abbr>
                                 </label>
                                 <?= form_dropdown('library_id', get_dropdown_list_library(), $input->library_id, 'id="library-id" class="form-control custom-select d-block"'); ?>
                                 <?= form_error('library_id'); ?>
                             </div>
+                            <div class="row">
+                                <div class="form-group col-10 mb-0">
+                                    <label for='book-id'>Judul Buku</label>
+                                    <?= form_dropdown('book_id', $book_transfer_available, 0, 'id="book-id" class="form-control custom-select d-block"'); ?>
+                                    <?= form_error('book_id'); ?>
+                                </div>
+                                <div class="form-group col-2 mb-0">
+                                    <label for="add-book">Tambah Buku</label>
+                                    <button disabled type="button" id="add-book" name="add-book" 
+                                    class="form-control btn btn-primary text-white">
+                                    Tambah Buku</button>
+                                </div>
+                            </div>
+                            <br>
+                            <table class="table table-striped mb-0 table-responsive" id="book-list">
+		                    	<thead>
+		                    		<tr>
+		                    			<th scope="col" style="min-width:50px">No</th>
+		                    			<th scope="col" style="min-width:400px">Judul Buku</th>
+                                        <th scope="col" style="min-width:200px">Penulis</th>
+                                        <th scope="col" style="min-width:100px">Stok Gudang</th>
+		                    			<th scope="col" style="min-width:100px">Jumlah</th>
+                                        <th scope="col" style="min-width:150px">Harga</th>
+		                    			<th scope="col" style="min-width:100px">Aksi</th>
+		                    		</tr> 
+		                    	</thead>
+		                    	<tbody id="book-list-content">
 
+		                    	</tbody>
+		                    </table>
+                            <br>
+                            <div class="form-group" id="input-discount">
+                                <label for="discount">Diskon (%)</label>
+                                <input name="discount" value="0" class='form-control quantity col-2' id="discount" type="number" min="0" max="100">
+                            </div>
                         </fieldset>
                         <hr>
                             <!-- button -->
@@ -89,30 +94,91 @@ $(document).ready(function() {
         dropdownParent: $('#app-main')
     });
 
-    $('#book').change(function() {
-        var id = $(this).val();
+    $('#destination').change(function(){
+        if ($("#destination").val()=="library"){
+            $("#input-perpustakaan").show()
+        }
+        else {
+            $("#input-perpustakaan").hide()
+        }
+    })
+    $('#book-id').change(function(){
+        if ($("#book-id").val()){
+            $('#add-book').prop('disabled', false)
+        }
+    })
+    $('#add-book').click(function(){
+        if ($("#book-id").val()){
+            $("#no-stock-warning").html('')
+            var number = $("#book-list-content tr").length+1
+            var book_name = $('#book-id option:selected').text()
+            var book_id = $('#book-id').val()
+            $.ajax({
+                type: "GET",
+                url: "<?= base_url('book_stock/api_get_by_book_id/'); ?>" + book_id,
+                datatype: "JSON",
+                success: function(res) {
+                    var stock = res.data.warehouse_present
+                    var author = res.data.author_name
+                    var price = res.data.harga
+                    var row1 = "<tr><th style='vertical-align: middle'>"+ number +"</th>"
+                    var row2 = "<td style='vertical-align: middle'>" + book_name + "<input type='text' hidden name='book_id' class='book_id' value='"+book_id+"'></td>"
+                    var row3 = "<td style='vertical-align: middle'>" + author + "</td>"
+                    var row4 = "<td style='vertical-align: middle' class='stock'>"+stock+"</td>"
+                    var row5 = "<td style='vertical-align: middle'><input type='number' value=0 min=1 max='"+stock+"'class='form-control quantity' name='quantity'></td>"
+                    var row6 = "<td style='vertical-align: middle' class='price'>"+price+"<input type='number' hidden name='price' class='price' value='"+price+"'></td>"
+                    var row7 = "<td style='vertical-align: middle'></button><button type='button' class='btn btn-danger btn-md remove-book'>Hapus</td></tr>"
+                    var html = row1+row2+row3+row4+row5+row6+row7
+                    $("#book-list-content").append(html);
+                },
+                error: function(err) {
+                    console.log(err);
+                },
+            });
+        }
+    })
+    
+    $("#book-list-content").on('click','.remove-book', function(event){
+        $(this).closest('tr').remove();
+        $("#book-list-content tr").each(function(index){
+            $(this).children('th').html(index+1)
+        });
+    });
+
+    $("#form_transfer").submit(function(e) {
+        e.preventDefault();
+        if ($("#destination").val()=="showroom"){
+            $("#library-id").val("")
+        }
+        data = {
+            'destination': $("#destination").val(),
+            'library_id': $("#library-id").val(),
+            'discount': $("#discount").val(),
+            'book_list': []
+        }
+        $("#book-list-content tr").each(function(){
+            book_data = {
+                'book_id': $(this).find("input.book_id").val(),
+                'price': Number($(this).find("input.price").val()),
+                'qty': Number($(this).find("input.quantity").val())
+            }
+            data['book_list'].push(book_data)
+        })
+        // console.log(data)
         $.ajax({
-            url: "<?php echo site_url('book_transfer/get_book');?>",
-            method: "POST",
-            data: {
-                id: id
+            type: "POST",
+            url: "<?= base_url("book_transfer/add"); ?>",
+            data: data,
+            datatype: 'JSON',
+            success: function(result) {
+                location.href = "<?= base_url('book_transfer'); ?>";
+                console.log("sukses")
             },
-            async: true,
-            dataType: 'json',
-            success: function(data) {
-
-                var html = '';
-                var i;
-                for (i = 0; i < data.length; i++) {
-                    html += '<option value=' + data[i].book_id + '>' + data[i].book_tittle +
-                        '</option>';
-                }
-                $('#book').html(html);
-
+            error: function(req, err) {
+                console.log(err)
             }
         });
-        return false;
-    });
+    })
 
 });
 </script>

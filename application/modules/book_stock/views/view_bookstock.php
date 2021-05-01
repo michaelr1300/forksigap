@@ -1,5 +1,12 @@
 <?php
 $level              = check_level();
+$date_year          = $this->input->get('date_year');
+
+$date_year_options = [];
+
+for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
+    $date_year_options[$dy] = $dy;
+}
 ?>
 <header class="page-title-bar mb-3">
     <nav aria-label="breadcrumb">
@@ -113,21 +120,29 @@ $level              = check_level();
                                     </td>
                                     </tr>
                                     <?php endif?>
+                                    <?php if($input->retur_stock) :?>
+                                    <tr>
+                                        <td width="160px">Stok Retur</td>
+                                        <td><?=$input->retur_stock?></td>
+                                    </tr>
+                                    <?php endif?>
                                 </tbody>
                             </table>
                         </div>
                         <?php if (empty($book_stock->revision) == FALSE) : ?>
                         <hr>
                         <!-- Log Revisi Stok -->
-                        <p class="font-weight-bold">Log Revisi Stok</p>
+                        <p class="font-weight-bold">Log Revisi Stok Gudang</p>
                         <div class="table-responsive" style="max-height:500px;">
                             <table class="table table-striped table-bordered mb-0">
                                 <thead>
                                     <tr class="text-center">
                                         <th scope="col">No</th>
-                                        <th scope="col">Awal</th>
+                                        <th scope="col">Stok Awal</th>
                                         <th scope="col">Perubahan</th>
+                                        <th scope="col">Stok Akhir</th>
                                         <th scope="col">Tanggal</th>
+                                        <th scope="col">Tipe</th>
                                         <th scope="col">Catatan</th>
                                         <?php if ($level == 'superadmin' || $level == 'admin_gudang') : ?>
                                         <th scope="col"></th>
@@ -148,12 +163,20 @@ $level              = check_level();
                                                 if ($revision->revision_type == "add") {
                                                     echo '<div class="text-success"> ' . '+' . ' ' . $revision->warehouse_revision . '</div>';
                                                 } elseif ($revision->revision_type == "sub") {
-                                                    echo '<div class="text-danger"> ' . '+' . ' ' . $revision->warehouse_revision . '</div>';
-                                                } 
+                                                    echo '<div class="text-danger"> ' . '-' . ' ' . $revision->warehouse_revision . '</div>';
+                                                } else {
+                                                    echo '<div class="text-danger"> ' . '-' . ' ' . $revision->warehouse_revision . '</div>';
+                                                }
                                             ?>
                                         </td>
                                         <td>
+                                            <?= $revision->warehouse_present; ?>
+                                        </td>
+                                        <td>
                                             <?= date('d F Y H:i:s', strtotime($revision->revision_date)); ?>
+                                        </td>
+                                        <td>
+                                            <?= get_book_revision_type()[$revision->type]; ?>
                                         </td>
                                         <td>
                                             <?= $revision->notes; ?>
@@ -168,7 +191,7 @@ $level              = check_level();
                         <!-- Log perubahan Stok -->
                         <?php else : ?>
                         <p>Data hanya dapat dilihat oleh Superadmin, Admin Penerbitan, Admin Percetakan, Admin Gudang,
-                        dan Admin Pemasaran</p>
+                            dan Admin Pemasaran</p>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -180,139 +203,131 @@ $level              = check_level();
                 <div class="tab-pane fade" id="chart-book">
                     <!-- Per month chart -->
                     <div class="row mb-4">
-                        <p class="col-12 font-weight-bold">Transaksi Buku per Bulan</p>
-                        <div class="col-3">
-                            <input type="year" id="year" name="year" class="form-control">
+                        <p class="col-12 font-weight-bold">Transaksi Buku per Tahun</p>
+                        <div class="col-4">
+                            <?= form_dropdown('date_year', $date_year_options, $date_year, 'id="date_year" class="form-control custom-select d-block" title="Filter Tahun Cetak"'); ?>
                         </div>
-                        <canvas id="chart-transaction-yearly" height="35vh !important" width="100% !important">
-                        <script>
-                        $(document).ready(function() {
-                            $.ajax({
-                                url: "<?=base_url('/book_stock/api_chart_data/')?><?=$book_stock->book_stock_id?>/2021",
-                                method: "GET",
-                                success: function(data) {
-                                    console.log(data);
-                                    // var label = [];
-                                    var value = [];
-                                    for (var i in data) {
-                                        // label.push(data[i].tahun);
-                                        value.push(data[i].stock_in);
-                                    }
-                                    console.log(value);
-                                    // var ctx = document.getElementById('chart-transaction-yearly').getContext('2d');
-                                    // var chart = new Chart(ctx, {
-                                    //     type: 'bar',
-                                    //     data: {
-                                    //         labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-                                    //             'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                                    //         ],
-                                    //         datasets: [{
-                                    //             label: 'coba',
-                                    //             backgroundColor: 'rgb(252, 116, 101)',
-                                    //             borderColor: 'rgb(255, 255, 255)',
-                                    //             data: value
-                                    //         }]
-                                    //     },
-                                    //     options: {}
-                                    // });
-                                }
-                            });
-                        });
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="text-center">
+                                <b>
+                                    <h5>Transaksi Buku <span>"<?=$input->book_title?>"</span></h5>
+                                    <h5>Tahun</h5>
+                                </b>
+                                <b>
+                                    <span id="date-year-title" class="mb-1"></span>
+                                </b>
+                            </div>
+                            <div class="chart-container" style="position: relative; height:80vh; width:100%">
+                                <canvas id="chart-transaction-yearly">
+                                <script>
+                                    $(document).ready(function() {
+                                        var year = new Date().getFullYear();
+                                        document.getElementById('date_year').valueAsYear = year;
+                                        var ctx_peryear = document.getElementById("chart-transaction-yearly");
+                                        var chart_transaction_per_year = new Chart(ctx_peryear, {
+                                            type: 'bar',
+                                            data: {
+                                                labels: ['Januari', 'Februari', 'Maret',
+                                                    'April', 'Mei', 'Juni', 'Juli',
+                                                    'Agustus', 'September', 'Oktober',
+                                                    'November', 'Desember'
+                                                ],
+                                                datasets: [{
+                                                        label: 'Buku Masuk',
+                                                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                                                        borderColor: 'rgb(54, 162, 235)',
+                                                        borderWidth: 1,
+                                                        data: []
+                                                    },
+                                                    {
+                                                        label: 'Buku Keluar',
+                                                        backgroundColor: 'rgb(252, 116, 101)',
+                                                        borderColor: 'rgb(255, 255, 255)',
+                                                        borderWidth: 1,
+                                                        data: []
+                                                    }
+                                                ]
+                                            },
+                                            options: {
+                                                responsive: true,
+                                                scales: {
+                                                    yAxes: [{
+                                                        display: true,
+                                                        scaleLabel: {
+                                                            display: true,
+                                                            labelString: 'Jumlah Buku'
+                                                        },
+                                                        ticks: {
+                                                            beginAtZero: true
+                                                        }
+                                                    }],
+                                                    xAxes: [{
+                                                        scaleLabel: {
+                                                            display: true,
+                                                            labelString: 'Bulan'
+                                                        }
+                                                    }],
+                                                }
+                                            },
+                                        })
+                                        var update_per_year = function(year){
+                                            $.getJSON('<?=base_url('/book_stock/api_chart_data/')?><?=$book_stock->book_stock_id?>/'+year, function(data) {
+                                                // console.log(data);
+                                                var stock_in = [];
+                                                var stock_out = [];
+                                                for (var i in data) {
+                                                    stock_in.push(data[i].stock_in);
+                                                    stock_out.push(data[i].stock_out);
+                                                }
+                                                // console.log(stock_in[1]);
+                                                // console.log(stock_out[1]);
+                                                var stock_in_data = [];
+                                                $.each(stock_in[1], function(key, val) {
+                                                    stock_in_data.push(val);
+                                                })
+                                                var stock_out_data = [];
+                                                $.each(stock_out[1], function(key, val) {
+                                                    stock_out_data.push(val);
+                                                })
+                                                chart_transaction_per_year.data.datasets[0].data = stock_in_data;
+                                                chart_transaction_per_year.data.datasets[1].data = stock_out_data;
+                                                chart_transaction_per_year.update();
+                                                document.getElementById('date-year-title').innerHTML = year;
+                                                // console.log(stock_in_data);
+                                                // console.log(stock_out_data);
+                                            })
+                                        }
 
-                        // var ctx = document.getElementById('chart-transaction-yearly').getContext('2d');
-                        // var myChart = new Chart(ctx, {
-                        //     type: 'bar',
-                        //     data: {
-                        //         labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-                        //             'Agustus', 'September', 'Oktober', 'November', 'Desember'
-                        //         ],
-                        //         datasets: [{
-                        //             label: 'Transaksi Buku Tahun ...',
-                        //             data: [],
-                        //             backgroundColor: [
-                        //                 'rgba(74, 138, 216, 0.2)'
-                        //                 // 'rgba(54, 162, 235, 0.2)',
-                        //                 // 'rgba(255, 206, 86, 0.2)',
-                        //                 // 'rgba(75, 192, 192, 0.2)',
-                        //                 // 'rgba(153, 102, 255, 0.2)',
-                        //                 // 'rgba(255, 159, 64, 0.2)'
-                        //             ],
-                        //             borderColor: [
-                        //                 'rgba(74, 138, 216, 1)',
-                        //                 // 'rgba(54, 162, 235, 1)',
-                        //                 // 'rgba(255, 206, 86, 1)',
-                        //                 // 'rgba(75, 192, 192, 1)',
-                        //                 // 'rgba(153, 102, 255, 1)',
-                        //                 // 'rgba(255, 159, 64, 1)'
-                        //             ],
-                        //             // borderWidth: 1
-                        //         }]
-                        //     },
-                        //     options: {
-                        //         scales: {
-                        //             yAxes: [{
-                        //                 ticks: {
-                        //                     beginAtZero: true
-                        //                 },
-                        //                 scaleLabel: {
-                        //                     display: true,
-                        //                     labelString: 'Jumlah'
-                        //                 }
-                        //             }],
-                        //             xAxes: [{
-                        //                 scaleLabel: {
-                        //                     display: true,
-                        //                     LabelString: 'Bulan'
-                        //                 }
-                        //             }],
-                        //         }
-                        //     }
-                        // });
-                        // var updatePerMonth = function(book_id) {
-                        //     $.ajax({
-                        //     url: "<?//=base_url('/book_stock/api_chart_data/')?>/<?=$book_stock->book_id?>/2021",
-                        //     type: 'GET',
-                        //     dataType: 'json',
-                        //     headers: {
-                        //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        //         },
-                        //         success: function(data) {
-                        //             // chart_transaction_yearly.data.labels = data.stock_in;
-                        //             // stock_in = data.stock_in.map(a => a);
-                        //             console.log(data.stock_in);
-                        //             chart_transaction_yearly.data.datasets[0].data = data.stock_in;
-                        //             // chart_transaction_yearly.update();
-                        //         },
-                        //         error: function(data){
-                        //             console.log(data);
-                        //         }
-                        //     });
-                        // }
+                                        update_per_year(year);
 
-                        // updatePerMonth(year);
+                                        $("#date_year").change(function() {
+                                            get_url();
+                                        });
 
-                        // $("#date").change(function() {
-                        //     get_url();
-                        // });
-                        
-                        // function get_url() {
-                        //     date = $("#date").val();
-                        //     url = "<?//=base_url('book_stock/api_chart_data/') ?>"+book_id+'/'+'2021';
-                        //     updatePerDay(year);
-                        // }
-                        </script>
+                                        function get_url() {
+                                            year = $("#date_year").val();
+                                            url = "<?=base_url('/book_stock/api_chart_data/')?><?=$book_stock->book_stock_id?>/"+year;
+                                            update_per_year(year);
+                                        }
+                                    });
+                                </script>
+                            </div>
+
+                        </div>
                     </div>
                     <!-- Per month chart -->
                     <hr>
                     <!-- Per day chart -->
-                    <div class="row">
+                    <!-- <div class="row">
                         <p class="col-12 font-weight-bold">Transaksi Buku per Hari</p>
                         <div class="col-3">
                             <input type="date" id="date" name="date" class="form-control">
                         </div>
                         <canvas id="chart-transaction-per-day" height="35vh !important" width="100% !important">
-                        <!-- <script>
-                        book_id = <?=$book_stock->book_id?>
+                        <script>
+                        book_id = <?//=$book_stock->book_id?>
                         today = new Date();
                         document.getELementById('date').valueAsDate = today;
                         date = today.toISOString().split('T')[0];
@@ -353,11 +368,10 @@ $level              = check_level();
                                 }
                             }
                         });
-                        </script> -->
-                    </div>
+                        </script>
+                    </div> -->
                 </div>
                 <!-- book transaction data -->
-
             </div>
         </div>
     </section>

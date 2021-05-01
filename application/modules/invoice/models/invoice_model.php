@@ -10,17 +10,24 @@ class Invoice_model extends MY_Model
         $data['input_error'] = array();
         $data['status'] = TRUE;
 
-        if ($this->input->post('due-date') == '') {
-            $data['input_error'][] = 'error-due-date';
-            $data['status'] = FALSE;
-        }
-
         if ($this->input->post('type') == '') {
             $data['input_error'][] = 'error-type';
             $data['status'] = FALSE;
         } else if ($this->input->post('type') == 'cash') {
             if ($this->input->post('source') == '') {
                 $data['input_error'][] = 'error-source';
+                $data['status'] = FALSE;
+            }
+        } else if ($this->input->post('type') == 'credit' || $this->input->post('type') == 'online') {
+            if ($this->input->post('due-date') == '') {
+                $data['input_error'][] = 'error-due-date';
+                $data['status'] = FALSE;
+            }
+        }
+
+        if ($this->input->post('source') == 'library') {
+            if ($this->input->post('source-library-id') == '') {
+                $data['input_error'][] = 'error-source-library';
                 $data['status'] = FALSE;
             }
         }
@@ -69,28 +76,33 @@ class Invoice_model extends MY_Model
     public function fetch_invoice_book($invoice_id)
     {
         return $this->db
-            ->select('invoice_book.*, book.book_title, book.harga')
+            ->select('invoice_book.*, book.book_title, author.author_name ')
             ->from('invoice_book')
             ->join('book', 'book.book_id = invoice_book.book_id')
+            ->join('draft_author', 'draft_author.draft_id = book.draft_id')
+            ->join('author', 'draft_author.author_id = author.author_id')
             ->where('invoice_id', $invoice_id)
             ->get()
             ->result();
-    }
-
-    public function fetch_book_info($book_id)
-    {
-        return $this->db
-            ->select('book_title')
-            ->from('book')
-            ->where('book_id', $book_id)
-            ->get()
-            ->row();
     }
 
     public function fetch_warehouse_stock($book_id)
     {
 
         $stock = $this->db->select('warehouse_present')
+            ->from('book_stock')
+            ->where('book_id', $book_id)
+            ->order_by("book_stock_id", "DESC")
+            ->limit(1)
+            ->get()
+            ->row();
+        return $stock;
+    }
+
+    public function fetch_showroom_stock($book_id)
+    {
+
+        $stock = $this->db->select('showroom_present')
             ->from('book_stock')
             ->where('book_id', $book_id)
             ->order_by("book_stock_id", "DESC")
@@ -133,12 +145,49 @@ class Invoice_model extends MY_Model
         return $options;
     }
 
+    public function get_ready_book_list_showroom()
+    {
+        $books = $this->db
+            ->select('book_id, book_title')
+            ->order_by('book_title', 'ASC')
+            ->from('book')
+            ->get()
+            ->result();
+        foreach ($books as $book) {
+            // Tambahkan data stock ke buku
+            $stock = $this->fetch_showroom_stock($book->book_id);
+            if ($stock == NULL)
+                $book->stock = 0;
+            else
+                $book->stock = $stock->showroom_present;
+        }
+
+        // Buku stock 0 tidak ditampilkan
+        foreach ($books as $key => $book) {
+            if ($book->stock == 0) {
+                unset($books[$key]);
+            }
+        }
+
+        // Input buku ke array untuk dropdown
+        $options = ['' => '-- Pilih --'];
+        foreach ($books as $book) {
+            $options += [$book->book_id => $book->book_title];
+        }
+
+        return $options;
+    }
+
     public function get_book($book_id)
     {
-        $book = $this->select('book.*')
+        $book = $this->db->select('book.*, author.author_name')
+            ->from('book')
+            ->join('draft_author', 'draft_author.draft_id = book.draft_id')
+            ->join('author', 'draft_author.author_id = author.author_id')
             ->where('book_id', $book_id)
-            ->get('book');
-
+            ->get()
+            ->row();
+            
         $stock = $this->fetch_warehouse_stock($book_id);
 
         if ($stock == NULL) {
@@ -188,17 +237,21 @@ class Invoice_model extends MY_Model
 
     public function filter_invoice($filters, $page)
     {
-        $invoice = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type'])
+        $invoice = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'invoice.customer_id', 'name as customer_name', 'customer.type as customer_type', 'status', 'invoice.type as invoice_type'])
+            ->join('customer', 'invoice.customer_id = customer.customer_id', 'left')
             ->when('keyword', $filters['keyword'])
-            ->when('type', $filters['type'])
+            ->when('invoice_type', $filters['invoice_type'])
+            ->when('customer_type', $filters['customer_type'])
             ->when('status', $filters['status'])
             ->order_by('invoice_id', 'DESC')
             ->paginate($page)
             ->get_all();
 
-        $total = $this->select(['invoice_id', 'number'])
+        $total = $this->select(['invoice_id', 'number', 'name'])
+            ->join('customer', 'invoice.customer_id = customer.customer_id', 'left')
             ->when('keyword', $filters['keyword'])
-            ->when('type', $filters['type'])
+            ->when('invoice_type', $filters['invoice_type'])
+            ->when('customer_type', $filters['customer_type'])
             ->when('status', $filters['status'])
             ->order_by('invoice_id')
             ->count();
@@ -216,10 +269,12 @@ class Invoice_model extends MY_Model
             if ($params == 'keyword') {
                 $this->group_start();
                 $this->or_like('number', $data);
+                $this->or_like('name', $data);
                 $this->group_end();
             } else {
                 $this->group_start();
-                $this->or_like('type', $data);
+                $this->or_like('invoice.type', $data);
+                $this->or_like('customer.type', $data);
                 $this->or_like('status', $data);
                 $this->group_end();
             }
@@ -235,25 +290,20 @@ class Invoice_model extends MY_Model
             ->where('status', 'confirm')
             ->or_where('status', 'preparing')
             ->or_where('status', 'preparing_finish')
-            ->or_where('status', 'finish')
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
-            ->when_request('status', $filters['status'])
             ->order_by('invoice_id', 'DESC')
             ->paginate($page)
             ->get_all();
 
-        $total = $this->select(['invoice_id', 'number'])
+        $total = $this->select('invoice_id')
             ->where('status', 'confirm')
             ->or_where('status', 'preparing')
             ->or_where('status', 'preparing_finish')
-            ->or_where('status', 'finish')
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
-            ->when_request('status', $filters['status'])
             ->order_by('invoice_id')
             ->count();
-
         return [
             'book_request'  => $book_request,
             'total' => $total
@@ -268,19 +318,9 @@ class Invoice_model extends MY_Model
                 $this->group_start();
                 $this->or_like('number', $data);
                 $this->group_end();
-            }
-            if ($params == 'type') {
-                if ($data == 'gudang') {
-                    $this->where('type', 'credit');
-                    $this->where('type', 'online');
-                    $this->where('type', 'cash')->where('source', 'warehouse');
-                } else if ($data == 'non_gudang_showroom') {
-                    $this->where('type', 'showroom');
-                } else if ($data == 'non_gudang_perpus') {
-                    $this->where('type', 'cash')->where('source', 'library');
-                }
-            }
-            if ($params == 'status') {
+            } else if ($params == 'type') {
+                $this->where('type', $data);
+            } else if ($params == 'status') {
                 $this->where('status', $data);
             }
         }
@@ -322,43 +362,5 @@ class Invoice_model extends MY_Model
         } else {
             return false;
         }
-    }
-
-    public function update_status($invoice_id, $status)
-    {
-        if ($status == 'confirm') {
-            $edit = [
-                'status'          => $status,
-                'confirm_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        if ($status == 'preparing_start') {
-            $edit = [
-                'status'          => $status,
-                'preparing_start_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        if ($status == 'preparing_end') {
-            $edit = [
-                'status'          => $status,
-                'preparing_end_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        if ($status == 'finish') {
-            $edit = [
-                'status'          => $status,
-                'finish_date'    => date('Y-m-d H:i:s'),
-                //'user_edited'   => $_SESSION['username']
-            ];
-        }
-
-        $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
-        return TRUE;
     }
 }

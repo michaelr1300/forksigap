@@ -19,14 +19,20 @@ class Book_stock_model extends MY_Model
     public function filter_book_stock($filters, $page)
     {
         $book_stocks = $this->select([
+            'author.author_name', 'draft.draft_id',
             'book_stock_id', 'book.book_id',
-            'book.book_title', 'book.isbn', 'book.published_date',
+            'book.book_title', 'book.published_date',
             'book_stock.*'])
+            ->join_table('book', 'book_stock', 'book')
+            ->join_table('draft', 'book', 'draft')
+            ->join_table('category', 'draft', 'category')
+            ->join_table('draft_author', 'draft', 'draft')
+            ->join_table('author', 'draft_author', 'author')
             ->when('keyword', $filters['keyword'])
             ->when('published_year', $filters['published_year'])
             ->when('warehouse_present', $filters['warehouse_present'])
-            ->join_table('book', 'book_stock', 'book')
             ->order_by('warehouse_present')
+            ->group_by('draft.draft_id')
             ->paginate($page)
             ->get_all();
 
@@ -35,8 +41,20 @@ class Book_stock_model extends MY_Model
             ->when('published_year', $filters['published_year'])
             ->when('warehouse_present', $filters['warehouse_present'])
             ->join_table('book', 'book_stock', 'book')
+            ->join_table('draft', 'book', 'draft')
+            ->join_table('category', 'draft', 'category')
+            ->join_table('draft_author', 'draft', 'draft')
+            ->join_table('author', 'draft_author', 'author')
             ->order_by('warehouse_present')
             ->count();
+        foreach ($book_stocks as $b) {
+            if ($b->draft_id) {
+                $b->authors = $this->get_id_and_name('author', 'draft_author', $b->draft_id, 'draft');
+            } else {
+                $b->authors = [];
+            }
+        }
+    
         return [
             'book_stocks' => $book_stocks,
             'total' => $total
@@ -45,11 +63,15 @@ class Book_stock_model extends MY_Model
 
     public function filter_excel($filters)
     {
-        return $this->select(['book.book_title', 'book.isbn', 'book.published_date', 'book_stock.*'])
+        return $this->select(['book.book_title', 'author.author_name', 'book.published_date', 'book_stock.*'])
             ->when('keyword', $filters['keyword'])
             ->when('published_year', $filters['published_year'])
             ->when('warehouse_present', $filters['warehouse_present'])
             ->join_table('book', 'book_stock', 'book')
+            ->join_table('draft', 'book', 'draft')
+            ->join_table('category', 'draft', 'category')
+            ->join_table('draft_author', 'draft', 'draft')
+            ->join_table('author', 'draft_author', 'author')
             ->order_by('book.book_title')
             ->get_all();
     }
@@ -62,7 +84,7 @@ class Book_stock_model extends MY_Model
                 $this->group_start();
                 // $this->or_like('name', $data);
                 $this->or_like('book_title', $data);
-                $this->or_like('isbn', $data);
+                $this->or_like('author_name', $data);
                 $this->group_end();
             }
             if ($params == 'published_year') {
@@ -91,6 +113,16 @@ class Book_stock_model extends MY_Model
         ->get();
     }
 
+    public function get_book_stock_by_book_id($book_id){
+        return $this->select(['book.book_title','book_stock.*', 'author.author_name', 'book.harga'])
+        ->where('book_stock.book_id', $book_id)
+        ->join_table('book','book_stock','book')
+        ->join_table('draft', 'book', 'draft')
+        ->join_table('draft_author', 'draft', 'draft')
+        ->join_table('author', 'draft_author', 'author')
+        ->get();
+    }
+
     public function get_book($book_id)
     {
         return $this->select('book.*')
@@ -98,6 +130,7 @@ class Book_stock_model extends MY_Model
         ->join_table('book','book_stock','book')
         ->get('book');
     }
+
 
     // public function fetch_stock_by_id($book_id)
     // {
@@ -149,6 +182,38 @@ class Book_stock_model extends MY_Model
         // ->where('library_stock_detail.library_id', $library_id)
         ->get()
         ->result();
+    }
+
+    public function retur_stock()
+    {
+        return $this->select(['book.book_title', 'author.author_name', 'book.published_date', 
+            'book_stock.book_stock_id', 'book_stock.book_id', 'book_stock.retur_stock'])
+            ->join_table('book', 'book_stock', 'book')
+            ->join_table('draft', 'book', 'draft')
+            // ->join_table('category', 'draft', 'category')
+            ->join_table('draft_author', 'draft', 'draft')
+            ->join_table('author', 'draft_author', 'author')
+            ->where_not('retur_stock', NULL)
+            ->order_by('book.book_title')
+            ->get_all();
+    }
+
+    public function log_retur()
+    {
+        return $this->db->select(['book.book_title', 'book_stock_revision.*'])
+            ->from('book_stock_revision')
+            // ->join('book_stock', 'book_stock.book_stock_id = book_stock_revision.book_stock_id')
+            ->join('book', 'book.book_id = book_stock_revision.book_id')
+            // ->join_table('book', 'book_stock', 'book')
+            // ->join_table('book', 'book_stock', 'book')
+            // ->join_table('draft', 'book', 'draft')
+            // ->join_table('category', 'draft', 'category')
+            // ->join_table('draft_author', 'draft', 'draft')
+            // ->join_table('author', 'draft_author', 'author')
+            ->where('book_stock_revision.type', 'return')
+            ->order_by('book_stock_revision_id', 'DESC')
+            ->get()
+            ->result();
     }
 
     // public function fetch_library_stock($book_stock_id){

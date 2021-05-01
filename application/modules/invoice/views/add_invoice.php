@@ -39,10 +39,10 @@
                         <div
                             class="form-group"
                             style="display: none;"
-                            id='sourceDropdown'
+                            id='source-dropdown'
                         >
                             <label
-                                for="type"
+                                for="source"
                                 class="font-weight-bold"
                             >Asal Stok<abbr title="Required">*</abbr></label>
                             <?= form_dropdown('source', $source, 0, 'id="source" class="form-control custom-select d-block"'); ?>
@@ -50,6 +50,21 @@
                                 id="error-source"
                                 class="d-none error-message text-danger"
                             >Asal stok wajib diisi jika jenis faktur adalah tunai!</small>
+                        </div>
+                        <div
+                            class="form-group"
+                            id="source-library-dropdown"
+                            style="display:none"
+                        >
+                            <label
+                                for="source-library-id"
+                                class="font-weight-bold"
+                            >Asal Perpustakaan<abbr title="Required">*</abbr></label>
+                            <?= form_dropdown('source-library-id', get_dropdown_list_library(), 0, 'id="source-library-id" class="form-control custom-select d-block"'); ?>
+                            <small
+                                id="error-source-library"
+                                class="d-none error-message text-danger"
+                            >Asal perpustakaan wajib diisi jika asal stok faktur adalah perpustakaan!</small>
                         </div>
                         <div
                             id="invoice-type"
@@ -237,6 +252,10 @@
                                             <td id="info-book-title"></td>
                                         </tr>
                                         <tr>
+                                            <td width="175px"> Penulis Buku </td>
+                                            <td id="info-book-author"></td>
+                                        </tr>
+                                        <tr>
                                             <td width="175px"> ISBN </td>
                                             <td id="info-isbn"></td>
                                         </tr>
@@ -401,6 +420,10 @@ $(document).ready(function() {
         placeholder: '-- Pilih --',
         dropdownParent: $('#app-main')
     });
+    $("#source-library-id").select2({
+        placeholder: '-- Pilih --',
+        dropdownParent: $('#app-main')
+    });
 
     function add_book_to_invoice() {
         var bookId = document.getElementById('book-id');
@@ -413,7 +436,7 @@ $(document).ready(function() {
         html += '</td>';
 
         // Harga
-        html += '<td class="align-middle">' + $('#info-price').text();
+        html += '<td class="align-middle"> Rp ' + $('#info-price').text();
         html += '<input type="number" hidden name="invoice_book_price[]" class="form-control" value="' + $('#info-price').text() + '"/>';
         html += '</td>';
 
@@ -429,7 +452,7 @@ $(document).ready(function() {
 
         // Total
         var totalPrice = (parseFloat($('#info-price').text())) * (parseFloat($('#qty').val())) * (1 - (parseFloat($('#discount').val()) / 100));
-        html += '<td class="align-middle">' + totalPrice + '</td>';
+        html += '<td class="align-middle"> Rp ' + parseFloat(totalPrice).toFixed(0) + '</td>';
 
         // Button Hapus
         html += '<td class="align-middle"><button type="button" class="btn btn-danger remove">Hapus</button></td></tr>';
@@ -489,6 +512,7 @@ $(document).ready(function() {
                     "max": res.data.stock
                 });
                 $('#info-book-title').html(res.data.book_title)
+                $('#info-book-author').html(res.data.author_name)
                 $('#info-isbn').html(res.data.isbn)
                 $('#info-price').html(res.data.harga)
                 $('#info-year').html(published_date.getFullYear())
@@ -545,10 +569,12 @@ $(document).ready(function() {
     $('#type').change(function(e) {
         const type = e.target.value
         if (type == 'cash') {
-            $('#sourceDropdown').show()
+            $('#source-dropdown').show()
         } else {
-            $('#sourceDropdown').hide()
+            $('#source-dropdown').hide()
+            $('#source-library-dropdown').hide()
             $('#source').val('')
+            $('#source-library-id').val('').trigger('change')
         }
         $.ajax({
             type: "GET",
@@ -564,9 +590,19 @@ $(document).ready(function() {
         });
     })
 
+    $('#source').change(function() {
+        if ($("#source").val() == "library") {
+            $("#source-library-dropdown").show()
+        } else {
+            $("#source-library-dropdown").hide()
+            $('#source-library-id').val('').trigger('change')
+        }
+    })
+
     $("#invoice_form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
+        console.log(form.serialize())
         $.ajax({
             type: "POST",
             url: "<?= base_url("invoice/add"); ?>",

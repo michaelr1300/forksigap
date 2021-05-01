@@ -1,5 +1,8 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+
 class Invoice extends MY_Controller
 {
     public function __construct()
@@ -14,9 +17,10 @@ class Invoice extends MY_Controller
     public function index($page = NULL)
     {
         $filters = [
-            'keyword'   => $this->input->get('keyword', true),
-            'type'      => $this->input->get('type', true),
-            'status'    => $this->input->get('status', true)
+            'keyword'           => $this->input->get('keyword', true),
+            'invoice_type'      => $this->input->get('invoice_type', true),
+            'status'            => $this->input->get('status', true),
+            'customer_type'     => $this->input->get('customer_type', true)
         ];
 
         $this->invoice->per_page = $this->input->get('per_page', true) ?? 10;
@@ -44,7 +48,6 @@ class Invoice extends MY_Controller
         $this->load->view('template', compact('pages', 'main_view', 'invoice', 'invoice_books'));
     }
 
-    // View add
     public function add()
     {
         //post add invoice
@@ -75,6 +78,7 @@ class Invoice extends MY_Controller
                 'due_date'          => $this->input->post('due-date'),
                 'type'              => $this->input->post('type'),
                 'source'            => $this->input->post('source'),
+                'source_library_id' => $this->input->post('source-library-id'),
                 'status'            => 'waiting',
                 'issued_date'       => $date_created
                 // 'user_created'      => $user_created
@@ -127,7 +131,17 @@ class Invoice extends MY_Controller
         }
     }
 
-    // View Edit
+    public function add_showroom()
+    {
+        $customer_type = get_customer_type();
+
+        $dropdown_book_options = $this->invoice->get_ready_book_list_showroom();
+
+        $pages       = $this->pages;
+        $main_view   = 'invoice/add_showroom';
+        $this->load->view('template', compact('pages', 'main_view', 'customer_type', 'dropdown_book_options'));
+    }
+
     public function edit($invoice_id)
     {
         //post edit invoice
@@ -156,6 +170,7 @@ class Invoice extends MY_Controller
                 'due_date'          => $this->input->post('due-date'),
                 'type'              => $this->input->post('type'),
                 'source'            => $this->input->post('source'),
+                'source_library_id' => $this->input->post('source-library-id'),
                 'status'            => 'waiting'
                 // 'date_edited'   => date('Y-m-d H:i:s'),
                 // 'user_edited'   => $_SESSION['username']
@@ -227,10 +242,29 @@ class Invoice extends MY_Controller
 
         $this->db->trans_begin();
 
-        // update lembar kerja
-        $this->invoice->where('invoice_id', $id)->update([
-            'status' => $invoice_status,
-        ]);
+        // Confirm Faktur
+        if ($invoice_status == 'confirm') {
+            // M T W T F S S
+            // 1 2 3 4 5 6 7
+            if (date('N') < 5) {
+                $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ 1 day"));
+            } else {
+                $add_day = 8 - date('N');
+                $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ " . $add_day . "day"));
+            }
+            $this->invoice->where('invoice_id', $id)->update([
+                'status' => $invoice_status,
+                'confirm_date' => now(),
+                'preparing_deadline' => $preparing_deadline
+            ]);
+        } else
+            // Cancel Faktur
+            if ($invoice_status == 'cancel') {
+                $this->invoice->where('invoice_id', $id)->update([
+                    'status' => $invoice_status,
+                    'cancel_date' => now(),
+                ]);
+            }
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -266,6 +300,95 @@ class Invoice extends MY_Controller
         $file_name = $invoice->number . '_Invoice';
 
         $this->pdf->generate_pdf_a4_portrait($html, $file_name);
+      
+    public function print_showroom_receipt()
+    {
+        // me-load library escpos
+        // $this->load->library('Escpose');
+        // membuat connector printer ke shared printer bernama "printer_a"
+        $connector = new WindowsPrintConnector("printer_a");
+
+        // membuat objek $printer agar dapat di lakukan fungsinya
+        $printer = new Printer($connector);
+
+        // membuat fungsi untuk membuat 1 baris tabel, agar dapat dipanggil berkali-kali dengan mudah
+        function buatBaris4Kolom($kolom1, $kolom2, $kolom3, $kolom4)
+        {
+            // Mengatur lebar setiap kolom (dalam satuan karakter)
+            $lebar_kolom_1 = 12;
+            $lebar_kolom_2 = 8;
+            $lebar_kolom_3 = 8;
+            $lebar_kolom_4 = 9;
+
+            // Melakukan wordwrap(), jadi jika karakter teks melebihi lebar kolom, ditambahkan \n 
+            $kolom1 = wordwrap($kolom1, $lebar_kolom_1, "\n", true);
+            $kolom2 = wordwrap($kolom2, $lebar_kolom_2, "\n", true);
+            $kolom3 = wordwrap($kolom3, $lebar_kolom_3, "\n", true);
+            $kolom4 = wordwrap($kolom4, $lebar_kolom_4, "\n", true);
+
+            // Merubah hasil wordwrap menjadi array, kolom yang memiliki 2 index array berarti memiliki 2 baris (kena wordwrap)
+            $kolom1Array = explode("\n", $kolom1);
+            $kolom2Array = explode("\n", $kolom2);
+            $kolom3Array = explode("\n", $kolom3);
+            $kolom4Array = explode("\n", $kolom4);
+
+            // Mengambil jumlah baris terbanyak dari kolom-kolom untuk dijadikan titik akhir perulangan
+            $jmlBarisTerbanyak = max(count($kolom1Array), count($kolom2Array), count($kolom3Array), count($kolom4Array));
+
+            // Mendeklarasikan variabel untuk menampung kolom yang sudah di edit
+            $hasilBaris = array();
+
+            // Melakukan perulangan setiap baris (yang dibentuk wordwrap), untuk menggabungkan setiap kolom menjadi 1 baris 
+            for ($i = 0; $i < $jmlBarisTerbanyak; $i++) {
+
+                // memberikan spasi di setiap cell berdasarkan lebar kolom yang ditentukan, 
+                $hasilKolom1 = str_pad((isset($kolom1Array[$i]) ? $kolom1Array[$i] : ""), $lebar_kolom_1, " ");
+                $hasilKolom2 = str_pad((isset($kolom2Array[$i]) ? $kolom2Array[$i] : ""), $lebar_kolom_2, " ");
+
+                // memberikan rata kanan pada kolom 3 dan 4 karena akan kita gunakan untuk harga dan total harga
+                $hasilKolom3 = str_pad((isset($kolom3Array[$i]) ? $kolom3Array[$i] : ""), $lebar_kolom_3, " ", STR_PAD_LEFT);
+                $hasilKolom4 = str_pad((isset($kolom4Array[$i]) ? $kolom4Array[$i] : ""), $lebar_kolom_4, " ", STR_PAD_LEFT);
+
+                // Menggabungkan kolom tersebut menjadi 1 baris dan ditampung ke variabel hasil (ada 1 spasi disetiap kolom)
+                $hasilBaris[] = $hasilKolom1 . " " . $hasilKolom2 . " " . $hasilKolom3 . " " . $hasilKolom4;
+            }
+
+            // Hasil yang berupa array, disatukan kembali menjadi string dan tambahkan \n disetiap barisnya.
+            return implode("\n", $hasilBaris) . "\n";
+        }
+
+        // Membuat judul
+        $printer->initialize();
+        $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT); // Setting teks menjadi lebih besar
+        $printer->setJustification(Printer::JUSTIFY_CENTER); // Setting teks menjadi rata tengah
+        $printer->text("UGM Press\n");
+        $printer->text("\n");
+
+        // Data transaksi
+        $printer->initialize();
+        $printer->text("Kasir : Andrew\n");
+        $printer->text("Waktu : 23-04-2021 19:23:22\n");
+
+        // Membuat tabel
+        $printer->initialize(); // Reset bentuk/jenis teks
+        $printer->text("----------------------------------------\n");
+        $printer->text(buatBaris4Kolom("Barang", "qty", "Harga", "Subtotal"));
+        $printer->text("----------------------------------------\n");
+        $printer->text(buatBaris4Kolom("Makaroni 250gr", "2pcs", "15.000", "30.000"));
+        $printer->text(buatBaris4Kolom("Telur", "2pcs", "5.000", "10.000"));
+        $printer->text(buatBaris4Kolom("Tepung terigu", "1pcs", "8.200", "16.400"));
+        $printer->text("----------------------------------------\n");
+        $printer->text(buatBaris4Kolom('', '', "Total", "56.400"));
+        $printer->text("\n");
+
+        // Pesan penutup
+        $printer->initialize();
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->text("Terima kasih telah berbelanja\n");
+        $printer->text("UGM Press Yogyakarta\n");
+
+        $printer->feed(5); // mencetak 5 baris kosong agar terangkat (pemotong kertas saya memiliki jarak 5 baris dari toner)
+        $printer->close();
     }
 
     public function api_get_book($book_id)
