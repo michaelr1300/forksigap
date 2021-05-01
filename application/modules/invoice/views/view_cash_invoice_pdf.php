@@ -243,30 +243,6 @@
         </tr>
         <tr>
             <td scope="col"></td>
-            <td scope="col">Diskon</td>
-            <td
-                scope="col"
-                style="text-align: right;"
-            >0%</td>
-            <td
-                scope="col"
-                style="text-align: right; border-bottom: 1px solid black"
-            >0</td>
-        </tr>
-        <tr>
-            <td scope="col"></td>
-            <td scope="col"></td>
-            <td
-                scope="col"
-                style="text-align: right;"
-            ></td>
-            <td
-                scope="col"
-                style="text-align: right;"
-            ><?= $total ?></td>
-        </tr>
-        <tr>
-            <td scope="col"></td>
             <td scope="col">Ongkos Kirim</td>
             <td
                 scope="col"
