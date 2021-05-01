@@ -55,6 +55,14 @@ $level              = check_level();
                                     <td width="200px"> Tanggal Jatuh Tempo </td>
                                     <td><?= $invoice->due_date ?></td>
                                 </tr>
+                                <tr>
+                                    <td width="200px"> Total Berat </td>
+                                    <td><?= $invoice->total_weight ?></td>
+                                </tr>
+                                <tr>
+                                    <td width="200px"> Total Ongkir </td>
+                                    <td><?= $invoice->delivery_fee ?></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -170,13 +178,77 @@ $level              = check_level();
                     </tbody>
                 </table>
 				<br>
-				
                 <div id="card-button" class="d-flex justify-content-end">
-                    <a class="btn btn-outline-danger" href="<?php echo base_url('invoice/pdf') ?>">Generate PDF<i class="fas fa-file-pdf fa-fw"></i></a>
+                    <button onclick="check_delivery()" class="btn btn-outline-danger">
+                        Generate PDF<i class="fas fa-file-pdf fa-fw"></i>
+                    </button>
                 </div>
-
-                
             </div>
         </div>
     </section>
 </div>
+                <div
+                    class="modal modal-alert fade"
+                    id="modal-delivery"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="modal-delivery"
+                    aria-hidden="true"
+                >
+                    <div
+                        class="modal-dialog"
+                        role="document"
+                    >
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Diskon</h5>
+                            </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label
+                                            for="delivery_fee"
+                                            class="font-weight-bold"
+                                        >
+                                            Masukkan Ongkos Kirim
+                                            <abbr title="Required">*</abbr>
+                                        </label>
+                                        <input
+                                            type="number"
+                                            name="delivery_fee"
+                                            id="delivery"
+                                            min=0
+                                            class="form-control"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                        onclick="save_delivery_fee()"
+                                    >Save</button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-light"
+                                        data-dismiss="modal"
+                                    >Close</button>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+<script>
+    function check_delivery(){
+        var ongkir = "<?= $invoice->delivery_fee ?>"
+        if (ongkir == ''){
+            $("#modal-delivery").modal()
+        }else
+        {
+            location.href="<?= base_url("invoice/generate_pdf/" . $invoice->invoice_id); ?>"
+        }
+    }
+
+    function save_delivery_fee(){
+        var ongkir = $("#delivery").val()
+        location.href="<?= base_url("invoice/generate_pdf/" . $invoice->invoice_id); ?>" + '/' + ongkir
+    }
+</script>
