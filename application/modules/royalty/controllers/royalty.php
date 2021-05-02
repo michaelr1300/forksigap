@@ -19,10 +19,27 @@ class Royalty extends MY_Controller
         //     'status'            => $this->input->get('status', true),
         //     'customer_type'     => $this->input->get('customer_type', true)
         // ];
-        $authors = $this->db->select('count(author_id)')->from('author')->get()->result();
+        $total_array = [];
+        $index = 0;
+        $authors = $this->db->select('author_id, author_name')->from('author')->get()->result();
         foreach ($authors as $author) {
-            $books =  $this->royalty->get_book($author->author_id);
+            $total_array[$index] = $this->royalty->author_earning($author->author_id)->total;
+            // $books_array[$index_books] =  $this->royalty->get_book($author->author_id);
+            $index++;
         }
+        var_dump($total_array);
+
+        // $total_array = [];
+        // $index_total = 0;
+        // foreach ($authors as $author) {
+        //     $total_array[$index_total] = 0;
+        //     foreach ($books_array[$index_total] as $book_array) {
+        //         if ($this->royalty->sum_book($book_array->book_id)->total != null) {
+        //             $total_array[$index_total] += intval($this->royalty->sum_book($book_array->book_id)->total);
+        //         }
+        //     }
+        //     $index_total++;
+        // }
 
         // $this->invoice->per_page = $this->input->get('per_page', true) ?? 10;
 

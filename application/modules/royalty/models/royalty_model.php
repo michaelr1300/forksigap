@@ -14,13 +14,38 @@ class Royalty_model extends MY_Model
 
     public function get_book($author_id)
     {
-        return $this->db->select('book_title')
+        return $this->db->select('book_id, book_title, book.draft_id')
             ->from('book')
             ->join('draft_author', 'draft_author.draft_id = book.draft_id')
             ->where('author_id', $author_id)
             ->get()
             ->result();
     }
+
+    public function author_earning($author_id)
+    {
+        $this->db->select('SUM(qty*price) AS total')
+            ->from('book')
+            ->join('draft_author', 'draft_author.draft_id = book.draft_id', 'right')
+            ->join('invoice_book', 'book.book_id = invoice_book.book_id')
+            ->join('invoice', 'invoice_book.invoice_id = invoice.invoice_id')
+            // ->where('issued_date', '$filter[start_date')
+            // ->where('issued_date', '$filters[end_date]')
+            ->where('author_id', $author_id);
+        return $this->db->get()->row();
+    }
+
+    // public function sum_book($book_id)
+    // {
+    //     $this->db->select('SUM(qty*price) AS total')
+    //         ->from('invoice_book')
+    //         ->join('invoice', 'invoice.invoice_id = invoice_book.invoice_id', 'left')
+    //         ->order_by('total', 'ASC')
+    //         // ->where('issued_date', '$filter[start_date')
+    //         // ->where('issued_date', '$filters[end_date]')
+    //         ->where('book_id', $book_id);
+    //     return $this->db->get()->row();
+    // }
     // public function validate_invoice()
     // {
     //     $data = array();
