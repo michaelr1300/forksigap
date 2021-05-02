@@ -42,7 +42,7 @@ class Invoice extends MY_Controller
         $pages          = $this->pages;
         $main_view      = 'invoice/view_invoice';
         $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
-        $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);        
+        $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
         $invoice->customer = $this->invoice->get_customer($invoice->customer_id);
 
         $this->load->view('template', compact('pages', 'main_view', 'invoice', 'invoice_books'));
@@ -277,6 +277,30 @@ class Invoice extends MY_Controller
         redirect($this->pages);
     }
 
+    public function generate_pdf($invoice_id, $ongkir=false)
+    {
+        $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
+        $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
+        $customer       = $this->invoice->get_customer($invoice->customer_id);
+        if ($ongkir != false){
+            $invoice->delivery_fee = $ongkir;
+            $this->db->set('delivery_fee', $ongkir)->where('invoice_id', $invoice_id)->update('invoice');
+        }
+        // PDF
+        $this->load->library('pdf');
+        $data_format['invoice'] = $invoice ?? '';
+        $data_format['invoice_books'] = $invoice_books ?? '';
+        $data_format['customer'] = $customer ?? '';
+        
+        if ($invoice->type == 'cash'){
+            $html = $this->load->view('invoice/view_cash_invoice_pdf', $data_format, true);
+        }else{
+            $html = $this->load->view('invoice/view_invoice_pdf', $data_format, true);
+        }
+        $file_name = $invoice->number . '_Invoice';
+
+        $this->pdf->generate_pdf_a4_portrait($html, $file_name);
+      
     public function print_showroom_receipt()
     {
         // me-load library escpos

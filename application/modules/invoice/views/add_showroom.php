@@ -62,17 +62,28 @@
                                     class="font-weight-bold"
                                 >Customer</label>
                                 <div class="row">
-                                    <div class="form-group col-md-8">
-                                        <?= form_dropdown('customer-id', get_customer_list(), 0, 'id="customer-id" class="form-control custom-select d-block"'); ?>
-                                    </div>
-                                    <div class="form-group col-md-4"><input
+                                    <div class="form-group pl-2 pr-2"><input
+                                            class="btn btn-primary"
+                                            value="Pilih Customer"
+                                            id="pilihCustomer"
+                                            readonly
+                                        /></div>
+                                    <div class="form-group"><input
                                             class="btn btn-primary"
                                             value="Customer Baru"
                                             id="tambahCustomer"
                                             readonly
                                         /></div>
                                 </div>
-
+                            </div>
+                        </div>
+                        <div>
+                            <div
+                                id="customer-dropdown"
+                                class="form-group col-md-8"
+                                style="display: none"
+                            >
+                                <?= form_dropdown('customer-id', get_customer_list(), 0, 'id="customer-id" class="form-control custom-select d-block"'); ?>
                             </div>
                         </div>
                         <div
@@ -324,6 +335,28 @@
 <script>
 $(document).ready(function() {
     get_showroom_number()
+    $('#pilihCustomer').click(function() {
+        var value = $('#pilihCustomer').val()
+        if (value == "Pilih Customer") {
+            $('#pilihCustomer').val("Hapus Customer")
+            $('#pilihCustomer').removeClass('btn-primary')
+            $('#pilihCustomer').addClass('btn-danger')
+            $('#customer-dropdown').show()
+            $('#tambahCustomer').removeClass('btn-danger')
+            $('#tambahCustomer').addClass('btn-primary')
+            $('#new-customer-info').hide()
+            $('#new-customer-name').val('')
+            $('#new-customer-type').val('')
+            $('#tambahCustomer').val("Customer Baru")
+        } else {
+            $('#pilihCustomer').val("Pilih Customer")
+            $('#pilihCustomer').removeClass('btn-danger')
+            $('#pilihCustomer').addClass('btn-primary')
+            $('#customer-dropdown').hide()
+            $('#customer-id').val('')
+            $('#customer-info').hide()
+        }
+    })
     $('#tambahCustomer').click(function() {
         var value = $('#tambahCustomer').val()
         if (value == "Customer Baru") {
@@ -333,6 +366,12 @@ $(document).ready(function() {
             $('#new-customer-info').show()
             $('#customer-info').hide()
             $('#customer-id').val('')
+            $('#pilihCustomer').removeClass('btn-danger')
+            $('#pilihCustomer').addClass('btn-primary')
+            $('#customer-dropdown').hide()
+            $('#customer-id').val('')
+            $('#customer-info').hide()
+            $('#pilihCustomer').val("Pilih Customer")
         } else {
             $('#tambahCustomer').val("Customer Baru")
             $('#tambahCustomer').removeClass('btn-danger')
@@ -546,6 +585,7 @@ $(document).ready(function() {
     $("#invoice_form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
+        console.log(form.serialize())
         $.ajax({
             type: "POST",
             url: "<?= base_url("invoice/add"); ?>",
