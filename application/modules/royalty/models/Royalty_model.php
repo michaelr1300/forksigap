@@ -3,4 +3,5 @@
 class Royalty_model extends MY_Model
 {
     protected $per_page = 10;
+    //test
 }
