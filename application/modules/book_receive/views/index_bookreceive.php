@@ -130,9 +130,9 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <?php if ($level == 'superadmin') : ?>
                                 <td style="min-width: 130px" class="align-middle text-center">
                                     <a href="<?= base_url('book_receive/edit/' . $book_receive->book_receive_id . ''
-                                    ); ?>" class="btn btn-sm btn-secondary" title="Edit Stok Buku">
+                                    ); ?>" class="btn btn-sm btn-secondary" title="Edit Penerimaan Buku">
                                         <i class="fa fa-pencil-alt"></i>
-                                        <span class="sr-only">Edit Stok Buku</span>
+                                        <span class="sr-only">Edit Penerimaan Buku</span>
                                     </a>
                                     <button title="Delete" type="button" class="btn btn-sm btn-danger"
                                         data-toggle="modal" data-target="#modal-hapus-<?= $book_receive->book_receive_id; ?>"><i
