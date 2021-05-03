@@ -100,10 +100,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             scope="col"
                                             class="pl-4"
                                         >No</th>
-                                        <th scope="col">Nama</th>
-                                        <th scope="col">Alamat</th>
-                                        <th scope="col">No Telepon</th>
-                                        <th scope="col">Jenis Customer</th>
+                                        <th scope="col" style="width:25%">Nama</th>
+                                        <th scope="col" style="width:40%">Alamat</th>
+                                        <th scope="col" style="width:15%">No Telepon</th>
+                                        <th scope="col" style="width:15%">Jenis Customer</th>
                                         <th style="width:100px; min-width:100px;"> &nbsp; </th>
                                     </tr>
                                 </thead>
