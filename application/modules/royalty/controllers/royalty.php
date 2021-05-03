@@ -13,50 +13,53 @@ class Royalty extends MY_Controller
 
     public function index($page = NULL)
     {
-        // $filters = [
-        //     'keyword'           => $this->input->get('keyword', true),
-        //     'invoice_type'      => $this->input->get('invoice_type', true),
-        //     'status'            => $this->input->get('status', true),
-        //     'customer_type'     => $this->input->get('customer_type', true)
-        // ];
-        $total_array = [];
-        $index = 0;
-        $authors = $this->db->select('author_id, author_name')->from('author')->get()->result();
-        foreach ($authors as $author) {
-            $total_array[$index] = $this->royalty->author_earning($author->author_id)->total;
-            // $books_array[$index_books] =  $this->royalty->get_book($author->author_id);
-            $index++;
+        $date_year = $this->input->get('date_year', true);
+        $period_time = $this->input->get('period_time', true);
+        $period_start = null;
+        $period_end = null;
+        if ($period_time != null) {
+            if ($period_time == 1) {
+                $period_start = $date_year . '/01/01';
+                $period_end = $date_year . '/06/30 23:59:59.999';
+            } else if ($period_time == 2) {
+                $period_start = $date_year . '/06/01';
+                $period_end = $date_year . '/12/31 23:59:59.999';
+            }
         }
-        var_dump($total_array);
 
-        // $total_array = [];
-        // $index_total = 0;
-        // foreach ($authors as $author) {
-        //     $total_array[$index_total] = 0;
-        //     foreach ($books_array[$index_total] as $book_array) {
-        //         if ($this->royalty->sum_book($book_array->book_id)->total != null) {
-        //             $total_array[$index_total] += intval($this->royalty->sum_book($book_array->book_id)->total);
-        //         }
-        //     }
-        //     $index_total++;
-        // }
+        $filters = [
+            'keyword'           => $this->input->get('keyword', true),
+            'period_start'      => $period_start,
+            'period_end'        => $period_end
+        ];
+        $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
 
-        // $this->invoice->per_page = $this->input->get('per_page', true) ?? 10;
+        $royalty = $this->royalty->author_earning($filters);
+        $total = count($royalty);
+        $total_royalty = 0;
+        foreach ($royalty as $royalty_each) {
+            $total_royalty += $royalty_each->total;
+        }
 
-        // $get_data = $this->invoice->filter_invoice($filters, $page);
-
-        // //data invoice
-        // $invoice    = $get_data['invoice'];
-        // $total      = $get_data['total'];
-        // $pagination = $this->invoice->make_pagination(site_url('invoice'), 2, $total);
+        $pagination = $this->royalty->make_pagination(site_url('royalty'), 2, $total);
 
         $pages      = $this->pages;
         $main_view  = 'royalty/index_royalty';
-        // $this->load->view('template', compact('pages', 'main_view'));
+        $this->load->view('template', compact('pages', 'main_view', 'royalty', 'pagination', 'total', 'total_royalty'));
     }
 
     public function view()
     {
+        // $total_array = [];
+        // $index = 0;
+        // $authors = $this->db->select('author_id, author_name')->from('author')->get()->result();
+        // foreach ($authors as $author) {
+        //     $total_array[$index] = $this->royalty->author_earning($author->author_id)->total;
+        //     // $books_array[$index_books] =  $this->royalty->get_book($author->author_id);
+        //     $index++;
+        // }
+        // var_dump($total_array);
+
         $pages          = $this->pages;
         $main_view      = 'royalty/view_royalty';
         // $invoice        = $this->invoice->fetch_invoice_id($invoice_id);

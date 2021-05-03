@@ -59,7 +59,7 @@ function royalti_action()
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h1 class="page-title"> Royalti </h1>
-            <span class="badge badge-info">Total : ??</span>
+            <span class="badge badge-info">Total : <?= $total ?></span>
         </div>
     </div>
 </header>
@@ -102,7 +102,7 @@ function royalti_action()
                             </div>
                             <div class="col-12 col-md-8 mt-2">
                                 <label for="status">Pencarian</label>
-                                <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Nama Penulis, NIP, Institusi" class="form-control"'); ?>
+                                <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Nama Penulis" class="form-control"'); ?>
                             </div>
                             <div class="col-12 col-md-4 mt-2">
                                 <label>&nbsp;</label>
@@ -143,14 +143,14 @@ function royalti_action()
                                     scope="col"
                                     style="width:35%;"
                                 >Nama</th>
-                                <th
+                                <!-- <th
                                     scope="col"
                                     style="width:15%;"
                                 >NIP</th>
                                 <th
                                     scope="col"
                                     style="width:15%;"
-                                >Institusi</th>
+                                >Institusi</th> -->
                                 <th
                                     scope="col"
                                     style="width:15%;"
@@ -168,46 +168,26 @@ function royalti_action()
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="text-center">
-                                <td class="align-middle pl-4">
-                                    1
-                                </td>
-                                <td class="text-center align-middle">
-                                    <a
-                                        href="<?= base_url("$pages/view/"); ?>"
-                                        class="font-weight-bold"
-                                    >
-                                        Abdul
-                                    </a>
-                                </td>
-                                <td class="align-middle">
-                                    tes
-                                </td>
-                                <td class="align-middle">
-                                    tes
-                                </td>
-                                <td class="align-middle">
-                                    tes
-                                </td>
-                                <td class="align-middle">
-                                    Sudah Dibayar
-                                </td>
-                                <td class="align-middle text-right d-flex">
-                                    <button
-                                        type="button"
-                                        class="btn btn-sm btn-secondary"
-                                        data-container="body"
-                                        data-toggle="popover"
-                                        data-placement="left"
-                                        data-html="true"
-                                        data-content="<?= royalti_action(); ?>"
-                                        data-trigger="focus"
-                                        style="margin-right:5px;"
-                                    >
-                                        <i class="fa fa-thumbs-up">Aksi</i>
-                                    </button>
-                                </td>
-                            </tr>
+                            <?php foreach ($royalty as $lData) : ?>
+                                <tr class="text-center">
+                                    <td class="align-middle pl-4">
+                                        <?= ++$i; ?>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <a
+                                            href="<?= base_url("$pages/view/$lData->author_id"); ?>"
+                                            class="font-weight-bold"
+                                        >
+                                            <?= highlight_keyword($lData->author_name, $keyword); ?>
+                                        </a>
+                                    </td>
+                                    <td class="align-middle">
+                                        <?= $lData->total; ?>
+                                    </td>
+                                    <td>Status</td>
+                                    <td></td>
+                                </tr>
+                            <?php endforeach; ?>
                             <tr style="text-align:center;">
                                 <td
                                     scope="col"
@@ -221,7 +201,7 @@ function royalti_action()
                                     class="align-middle"
                                     colspan="3"
                                 >
-                                    <b>Rp 11.000.000</b>
+                                    <b>Rp <?= $total_royalty ?></b>
                                 </td>
                             </tr>
                         </tbody>

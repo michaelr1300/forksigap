@@ -22,17 +22,42 @@ class Royalty_model extends MY_Model
             ->result();
     }
 
-    public function author_earning($author_id)
+    public function author_earning($filters)
     {
-        $this->db->select('SUM(qty*price) AS total')
+        $this->db->select('author.author_id, author_name, SUM(qty*price) AS total')
             ->from('book')
             ->join('draft_author', 'draft_author.draft_id = book.draft_id', 'right')
+            ->join('author', 'draft_author.author_id = author.author_id')
             ->join('invoice_book', 'book.book_id = invoice_book.book_id')
             ->join('invoice', 'invoice_book.invoice_id = invoice.invoice_id')
-            // ->where('issued_date', '$filter[start_date')
-            // ->where('issued_date', '$filters[end_date]')
-            ->where('author_id', $author_id);
-        return $this->db->get()->row();
+            ->group_by('author.author_id');
+        if ($filters['keyword'] != '') {
+            $this->db->like('author_name', $filters['keyword']);
+        }
+        if ($filters['period_start'] != null && $filters['period_end'] != null) {
+            // $this->db->where('issued_date BETWEEN ' . $filters['period_start'] . ' and "' . $filters['period_end'] . '"');
+            $this->db->where('issued_date BETWEEN "' . $filters['period_start'] . '" and "' . $filters['period_end'] . '"');
+        }
+        return $this->db->get()->result();
+    }
+
+    public function when($params, $data)
+    {
+        // jika data null, maka skip
+        if ($data != '') {
+            if ($params == 'keyword') {
+                $this->group_start();
+                $this->or_like('author_name', $data);
+                $this->group_end();
+            } else {
+                $this->group_start();
+                $this->or_like('invoice.type', $data);
+                $this->or_like('customer.type', $data);
+                $this->or_like('status', $data);
+                $this->group_end();
+            }
+        }
+        return $this;
     }
 
     // public function sum_book($book_id)
@@ -181,26 +206,4 @@ class Royalty_model extends MY_Model
     //         'total' => $total
     //     ];
     // }
-
-    // public function when($params, $data)
-    // {
-    //     // jika data null, maka skip
-    //     if ($data != '') {
-    //         if ($params == 'keyword') {
-    //             $this->group_start();
-    //             $this->or_like('number', $data);
-    //             $this->or_like('name', $data);
-    //             $this->group_end();
-    //         } else {
-    //             $this->group_start();
-    //             $this->or_like('invoice.type', $data);
-    //             $this->or_like('customer.type', $data);
-    //             $this->or_like('status', $data);
-    //             $this->group_end();
-    //         }
-    //     }
-    //     return $this;
-    // }
-
-
 }
