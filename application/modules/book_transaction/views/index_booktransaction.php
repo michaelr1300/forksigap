@@ -41,7 +41,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                     <div class="p-3">
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-4 mb-3">
                                 <label for="per_page">Data per halaman</label>
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
@@ -53,9 +53,9 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <label for="end_date">Tanggal Selesai</label>
                                 <?= form_input('end_date', $end_date, 'class="form-control dates"')?>
                             </div>
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-8">
                                 <label for="status">Pencarian</label>
-                                <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Nama" class="form-control"'); ?>
+                                <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Judul" class="form-control"'); ?>
                             </div>
                             <div class="col-12 col-lg-4">
                                 <label>&nbsp;</label>
