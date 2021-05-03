@@ -21,6 +21,7 @@ class Book_transaction_model extends MY_Model{
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
             ->when('end_date', $filters['end_date'])
+            ->when('transaction_type', $filters['transaction_type'])
             ->order_by('book_transaction_id', 'DESC')
             ->paginate($page)
             ->get_all();
@@ -31,6 +32,7 @@ class Book_transaction_model extends MY_Model{
             ->when('keyword', $filters['keyword'])
             ->when('start_date', $filters['start_date'])
             ->when('end_date', $filters['end_date'])
+            ->when('transaction_type', $filters['transaction_type'])
             ->count();
         return [
             'book_transactions' => $book_transactions,
@@ -61,6 +63,20 @@ class Book_transaction_model extends MY_Model{
             }
             else if ($params == 'end_date') {
                 $this->where('date <=', $data.' 23:59:59');
+            }
+            else if ($params == 'transaction_type'){
+                if ($data == 'print'){
+                    $this->where_not('book_transaction.book_receive_id', null);
+                }
+                else if ($data == 'invoice'){
+                    $this->where_not('book_transaction.invoice_id', null);
+                }
+                else if ($data == 'transfer'){
+                    $this->where_not('book_transaction.book_transfer_id', null);
+                }
+                else if ($data == 'non_sales'){
+                    $this->where_not('book_transaction.book_non_sales_id', null);
+                }
             }
         }
         return $this;

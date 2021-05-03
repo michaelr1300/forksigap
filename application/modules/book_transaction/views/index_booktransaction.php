@@ -3,6 +3,7 @@ $level              = check_level();
 $per_page           = $this->input->get('per_page') ?? 10;
 $start_date         = $this->input->get('start_date');
 $end_date           = $this->input->get('end_date');
+$transaction_type   = $this->input->get('transaction_type');
 $keyword            = $this->input->get('keyword');
 $page               = $this->uri->segment(2);
 $i                  = isset($page) ? $page * $per_page - $per_page : 0;
@@ -41,21 +42,25 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                     <div class="p-3">
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
-                            <div class="col-12 col-md-4">
+                            <div class="col-12 col-md-3 mb-3">
                                 <label for="per_page">Data per halaman</label>
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
-                            <div class="col-12 col-md-4 mb-3">
+                            <div class="col-12 col-md-3 mb-3">
+                                <label for="transaction_type">Jenis Transaksi</label>
+                                <?= form_dropdown('transaction_type', get_book_transaction_type(), $transaction_type, 'id="transaction_type" class="form-control custom-select d-block" title="Filter Jenis Transaksi"');?>
+                            </div>
+                            <div class="col-12 col-md-3 mb-3">
                                 <label for="start_date">Tanggal Mulai</label>
                                 <?= form_input('start_date', $start_date, 'class="form-control dates"')?>
                             </div>
-                            <div class="col-12 col-md-4 mb-3">
+                            <div class="col-12 col-md-3 mb-3">
                                 <label for="end_date">Tanggal Selesai</label>
                                 <?= form_input('end_date', $end_date, 'class="form-control dates"')?>
                             </div>
-                            <div class="col-12 col-md-6">
+                            <div class="col-12 col-md-8">
                                 <label for="status">Pencarian</label>
-                                <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Nama" class="form-control"'); ?>
+                                <?= form_input('keyword', $keyword, 'placeholder="Cari berdasarkan Judul" class="form-control"'); ?>
                             </div>
                             <div class="col-12 col-lg-4">
                                 <label>&nbsp;</label>
@@ -97,32 +102,42 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                         <tbody>
                             <?php foreach ($book_transactions as $book_transaction) : ?>
                             <?php if ($book_transaction->stock_in) {
-                                    $stock_display = $book_transaction->stock_in;
-                                    $type_display = "Masuk";
+                                    $stock_display = '+ '.$book_transaction->stock_in;
+                                    $type_display = "Percetakan";
+                                    $change_text_color = "green";
+                                    $order_number = $book_transaction->order_number;
+                                    $link = base_url('book_receive/view/' . $book_transaction->book_receive_id);
                                 }
                                 else {
-                                    $stock_display = $book_transaction->stock_out;
-                                    $type_display = "Keluar";
+                                    $stock_display = '- '.$book_transaction->stock_out;
+                                    $change_text_color = "red";
+                                    if ($book_transaction->invoice_number){
+                                        $type_display = "Pesanan";
+                                        $order_number = $book_transaction->invoice_number;
+                                        $link = base_url('book_request/view/' . $book_transaction->book_request_id);
+                                    }
+                                    else if ($book_transaction->book_non_sales_number){
+                                        $type_display = "Non Penjualan";
+                                        $order_number = $book_transaction->book_non_sales_number;
+                                        $link = base_url('book_non_sales/view/' . $book_transaction->book_non_sales_id);
+                                    }
+                                    else if ($book_transaction->transfer_number){
+                                        $type_display = "Pemindahan";
+                                        $order_number = $book_transaction->transfer_number;
+                                        $link = base_url('book_transfer/view/' . $book_transaction->book_transfer_id);
+                                    }
                                 } ?>
                             <tr>
                                 <td class="align-middle text-center"><?= ++$i; ?></td>
                                 <td class="align-middle">
-                                    <a href="<?= base_url('book_transaction/view/' . $book_transaction->book_transaction_id . ''); ?>"
+                                    <a href="<?= $link ?>"
                                         class="font-weight-bold">
                                         <?= highlight_keyword($book_transaction->book_title, $keyword); ?>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?php if($book_transaction->stock_in) : ?>
-                                    <?= $book_transaction->order_number; ?>
-                                    <?php elseif ($book_transaction->invoice_number): ?>
-                                    <?= $book_transaction->invoice_number; ?>
-                                    <?php elseif ($book_transaction->transfer_number): ?>
-                                    <?= $book_transaction->transfer_number; ?>
-                                    <?php elseif ($book_transaction->book_non_sales_number): ?>
-                                    <?= $book_transaction->book_non_sales_number; ?>
-                                    <?php endif?>
+                                    <?= $order_number ?>
                                 </td>
-                                <td class="align-middle text-center">
+                                <td class="align-middle text-center" style=<?= "color:". $change_text_color?>>
                                     <?= $stock_display ?>
                                 </td>
                                 <td class="align-middle text-center">

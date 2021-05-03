@@ -20,6 +20,7 @@ class Book_transaction extends MY_Controller
                 'published_year'    => $this->input->get('published_year', true),
                 'start_date'        => $this->input->get('start_date', true),
                 'end_date'          => $this->input->get('end_date', true),
+                'transaction_type'  => $this->input->get('transaction_type', true),
                 'excel'             => $this->input->get('excel', true)
             ];
             //custom per page

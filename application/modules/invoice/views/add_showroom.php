@@ -585,7 +585,9 @@ $(document).ready(function() {
     $("#invoice_form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
-        console.log(form.serialize())
+        if ($('#customer-id').val() == "" && $('#new-customer-name').val() == "") {
+            $('#customer-id').val('1')
+        }
         $.ajax({
             type: "POST",
             url: "<?= base_url("invoice/add"); ?>",
@@ -608,8 +610,6 @@ $(document).ready(function() {
             }
         });
     })
-
-
 
 });
 </script>
