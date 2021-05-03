@@ -945,3 +945,13 @@ function get_book_revision_type(){
         'return' => 'Retur Buku'
     ];
 }
+
+function get_book_transaction_type(){
+    return [
+        '' => '--Pilih--',
+        'print' => 'Percetakan',
+        'invoice' => 'Pesanan',
+        'transfer' => 'Pemindahan',
+        'non_sales' => 'Non Penjualan'
+    ];
+}
