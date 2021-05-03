@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Book_receive extends MY_Controller
+class Book_receive extends Warehouse_Controller
 {
     public $per_page = 10;
 
@@ -10,7 +10,7 @@ class Book_receive extends MY_Controller
         $this->pages = "book_receive";
         $this->load->model('book_receive/book_receive_model', 'book_receive');
         $this->load->model('book_stock/book_stock_model', 'book_stock');
-        $this->load->model('book_transaction/book_transaction_model', 'book_transaction');
+        // $this->load->model('book_transaction/book_transaction_model', 'book_transaction');
     }
 
     //index book receive
@@ -26,7 +26,6 @@ class Book_receive extends MY_Controller
         $this->book_receive->per_page = $this->input->get('per_page', true) ?? 10;
         $get_data = $this->book_receive->filter_book_receive($filters, $page);
 
-        // if ($this->check_level() == TRUE):
         $book_receives = $get_data['book_receives'];
         $total = $get_data['total'];
         $pagination = $this->book_receive->make_pagination(site_url('book_receives'), 2, $total);
@@ -34,117 +33,6 @@ class Book_receive extends MY_Controller
         $pages      = $this->pages;
         $main_view  = 'book_receive/index_bookreceive';
         $this->load->view('template', compact('pages', 'main_view', 'book_receives', 'pagination', 'total'));
-        // endif;
-    }
-
-    //view details of book receive
-    public function view($book_receive_id = null)
-    {
-        if (!$this->_is_book_receive_user()) {
-            redirect($this->pages);
-        }
-
-        if ($book_receive_id == null) {
-            redirect($this->pages);
-        }
-
-        $book_receive = $this->book_receive->get_book_receive($book_receive_id);
-        $filename = $filename = strtolower($book_receive->order_number . '_serah_terima_acc');
-
-        if (!$book_receive) {
-            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
-            redirect($this->pages);
-        }
-
-        $is_handover = $book_receive->is_handover;
-        $is_wrapping = $book_receive->is_wrapping;
-        $is_final    = $book_receive->book_receive_status == 'finish';
-        $uploaded_file = $this->book_receive->find_file_ext($filename);
-
-        $pages       = $this->pages;
-        $main_view   = 'book_receive/view/overview';
-        $form_action = "book_receive/edit/$book_receive_id";
-        $this->load->view('template', compact('form_action', 'main_view', 'pages', 'book_receive', 'is_final', 'is_handover', 'is_wrapping', 'uploaded_file'));
-    }
-
-    // public function api_get_staff_gudang()
-    // {
-    //     $staff_gudang = $this->book_receive->get_staff_gudang();
-    //     return $this->send_json_output(true, $staff_gudang);
-    // }
-
-    private function _is_book_receive_user()
-    {
-        if ($this->level == 'superadmin' || $this->level == 'admin_gudang' || $this->level == 'staff_gudang') {
-            return true;
-        } else {
-            $this->session->set_flashdata('error', 'Hanya admin gudang dan superadmin yang dapat mengakses.');
-            return false;
-        }
-    }
-
-    public function generate_pdf_handover($book_receive_id, $progress)
-    {
-        $book_receive        = $this->book_receive->get_book_receive($book_receive_id);
-        $staff_gudang        = $this->book_receive->get_staff_gudang_by_progress($progress, $book_receive_id);
-        $staff = '';
-        foreach ($staff_gudang as $val) {
-            $staff .= $val->username . ", ";
-        }
-        // PDF
-        $this->load->library('pdf');
-
-        // FORMAT DATA
-        $data_format['jobtype'] = 'Serah Terima';
-        $data_format['title'] = $book_receive->book_title ?? '';
-        $data_format['ordernumber'] = $book_receive->order_number ?? '';
-        $data_format['total'] = $book_receive->total ?? '';
-        $data_format['total_postprint'] = $book_receive->total_postprint ?? '';
-        $data_format['handover_end_date'] = date('d/m/Y', strtotime($book_receive->handover_end_date)) ?? '';
-        // $data_format['staff'] = $book_receive->handover_staff;
-        $data_format['notes'] = $book_receive->{"{$progress}_notes"} ?? '';
-        $format = $this->load->view('book_receive/format_pdf_handover', $data_format, true);
-        $this->pdf->loadHtml($format);
-
-        // (Optional) Setup the paper size and orientation
-        $this->pdf->set_paper('A4', 'landscape');
-
-        // Render the HTML as PDF
-        $this->pdf->render();
-        $this->pdf->stream(strtolower($data_format['ordernumber'] . '_' . $data_format['jobtype']));
-    }
-
-    public function generate_pdf_wrapping($book_receive_id, $progress)
-    {
-        $book_receive        = $this->book_receive->get_book_receive($book_receive_id);
-        $staff_gudang        = $this->book_receive->get_staff_gudang_by_progress($progress, $book_receive_id);
-        $staff = '';
-        foreach ($staff_gudang as $val) {
-            $staff .= $val->username . ", ";
-        }
-        // PDF
-        $this->load->library('pdf');
-
-        // FORMAT DATA
-        $data_format['jobtype'] = 'Wrapping';
-        $data_format['title'] = $book_receive->book_title ?? '';
-        $data_format['ordernumber'] = $book_receive->order_number ?? '';
-        $data_format['total'] = $book_receive->total ?? '';
-        $data_format['total_postprint'] = $book_receive->total_postprint ?? '';
-        $data_format['wrapping_start_date'] = date('d/m/Y', strtotime($book_receive->wrapping_start_date)) ?? '';
-        $data_format['wrapping_end_date'] = date('d/m/Y', strtotime($book_receive->wrapping_end_date)) ?? '';
-        $data_format['wrapping_deadline'] = date('d/m/Y', strtotime($book_receive->wrapping_deadline)) ?? '';
-        // $data_format['staff'] = $book_receive->wrapping_staff;
-        $data_format['notes'] = $book_receive->{"{$progress}_notes"} ?? '';
-        $format = $this->load->view('book_receive/format_pdf_wrapping', $data_format, true);
-        $this->pdf->loadHtml($format);
-
-        // (Optional) Setup the paper size and orientation
-        $this->pdf->set_paper('A4', 'portrait');
-
-        // Render the HTML as PDF
-        $this->pdf->render();
-        $this->pdf->stream(strtolower($data_format['ordernumber'] . '_' . $data_format['jobtype']));
     }
 
     //edit book receive
@@ -175,51 +63,13 @@ class Book_receive extends MY_Controller
         $input->wrapping_deadline = empty_to_null($input->wrapping_deadline);
 
         if ($this->form_validation->run() == true) {
-            if ($input->is_handover == 0 || $input->is_wrapping == 0) {
-                $input->finish_date = null;
-            }
-            if ($input->is_handover == 0){
-                $input->wrapping_start_date = null;
-                $input->wrapping_end_date = null;
-                $input->is_wrapping = 0;
-                if ($input->handover_start_date == null){
-                    $input->handover_end_date = null; 
-                    $input->book_receive_status = 'waiting';
-                }
-                else if ($input->handover_end_date == null){
-                    $input->book_receive_status = 'handover';
-                }
-                else if ($input->handover_end_date != null){
-                    $input->book_receive_status = 'handover_approval';
-                }
-            }
-            else if ($input->is_wrapping == 0){
-                if ($input->wrapping_start_date == null){
-                    $input->wrapping_end_date = null; 
-                    $input->book_receive_status = 'handover_finish';
-                }
-                else if ($input->wrapping_end_date == null){
-                    $input->book_receive_status = 'wrapping';
-                }
-                else if ($input->wrapping_end_date != null){
-                    $input->book_receive_status = 'wrapping_approval';
-                }
-            }
-            else {
-                if ($input->finish_date == null){
-                    $input->book_receive_status = 'wrapping_finish';
-                }
-                else {
-                    $input->book_receive_status = 'finish';
-                }
-            }
             $this->db->set($input)->where('book_receive_id', $book_receive_id)->update('book_receive');
             $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
         } else {
             $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
             redirect($_SERVER['HTTP_REFERER'], 'refresh');
         }
-        redirect('book_receive/view/' . $book_receive_id);
+        redirect('book_receive');
     }
 
     public function delete($book_receive_id = null)
@@ -250,23 +100,42 @@ class Book_receive extends MY_Controller
         redirect($this->pages);
     }
 
-    private function _is_warehouse_admin()
+    //view details of book receive
+    public function view($book_receive_id = null)
     {
-        if ($this->level == 'superadmin' || $this->level == 'admin_gudang') {
-            return true;
-        } else {
-            $this->session->set_flashdata('error', 'Hanya admin gudang dan superadmin yang dapat mengakses.');
-            return false;
+        if (!$this->_is_warehouse_admin()) {
+            redirect($this->pages);
         }
+
+        if ($book_receive_id == null) {
+            redirect($this->pages);
+        }
+
+        $book_receive = $this->book_receive->get_book_receive($book_receive_id);
+        $filename = $filename = strtolower($book_receive->order_number . '_serah_terima_acc');
+
+        if (!$book_receive) {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
+
+        $is_handover = $book_receive->is_handover;
+        $is_wrapping = $book_receive->is_wrapping;
+        $is_final    = $book_receive->book_receive_status == 'finish';
+        $uploaded_file = $this->book_receive->find_file_ext($filename);
+
+        $pages       = $this->pages;
+        $main_view   = 'book_receive/view/overview';
+        $form_action = "book_receive/edit/$book_receive_id";
+        $this->load->view('template', compact('form_action', 'main_view', 'pages', 'book_receive', 'is_final', 'is_handover', 'is_wrapping', 'uploaded_file'));
     }
 
-    //add deadline sebelum proses dimulai
+    // masukkan deadline sebelum proses dimulai
     public function add_deadline($book_receive_id)
     {
         if ($this->_is_warehouse_admin() == TRUE && $this->input->method() == 'post') {
             $deadline = $this->input->post('deadline');
             $book_receive = $this->book_receive->where('book_receive_id', $book_receive_id)->get();
-            // $this->load->library('form_validation');
             $this->form_validation->set_rules('deadline', 'Deadline Penerimaan Buku', 'required');
             if (!$book_receive) {
                 $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
@@ -286,12 +155,95 @@ class Book_receive extends MY_Controller
         redirect('book_receive/view/' . $book_receive_id);
     }
 
+    // generate pdf berita acara serah terima
+    public function generate_pdf_handover($book_receive_id, $progress)
+    {
+        $book_receive        = $this->book_receive->get_book_receive($book_receive_id);
+        // PDF
+        $this->load->library('pdf');
+
+        // FORMAT DATA
+        $data_format['jobtype'] = 'Serah Terima';
+        $data_format['title'] = $book_receive->book_title ?? '';
+        $data_format['ordernumber'] = $book_receive->order_number ?? '';
+        $data_format['total'] = $book_receive->total ?? '';
+        $data_format['total_postprint'] = $book_receive->total_postprint ?? '';
+        $data_format['handover_end_date'] = date('d/m/Y', strtotime($book_receive->handover_end_date)) ?? '';
+        $data_format['notes'] = $book_receive->{"{$progress}_notes"} ?? '';
+        $format = $this->load->view('book_receive/format_pdf_handover', $data_format, true);
+        $this->pdf->loadHtml($format);
+
+        // (Optional) Setup the paper size and orientation
+        $this->pdf->set_paper('A4', 'landscape');
+
+        // Render the HTML as PDF
+        $this->pdf->render();
+        $this->pdf->stream(strtolower($data_format['ordernumber'] . '_' . $data_format['jobtype']));
+    }
+
+    // upload pdf berita acara serah terima
+    public function upload_handover()
+    {
+        if ($this->_is_warehouse_admin() && $this->input->method() == 'post') {
+            $book_receive_id = $this->input->post('receive_id');
+            $book_receive = $this->book_receive->get_book_receive($book_receive_id);
+            if (!empty($_FILES) && $book_receive) {
+                $filename = strtolower($book_receive->order_number . '_serah_terima_acc');
+                $upload   = $this->book_receive->upload_handover('handover_file', $filename);
+                if ($upload) {
+                    $this->session->set_flashdata('success', 'Upload file sukses');
+                }
+            } else {
+                $this->session->set_flashdata('error', 'Upload file gagal');
+            }
+        } else {
+            $this->session->set_flashdata('error', 'Upload file gagal');
+        }
+        redirect($this->pages . "/view/$book_receive_id");
+    }
+
+    // generate pdf lembar antrian wrapping
+    public function generate_pdf_wrapping($book_receive_id, $progress)
+    {
+        $book_receive        = $this->book_receive->get_book_receive($book_receive_id);
+        $staff_gudang        = $this->book_receive->get_staff_gudang_by_progress($progress, $book_receive_id);
+        $staff = '';
+        foreach ($staff_gudang as $val) {
+            $staff .= $val->username . ", ";
+        }
+        // PDF
+        $this->load->library('pdf');
+
+        // FORMAT DATA
+        $data_format['jobtype'] = 'Wrapping';
+        $data_format['title'] = $book_receive->book_title ?? '';
+        $data_format['ordernumber'] = $book_receive->order_number ?? '';
+        $data_format['total'] = $book_receive->total ?? '';
+        $data_format['total_postprint'] = $book_receive->total_postprint ?? '';
+        $data_format['wrapping_start_date'] = date('d/m/Y', strtotime($book_receive->wrapping_start_date)) ?? '';
+        $data_format['wrapping_end_date'] = date('d/m/Y', strtotime($book_receive->wrapping_end_date)) ?? '';
+        $data_format['wrapping_deadline'] = date('d/m/Y', strtotime($book_receive->wrapping_deadline)) ?? '';
+        $data_format['staff'] = $staff;
+        $data_format['notes'] = $book_receive->{"{$progress}_notes"} ?? '';
+        $format = $this->load->view('book_receive/format_pdf_wrapping', $data_format, true);
+        $this->pdf->loadHtml($format);
+
+        // (Optional) Setup the paper size and orientation
+        $this->pdf->set_paper('A4', 'portrait');
+
+        // Render the HTML as PDF
+        $this->pdf->render();
+        $this->pdf->stream(strtolower($data_format['ordernumber'] . '_' . $data_format['jobtype']));
+    }
+
+    // ambil staff gudang
     public function api_get_staff_gudang()
     {
         $staff_gudang = $this->book_receive->get_staff_gudang();
         return $this->send_json_output(true, $staff_gudang);
     }
 
+    // tambah staff gudang untuk staff bertugas sesuai progress
     public function api_add_staff_gudang()
     {
         $input = (object) $this->input->post(null, true);
@@ -316,6 +268,7 @@ class Book_receive extends MY_Controller
         }
     }
 
+    // hapus staff gudang untuk staff bertugas sesuai progress
     public function api_delete_staff_gudang($id = null)
     {
         $staff_gudang = $this->db->where('book_receive_user_id', $id)->get('book_receive_user')->result();
@@ -336,6 +289,7 @@ class Book_receive extends MY_Controller
         }
     }
 
+    // mulai progress handover (serah terima) atau wrapping
     public function api_start_progress($book_receive_id)
     {
         // apakah book_receive tersedia
@@ -399,32 +353,7 @@ class Book_receive extends MY_Controller
         }
     }
 
-    public function api_set_stock($book_receive_id)
-    {
-        // cek data
-        $book_receive = $this->book_receive->where('book_receive_id', $book_receive_id)->get();
-        if (!$book_receive) {
-            $message = $this->lang->line('toast_data_not_available');
-            return $this->send_json_output(false, $message, 404);
-        }
-
-        $input = (object) $this->input->post(null, false);
-
-        // hanya untuk user yang berkaitan dengan book_receive ini
-        if (!$this->_is_warehouse_admin()) {
-            return $this->send_json_output(false, $this->lang->line('toast_error_not_authorized'));
-        }
-
-        // hilangkan property pembantu yang tidak ada di db
-        unset($input->progress);
-
-        if ($this->book_receive->where('book_receive_id', $book_receive_id)->update($input)) {
-            return $this->send_json_output(true, $this->lang->line('toast_edit_success'));
-        } else {
-            return $this->send_json_output(false, $this->lang->line('toast_edit_fail'));
-        }
-    }
-
+    // selesai progress handover/wrapping
     public function api_finish_progress($book_receive_id)
     {
         // apakah order cetak tersedia
@@ -452,8 +381,7 @@ class Book_receive extends MY_Controller
         }
     }
 
-
-    // update book_receive, kirim update via post
+    // update book_receive untuk aksi progress, kirim update via post
     public function api_action_progress($book_receive_id)
     {
         // cek data
@@ -481,14 +409,15 @@ class Book_receive extends MY_Controller
             } elseif ($input->progress == 'wrapping') {
                 $input->book_receive_status = 'wrapping';
             }
-        } else {
+        } 
+        else {
             $input->{"is_$input->progress"} = $input->accept;
 
             // update book_receive status ketika selesai progress
             if ($input->progress == 'handover') {
-                $input->book_receive_status = $input->accept ? 'handover_finish' : 'reject';
+                $input->book_receive_status = 'handover_finish';
             } elseif ($input->progress == 'wrapping') {
-                $input->book_receive_status = $input->accept ? 'wrapping_finish' : 'reject';
+                $input->book_receive_status = 'wrapping_finish';
             }
         }
 
@@ -509,6 +438,7 @@ class Book_receive extends MY_Controller
         }
     }
 
+    // finalisasi book receive, update stok buku
     public function final($book_receive_id = null, $action = null)
     {
         if (!$book_receive_id || !$action) {
@@ -519,15 +449,6 @@ class Book_receive extends MY_Controller
         if (!$this->_is_warehouse_admin()) {
             redirect($_SERVER['HTTP_REFERER']);
         }
-
-        // ambil data book_receive
-        // $data = $this->book_receive->get_book_receive($book_receive_id);
-
-        // insert data book_receive ke table book_transaction
-        // $book_id_to_trans         = $data->book_id;
-        // $book_receive_id_to_trans = $data->book_receive_id;
-
-        // update book stock
 
         // memastikan konsistensi data
         $this->db->trans_begin();
@@ -543,7 +464,8 @@ class Book_receive extends MY_Controller
             'book_receive_status' => $action,
             'finish_date' => $action == 'finish' ? now() : null
         ]);
-        //insert to book stock
+
+        // update book stock
         $book_stock = $this->book_stock->where('book_id', $book_receive->book_id)->get();
         $book_stock_print = $this->book_receive->get_print_order($book_receive->print_order_id);
         if ($book_stock) {
@@ -556,14 +478,14 @@ class Book_receive extends MY_Controller
             ]);
         }
         //insert to book transaction
-        //ini datenya dari book transaction
-        $this->book_transaction->insert([
-            'book_id'            => $book_receive->book_id,
-            'book_receive_id'    => $book_receive->book_receive_id,
-            'book_stock_id'      => $book_stock->book_stock_id,
-            'stock_in'           => $book_stock_print->total_postprint,
-            'date'               => now()
-        ]);
+        // $book_stock = $this->book_stock->where('book_id', $book_receive->book_id)->get();
+        // $this->book_transaction->insert([
+        //     'book_id'            => $book_receive->book_id,
+        //     'book_receive_id'    => $book_receive->book_receive_id,
+        //     'book_stock_id'      => $book_stock->book_stock_id,
+        //     'stock_in'           => $book_stock_print->total_postprint,
+        //     'date'               => date("Y-m-d")
+        // ]);
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
             $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
@@ -575,23 +497,13 @@ class Book_receive extends MY_Controller
         redirect($this->pages . "/view/$book_receive_id");
     }
 
-    public function upload_handover()
+    private function _is_warehouse_admin()
     {
-        if ($this->_is_warehouse_admin() && $this->input->method() == 'post') {
-            $book_receive_id = $this->input->post('receive_id');
-            $book_receive = $this->book_receive->get_book_receive($book_receive_id);
-            if (!empty($_FILES) && $book_receive) {
-                $filename = strtolower($book_receive->order_number . '_serah_terima_acc');
-                $upload   = $this->book_receive->upload_handover('handover_file', $filename);
-                if ($upload) {
-                    $this->session->set_flashdata('success', 'Upload file sukses');
-                }
-            } else {
-                $this->session->set_flashdata('error', 'Upload file gagal');
-            }
+        if ($this->level == 'superadmin' || $this->level == 'admin_gudang') {
+            return true;
         } else {
-            $this->session->set_flashdata('error', 'Upload file gagal');
+            $this->session->set_flashdata('error', 'Hanya admin gudang dan superadmin yang dapat mengakses.');
+            return false;
         }
-        redirect($this->pages . "/view/$book_receive_id");
     }
 }

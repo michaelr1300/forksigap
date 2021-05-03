@@ -73,18 +73,21 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action='<?=base_url('book_receive/add_deadline/' . $book_receive->book_receive_id)?>' id="form-book-receive-add-deadline" enctype="multipart/form-data">
+                    <form method="post"
+                        action='<?=base_url('book_receive/add_deadline/' . $book_receive->book_receive_id)?>'
+                        id="form-book-receive-add-deadline" enctype="multipart/form-data">
                         <fieldset>
                             <div class="form-group col-8">
-                                <label for="deadline">Deadline Penerimaan Buku</label>
-                                <?= form_input('deadline', $book_receive->deadline, 'class="form-control dates"')?>
+                                <input type="text" name="deadline" id="deadline"
+                                    class="form-control flatpickr_modal d-none"
+                                    value="<?= $book_receive->deadline ?>" />
                                 <?= form_error('deadline'); ?>
                                 <br>
-                                <input type="submit" value="submit" class="btn btn-primary">
                             </div>
+                            <input type="submit" value="Submit" class="btn btn-primary d-flex ml-auto mb-3">
                         </fieldset>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

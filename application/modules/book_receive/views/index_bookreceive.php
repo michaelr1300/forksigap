@@ -39,11 +39,11 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                     <div class="p-3">
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
-                            <div class="col-12 col-md-4 mb-3">
+                            <div class="col-12 col-md-4 mb-4">
                                 <label for="per_page">Data per halaman</label>
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
-                            <div class="col-12 col-md-4 mb-3">
+                            <div class="col-12 col-md-4 mb-4">
                                 <label for="category">Tahun Terbit</label>
                                 <?= form_dropdown('published_year', get_published_date(), $published_year, 'id="published_year" class="form-control custom-select d-block" title="Filter Tahun Terbit"'); ?>
                             </div>
@@ -51,7 +51,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <label for="category">Lokasi Rak</label>
                                 <?//= form_dropdown('bookshelf_location', get_bookshelf_location(), $bookshelf_location, 'id="bookshelf_location" class="form-control custom-select d-block" title="Lokasi Rak"'); ?>
                             </div> -->
-                            <div class="col-12 col-md-4 mb-3">
+                            <div class="col-12 col-md-4 mb-4">
                                 <label for="category">Status</label>
                                 <?= form_dropdown('book_receive_status', get_book_receive_status(), $book_receive_status, 'id="book_receive_status" class="form-control custom-select d-block" title="Status"'); ?>
                             </div>
@@ -125,7 +125,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <?= deadline_color($book_receive->deadline, $book_receive->book_receive_status); ?>
                                 </td>
                                 <td class="align-middle text-center">
-                                    <?= get_book_receive_status()[$book_receive->book_receive_status] ?? $book_receive->print_order_status;  ?></td>
+                                    <?= get_book_receive_status()[$book_receive->book_receive_status]?></td>
                                 </td>
                                 <?php if ($level == 'superadmin') : ?>
                                 <td style="min-width: 130px" class="align-middle text-center">

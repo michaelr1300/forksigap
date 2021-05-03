@@ -25,7 +25,12 @@ if (!$is_final) :
             </div>
             <div class="modal-body">
                 <p>Apakah anda yakin akan menyelesaikan penerimaan buku ini?</p>
-                <div class="alert alert-info">Tanggal selesai penerimaan akan tercatat ketika klik Submit</div>
+                
+                <div class="alert alert-info">
+                    <p class="mb-0">Ketika klik submit:</p>
+                    <p class="mb-0">1. Stok buku akan ditambahkan ke gudang</p>
+                    <p class="mb-0">2. Tanggal selesai penerimaan akan tercatat</p>
+                </div>
             </div>
             <div class="modal-footer">
                 <button id="btn-accept-book-receive" class="btn btn-primary">Submit</button>

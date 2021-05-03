@@ -19,11 +19,6 @@ class Book_receive_model extends MY_Model
                 'label' => $this->lang->line('form_book_receive_deadline'),
                 'rules' => 'trim|required',
             ],
-            [
-                'field' => 'book_receive_id',
-                'label' => $this->lang->line('ID Penerimaan Buku'),
-                'rules' => 'trim|required',
-            ],
         ];
 
         return $validation_rules;
@@ -42,19 +37,14 @@ class Book_receive_model extends MY_Model
         ];
     }
 
-    //insert data
-
-
     //get & filter data and total of data
     public function filter_book_receive($filters, $page)
     {
         $book_receives = $this->select(['print_order.print_order_id', 
-        // 'CONCAT_WS(" - ", NULLIF(book_receive.order_number1,""), print_order.order_number) AS order_number_1', 
         'print_order.order_number',
         'print_order.total', 'print_order.total_postprint', 
         'book.book_id', 
         'book.book_title',
-        // 'CONCAT_WS(" - ", NULLIF(book_receive.name,""), book.book_title) AS title',
         'book_receive.*'])
             ->when('keyword', $filters['keyword'])
             ->when('book_receive_status', $filters['book_receive_status'])
@@ -80,27 +70,17 @@ class Book_receive_model extends MY_Model
         if ($data) {
             if ($params == 'keyword') {
                 $this->group_start();
-                // $this->or_like('name', $data);
                 $this->like('book_title', $data);
                 $this->or_like('order_number', $data);
                 $this->group_end();
             }
             if ($params == 'book_receive_status'){
-                    $this->where('book_receive_status', $data);
+                $this->where('book_receive_status', $data);
             }
         }
         return $this;
     }
 
-    //get book_id
-    public function get_book($book_id)
-    {
-        return $this->select('book.*')
-            ->where('book_id', $book_id)
-            ->join_table('book', 'book_receive', 'book')
-            ->get('book');
-    }
-    
     //get print_order_id
     public function get_print_order($print_order_id)
     {
@@ -125,6 +105,7 @@ class Book_receive_model extends MY_Model
             ->get();
     }
 
+    // ambil data user dengan level staff_gudang
     public function get_staff_gudang()
     {
         return $this->select(['user_id', 'username', 'level', 'email'])
@@ -134,6 +115,7 @@ class Book_receive_model extends MY_Model
             ->get_all('user');
     }
 
+    // ambil data staff gudang sesuai progress (handover/wrapping)
     public function get_staff_gudang_by_progress($progress, $book_receive_id)
     {
         return $this->db->select(['book_receive_user_id', 'book_receive_user.user_id', 'book_receive_id', 'progress', 'username', 'email'])
@@ -152,16 +134,7 @@ class Book_receive_model extends MY_Model
             ->num_rows();
     }
 
-    // public function update_book_receive($book_receive_id, $data, $table){
-    //     $this->db->where('book_receive_id', $book_receive_id);
-    //     $this->db->update($table, $data);
-    // }
-
-    public function delete_book_receive($where){
-        $this->db->where('book_receive_id', $where);
-        $this->db->delete('book_receive');
-    }
-
+    // mulai progress (handover/wrapping), update status dan tanggal mulai progress
     public function start_progress($book_receive_id, $progress)
     {
         // transaction data agar konsisten
@@ -183,6 +156,7 @@ class Book_receive_model extends MY_Model
         }
     }
 
+    // selesai progress (handover/wrapping) update status dan tanggal selesai progress
     public function finish_progress($book_receive_id, $progress)
     {
         $input = [
@@ -198,6 +172,8 @@ class Book_receive_model extends MY_Model
             return false;
         }
     }
+
+    // upload berita acara serah terima
     public function upload_handover($input_field_name, $file_name)
     {
         if (!is_dir($this->storage_directory)) {
@@ -227,6 +203,8 @@ class Book_receive_model extends MY_Model
             return false;
         }
     }
+
+    // ambil file berita acara yang telah diupload
     public function find_file_ext($filename){
         $full_filename = $this->storage_directory."/".$filename;
         if (file_exists($full_filename.".jpg")){
