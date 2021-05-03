@@ -48,25 +48,33 @@ class Royalty extends MY_Controller
         $this->load->view('template', compact('pages', 'main_view', 'royalty', 'pagination', 'total', 'total_royalty'));
     }
 
-    public function view()
+    public function view($author_id)
     {
-        // $total_array = [];
-        // $index = 0;
-        // $authors = $this->db->select('author_id, author_name')->from('author')->get()->result();
-        // foreach ($authors as $author) {
-        //     $total_array[$index] = $this->royalty->author_earning($author->author_id)->total;
-        //     // $books_array[$index_books] =  $this->royalty->get_book($author->author_id);
-        //     $index++;
-        // }
-        // var_dump($total_array);
+        $date_year = $this->input->get('date_year', true);
+        $period_time = $this->input->get('period_time', true);
+        $period_start = null;
+        $period_end = null;
+        if ($period_time != null) {
+            if ($period_time == 1) {
+                $period_start = $date_year . '/01/01';
+                $period_end = $date_year . '/06/30 23:59:59.999';
+            } else if ($period_time == 2) {
+                $period_start = $date_year . '/06/01';
+                $period_end = $date_year . '/12/31 23:59:59.999';
+            }
+        }
+
+        $filters = [
+            'keyword'           => $this->input->get('keyword', true),
+            'period_start'      => $period_start,
+            'period_end'        => $period_end
+        ];
+        var_dump($this->royalty->author_details($author_id, $filters));
 
         $pages          = $this->pages;
         $main_view      = 'royalty/view_royalty';
-        // $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
-        // $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
-        // $invoice->customer = $this->invoice->get_customer($invoice->customer_id);
 
-        $this->load->view('template', compact('pages', 'main_view'));
+        // $this->load->view('template', compact('pages', 'main_view'));
     }
 }
 
