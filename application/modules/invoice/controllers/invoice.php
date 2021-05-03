@@ -300,6 +300,7 @@ class Invoice extends MY_Controller
         $file_name = $invoice->number . '_Invoice';
 
         $this->pdf->generate_pdf_a4_portrait($html, $file_name);
+    }
       
     public function print_showroom_receipt()
     {
