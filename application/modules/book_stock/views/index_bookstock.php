@@ -160,6 +160,11 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                             <i class="fa fa-pencil-alt"></i>
                                             <span class="sr-only">Edit Stok Buku</span>
                                         </a>
+                                        <a href="<?= base_url('book_stock/retur/' . $book_stock->book_stock_id . ''
+                                        ); ?>" class="btn btn-sm btn-secondary" title="Revisi Stok Retur">
+                                            <i class="fas fa-undo-alt"></i>
+                                            <span class="sr-only">Revisi Stok Retur</span>
+                                        </a>
                                         <div class="text-left">
                                             <div class="modal modal-alert fade"
                                                 id="modal-edit-rak-<?= $book_stock->book_id; ?>" tabindex="-1"

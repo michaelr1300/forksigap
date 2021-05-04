@@ -8,7 +8,7 @@
                 <a href="<?= base_url('book_stock')?>">Stok Buku</a>
             </li>
             <li class="breadcrumb-item active">
-                <a class="text-muted">Form Edit Stok Buku</a>
+                <a class="text-muted">Form Retur Stok Buku</a>
             </li>
         </ol>
     </nav>
@@ -20,11 +20,11 @@
             <div class="card">
                 <div class="card-body">
                     <fieldset>
-                        <legend>Form Edit Stok Buku</legend>
+                        <legend>Form Retur Stok Buku</legend>
                         <div class="alert alert-warning">
                             <strong>PERHATIAN!</strong> Fitur ini berfungsi untuk mengubah stok buku.
                         </div>
-                        <form action="<?= base_url('book_stock/edit_book_stock'); ?>" method="post">
+                        <form action="<?= base_url('book_stock/retur_book_stock'); ?>" method="post">
                             <div class="form-group">
                                 <label class="font-weight-bold">Judul Buku</label>
                                 <input type="text" class="form-control" value="<?= $input->book_title; ?>" disabled />
@@ -49,19 +49,34 @@
                                     </label>
                                 </div>
                             </div> -->
-                            <div class="form-group" id="revisi-buku"> 
-                                <label for="revision_type" class="d-block font-weight-bold"> Tipe Operasi <abbr
+                            
+                            <div class="form-group" id="retur-buku"> 
+                                <label for="revision_type" class="d-block font-weight-bold"> Tipe Retur <abbr
                                         title="Required">*</abbr></label>
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                     <label class="btn btn-secondary active">
-                                        <input type="radio" name="revision_type" value="add"
-                                            class="custom-control-input" /> Tambah
+                                        <input type="radio" name="revision_type" value="sub"
+                                            class="custom-control-input" /> Tambah Stok Retur
                                     </label>
                                     <label class="btn btn-secondary ">
-                                        <input type="radio" name="revision_type" value="sub"
-                                            class="custom-control-input" /> Kurang
+                                        <input type="radio" name="revision_type" value="delete"
+                                            class="custom-control-input" /> Penghapusan Stok Retur
                                     </label>
                                 </div>
+                            </div>
+
+                            <div class="form-group" id="date">
+                            <label for="date" class="d-block font-weight-bold">Tanggal Retur <abbr
+                                title="Required">*</abbr> </label>
+                            <div class="has-clearable">
+                                <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">
+                                        <i class="fa fa-times-circle"></i>
+                                    </span>
+                                </button>
+                                <input type="date" class="form-control dates" name="date"
+                                    id="date" />
+                            </div>
                             </div>
 
                             <div class="form-group">

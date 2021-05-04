@@ -97,6 +97,37 @@ class Book_stock extends Warehouse_sales_controller
         // }
     }
 
+    public function retur($book_stock_id){
+        if(!$this->_is_warehouse_admin()){
+            redirect($this->pages);
+        }
+
+        $book_stock = $this->book_stock->get_book_stock($book_stock_id);
+        // $input = (object) $book_stock;
+        if(!$book_stock){
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
+
+        if(!$_POST){
+            $input = (object) $book_stock;
+        }
+        else{
+            $input = (object) $this->input->post(null, true);
+            // catat orang yang menginput stok buku
+            $input->user_id = $_SESSION['user_id'];
+            
+        }
+
+        // if(!$this->book_stock->validate() || $this->form_validation->error_array()){
+            $pages = $this->pages;
+            $main_view = 'book_stock/retur_bookstock';
+            $form_action = "book_stock/retur/$book_stock_id";
+            $this->load->view('template', compact('pages','main_view', 'input'));   
+        //     return; 
+        // }
+    }
+
     public function edit_book_location(){
         if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
             $book_title = $this->input->post('book_title');
@@ -176,24 +207,61 @@ class Book_stock extends Warehouse_sales_controller
                 $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
             }
             else {
-                if ($type == "revision"){
-                    if ($revision_type=="add") $book_stock->warehouse_present += $quantity;
-                    else $book_stock->warehouse_present -= $quantity;
-                    $book_stock_revision->warehouse_present = $book_stock->warehouse_present;
-                    $book_stock_revision->revision_date = now();
+                if ($revision_type=="add") $book_stock->warehouse_present += $quantity;
+                else $book_stock->warehouse_present -= $quantity;
+                $book_stock_revision->warehouse_present = $book_stock->warehouse_present;
+                $book_stock_revision->revision_date = now();
+                $book_stock_revision->type = "revision";
+                
+                
+                if ($this->book_stock->where('book_id', $book_id)->update($book_stock) && $this->db->insert('book_stock_revision',$book_stock_revision)) {
+                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+                } else {
+                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_fail'));
                 }
-                elseif ($type == "return"){
-                    if ($revision_type=="sub") {
-                        $book_stock->warehouse_present -= $quantity;
-                        $book_stock->retur_stock += $quantity;
-                    }
-                    else {
-                        $book_stock->retur_stock -= $quantity;
-                    }
-                    $book_stock_revision->warehouse_present = $book_stock->warehouse_present;
-                    $input->revision_date = 'revision_date';
-                    
+            }
+        }
+        else {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_edit_fail'));
+        }
+        redirect('book_stock/view/'.$book_stock->book_stock_id);
+    }
+
+    public function retur_book_stock(){
+        if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
+            $type = $this->input->post('type');
+            $revision_type = $this->input->post('revision_type');
+            $book_id = $this->input->post('book_id');
+            $revision_date = $this->input->post('date');
+            $quantity = $this->input->post('warehouse_modifier');
+            $notes = $this->input->post('notes');
+            $book_stock = $this->book_stock->where('book_id', $book_id)->get();
+            $book_stock_revision = (object) [
+                'book_id'            => $book_id,
+                'warehouse_past'     => $book_stock->warehouse_present,
+                'type'               => $type,
+                'warehouse_present'  => 0,
+                'warehouse_revision' => $quantity,
+                'revision_type'      => $revision_type,
+                'notes'              => $notes,
+                'revision_date'      => $revision_date
+            ];
+            if (!$book_stock) {
+                $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            }
+            else {
+
+                if ($revision_type=="sub") {
+                    $book_stock->warehouse_present -= $quantity;
+                    $book_stock->retur_stock += $quantity;
                 }
+                else {
+                    $book_stock->retur_stock -= $quantity;
+                }
+                $book_stock_revision->warehouse_present = $book_stock->warehouse_present;
+                $input->revision_date = 'revision_date';
+                $book_stock_revision->type = "return";
+
                 
                 if ($this->book_stock->where('book_id', $book_id)->update($book_stock) && $this->db->insert('book_stock_revision',$book_stock_revision)) {
                     $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
