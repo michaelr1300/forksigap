@@ -95,12 +95,12 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                     </tr>
                                     <td width="160px">Detail Stok Perpustakaan</td>
                                     <td>
-                                        <table class="table table-bordered mb-0 table-responsive">
+                                        <table class="table table-striped mb-0 table-responsive">
                                             <tbody>
                                                 <tr>
-                                                    <th>No</th>
-                                                    <th>Nama Perpustakaan</th>
-                                                    <th>Stok</th>
+                                                    <th class="align-middle text-center">No</th>
+                                                    <th style="width:250px;">Nama Perpustakaan</th>
+                                                    <th class="align-middle text-center">Stok</th>
                                                 </tr>
                                                 <?php $no=1; foreach($book_stock->library_stock as $library_data) : ?>
                                                 <tr>
@@ -144,9 +144,6 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                         <th scope="col">Tanggal</th>
                                         <th scope="col">Tipe</th>
                                         <th scope="col">Catatan</th>
-                                        <?php if ($level == 'superadmin' || $level == 'admin_gudang') : ?>
-                                        <th scope="col"></th>
-                                        <?php endif; ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -164,9 +161,8 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                                     echo '<div class="text-success"> ' . '+' . ' ' . $revision->warehouse_revision . '</div>';
                                                 } elseif ($revision->revision_type == "sub") {
                                                     echo '<div class="text-danger"> ' . '-' . ' ' . $revision->warehouse_revision . '</div>';
-                                                }
-                                                else {
-                                                    echo '<div class="text"> ' . ' ' . $revision->warehouse_revision . '</div>';
+                                                } else {
+                                                    echo '<div class="text-danger"> ' . '-' . ' ' . $revision->warehouse_revision . '</div>';
                                                 }
                                             ?>
                                         </td>

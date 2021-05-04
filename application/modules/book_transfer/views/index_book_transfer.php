@@ -61,87 +61,89 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                         <?= form_close(); ?>
                     </div>
                     <?php if ($book_transfer) : ?>
-                    <table class="table table-striped mb-0 table-responsive">
-                        <thead>
-                            <tr class="text-center">
-                                <th scope="col" class="pl-4">No</th>
-                                <th scope="col" style="min-width:200px;">Nomor Bon</th>
-                                <th scope="col" style="min-width:200px;">Tujuan</th>
-                                <th scope="col" style="min-width:100px;">Tanggal</th>
-                                <th scope="col" style="min-width:200px;">Status</th>
-                                <th style="min-width:100px;"> Aksi </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($book_transfer as $book_transfer) : ?>
-                            <tr class="text-center">
-                                <td class="align-middle pl-4"><?= ++$i; ?></td>
-                                <td class="text-left align-middle">
-                                    <a href="<?= base_url('book_transfer/view/' . $book_transfer->book_transfer_id . ''); ?>"
-                                        class="font-weight-bold">
-                                        <?= highlight_keyword($book_transfer->transfer_number, $keyword); ?>
-                                    </a>
-                                </td>
-                                <?php if ($book_transfer->destination=='library'): ?>
-                                <td class="align-middle">
-                                    <?= $book_transfer->library_name; ?>
-                                </td>
-                                <?php else: ?>
-                                <td class="align-middle">
-                                    <?= get_book_transfer_destination()[$book_transfer->destination]; ?>
-                                </td>
-                                <?php endif; ?>
-                                <td class="align-middle">
-                                    <?= format_datetime($book_transfer->transfer_date); ?>
-                                </td>
-                                <td class="align-middle">
-                                    <?= get_book_transfer_status()[$book_transfer->transfer_status ?? $book_transfer->status]; ?>
-                                </td>
-                                <td class="align-middle text-right">
-                                    <a href="<?= base_url('book_transfer/edit/'.$book_transfer->book_transfer_id); ?>"
-                                        class="btn btn-sm btn-secondary">
-                                        <i class="fa fa-pencil-alt"></i>
-                                        <span class="sr-only">Edit</span>
-                                    </a>
-                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
-                                        data-target="#modal-hapus-<?= $book_transfer->book_transfer_id; ?>"><i
-                                            class="fa fa-trash-alt"></i><span class="sr-only">Delete</span></button>
-                                    <div class="text-left">
-                                        <div class="modal modal-alert fade"
-                                            id="modal-hapus-<?= $book_transfer->book_transfer_id; ?>" tabindex="-1"
-                                            role="dialog"
-                                            aria-labelledby="modal-hapus-"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">
-                                                            <i class="fa fa-exclamation-triangle text-red mr-1"></i>
-                                                            Konfirmasi Hapus
-                                                        </h5>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Apakah anda yakin akan menghapus data pemindahan buku <span
-                                                                class="font-weight-bold"><?= $book_transfer->book_title; ?></span>?
-                                                        </p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type ="button" class="btn btn-light" 
-                                                            data-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-danger"
-                                                            onclick="location.href='<?= base_url('book_transfer/delete_book_transfer/'.$book_transfer->book_transfer_id); ?>'"
-                                                            data-dismiss="modal">Hapus</button>
-                                                        
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr class="text-center">
+                                    <th scope="col" class="pl-4">No</th>
+                                    <th scope="col" style="min-width:200px;">Nomor Bon</th>
+                                    <th scope="col" style="min-width:200px;">Tujuan</th>
+                                    <th scope="col" style="min-width:100px;">Tanggal</th>
+                                    <th scope="col" style="min-width:200px;">Status</th>
+                                    <th style="min-width:100px;"> Aksi </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($book_transfer as $book_transfer) : ?>
+                                <tr class="text-center">
+                                    <td class="align-middle pl-4"><?= ++$i; ?></td>
+                                    <td class="text-left align-middle">
+                                        <a href="<?= base_url('book_transfer/view/' . $book_transfer->book_transfer_id . ''); ?>"
+                                            class="font-weight-bold">
+                                            <?= highlight_keyword($book_transfer->transfer_number, $keyword); ?>
+                                        </a>
+                                    </td>
+                                    <?php if ($book_transfer->destination=='library'): ?>
+                                    <td class="align-middle">
+                                        <?= $book_transfer->library_name; ?>
+                                    </td>
+                                    <?php else: ?>
+                                    <td class="align-middle">
+                                        <?= get_book_transfer_destination()[$book_transfer->destination]; ?>
+                                    </td>
+                                    <?php endif; ?>
+                                    <td class="align-middle">
+                                        <?= format_datetime($book_transfer->transfer_date); ?>
+                                    </td>
+                                    <td class="align-middle">
+                                        <?= get_book_transfer_status()[$book_transfer->transfer_status ?? $book_transfer->status]; ?>
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        <a href="<?= base_url('book_transfer/edit/'.$book_transfer->book_transfer_id); ?>"
+                                            class="btn btn-sm btn-secondary">
+                                            <i class="fa fa-pencil-alt"></i>
+                                            <span class="sr-only">Edit</span>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
+                                            data-target="#modal-hapus-<?= $book_transfer->book_transfer_id; ?>"><i
+                                                class="fa fa-trash-alt"></i><span class="sr-only">Delete</span></button>
+                                        <div class="text-left">
+                                            <div class="modal modal-alert fade"
+                                                id="modal-hapus-<?= $book_transfer->book_transfer_id; ?>" tabindex="-1"
+                                                role="dialog"
+                                                aria-labelledby="modal-hapus-"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">
+                                                                <i class="fa fa-exclamation-triangle text-red mr-1"></i>
+                                                                Konfirmasi Hapus
+                                                            </h5>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Apakah anda yakin akan menghapus data pemindahan buku <span
+                                                                    class="font-weight-bold"><?= $book_transfer->book_title; ?></span>?
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type ="button" class="btn btn-light" 
+                                                                data-dismiss="modal">Close</button>
+                                                            <button type="button" class="btn btn-danger"
+                                                                onclick="location.href='<?= base_url('book_transfer/delete_book_transfer/'.$book_transfer->book_transfer_id); ?>'"
+                                                                data-dismiss="modal">Hapus</button>
+                                                            
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                     <?php else : ?>
                     <p class="text-center">Data tidak tersedia</p>
                     <?php endif; ?>

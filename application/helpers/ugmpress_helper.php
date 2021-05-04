@@ -809,19 +809,11 @@ function strip_disallowed_char($string)
 //     ];
 // }
 
-function get_selling_options()
-{
-    return [
-        '0' => 'Laris',
-        '1' => 'Semi Laris'
-    ];
-}
-
 function get_warehouse_stock(){
     return [
         '' => 'Semua',
-        '1' => '<= 50',
-        '2' => '> 50'
+        'up_to_50' => '<= 50',
+        'above_50' => '> 50'
     ];
 }
 
@@ -837,15 +829,12 @@ function get_book_receive_status(){
     return [
         '' => '--Pilih--',
         'waiting' => 'Belum Diproses',
-        'reject' => 'Ditolak',
-        // 'revisi' => 'Butuh Revisi',
         'handover' => 'Serah Terima',
         'handover_approval' => 'Serah Terima Menunggu Approval',
         'handover_finish' => 'Selesai Serah Terima',
         'wrapping' => 'Wrapping',
         'wrapping_approval' => 'Wrapping Menunggu Approval',
         'wrapping_finish' => 'Selesai Wrapping',
-        // 'finalisai' => 'Menunggu Finalisasi',
         'finish' => 'Selesai',
     ];
 }

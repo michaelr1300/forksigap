@@ -20,7 +20,7 @@ $level              = check_level();
         <div class="page-title mb-0 pb-0 h1"> Pesanan Buku </div>
 
         <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal"
-            data-target="#modal-edit-<?= $book_request->invoice_id; ?>"><i class="fa fa-edit fa-fw"></i> Edit Pesanan
+            data-target="#modal-edit-<?= $book_request->invoice_id; ?>"><i class="fa fa-edit fa-fw"></i> Edit Permintaan
             Buku</button>
 
     </div>
@@ -136,7 +136,10 @@ $level              = check_level();
                                 <tr>
                                     <td width="200px"> File Faktur </td>
                                     <td>
-                                        <?//= get_book_request_status()[$book_request->status]?>
+                                        <button class="btn btn-info" 
+                                        onclick="location.href = '<?= base_url('invoice/generate_pdf/' . $book_request->invoice_id . '/' . $book_request->delivery_fee); ?>'">
+                                            <i class="fa fa-download mr-3"></i>Download file faktur
+                                        </button>
                                     </td>
                                 </tr>
                                 <tr>

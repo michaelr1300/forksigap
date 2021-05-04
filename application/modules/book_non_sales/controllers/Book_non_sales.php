@@ -88,13 +88,6 @@ class Book_non_sales extends MY_Controller
                 'qty' => $books['qty']
             ];
             $book_stock = $this->book_stock->where('book_id', $books['book_id'])->get();
-            $this->book_transaction->insert([
-                'book_id' => $books['book_id'],
-                'book_stock_id' => $book_stock->book_stock_id,
-                'book_non_sales_id' => $book_non_sales_id,
-                'stock_out' => $books['qty'],
-                'date' => now()
-            ]);
             $book_non_sales_list_success = $this->db->insert('book_non_sales_list',$book_non_sales_list);
         }
 
@@ -201,6 +194,13 @@ class Book_non_sales extends MY_Controller
             $book_stock = $this->book_stock->where('book_id', $book_non_sales_list->book_id)->get();
             $book_stock->warehouse_present -= $book_non_sales_list->qty;
             $this->book_stock->where('book_id', $book_non_sales_list->book_id)->update($book_stock);
+            $this->book_transaction->insert([
+                'book_id' => $book_non_sales_list->book_id,
+                'book_stock_id' => $book_stock->book_stock_id,
+                'book_non_sales_id' => $book_non_sales_id,
+                'stock_out' => $book_non_sales_list->qty,
+                'date' => now()
+            ]);
         }
         
         // update data book_non_sales

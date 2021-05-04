@@ -82,168 +82,131 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                         <?= form_close(); ?>
                     </div>
                     <?php if ($book_stocks) : ?>
-                    <table class="table table-striped mb-0 table-responsive">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="pl-4 align-middle text-center" rowspan="2">No</th>
-                                <th scope="col" style="min-width:350px;" class="align-middle text-center" rowspan="2">
-                                    Judul</th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center" rowspan="2">
-                                    Tahun Terbit
-                                </th>
-                                <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
-                                    Penulis</th>
-                                <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
-                                    Lokasi Rak</th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center" colspan="3">
-                                    Stok</th>
-                                <!-- <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
-                                    Laris/Semi
-                                    Laris
-                                </th> -->
-                                <?php if ($level == 'superadmin') : ?>
-                                <th style="min-width:150px;" class="align-middle text-center" rowspan="2"> Aksi </th>
-                                <?php endif; ?>
-                            </tr>
-                            <tr>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Gudang</th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Perpustakaan</th>
-                                <th scope="col" style="min-width:100px;" class="align-middle text-center">Showroom</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($book_stocks as $book_stock) : ?>
-                            <tr>
-                                <td class="align-middle text-center"><?= ++$i; ?></td>
-                                <td class="align-middle">
-                                    <a href="<?= base_url('book_stock/view/' . $book_stock->book_stock_id . ''); ?>"
-                                        class="font-weight-bold">
-                                        <?= highlight_keyword($book_stock->book_title, $keyword); ?>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <?=konversiTahun($book_stock->published_date);?>
-                                </td>
-                                <td class="align-middle text-center">
-                                <?= isset($book_stock->author_name) ? highlight_keyword($book_stock->author_name, $keyword) : '-'; ?>
-                                    <button
-                                        type="button"
-                                        class="btn btn-link btn-sm m-0 p-0 <?= count($book_stock->authors) <= 1 ? 'd-none' : ''; ?>"
-                                        data-container="body"
-                                        data-toggle="popover"
-                                        data-placement="right"
-                                        data-html="true"
-                                        data-trigger="hover"
-                                        data-content='<?= expand($book_stock->authors); ?>'
-                                    >
-                                        <i class="fa fa-users"></i>
-                                    </button>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <?= $book_stock->book_location; ?></td>
-                                </td>
-                                <?php if($book_stock->warehouse_present <= 50) : ?>
-                                <td class="align-middle text-center text-danger"><b>
-                                        <?=$book_stock->warehouse_present; ?></b>
-                                </td>
-                                <?php else : ?>
-                                <td class="align-middle text-center">
-                                    <?=$book_stock->warehouse_present; ?>
-                                </td>
-                                <?php endif?>
-                                <td class="align-middle text-center"><?=$book_stock->library_present?></td>
-                                <td class="align-middle text-center"><?=$book_stock->showroom_present?></td>
-                                <!-- <td class="align-middle text-center"><?//=$book_stock->selling?></td> -->
-                                <?php if ($level == 'superadmin') : ?>
-                                <td style="min-width: 130px" class="align-middle text-center">
-                                    <div class="text-center">
-                                    <button title="Edit Lokasi Rak" type="button" class="btn btn-sm btn-secondary"
-                                        data-toggle="modal" data-target="#modal-edit-rak-<?= $book_stock->book_id; ?>"><i
-                                            class="fa fa-map-marker-alt"></i><span class="sr-only">Edit Lokasi Rak</span></button>
-                                    <a href="<?= base_url('book_stock/edit/' . $book_stock->book_stock_id . ''
-                                    ); ?>" class="btn btn-sm btn-secondary" title="Edit Stok Buku">
-                                        <i class="fa fa-pencil-alt"></i>
-                                        <span class="sr-only">Edit Stok Buku</span>
-                                    </a>
-                                    <button title="Delete" type="button" class="btn btn-sm btn-danger"
-                                        data-toggle="modal" data-target="#modal-hapus-<?= $book_stock->book_id; ?>"><i
-                                            class="fa fa-trash-alt"></i><span class="sr-only">Delete</span></button>
-                                    
-                                    <div class="text-left">
-                                        <div class="modal modal-alert fade"
-                                            id="modal-edit-rak-<?= $book_stock->book_id; ?>" tabindex="-1"
-                                            role="dialog"
-                                            aria-labelledby="modal-edit-rak-<?= $book_stock->book_id; ?>"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">
-                                                            <i class="fa fa-map-marker-alt text-black mr-1"></i>
-                                                            Edit Lokasi Rak
-                                                        </h5>
-                                                    </div>
-                                                    <form action="<?=base_url('book_stock/edit_book_location/')?>" method='post'>
-                                                        <div class="modal-body">
-                                                            <div class="form-group">
-                                                                <label class="font-weight-bold">Judul Buku</label>
-                                                                    <input type="text" class="form-control" value="<?= $book_stock->book_title; ?>" disabled />
-                                                                    <input type="hidden" class="form-control" id="book_stock_id" name="book_stock_id"
-                                                                    value="<?= $book_stock->book_stock_id; ?>" />
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="book_location">Lokasi Rak Buku</label>
-                                                                <?= form_input('book_location', $book_stock->book_location, 'class="form-control" id="book_location" '); ?>
-                                                                <?= form_error('book_location'); ?>
-                                                            </div>
-                                                        </div>     
-                                                        <div class="modal-footer">
-                                                            <div class="form-group">
-                                                                <button type="button" class="btn btn-light"
-                                                                    data-dismiss="modal">Close</button>
-                                                                    <input type="submit" class="btn btn-primary" value="Submit"/>
-                                                            </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="pl-4 align-middle text-center" rowspan="2">No</th>
+                                    <th scope="col" style="min-width:350px;" class="align-middle text-center" rowspan="2">
+                                        Judul</th>
+                                    <th scope="col" style="min-width:100px;" class="align-middle text-center" rowspan="2">
+                                        Tahun Terbit
+                                    </th>
+                                    <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
+                                        Penulis</th>
+                                    <th scope="col" style="min-width:150px;" class="align-middle text-center" rowspan="2">
+                                        Lokasi Rak</th>
+                                    <th scope="col" style="min-width:100px;" class="align-middle text-center" colspan="3">
+                                        Stok</th>
+                                    <?php if ($level == 'superadmin') : ?>
+                                    <th style="min-width:150px;" class="align-middle text-center" rowspan="2"> Aksi </th>
+                                    <?php endif; ?>
+                                </tr>
+                                <tr>
+                                    <th scope="col" style="min-width:100px;" class="align-middle text-center">Gudang</th>
+                                    <th scope="col" style="min-width:100px;" class="align-middle text-center">Perpustakaan</th>
+                                    <th scope="col" style="min-width:100px;" class="align-middle text-center">Showroom</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($book_stocks as $book_stock) : ?>
+                                <tr>
+                                    <td class="align-middle text-center"><?= ++$i; ?></td>
+                                    <td class="align-middle">
+                                        <a href="<?= base_url('book_stock/view/' . $book_stock->book_stock_id . ''); ?>"
+                                            class="font-weight-bold">
+                                            <?= highlight_keyword($book_stock->book_title, $keyword); ?>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <?=konversiTahun($book_stock->published_date);?>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                    <?= isset($book_stock->author_name) ? highlight_keyword($book_stock->author_name, $keyword) : '-'; ?>
+                                        <button
+                                            type="button"
+                                            class="btn btn-link btn-sm m-0 p-0 <?= count($book_stock->authors) <= 1 ? 'd-none' : ''; ?>"
+                                            data-container="body"
+                                            data-toggle="popover"
+                                            data-placement="right"
+                                            data-html="true"
+                                            data-trigger="hover"
+                                            data-content='<?= expand($book_stock->authors); ?>'
+                                        >
+                                            <i class="fa fa-users"></i>
+                                        </button>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <?= $book_stock->book_location; ?></td>
+                                    </td>
+                                    <?php if($book_stock->warehouse_present <= 50) : ?>
+                                    <td class="align-middle text-center text-danger"><b>
+                                            <?=$book_stock->warehouse_present; ?></b>
+                                    </td>
+                                    <?php else : ?>
+                                    <td class="align-middle text-center">
+                                        <?=$book_stock->warehouse_present; ?>
+                                    </td>
+                                    <?php endif?>
+                                    <td class="align-middle text-center"><?=$book_stock->library_present?></td>
+                                    <td class="align-middle text-center"><?=$book_stock->showroom_present?></td>
+                                    <?php if ($level == 'superadmin') : ?>
+                                    <td style="min-width: 130px" class="align-middle text-center">
+                                        <div class="text-center">
+                                        <button title="Edit Lokasi Rak" type="button" class="btn btn-sm btn-secondary"
+                                            data-toggle="modal" data-target="#modal-edit-rak-<?= $book_stock->book_id; ?>"><i
+                                                class="fa fa-map-marker-alt"></i><span class="sr-only">Edit Lokasi Rak</span></button>
+                                        <a href="<?= base_url('book_stock/edit/' . $book_stock->book_stock_id . ''
+                                        ); ?>" class="btn btn-sm btn-secondary" title="Edit Stok Buku">
+                                            <i class="fa fa-pencil-alt"></i>
+                                            <span class="sr-only">Edit Stok Buku</span>
+                                        </a>
+                                        <div class="text-left">
+                                            <div class="modal modal-alert fade"
+                                                id="modal-edit-rak-<?= $book_stock->book_id; ?>" tabindex="-1"
+                                                role="dialog"
+                                                aria-labelledby="modal-edit-rak-<?= $book_stock->book_id; ?>"
+                                                aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">
+                                                                <i class="fa fa-map-marker-alt text-black mr-1"></i>
+                                                                Edit Lokasi Rak
+                                                            </h5>
                                                         </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="text-left">
-                                        <div class="modal modal-alert fade"
-                                            id="modal-hapus-<?= $book_stock->book_id; ?>" tabindex="-1" role="dialog"
-                                            aria-labelledby="modal-hapus" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title"><i
-                                                                class="fa fa-exclamation-triangle text-red mr-1"></i>
-                                                            Konfirmasi Hapus</h5>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Apakah anda yakin akan menghapus data stok buku <span
-                                                                class="font-weight-bold"><?= $book_stock->book_title; ?></span>?
-                                                        </p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-light"
-                                                            data-dismiss="modal">Close</button>
-                                                        <!-- <button type="button" class="btn btn-danger"
-                                                            data-dismiss="modal">Hapus</button> -->
-                                                        <button type="button" class="btn btn-danger"
-                                                            onclick="location.href='<?= base_url('book_stock/delete/' . $book_stock->book_stock_id . ''); ?>'"
-                                                            data-dismiss="modal">Hapus</button>
+                                                        <form action="<?=base_url('book_stock/edit_book_location/')?>" method='post'>
+                                                            <div class="modal-body">
+                                                                <div class="form-group">
+                                                                    <label class="font-weight-bold">Judul Buku</label>
+                                                                        <input type="text" class="form-control" value="<?= $book_stock->book_title; ?>" disabled />
+                                                                        <input type="hidden" class="form-control" id="book_stock_id" name="book_stock_id"
+                                                                        value="<?= $book_stock->book_stock_id; ?>" />
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="book_location">Lokasi Rak Buku</label>
+                                                                    <?= form_input('book_location', $book_stock->book_location, 'class="form-control" id="book_location" '); ?>
+                                                                    <?= form_error('book_location'); ?>
+                                                                </div>
+                                                            </div>     
+                                                            <div class="modal-footer">
+                                                                <div class="form-group">
+                                                                    <button type="button" class="btn btn-light"
+                                                                        data-dismiss="modal">Close</button>
+                                                                        <input type="submit" class="btn btn-primary" value="Submit"/>
+                                                                </div>
+                                                            </div>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <?php endif?>
-                            </tr>
-                            <?php endforeach ?>
-                        </tbody>
-                    </table>
+                                    </td>
+                                    <?php endif?>
+                                </tr>
+                                <?php endforeach ?>
+                            </tbody>
+                        </table>
+                    </div>
                     <?php else : ?>
                     <p class="text-center my-5">Data tidak tersedia</p>
                     <?php endif; ?>
