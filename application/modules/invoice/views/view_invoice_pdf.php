@@ -226,10 +226,11 @@
             <?php endforeach ?>
 
             <?php
-            $total = 0;
+            $total_temp = 0;
             foreach ($invoice_books as $invoice_book) {
-                $total += $invoice_book->price;
+                $total_temp += $invoice_book->price;
             }
+            $total = $total_temp + $invoice->delivery_fee;
             ?>
         </tbody>
     </table>
@@ -239,7 +240,7 @@
             <td style="width:50%"></td>
             <td style="width:10%"></td>
             <td style="width:10%"></td>
-            <td style="width:10%; text-align: right;"><?= $total ?></td>
+            <td style="width:10%; text-align: right;"><?= $total_temp ?></td>
         </tr>
         <tr>
             <td scope="col"></td>
@@ -263,16 +264,14 @@
             <td
                 scope="col"
                 style="text-align: right; border-bottom: 4px double black"
-            ><b><?= $total + $invoice->delivery_fee ?></b></td>
+            ><b><?= $total ?></b></td>
         </tr>
         <tr>
-            <td scope="col"></td>
-            <td scope="col"></td>
             <td
                 scope="col"
-                colspan="2"
+                colspan="4"
                 style="text-align: right;"
-            ><b>Total dalam huruf</b></td>
+            ><b><?= ucfirst(view_total_array($total)) ?> rupiah</b></td>
         </tr>
         <tr>
             <td scope="col"></td>
@@ -326,3 +325,42 @@
 </body>
 
 </html>
+
+<?php
+function total_array($total) {
+        $total = abs($total);
+        $words = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
+        $temp = "";
+        if ($total < 12) {
+            $temp = " ". $words[$total];
+        } else if ($total <20) {
+            $temp = total_array($total - 10). " belas";
+        } else if ($total < 100) {
+            $temp = total_array($total/10)." puluh". total_array($total % 10);
+        } else if ($total < 200) {
+            $temp = " seratus" . total_array($total - 100);
+        } else if ($total < 1000) {
+            $temp = total_array($total/100) . " ratus" . total_array($total % 100);
+        } else if ($total < 2000) {
+            $temp = " seribu" . total_array($total - 1000);
+        } else if ($total < 1000000) {
+            $temp = total_array($total/1000) . " ribu" . total_array($total % 1000);
+        } else if ($total < 1000000000) {
+            $temp = total_array($total/1000000) . " juta" . total_array($total % 1000000);
+        } else if ($total < 1000000000000) {
+            $temp = total_array($total/1000000000) . " milyar" . total_array(fmod($total,1000000000));
+        } else if ($total < 1000000000000000) {
+            $temp = total_array($total/1000000000000) . " trilyun" . total_array(fmod($total,1000000000000));
+        }     
+        return $temp;
+    }
+    
+function view_total_array($total) {
+        if($total<0) {
+            $result = "minus ". trim(total_array($total));
+        } else {
+            $result = trim(total_array($total));
+        }     		
+        return $result;
+    }
+?>
