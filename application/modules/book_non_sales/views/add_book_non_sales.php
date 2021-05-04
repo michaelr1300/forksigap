@@ -21,13 +21,9 @@
                     <form id="form_non_sales" action="<?= base_url("book_non_sales/add"); ?>" method="post">
                         <fieldset>
                             <legend>Form Buku Non Penjualan</legend>
-                            <!-- <div class="form-group">
-                                <label for="number">Nomor Permintaan Non Penjualan<abbr title="Required">*</abbr></label>
-                                <input type="text" class="form-control" id="number">
-                            </div> -->
                             <div class="form-group">
                                 <label for="name">Nama<abbr title="Required">*</abbr></label>
-                                <input type="text" id="name" class="form-control">
+                                <input type="text" id="name" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="address">Alamat<abbr title="Required">*</abbr></label>
@@ -36,7 +32,8 @@
                                 'class' => 'form-control',
                                 'id'    => "address",
                                 'rows'  => '3',
-                                'value' => $input->address
+                                'value' => $input->address,
+                                'required' => true
                             ]); ?>
                             <?= form_error('address'); ?>
                             </div>
@@ -47,25 +44,11 @@
                                     <option value="doorprize">Doorprize</option>
                                 </select>
                             </div>
-                            <!-- <div class="form-group" id="input-perpustakaan" style="display:none">
-                                <label for="library-id">Tujuan Perpustakaan
-                                    <abbr title="Required">*</abbr>
-                                </label>
-                                <?//= form_dropdown('library_id', get_dropdown_list_library(), $input->library_id, 'id="library-id" class="form-control custom-select d-block"'); ?>
-                                <?//= form_error('library_id'); ?>
-                            </div> -->
                             <div class="row">
                                 <div class="form-group col-10 mb-0">
                                     <label for='book-id'>Judul Buku</label>
-                                    <?= form_dropdown('book_id', $book_non_sales_available, 0, 'id="book-id" class="form-control custom-select d-block"'); ?>
+                                    <?= form_dropdown('book_id', $book_non_sales_available, 0, 'id="book-id" class="form-control custom-select d-block" required'); ?>
                                     <?= form_error('book_id'); ?>
-
-                                    <!-- <select class="form-control" name="book_tittle" id="book_tittle" required>
-                                        <option value="">No Selected</option>
-                                        <?php //foreach($book as $row):?>
-                                        <option value="<?php //echo $row->book_id;?>"><?php echo $row->book_tittle;?></option>
-                                        <?php //endforeach;?>
-                                    </select> -->
                                 </div>
                                 <div class="form-group col-2 mb-0">
                                     <label for="add-book">Tambah Buku</label>
@@ -108,19 +91,6 @@ $(document).ready(function() {
         dropdownParent: $('#app-main')
     });
 
-    // $("#library-id").select2({
-    //     placeholder: '-- Pilih --',
-    //     dropdownParent: $('#app-main')
-    // });
-
-    // $('#destination').change(function(){
-    //     if ($("#destination").val()=="library"){
-    //         $("#input-perpustakaan").show()
-    //     }
-    //     else {
-    //         $("#input-perpustakaan").hide()
-    //     }
-    // })
     $('#book-id').change(function(){
         if ($("#book-id").val()){
             $('#add-book').prop('disabled', false)

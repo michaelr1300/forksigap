@@ -8,14 +8,29 @@ class Book_non_sales_model extends MY_Model
     {
         $validation_rules = [
             [
+                'field' => 'name',
+                'label' => 'Nama',
+                'rules' => 'required',
+            ],
+            [
+                'field' => 'address',
+                'label' => 'Alamat',
+                'rules' => 'required',
+            ],
+            [
+                'field' => 'book_id',
+                'label' => 'Buku',
+                'rules' => 'required',
+            ],
+            [
                 'field' => 'qty',
                 'label' => 'Jumlah Buku',
-                'rules' => 'trim|required',
+                'rules' => 'required',
             ],
             [
                 'field' => 'type',
                 'label' => 'Tipe Non Penjualan',
-                'rules' => 'trim|required',
+                'rules' => 'required',
             ],
         ];
 

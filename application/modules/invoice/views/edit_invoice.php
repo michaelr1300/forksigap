@@ -376,10 +376,11 @@
                                                     value="<?= $books->price ?>"
                                                 />
                                             </td>
-                                            <td class="align-middle"><?= $books->qty ?>
+                                            <td class="align-middle">
                                                 <input
+                                                    id="invoice-book-qty-<?= $books->book_id ?>"
                                                     type="number"
-                                                    hidden
+                                                    required
                                                     name="invoice_book_qty[]"
                                                     class="form-control"
                                                     value="<?= $books->qty ?>"
@@ -441,6 +442,25 @@ $(document).ready(function() {
     //hilangin buku yg sudah ada
     <?php foreach ($invoice_book as $books) : ?>
         $('#book-id option[value="' + <?= $books->book_id ?> + '"]').remove()
+
+        //fetch stock sekarang
+        $.ajax({
+            type: "GET",
+            url: "<?= base_url('invoice/api_get_book/'); ?>" + <?= $books->book_id ?>,
+            datatype: "JSON",
+            success: function(res) {
+                $('#invoice-book-qty-' + <?= $books->book_id ?>).attr({
+                    "max" : res.data.stock,
+                    "min" : 1
+                });
+            },
+            error: function(err) {
+                console.log(err);
+            },
+        });
+
+
+        
     <?php endforeach; ?>
 
     $('#tambahCustomer').click(function() {
@@ -486,7 +506,7 @@ $(document).ready(function() {
         dropdownParent: $('#app-main')
     });
 
-    function add_book_to_invoice() {
+    function add_book_to_invoice(stock) {
         var bookId = document.getElementById('book-id');
 
         html = '<tr class="text-center">';
@@ -497,13 +517,13 @@ $(document).ready(function() {
         html += '</td>';
 
         // Harga
-        html += '<td class="align-middle">' + $('#info-price').text();
+        html += '<td class="align-middle"> Rp ' + $('#info-price').text();
         html += '<input type="number" hidden name="invoice_book_price[]" class="form-control" value="' + $('#info-price').text() + '"/>';
         html += '</td>';
 
         // Jumlah
-        html += '<td class="align-middle">' + document.getElementById('qty').value;
-        html += '<input type="number" hidden name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '"/>';
+        html += '<td class="align-middle">';
+        html += '<input type="number" name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '" max="' + stock + '"/>';
         html += '</td>';
 
         // Diskon
@@ -513,7 +533,7 @@ $(document).ready(function() {
 
         // Total
         var totalPrice = (parseFloat($('#info-price').text())) * (parseFloat($('#qty').val())) * (1 - (parseFloat($('#discount').val()) / 100));
-        html += '<td class="align-middle">' + totalPrice + '</td>';
+        html += '<td class="align-middle"> Rp ' + parseFloat(totalPrice).toFixed(0) + '</td>';
 
         // Button Hapus
         html += '<td class="align-middle"><button type="button" class="btn btn-danger remove">Hapus</button></td></tr>';
@@ -529,23 +549,25 @@ $(document).ready(function() {
         $('#book-info').hide();
     }
 
-    $(document).on('click', '#add_item', function() {
+    $('#add_item').click(function() {
         // Judul buku harus dipilih
         if (document.getElementById('book-id').value === '') {
             alert("Silakan Pilih Judul Buku!");
             return
         }
-        // Jumlah buku harus diisi
-        if (!(document.getElementById('qty').value > 0)) {
-            alert("Jumlah Buku Minimal = 1!");
+        // Jumlah buku 1 - stock
+        var qty = document.getElementById('qty')
+        if ((parseInt(qty.value) < 1) || parseInt(qty.value) > parseInt(qty.max)) {
+            alert("Jumlah buku minimal 1 dan tidak boleh melebihi stock!");
             return
         }
         // Diskon antara 0-100%
-        if ((document.getElementById('discount').value > 100) || (document.getElementById('discount').value < 0)) {
+        var discount = document.getElementById('discount').value
+        if (!((discount <= 100) && (discount >= 0))) {
             alert("Masukkan diskon antara 0 - 100!");
             return
         } else {
-            add_book_to_invoice();
+            add_book_to_invoice(qty.max);
             reset_book();
         }
     });

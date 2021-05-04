@@ -425,7 +425,7 @@ $(document).ready(function() {
         dropdownParent: $('#app-main')
     });
 
-    function add_book_to_invoice() {
+    function add_book_to_invoice(stock) {
         var bookId = document.getElementById('book-id');
 
         html = '<tr class="text-center">';
@@ -441,8 +441,8 @@ $(document).ready(function() {
         html += '</td>';
 
         // Jumlah
-        html += '<td class="align-middle">' + document.getElementById('qty').value;
-        html += '<input type="number" hidden name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '"/>';
+        html += '<td class="align-middle">';
+        html += '<input type="number" required name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '" max="' + stock + '"/>';
         html += '</td>';
 
         // Diskon
@@ -485,7 +485,7 @@ $(document).ready(function() {
             alert("Masukkan diskon antara 0 - 100!");
             return
         } else {
-            add_book_to_invoice();
+            add_book_to_invoice(qty.max);
             reset_book();
         }
     });

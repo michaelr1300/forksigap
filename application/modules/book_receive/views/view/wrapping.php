@@ -33,7 +33,6 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
         <?php 
             $this->load->view('book_receive/view/common/progress_alert', [
                 'progress'          => 'wrapping',
-                // 'staff_gudang'  => $staff_gudang
             ]); 
             ?>
 
@@ -88,15 +87,6 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
                         <span class="badge badge-info p-1"><?= $staff->username; ?></span>
                     <?php endforeach; ?>
                 </strong>
-                <!-- <?php //if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && empty($book_receive->handover_deadline))) && !$is_final) : ?>
-                <a href="#" id="btn-modal-staff-wrapping" title="Staff Bertugas" data-toggle="modal"
-                    data-target="#modal-staff-wrapping">Staff Bertugas <i class="fas fa-edit fa-fw"></i></a>
-                <?php //else : ?>
-                <span class="text-muted">Staff Bertugas</span>
-                <?php //endif ?>
-                <strong>
-                    <span><?//= $book_receive->wrapping_staff ?></span>
-                </strong> -->
             </div>
             <?php endif; ?>
             <div class="list-group-item justify-content-between">
@@ -104,13 +94,6 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
                 <strong>
                     <?= $book_receive->total_postprint ?></strong>
             </div>
-            <!-- <?php //if ($book_receive->total) : ?>
-            <div class="list-group-item justify-content-between">
-                <span class="text-muted">Jumlah hasil wrapping</span>
-                <strong id="total-wrapping"><?//= $book_receive->total; ?></strong>
-            </div>
-            <?php //endif; ?> -->
-
             <div class="m-3">
                 <div class="text-muted pb-1">Catatan Admin</div>
                 <?= $book_receive->wrapping_notes_admin ?>
