@@ -101,6 +101,20 @@ class Invoice extends MY_Controller
                     'discount'      => $this->input->post('invoice_book_discount')[$i]
                 ];
                 $this->db->insert('invoice_book', $book);
+
+                // Kurangi Stock Buku
+                $book_stock = $this->book_stock->where('book_id', $book['book_id'])->get();
+                $book_stock->warehouse_present -= $book['qty'];
+                $this->book_stock->where('book_id', $book['book_id'])->update($book_stock);
+
+                // Catat Transaksi Buku (titip)
+                // $this->book_transaction->insert([
+                //     'book_id' => $books['book_id'],
+                //     'book_stock_id' => $book_stock->book_stock_id,
+                //     'book_non_sales_id' => $book_non_sales_id,
+                //     'stock_out' => $books['qty'],
+                //     'date' => now()
+                // ]);
             }
             echo json_encode(['status' => TRUE]);
             $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
