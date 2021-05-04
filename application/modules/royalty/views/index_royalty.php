@@ -128,8 +128,13 @@ function royalti_action()
                     </div><br>
                     <div class="text-center">
                         <h5>Daftar Penerima Royalti</h5>
-                        <h7>Periode $periode_bang_andrew_mulya</h7><br>
-                        <h7>Tahun Lahirnya Keqing</h7>
+                        <?php if ($period_time == '1') $period_time = 'Periode Januari-Juni';
+                        elseif ($period_time == '2') $period_time = 'Periode Juli-Desember';
+                        else $period_time = ''; ?>
+                        <?php if ($date_year == null) $date_year = '';
+                        else $date_year = 'Tahun ' . $date_year ?>
+                        <h6><?= $period_time; ?></h6>
+                        <h6><?= $date_year; ?></h6>
                     </div>
                     <table class="table table-striped mb-0 table-responsive">
                         <thead>
