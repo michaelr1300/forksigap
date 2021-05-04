@@ -4,16 +4,16 @@ $level              = check_level();
 
 <header class="page-title-bar mb-3">
     <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
+        <ol class="breadcrumb">
             <li class="breadcrumb-item">
                 <a href="<?= base_url(); ?>"><span class="fa fa-home"></span></a>
             </li>
             <li class="breadcrumb-item">
-                <a href="<?= base_url('invoice'); ?>">Royalti</a>
+                <a href="<?= base_url('royalty'); ?>">Royalti</a>
             </li>
             <li class="breadcrumb-item">
                 <a class="text-muted">
-                    <!-- <?= $author->author_name ?></a> -->
+                    <?= $author->author_name ?></a>
             </li>
         </ol>
     </nav>
@@ -25,7 +25,6 @@ $level              = check_level();
         class="card"
     >
         <div class="card-body">
-            <?php //=isset($input->draft_id) ? form_hidden('draft_id', $input->draft_id) : ''; ?>
             <div class="tab-content">
                 <!-- book-data -->
                 <div
@@ -35,36 +34,7 @@ $level              = check_level();
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered mb-0">
                             <tbody>
-                            <tr>
-                                <td width="200px"> <?=$this->lang->line('form_author_nip');?> </td>
-                                <td><?=$author->author_nip;?> </td>
-                            </tr>
-                            <tr>
-                                <td width="200px"> <?=$this->lang->line('form_author_latest_education');?> </td>
-                                <td>
-                                    <?=($author->author_latest_education == 's4') ? 'Professor' : ucwords($author->author_latest_education);?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td width="200px"> <?=$this->lang->line('form_work_unit_name');?> </td>
-                                <td> <?=konversiID('work_unit', 'work_unit_id', $author->work_unit_id)->work_unit_name;?> </td>
-                            </tr>
-                            <tr>
-                                <td width="200px"> <?=$this->lang->line('form_institute_name');?> </td>
-                                <td> <?=konversiID('institute', 'institute_id', $author->institute_id)->institute_name;?> </td>
-                            </tr>
-                            <tr>
-                                <td width="200px"> <?=$this->lang->line('form_author_address');?> </td>
-                                <td><?=$author->author_address;?> </td>
-                            </tr>
-                            <tr>
-                                <td width="200px"> <?=$this->lang->line('form_author_contact');?> </td>
-                                <td><?=$author->author_contact;?> </td>
-                            </tr>
-                            <tr>
-                                <td width="200px"> <?=$this->lang->line('form_author_email');?> </td>
-                                <td><?=$author->author_email;?> </td>
-                            </tr>
+
                             </tbody>
                         </table>
                     </div>
@@ -72,13 +42,18 @@ $level              = check_level();
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered mb-0">
                             <tbody>
+                                <?php if ($period_time == '1') $period_time = 'Januari-Juni';
+                                elseif ($period_time == '2') $period_time = 'Juli-Desember';
+                                else $period_time = '-'; ?>
+                                <?php if ($date_year == null) $date_year = '-';
+                                else $date_year = $date_year ?>
                                 <tr>
                                     <td width="200px"> Periode Royalti </td>
-                                    <td>Juli - Desember (misalnya)</td>
+                                    <td><?= $period_time; ?></td>
                                 </tr>
                                 <tr>
                                     <td width="200px"> Tahun Royalti </td>
-                                    <td>Tahun Lahir Keqing</td>
+                                    <td><?= $date_year; ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -108,38 +83,33 @@ $level              = check_level();
                         </tr>
                     </thead>
                     <tbody>
-                    <?php $i = 0; ?>
-                    <?php foreach ($invoice_books as $invoice_book) : ?>
-                    <?php $i++; ?>
-                        <tr class="text-center">
-                            <td class="align-middle pl-4">
-                                <?= $i ?>
-                            </td>
-                            <td class="text-left align-middle">
-                                <!-- <?= $invoice_book->book_title ?> -->
-                            </td>
-                            <td class="align-middle">
-                                Penulis
-                            </td>
-                            <td class="align-middle">
-                                Rp <?= $invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount/100) ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
+                        <?php $index = 0;
+                        $total_earning = 0; ?>
+                        <?php foreach ($royalty_details as $royalty) : ?>
+                            <tr>
+                                <td class="text-center"><?= $index + 1; ?></td>
+                                <td class="text-left"><?= $royalty->book_title; ?></td>
+                                <td class="text-center"><?= $royalty->count; ?></td>
+                                <td class="text-right pr-5">Rp <?= $royalty->total; ?></td>
+                            </tr>
+                            <?php $index++;
+                            $total_earning += $royalty->total; ?>
+                        <?php endforeach; ?>
                         <tr style="text-align:center;">
-                        <td scope="col"
-                            class="align-middle"
-                            colspan="3"
-                        >
-                        <b>Total Royalti</b>
-                        </td>
-                        <td>
-                            <b>Rp 12.000.000</b>
-                        </td>
+                            <td
+                                scope="col"
+                                class="align-middle"
+                                colspan="3"
+                            >
+                                <b>Total Royalti</b>
+                            </td>
+                            <td class="text-right pr-5">
+                                <b>Rp <?= $total_earning; ?></b>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
-				<br>
+                <br>
             </div>
         </div>
     </section>

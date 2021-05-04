@@ -128,6 +128,9 @@ function royalti_action()
                     </div><br>
                     <div class="text-center">
                         <h5>Daftar Penerima Royalti</h5>
+                        <?php $url = '';
+                        if ($period_time == null) $url = '';
+                        else $url = '/' . $period_time . '/' . $date_year; ?>
                         <?php if ($period_time == '1') $period_time = 'Periode Januari-Juni';
                         elseif ($period_time == '2') $period_time = 'Periode Juli-Desember';
                         else $period_time = ''; ?>
@@ -180,7 +183,7 @@ function royalti_action()
                                     </td>
                                     <td class="text-center align-middle">
                                         <a
-                                            href="<?= base_url("$pages/view/$lData->author_id"); ?>"
+                                            href="<?= base_url("$pages/view/$lData->author_id" . $url); ?>"
                                             class="font-weight-bold"
                                         >
                                             <?= highlight_keyword($lData->author_name, $keyword); ?>
