@@ -335,6 +335,7 @@
 <script>
 $(document).ready(function() {
     get_showroom_number()
+    $('#discount').val(15)
     $('#pilihCustomer').click(function() {
         var value = $('#pilihCustomer').val()
         if (value == "Pilih Customer") {
@@ -355,6 +356,7 @@ $(document).ready(function() {
             $('#customer-dropdown').hide()
             $('#customer-id').val('')
             $('#customer-info').hide()
+            $('#discount').val(15)
         }
     })
     $('#tambahCustomer').click(function() {
@@ -379,6 +381,7 @@ $(document).ready(function() {
             $('#new-customer-info').hide()
             $('#new-customer-name').val('')
             $('#new-customer-type').val('')
+            $('#discount').val(15)
         }
     })
 
@@ -585,9 +588,6 @@ $(document).ready(function() {
     $("#invoice_form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
-        if ($('#customer-id').val() == "" && $('#new-customer-name').val() == "") {
-            $('#customer-id').val('1')
-        }
         $.ajax({
             type: "POST",
             url: "<?= base_url("invoice/add"); ?>",

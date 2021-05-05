@@ -602,7 +602,6 @@ $(document).ready(function() {
     $("#invoice_form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
-        console.log(form.serialize())
         $.ajax({
             type: "POST",
             url: "<?= base_url("invoice/add"); ?>",

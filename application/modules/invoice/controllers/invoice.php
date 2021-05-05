@@ -61,7 +61,7 @@ class Invoice extends MY_Controller
                 $customer_id = $this->input->post('customer-id');
             }
             //Nentuin customer id jika customer dibuat baru
-            else {
+            else if ($this->input->post('new-customer-name') == '' && $this->input->post('new-customer-phone-number') == '') {
                 $add = [
                     'name'          => $this->input->post('new-customer-name'),
                     'address'       => $this->input->post('new-customer-address'),
@@ -70,6 +70,8 @@ class Invoice extends MY_Controller
                 ];
                 $this->db->insert('customer', $add);
                 $customer_id = $this->db->insert_id();
+            } else {
+                $customer_id = null;
             }
 
             $add = [
@@ -150,6 +152,7 @@ class Invoice extends MY_Controller
         $customer_type = get_customer_type();
 
         $dropdown_book_options = $this->invoice->get_ready_book_list_showroom();
+        // $dropdown_book_options = $this->invoice->get_ready_book_list();
 
         $pages       = $this->pages;
         $main_view   = 'invoice/add_showroom';
@@ -291,12 +294,12 @@ class Invoice extends MY_Controller
         redirect($this->pages);
     }
 
-    public function generate_pdf($invoice_id, $ongkir=false)
+    public function generate_pdf($invoice_id, $ongkir = false)
     {
         $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
         $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
         $customer       = $this->invoice->get_customer($invoice->customer_id);
-        if ($ongkir != false){
+        if ($ongkir != false) {
             $invoice->delivery_fee = $ongkir;
             $this->db->set('delivery_fee', $ongkir)->where('invoice_id', $invoice_id)->update('invoice');
         }
@@ -305,17 +308,17 @@ class Invoice extends MY_Controller
         $data_format['invoice'] = $invoice ?? '';
         $data_format['invoice_books'] = $invoice_books ?? '';
         $data_format['customer'] = $customer ?? '';
-        
-        if ($invoice->type == 'cash'){
+
+        if ($invoice->type == 'cash') {
             $html = $this->load->view('invoice/view_cash_invoice_pdf', $data_format, true);
-        }else{
+        } else {
             $html = $this->load->view('invoice/view_invoice_pdf', $data_format, true);
         }
         $file_name = $invoice->number . '_Invoice';
 
         $this->pdf->generate_pdf_a4_portrait($html, $file_name);
     }
-      
+
     public function print_showroom_receipt()
     {
         // me-load library escpos

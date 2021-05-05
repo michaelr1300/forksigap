@@ -32,7 +32,7 @@ class Invoice_model extends MY_Model
             }
         }
 
-        if ($this->input->post('customer-id') == '') {
+        if ($this->input->post('customer-id') == '' && $this->input->post('type') != 'showroom') {
             if ($this->input->post('new-customer-name') == '' && $this->input->post('new-customer-phone-number') == '') {
                 $data['input_error'][] = 'error-customer-info';
                 $data['status'] = FALSE;
@@ -187,7 +187,7 @@ class Invoice_model extends MY_Model
             ->where('book_id', $book_id)
             ->get()
             ->row();
-            
+
         $stock = $this->fetch_warehouse_stock($book_id);
 
         if ($stock == NULL) {
