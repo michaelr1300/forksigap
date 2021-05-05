@@ -83,9 +83,9 @@
                                 <label class="font-weight-bold" for="warehouse_modifier">Perubahan<abbr
                                         title="Required">*</abbr></label>
                                 <input type="number" class="form-control" name="warehouse_modifier"
-                                    id="warehouse_modifier" />
+                                    id="warehouse_modifier" min="1" />
                                 <input type="hidden" name="warehouse_past" id="warehouse_past"
-                                    value="<?//= $input->stock_warehouse; ?>">
+                                    value="">
                             </div>
                             <div class="form-group">
                                 <label class="font-weight-bold" for="notes">Catatan</label>
