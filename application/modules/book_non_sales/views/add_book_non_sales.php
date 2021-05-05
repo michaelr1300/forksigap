@@ -47,7 +47,7 @@
                             <div class="row">
                                 <div class="form-group col-10 mb-0">
                                     <label for='book-id'>Judul Buku</label>
-                                    <?= form_dropdown('book_id', $book_non_sales_available, 0, 'id="book-id" class="form-control custom-select d-block" required'); ?>
+                                    <?= form_dropdown('book_id', $book_non_sales_available, 0, 'id="book-id" class="form-control custom-select d-block"'); ?>
                                     <?= form_error('book_id'); ?>
                                 </div>
                                 <div class="form-group col-2 mb-0">
@@ -76,7 +76,7 @@
                         </fieldset>
                         <hr>
                             <!-- button -->
-                        <input type="submit" class="btn btn-primary ml-auto" value="Submit" />
+                        <input type="submit" class="btn btn-primary ml-auto" id="submit-form" disabled value="Submit" />
                     </form>
                 </div>
             </section>
@@ -116,6 +116,8 @@ $(document).ready(function() {
                     var row5 = "<td style='vertical-align: middle'><input type='number' value=0 min=1 max='"+stock+"'class='form-control quantity' name='quantity'></td>"
                     var row6 = "<td style='vertical-align: middle;text-align: center'></button><button type='button' class='btn btn-danger btn-md remove-book'>Hapus</td></tr>"
                     var html = row1+row2+row3+row4+row5+row6
+                    $('#book-id option[value="' + book_id + '"]').remove()
+                    $('#submit-form').prop('disabled', false)
                     $("#book-list-content").append(html);
                 },
                 error: function(err) {
@@ -126,10 +128,17 @@ $(document).ready(function() {
     })
     
     $("#book-list-content").on('click','.remove-book', function(event){
+        let selector = $(this).closest("tr").children("td").first()
+        let book_title = selector.text()
+        let book_id = selector.children("input").val()
         $(this).closest('tr').remove();
         $("#book-list-content tr").each(function(index){
             $(this).children('th').html(index+1)
         });
+        if ($('#book-list tr').length <= 1){
+            $('#submit-form').prop('disabled', true)
+        }
+        $("#book-id").prepend(new Option(book_title, book_id))
     });
 
     $("#form_non_sales").submit(function(e) {

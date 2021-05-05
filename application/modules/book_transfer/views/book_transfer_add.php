@@ -19,11 +19,11 @@
             <section class="card">
                 <div class="card-body">
                     <form id="form_transfer" action="<?= base_url("book_transfer/add"); ?>" method="post">
-                        <fielsdet>
+                        <fieldset>
                             <legend>Form Pemindahan Buku</legend>
                             <div class="form-group">
                                 <label for="destination">Tujuan Pemindahan<abbr title="Required">*</abbr></label>
-                                <select name="destination" id="destination" class="form-control">
+                                <select name="destination" id="destination" class="form-control custom-select d-block" >
                                     <option value="showroom">Showroom</option>
                                     <option value="library">Perpustakaan</option>
                                 </select>
@@ -73,7 +73,7 @@
                         </fieldset>
                         <hr>
                             <!-- button -->
-                        <input type="submit" class="btn btn-primary ml-auto" value="Submit" />
+                        <input type="submit" disabled class="btn btn-primary ml-auto" id="submit-form" value="Submit" />
                         <!-- <a class="btn btn-secondary" href="<?php// echo base_url('book_transfer') ?>" role="button">Back</a> -->
                     </form>
                 </div>
@@ -97,9 +97,11 @@ $(document).ready(function() {
     $('#destination').change(function(){
         if ($("#destination").val()=="library"){
             $("#input-perpustakaan").show()
+            $('#library-id').prop('required', true)
         }
         else {
             $("#input-perpustakaan").hide()
+            $('#library-id').prop('required', false)
         }
     })
     $('#book-id').change(function(){
@@ -129,6 +131,8 @@ $(document).ready(function() {
                     var row6 = "<td style='vertical-align: middle' class='price'>"+price+"<input type='number' hidden name='price' class='price' value='"+price+"'></td>"
                     var row7 = "<td style='vertical-align: middle'></button><button type='button' class='btn btn-danger btn-md remove-book'>Hapus</td></tr>"
                     var html = row1+row2+row3+row4+row5+row6+row7
+                    $('#book-id option[value="' + book_id + '"]').remove()
+                    $('#submit-form').prop('disabled', false)
                     $("#book-list-content").append(html);
                 },
                 error: function(err) {
@@ -139,10 +143,17 @@ $(document).ready(function() {
     })
     
     $("#book-list-content").on('click','.remove-book', function(event){
+        let selector = $(this).closest("tr").children("td").first()
+        let book_title = selector.text()
+        let book_id = selector.children("input").val()
         $(this).closest('tr').remove();
         $("#book-list-content tr").each(function(index){
             $(this).children('th').html(index+1)
         });
+        if ($('#book-list tr').length <= 1){
+            $('#submit-form').prop('disabled', true)
+        }
+        $("#book-id").prepend(new Option(book_title, book_id))
     });
 
     $("#form_transfer").submit(function(e) {
