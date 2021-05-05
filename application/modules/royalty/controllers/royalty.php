@@ -35,17 +35,20 @@ class Royalty extends MY_Controller
         $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
 
         $royalty = $this->royalty->author_earning($filters);
+        var_dump($royalty);
         $total = count($royalty);
+        $total_penjualan = 0;
         $total_royalty = 0;
         foreach ($royalty as $royalty_each) {
-            $total_royalty += $royalty_each->total;
+            $total_penjualan += $royalty_each->penjualan;
+            $total_royalty += $royalty_each->earned_royalty;
         }
 
         $pagination = $this->royalty->make_pagination(site_url('royalty'), 2, $total);
 
         $pages      = $this->pages;
         $main_view  = 'royalty/index_royalty';
-        $this->load->view('template', compact('pages', 'main_view', 'royalty', 'pagination', 'total', 'total_royalty'));
+        $this->load->view('template', compact('pages', 'main_view', 'royalty', 'pagination', 'total', 'total_penjualan', 'total_royalty'));
     }
 
     public function view($author_id, $period_time = null, $date_year = null)

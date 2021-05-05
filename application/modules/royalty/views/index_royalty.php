@@ -162,6 +162,10 @@ function royalti_action()
                                 <th
                                     scope="col"
                                     style="width:15%;"
+                                >Jumlah Penjualan</th>
+                                <th
+                                    scope="col"
+                                    style="width:15%;"
                                 >Jumlah Royalti</th>
                                 <th
                                     scope="col"
@@ -190,27 +194,36 @@ function royalti_action()
                                         </a>
                                     </td>
                                     <td class="align-middle">
-                                        <?= $lData->total; ?>
+                                        Rp <?= round($lData->penjualan, 0); ?>
+                                    </td>
+                                    <td class="align-middle">
+                                        Rp <?= round($lData->earned_royalty, 0); ?>
                                     </td>
                                     <td>Status</td>
                                     <td></td>
                                 </tr>
                             <?php endforeach; ?>
                             <tr style="text-align:center;">
+                                <td>&nbsp;</td>
                                 <td
                                     scope="col"
                                     class="align-middle"
-                                    colspan="4"
                                 >
                                     <b>Total</b>
                                 </td>
                                 <td
                                     scope="col"
                                     class="align-middle"
-                                    colspan="3"
                                 >
-                                    <b>Rp <?= $total_royalty ?></b>
+                                    <b>Rp <?= round($total_penjualan, 0) ?></b>
                                 </td>
+                                <td
+                                    scope="col"
+                                    class="align-middle"
+                                >
+                                    <b>Rp <?= round($total_royalty, 0) ?></b>
+                                </td>
+                                <td>&nbsp;</td>
                             </tr>
                         </tbody>
                     </table>

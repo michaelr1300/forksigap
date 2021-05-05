@@ -24,7 +24,7 @@ class Royalty_model extends MY_Model
 
     public function author_earning($filters)
     {
-        $this->db->select('author.author_id, author_name, SUM(qty*price) AS total')
+        $this->db->select('author.author_id, author_name, SUM(qty*price) AS penjualan, SUM(qty*price*book.royalty/100) as earned_royalty')
             ->from('book')
             ->join('draft_author', 'draft_author.draft_id = book.draft_id', 'right')
             ->join('author', 'draft_author.author_id = author.author_id')
@@ -42,7 +42,7 @@ class Royalty_model extends MY_Model
 
     public function author_details($author_id, $filters)
     {
-        $this->db->select('book.book_id, book.book_title, SUM(qty) AS count, SUM(qty*price) AS total')
+        $this->db->select('book.book_id, book.book_title, SUM(qty) AS count, SUM(qty*price) AS penjualan, SUM(qty*price*book.royalty/100) as earned_royalty')
             ->from('book')
             ->join('draft_author', 'draft_author.draft_id = book.draft_id', 'right')
             ->join('invoice_book', 'book.book_id = invoice_book.book_id')

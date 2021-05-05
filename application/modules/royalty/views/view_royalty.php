@@ -79,21 +79,28 @@ $level              = check_level();
                             <th
                                 scope="col"
                                 style="width:15%;"
+                            >Penjualan</th>
+                            <th
+                                scope="col"
+                                style="width:15%;"
                             >Royalti</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php $index = 0;
-                        $total_earning = 0; ?>
+                        $total_earning = 0;
+                        $total_royalty = 0; ?>
                         <?php foreach ($royalty_details as $royalty) : ?>
                             <tr>
                                 <td class="text-center"><?= $index + 1; ?></td>
                                 <td class="text-left"><?= $royalty->book_title; ?></td>
                                 <td class="text-center"><?= $royalty->count; ?></td>
-                                <td class="text-right pr-5">Rp <?= $royalty->total; ?></td>
+                                <td class="text-right pr-5">Rp <?= $royalty->penjualan; ?></td>
+                                <td class="text-right pr-5">Rp <?= round($royalty->earned_royalty, 0); ?></td>
                             </tr>
                             <?php $index++;
-                            $total_earning += $royalty->total; ?>
+                            $total_earning += $royalty->penjualan;
+                            $total_royalty += $royalty->earned_royalty; ?>
                         <?php endforeach; ?>
                         <tr style="text-align:center;">
                             <td
@@ -101,10 +108,13 @@ $level              = check_level();
                                 class="align-middle"
                                 colspan="3"
                             >
-                                <b>Total Royalti</b>
+                                <b>Total</b>
                             </td>
                             <td class="text-right pr-5">
                                 <b>Rp <?= $total_earning; ?></b>
+                            </td>
+                            <td class="text-right pr-5">
+                                <b>Rp <?= $total_royalty; ?></b>
                             </td>
                         </tr>
                     </tbody>
