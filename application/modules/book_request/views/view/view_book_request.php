@@ -20,7 +20,7 @@ $level              = check_level();
         <div class="page-title mb-0 pb-0 h1"> Pesanan Buku </div>
 
         <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal"
-            data-target="#modal-edit-<?= $book_request->invoice_id; ?>"><i class="fa fa-edit fa-fw"></i> Edit Permintaan
+            data-target="#modal-edit-<?= $book_request->invoice_id; ?>"><i class="fa fa-edit fa-fw"></i> Edit Pesanan
             Buku</button>
 
     </div>
