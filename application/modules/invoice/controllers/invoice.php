@@ -27,9 +27,12 @@ class Invoice extends MY_Controller
         $this->invoice->per_page = $this->input->get('per_page', true) ?? 10;
 
         $get_data = $this->invoice->filter_invoice($filters, $page);
-
         //data invoice
         $invoice    = $get_data['invoice'];
+        foreach ($invoice as $each_invoice) {
+            if ($each_invoice->customer_name == NULL) $each_invoice->customer_name = '';
+            if ($each_invoice->customer_type == NULL) $each_invoice->customer_type = 'general';
+        }
         $total      = $get_data['total'];
         $pagination = $this->invoice->make_pagination(site_url('invoice'), 2, $total);
 
