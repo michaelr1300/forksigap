@@ -619,8 +619,8 @@ $(document).ready(function() {
                     location.href = "<?= base_url('invoice'); ?>";
                 }
             },
-            error: function(req, err) {
-                console.log(err)
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText);
             }
         });
     })

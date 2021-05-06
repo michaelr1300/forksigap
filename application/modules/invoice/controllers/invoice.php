@@ -11,6 +11,7 @@ class Invoice extends MY_Controller
         $this->pages = 'invoice';
         $this->load->model('invoice_model', 'invoice');
         $this->load->model('book/Book_model', 'book');
+        $this->load->model('book_stock/Book_stock_model', 'book_stock');
         $this->load->helper('sales_helper');
     }
 
@@ -61,7 +62,7 @@ class Invoice extends MY_Controller
                 $customer_id = $this->input->post('customer-id');
             }
             //Nentuin customer id jika customer dibuat baru
-            else if ($this->input->post('new-customer-name') == '' && $this->input->post('new-customer-phone-number') == '') {
+            else if (!empty($this->input->post('new-customer-name'))) {
                 $add = [
                     'name'          => $this->input->post('new-customer-name'),
                     'address'       => $this->input->post('new-customer-address'),
@@ -151,8 +152,8 @@ class Invoice extends MY_Controller
     {
         $customer_type = get_customer_type();
 
-        $dropdown_book_options = $this->invoice->get_ready_book_list_showroom();
-        // $dropdown_book_options = $this->invoice->get_ready_book_list();
+        // $dropdown_book_options = $this->invoice->get_ready_book_list_showroom();
+        $dropdown_book_options = $this->invoice->get_ready_book_list();
 
         $pages       = $this->pages;
         $main_view   = 'invoice/add_showroom';

@@ -588,12 +588,17 @@ $(document).ready(function() {
     $("#invoice_form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
+        console.log(form.serialize())
+        if ($('#new-customer-name').val() == '') {
+            console.log("test")
+        }
         $.ajax({
             type: "POST",
             url: "<?= base_url("invoice/add"); ?>",
             data: form.serialize(), // serializes the form's elements.
             success: function(result) {
                 var response = $.parseJSON(result)
+                console.log(response)
                 //Validation Error
                 if (response.status != true) {
                     $(".error-message").addClass('d-none');
@@ -605,8 +610,8 @@ $(document).ready(function() {
                     location.href = "<?= base_url('invoice'); ?>";
                 }
             },
-            error: function(req, err) {
-                console.log(err)
+            error: function(xhr, status, error) {
+                console.log(xhr.responseText);
             }
         });
     })
