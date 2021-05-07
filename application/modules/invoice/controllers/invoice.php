@@ -78,11 +78,12 @@ class Invoice extends MY_Controller
                 $customer_id = null;
             }
 
+            $type = $this->input->post('type');
             $add = [
-                'number'            => $this->input->post('number'),
+                'number'            => $this->invoice->get_last_invoice_number($type),
                 'customer_id'       => $customer_id,
                 'due_date'          => $this->input->post('due-date'),
-                'type'              => $this->input->post('type'),
+                'type'              => $type,
                 'source'            => $this->input->post('source'),
                 'source_library_id' => $this->input->post('source-library-id'),
                 'status'            => 'waiting',
@@ -185,11 +186,12 @@ class Invoice extends MY_Controller
                 $customer_id = $this->db->insert_id();
             }
 
+            $type = $this->input->post('type');
             $edit = [
-                'number'            => $this->input->post('number'),
+                'number'            => $this->invoice->get_last_invoice_number($type),
                 'customer_id'       => $customer_id,
                 'due_date'          => $this->input->post('due-date'),
-                'type'              => $this->input->post('type'),
+                'type'              => $type,
                 'source'            => $this->input->post('source'),
                 'source_library_id' => $this->input->post('source-library-id'),
                 'status'            => 'waiting'
@@ -430,12 +432,5 @@ class Invoice extends MY_Controller
     {
         $discount = $this->invoice->get_discount($customerType);
         return $this->send_json_output(true, $discount);
-    }
-
-    // Auto generate nomor faktur berdasar jenis faktur
-    public function api_get_last_invoice_number($type)
-    {
-        $number = $this->invoice->get_last_invoice_number($type);
-        return $this->send_json_output(true, $number);
     }
 }
