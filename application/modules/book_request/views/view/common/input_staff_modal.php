@@ -137,7 +137,7 @@ $(document).ready(function() {
         )
     })
 
-    // pilih reviewer
+    // pilih staff
     $(`#${progress}-progress-wrapper`).on('click', `#btn-select-staff-gudang-${progress}`, function() {
         const $this = $(this);
         const user_id = $(`#staff-gudang-id-${progress}`).val();
@@ -155,7 +155,6 @@ $(document).ready(function() {
             data: {
                 invoice_id,
                 user_id,
-                progress
             },
             success: function(res) {
                 showToast(true, res.data);

@@ -33,20 +33,6 @@ class Book_request extends MY_Controller
         $this->load->view('template', compact('pages', 'main_view', 'book_request', 'pagination','total'));
     }
 
-    // public function edit($invoice_id){
-    //     if($this->_is_warehouse_admin() == TRUE):
-    //     $pages        = $this->pages;
-    //     $main_view    = 'book_request/book_request_edit';
-    //     $book_request = $this->invoice->fetch_invoice_id($invoice_id);
-    //     if(empty($book_request) == FALSE):
-    //     $this->load->view('template', compact('pages', 'main_view', 'book_request'));
-    //     else:
-    //     $this->session->set_flashdata('error','Halaman tidak ditemukan.');
-    //     redirect(base_url(), 'refresh');
-    //     endif;
-    //     endif;
-    // }
-
     public function view($invoice_id){
         $book_request = $this->invoice->fetch_invoice_id($invoice_id);
         if (!$book_request) {
@@ -71,7 +57,7 @@ class Book_request extends MY_Controller
     {
         $input = (object) $this->input->post(null, true);
 
-        if (!$input->invoice_id || !$input->user_id || !$input->progress) {
+        if (!$input->invoice_id || !$input->user_id) {
             return $this->send_json_output(false, $this->lang->line('toast_data_not_available'));
         }
 
@@ -80,7 +66,7 @@ class Book_request extends MY_Controller
             return $this->send_json_output(false, $message);
         }
 
-        if ($this->book_request->check_row_staff_gudang($input->invoice_id, $input->user_id, $input->progress) > 0) {
+        if ($this->book_request->check_row_staff_gudang($input->invoice_id, $input->user_id) > 0) {
             return $this->send_json_output(false, $this->lang->line('toast_data_duplicate'), 422);
         }
 
@@ -126,9 +112,6 @@ class Book_request extends MY_Controller
             return $this->send_json_output(false, $message);
         }
         
-        // berisi 'progress' untuk conditional dibawah
-        // $input = (object) $this->input->post(null, false);
-
         $is_start_preparing = $this->invoice->start_progress($invoice_id);
 
         if ($is_start_preparing) {
@@ -187,9 +170,6 @@ class Book_request extends MY_Controller
             return $this->send_json_output(false, $message);
         }
         
-        // berisi 'progress' untuk conditional dibawah
-        // $input = (object) $this->input->post(null, false);
-
         //update status
         $is_finish_preparing = $this->invoice->finish_progress($invoice_id);
         
@@ -220,126 +200,6 @@ class Book_request extends MY_Controller
         }
     }
 
-    // public function add_book_request(){
-    //     if($this->check_level_gudang_pemasaran() == TRUE):
-    //     $this->load->library('form_validation');
-    //     $this->form_validation->set_rules('book_id', 'Judul buku', 'required|max_length[10]');
-    //     $this->form_validation->set_rules('order_number', 'Nomor Order', 'required|max_length[25]');
-    //     $this->form_validation->set_rules('total', 'Jumlah Permintaan', 'required|max_length[10]');
-    //     $this->form_validation->set_rules('notes', 'Catatan', 'required|max_length[250]');
-
-    //     if($this->form_validation->run() == FALSE){
-    //         $this->session->set_flashdata('error',validation_errors());
-    //         redirect($_SERVER['HTTP_REFERER'], 'refresh');
-    //     }else{
-    //         $check  =   $this->book_request->add_book_request();
-    //         if($check   ==  TRUE){
-    //             $this->session->set_flashdata('success','Berhasil menambahkan draft permintaan buku.');
-    //             redirect('book_request');
-    //         }else{
-    //             $this->session->set_flashdata('error','Gagal menambahkan draft permintaan buku.');
-    //             redirect($_SERVER['HTTP_REFERER'], 'refresh');
-    //         }
-    //     }
-    //     endif;
-    // }
-
-    // public function edit_book_request(){
-    //     if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
-    //         $order_number = $this->input->post('number');
-    //         $invoice_id = $this->input->post('invoice_id');
-    //         $new_status = $this->input->post('status');
-    //         $invoice = $this->invoice->where('invoice_id', $invoice_id)->get();
-    //         if (!$invoice) {
-    //             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
-    //         }
-    //         else {
-    //             $invoice->status = $new_status;
-    //             if ($this->invoice->where('invoice_id', $invoice_id)->update($invoice)) {
-    //                 $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
-    //             } else {
-    //                 $this->session->set_flashdata('success', $this->lang->line('toast_edit_fail'));
-    //             }
-    //         }
-    //     }
-    //     else {
-    //         $this->session->set_flashdata('warning', $this->lang->line('toast_edit_fail'));
-    //     }
-    //     redirect($this->pages);
-    // }
-
-    // public function delete_book_request($book_request_id){
-    //     if($this->_is_warehouse_admin() == TRUE){
-    //         $book_request = $this->book_request->where('book_request_id', $book_request_id)->get();
-    //         if (!$book_request) {
-    //             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
-    //             redirect($this->pages);
-    //         }
-
-    //         if ($this->book_request->where('book_request_id', $book_request_id)->delete()) {
-    //             $this->session->set_flashdata('success', $this->lang->line('toast_delete_success'));
-    //         } else {
-    //             $this->session->set_flashdata('success', $this->lang->line('toast_delete_fail'));
-    //         }
-    //     }
-    //     redirect($this->pages);
-    // }
-
-    public function action_request($book_request_id){
-        if($this->_is_warehouse_admin() == TRUE):
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('flag', 'Aksi', 'required|max_length[1]');
-        $this->form_validation->set_rules('request_notes_admin', 'Catatan', 'required|max_length[1000]');
-
-        if($this->form_validation->run() == FALSE){
-            $this->session->set_flashdata('error','Gagal melakukan aksi pada progress permintaan.');
-            redirect($_SERVER['HTTP_REFERER'].'#section_request', 'refresh');
-        }else{
-            $check  =   $this->book_request->action_request($book_request_id);
-            if($check   ==  TRUE){
-                $this->session->set_flashdata('success','Berhasil melakukan aksi pada progress permintaan.');
-                redirect($_SERVER['HTTP_REFERER'].'#section_request', 'refresh');
-            }else{
-                $this->session->set_flashdata('error','Gagal melakukan aksi pada progress permintaan.');
-                redirect($_SERVER['HTTP_REFERER'].'#section_request', 'refresh');
-            }
-        }
-        endif;
-    }
-
-    public function action_final($book_request_id){
-        if($this->_is_warehouse_admin() == TRUE):
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('stock_in_warehouse', 'Stok dalam gudang', 'required|max_length[10]');
-        $this->form_validation->set_rules('stock_out_warehouse', 'Stok luar gudang', 'required|max_length[10]');
-        $this->form_validation->set_rules('stock_marketing', 'Stok pemasaran', 'required|max_length[10]');
-        $this->form_validation->set_rules('stock_input_notes', 'Catatan', 'required|max_length[256]');
-
-        if($this->form_validation->run() == FALSE){
-            $this->session->set_flashdata('error','Permintaan buku gagal di finalisasi.');
-            redirect($_SERVER['HTTP_REFERER'].'#section_final', 'refresh');
-        }else{
-            $check  =   $this->book_request->action_final($book_request_id);
-            if($check   ==  TRUE){
-                $this->session->set_flashdata('success','Permintaan buku berhasil di finalisasi.');
-                redirect($_SERVER['HTTP_REFERER'].'#section_final', 'refresh');
-            }else{
-                $this->session->set_flashdata('error','Permintaan buku gagal di finalisasi.');
-                redirect($_SERVER['HTTP_REFERER'].'#section_final', 'refresh');
-            }
-        }
-        endif;
-    }
-
-    public function check_level_gudang_pemasaran(){
-        if($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_gudang' || $_SESSION['level'] == 'admin_pemasaran'){
-            return TRUE;
-        }else{
-            $this->session->set_flashdata('error','Hanya admin gudang, admin pemasaran, dan superadmin yang dapat mengakses.');
-            redirect(base_url());
-        }
-    }
-
     public function _is_warehouse_admin(){
         if($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_gudang'){
             return TRUE;
@@ -347,21 +207,5 @@ class Book_request extends MY_Controller
             $this->session->set_flashdata('error','Hanya admin gudang dan superadmin yang dapat mengakses.');
             redirect(base_url());
         }
-    }
-    
-    public function check_level_pemasaran(){
-        if($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_pemasaran'){
-            return TRUE;
-        }else{
-            $this->session->set_flashdata('error','Hanya admin pemasaran dan superadmin yang dapat mengakses.');
-            redirect(base_url());
-        }
-    }
-
-    public function ac_book_id(){
-        $postData   =   $this->input->post();
-        $data       =   $this->book_request->fetch_book_id($postData);
-
-        echo json_encode($data);
-    }
+    }    
 }

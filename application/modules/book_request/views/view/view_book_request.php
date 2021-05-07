@@ -147,7 +147,7 @@ $level              = check_level();
 $is_preparing_started       = format_datetime($book_request->preparing_start_date);
 $is_preparing_finished      = format_datetime($book_request->preparing_end_date);
 $is_preparing_deadline_set  = format_datetime($book_request->preparing_deadline);
-$staff_gudang               = $this->book_request->get_staff_gudang_by_progress('preparing', $book_request->invoice_id);
+$staff_gudang               = $this->book_request->get_staff_gudang_by_invoice($book_request->invoice_id);
 ?>
 <section id="preparing-progress-wrapper" class="card">
     <div id="preparing-progress">
