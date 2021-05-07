@@ -476,6 +476,7 @@ class Book_receive extends Warehouse_Controller
                 'book_id'            => $book_receive->book_id,
                 'warehouse_present'  => $book_stock_print->total_postprint
             ]);
+            $book_stock->book_stock_id = $this->db->insert_id();
         }
         //insert to book transaction
         $this->book_transaction->insert([
