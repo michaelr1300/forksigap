@@ -75,7 +75,6 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <th scope="col" style="min-width:200px;">Kategori Pesanan</th>
                                     <th scope="col" style="min-width:200px;">Asal Stok</th>
                                     <th scope="col" style="min-width:200px;">Status</th>
-                                    <th style="min-width:100px;"> Aksi </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -99,50 +98,6 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     </td>
                                     <td class="align-middle">
                                         <?= get_book_request_status()[$book_request->status]; ?>
-                                    </td>
-                                    <td class="align-middle">
-                                        <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal"
-                                            data-target="#modal-edit-<?= $book_request->invoice_id; ?>"><i
-                                                class="fa fa-pencil-alt"></i><span class="sr-only">Edit</span></button>
-                                        <div class="text-left">
-                                            <div class="modal modal-alert fade"
-                                                id="modal-edit-<?= $book_request->invoice_id; ?>" tabindex="-1"
-                                                role="dialog"
-                                                aria-labelledby="modal-edit-<?= $book_request->invoice_id; ?>"
-                                                aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title">
-                                                                <i class="fa fa-pencil-alt text-black mr-1"></i>
-                                                                Edit Status
-                                                            </h5>
-                                                        </div>
-                                                        <form action="<?=base_url('book_request/edit_book_request/')?>" method='post'>
-                                                            <div class="modal-body">
-                                                                <div class="form-group">
-                                                                    <label for="number" class="font-weight-bold">Nomor Pesanan</label>
-                                                                    <input type="text" name="number" id="number" class="form-control" value=<?=$book_request->number ?> disabled/>
-                                                                    <input type="hidden" name="invoice_id" id="invoice_id" class="form-control" value=<?=$book_request->invoice_id ?>/>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="status" class="font-weight-bold">Status Pesanan</label>
-                                                                    <?= form_dropdown('status', get_book_request_status_edit(), $book_request->status, 'id="status" class="form-control custom-select d-block" title="Edit Status"'); ?>
-                                                                    <small>Status pesanan sekarang = <?= get_book_request_status()[$book_request->status]; ?></small>
-                                                                </div>     
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <div class="form-group">
-                                                                    <input type="submit" class="btn btn-primary" id="submit"/>
-                                                                    <button type="button" class="btn btn-light"
-                                                                        data-dismiss="modal">Close</button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

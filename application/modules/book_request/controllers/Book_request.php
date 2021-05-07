@@ -33,19 +33,19 @@ class Book_request extends MY_Controller
         $this->load->view('template', compact('pages', 'main_view', 'book_request', 'pagination','total'));
     }
 
-    public function edit($invoice_id){
-        if($this->_is_warehouse_admin() == TRUE):
-        $pages        = $this->pages;
-        $main_view    = 'book_request/book_request_edit';
-        $book_request = $this->invoice->fetch_invoice_id($invoice_id);
-        if(empty($book_request) == FALSE):
-        $this->load->view('template', compact('pages', 'main_view', 'book_request'));
-        else:
-        $this->session->set_flashdata('error','Halaman tidak ditemukan.');
-        redirect(base_url(), 'refresh');
-        endif;
-        endif;
-    }
+    // public function edit($invoice_id){
+    //     if($this->_is_warehouse_admin() == TRUE):
+    //     $pages        = $this->pages;
+    //     $main_view    = 'book_request/book_request_edit';
+    //     $book_request = $this->invoice->fetch_invoice_id($invoice_id);
+    //     if(empty($book_request) == FALSE):
+    //     $this->load->view('template', compact('pages', 'main_view', 'book_request'));
+    //     else:
+    //     $this->session->set_flashdata('error','Halaman tidak ditemukan.');
+    //     redirect(base_url(), 'refresh');
+    //     endif;
+    //     endif;
+    // }
 
     public function view($invoice_id){
         $book_request = $this->invoice->fetch_invoice_id($invoice_id);
@@ -244,46 +244,46 @@ class Book_request extends MY_Controller
     //     endif;
     // }
 
-    public function edit_book_request(){
-        if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
-            $order_number = $this->input->post('number');
-            $invoice_id = $this->input->post('invoice_id');
-            $new_status = $this->input->post('status');
-            $invoice = $this->invoice->where('invoice_id', $invoice_id)->get();
-            if (!$invoice) {
-                $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
-            }
-            else {
-                $invoice->status = $new_status;
-                if ($this->invoice->where('invoice_id', $invoice_id)->update($invoice)) {
-                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
-                } else {
-                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_fail'));
-                }
-            }
-        }
-        else {
-            $this->session->set_flashdata('warning', $this->lang->line('toast_edit_fail'));
-        }
-        redirect($this->pages);
-    }
+    // public function edit_book_request(){
+    //     if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
+    //         $order_number = $this->input->post('number');
+    //         $invoice_id = $this->input->post('invoice_id');
+    //         $new_status = $this->input->post('status');
+    //         $invoice = $this->invoice->where('invoice_id', $invoice_id)->get();
+    //         if (!$invoice) {
+    //             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+    //         }
+    //         else {
+    //             $invoice->status = $new_status;
+    //             if ($this->invoice->where('invoice_id', $invoice_id)->update($invoice)) {
+    //                 $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+    //             } else {
+    //                 $this->session->set_flashdata('success', $this->lang->line('toast_edit_fail'));
+    //             }
+    //         }
+    //     }
+    //     else {
+    //         $this->session->set_flashdata('warning', $this->lang->line('toast_edit_fail'));
+    //     }
+    //     redirect($this->pages);
+    // }
 
-    public function delete_book_request($book_request_id){
-        if($this->_is_warehouse_admin() == TRUE){
-            $book_request = $this->book_request->where('book_request_id', $book_request_id)->get();
-            if (!$book_request) {
-                $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
-                redirect($this->pages);
-            }
+    // public function delete_book_request($book_request_id){
+    //     if($this->_is_warehouse_admin() == TRUE){
+    //         $book_request = $this->book_request->where('book_request_id', $book_request_id)->get();
+    //         if (!$book_request) {
+    //             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+    //             redirect($this->pages);
+    //         }
 
-            if ($this->book_request->where('book_request_id', $book_request_id)->delete()) {
-                $this->session->set_flashdata('success', $this->lang->line('toast_delete_success'));
-            } else {
-                $this->session->set_flashdata('success', $this->lang->line('toast_delete_fail'));
-            }
-        }
-        redirect($this->pages);
-    }
+    //         if ($this->book_request->where('book_request_id', $book_request_id)->delete()) {
+    //             $this->session->set_flashdata('success', $this->lang->line('toast_delete_success'));
+    //         } else {
+    //             $this->session->set_flashdata('success', $this->lang->line('toast_delete_fail'));
+    //         }
+    //     }
+    //     redirect($this->pages);
+    // }
 
     public function action_request($book_request_id){
         if($this->_is_warehouse_admin() == TRUE):
