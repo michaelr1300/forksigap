@@ -270,16 +270,14 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                             },
                                         })
                                         var update_per_year = function(year){
-                                            $.getJSON('<?=base_url('/book_stock/api_chart_data/')?><?=$book_stock->book_stock_id?>/'+year, function(data) {
-                                                // console.log(data);
+                                            $.getJSON('<?=base_url('/book_stock/api_chart_data/')?><?=$book_stock->book_stock_id?>/'+year, 
+                                            function(data) {
                                                 var stock_in = [];
                                                 var stock_out = [];
                                                 for (var i in data) {
                                                     stock_in.push(data[i].stock_in);
                                                     stock_out.push(data[i].stock_out);
                                                 }
-                                                // console.log(stock_in[1]);
-                                                // console.log(stock_out[1]);
                                                 var stock_in_data = [];
                                                 $.each(stock_in[1], function(key, val) {
                                                     stock_in_data.push(val);
@@ -292,8 +290,6 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                                 chart_transaction_per_year.data.datasets[1].data = stock_out_data;
                                                 chart_transaction_per_year.update();
                                                 document.getElementById('date-year-title').innerHTML = year;
-                                                // console.log(stock_in_data);
-                                                // console.log(stock_out_data);
                                             })
                                         }
 

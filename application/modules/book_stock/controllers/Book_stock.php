@@ -259,7 +259,7 @@ class Book_stock extends Warehouse_sales_controller
                     $book_stock->retur_stock -= $quantity;
                 }
                 $book_stock_revision->warehouse_present = $book_stock->warehouse_present;
-                $input->revision_date = 'revision_date';
+                $book_stock_revision->revision_date = 'revision_date';
                 $book_stock_revision->type = "return";
 
                 
@@ -296,9 +296,9 @@ class Book_stock extends Warehouse_sales_controller
         $book_stock = $this->book_stock->get_book_stock_by_book_id($book_id);
         return $this->send_json_output(true, $book_stock);
     }
+
     public function generate_excel($filters)
     {
-        // $get_data = $this->book_stock->filter_excel($filters);
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
         $filename = 'STOK BUKU GUDANG';
@@ -311,29 +311,30 @@ class Book_stock extends Warehouse_sales_controller
                     ->setBold(true);
         $sheet->setCellValue('A3', 'No');
         $sheet->setCellValue('B3', 'Judul');
-        $sheet->setCellValue('C3', 'Stok Gudang');
+        $sheet->setCellValue('C3', 'Penulis');
+        $sheet->setCellValue('D3', 'Stok Gudang');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:C3')
+                    ->getStyle('A3:D3')
                     ->getFill()
                     ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                     ->getStartColor()
                     ->setARGB('A6A6A6');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:C3')
+                    ->getStyle('A3:D3')
                     ->getFont()
                     ->setBold(true);
 
         // Auto width
-        // $sheet->getColumnDimension('A')->setAutoSize(true);
         $sheet->getColumnDimension('B')->setAutoSize(true);
         $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
 
         $get_data = $this->book_stock->filter_excel($filters);
         $no = 1;
         $i = 4;
         // Column Content
         foreach ($get_data as $data) {
-            foreach (range('A', 'C') as $v) {
+            foreach (range('A', 'D') as $v) {
                 switch ($v) {
                     case 'A': {
                             $value = $no++;
@@ -344,10 +345,14 @@ class Book_stock extends Warehouse_sales_controller
                             break;
                         }
                     case 'C': {
+                        $value = $data->author_name;
+                        break;
+                    }
+                    case 'D': {
                             $value = $data->warehouse_present;
                             if($value <=50){
                                 $spreadsheet->getActiveSheet()
-                                ->getStyle('C'.$i)
+                                ->getStyle('D'.$i)
                                 ->getFill()
                                 ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                                 ->getStartColor()

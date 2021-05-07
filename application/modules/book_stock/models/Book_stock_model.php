@@ -52,17 +52,19 @@ class Book_stock_model extends MY_Model
 
     public function filter_excel($filters)
     {
-        return $this->select(['book.book_title', 'author.author_name', 'book.published_date', 'book_stock.*'])
+        $book_stocks =  $this->select(['book.book_title', 'author.author_name', 
+        'book.published_date', 'book_stock.*'])
             ->when('keyword', $filters['keyword'])
             ->when('published_year', $filters['published_year'])
             ->when('warehouse_present', $filters['warehouse_present'])
             ->join_table('book', 'book_stock', 'book')
             ->join_table('draft', 'book', 'draft')
-            ->join_table('category', 'draft', 'category')
             ->join_table('draft_author', 'draft', 'draft')
             ->join_table('author', 'draft_author', 'author')
+            ->group_by('draft.draft_id')
             ->order_by('book.book_title')
             ->get_all();
+        return $book_stocks;
     }
 
     public function when($params, $data)
