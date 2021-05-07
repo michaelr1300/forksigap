@@ -296,6 +296,18 @@ class Book_transfer extends MY_Controller
             $book_stock->warehouse_present -= $book_transfer_list->qty;
             $this->book_stock->where('book_id', $book_transfer_list->book_id)->update($book_stock);
         }
+
+        //insert to book transaction
+        foreach($book_transfer_lists as $book_transfer_list){
+            $book_stock = $this->book_stock->where('book_id', $book_transfer_list->book_id)->get();
+            $this->book_transaction->insert([
+                'book_id' => $book_transfer_list->book_id,
+                'book_stock_id' => $book_stock->book_stock_id,
+                'invoice_id' => $book_transfer_list->invoice_id,
+                'stock_out' => $book_transfer_list->qty,
+                'date' => now()
+            ]);
+        }        
         
         // update data book_transfer
         $this->book_transfer->where('book_transfer_id', $book_transfer_id)->update([
@@ -357,15 +369,6 @@ class Book_transfer extends MY_Controller
                 'qty' => $books['qty'],
                 'price' => $books['price']
             ];
-            //insert to book transaction
-            $book_stock = $this->book_stock->where('book_id', $books['book_id'])->get();
-            $this->book_transaction->insert([
-                'book_id' => $books['book_id'],
-                'book_stock_id' => $book_stock->book_stock_id,
-                'book_transfer_id' => $book_transfer_id,
-                'stock_out' => $books['qty'],
-                'date' => now()
-            ]);
             $book_transfer_list_success = $this->db->insert('book_transfer_list',$book_transfer_list);
         }
         if ($book_transfer_success && $book_transfer_list_success) {

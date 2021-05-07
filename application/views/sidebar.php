@@ -64,17 +64,17 @@ $menu_list = [
         'level' => 'superadmin|admin_gudang|admin_pemasaran'
     ],
     [
+        'name'  => 'Buku Non Penjualan',
+        'url'   => 'book_non_sales',
+        'icon'  => 'fas fa-gifts',
+        'level' => 'superadmin|admin_gudang'
+    ],
+    [
         'name'  => 'Transaksi Buku',
         'url'   => 'book_transaction',
         'icon'  => 'fas fa-exchange-alt',
         'level' => 'superadmin|admin_gudang'
 
-    ],
-    [
-        'name'  => 'Buku Non Penjualan',
-        'url'   => 'book_non_sales',
-        'icon'  => 'fas fa-gifts',
-        'level' => 'superadmin|admin_gudang'
     ],
     [
         'title' => 'Pemasaran',
