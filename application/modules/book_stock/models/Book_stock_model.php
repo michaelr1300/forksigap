@@ -164,7 +164,7 @@ class Book_stock_model extends MY_Model
 
     public function retur_stock()
     {
-        return $this->select(['book.book_title', 'author.author_name', 'book.published_date', 
+        return $this->select(['book.book_title', 'book.book_id', 'author.author_name',
             'book_stock.book_stock_id', 'book_stock.book_id', 'book_stock.retur_stock'])
             ->join_table('book', 'book_stock', 'book')
             ->join_table('draft', 'book', 'draft')
