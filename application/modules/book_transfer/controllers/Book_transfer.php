@@ -303,7 +303,7 @@ class Book_transfer extends MY_Controller
             $this->book_transaction->insert([
                 'book_id' => $book_transfer_list->book_id,
                 'book_stock_id' => $book_stock->book_stock_id,
-                'invoice_id' => $book_transfer_list->invoice_id,
+                'book_transfer_id' => $book_transfer_list->book_transfer_id,
                 'stock_out' => $book_transfer_list->qty,
                 'date' => now()
             ]);
