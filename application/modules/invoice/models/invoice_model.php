@@ -81,6 +81,7 @@ class Invoice_model extends MY_Model
             ->join('book', 'book.book_id = invoice_book.book_id')
             ->join('draft_author', 'draft_author.draft_id = book.draft_id')
             ->join('author', 'draft_author.author_id = author.author_id')
+            ->group_by('draft_author.draft_id')
             ->where('invoice_id', $invoice_id)
             ->get()
             ->result();
@@ -93,7 +94,6 @@ class Invoice_model extends MY_Model
             ->from('book_stock')
             ->where('book_id', $book_id)
             ->order_by("book_stock_id", "DESC")
-            ->limit(1)
             ->get()
             ->row();
         return $stock;

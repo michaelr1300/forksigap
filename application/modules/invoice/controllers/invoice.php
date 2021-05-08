@@ -199,15 +199,26 @@ class Invoice extends MY_Controller
                 // 'user_edited'   => $_SESSION['username']
             ];
 
+            
             $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
 
             // Jumlah Buku di Faktur
             $countsize = count($this->input->post('invoice_book_id'));
 
-            //hapus invoice_book yang sudah ada 
-            $this->db->where('invoice_id', $invoice_id)->delete('invoice_book');
 
-            // Masukkan buku di form faktur ke database
+            $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
+
+            // Kembalikan stock buku
+            foreach ($invoice_books as $invoice_book) {
+                $book_stock = $this->book_stock->where('book_id', $invoice_book->book_id)->get();
+                $book_stock->warehouse_present += $invoice_book->qty;
+                $this->book_stock->where('book_id', $invoice_book->book_id)->update($book_stock);
+            }
+
+            // Hapus invoice_book yang sudah ada 
+            $this->db->where('invoice_id', $invoice_id)->delete('invoice_book');
+            
+            // Masukkan invoice_book yang baru (hasil edit) ke database
             for ($i = 0; $i < $countsize; $i++) {
                 $book = [
                     'invoice_id'    => $invoice_id,
@@ -217,7 +228,13 @@ class Invoice extends MY_Controller
                     'discount'      => $this->input->post('invoice_book_discount')[$i]
                 ];
                 $this->db->insert('invoice_book', $book);
+
+                // Kurangi Stock Buku
+                $book_stock = $this->book_stock->where('book_id', $book['book_id'])->get();
+                $book_stock->warehouse_present -= $book['qty'];
+                $this->book_stock->where('book_id', $book['book_id'])->update($book_stock);
             }
+
             echo json_encode(['status' => TRUE]);
             $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
         }
@@ -246,6 +263,7 @@ class Invoice extends MY_Controller
             $customer_type = get_customer_type();
 
             $invoice_book = $this->invoice->fetch_invoice_book($invoice->invoice_id);
+            
 
             $dropdown_book_options = $this->invoice->get_ready_book_list();
 

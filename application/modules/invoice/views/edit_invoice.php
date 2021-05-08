@@ -394,7 +394,7 @@
                                                     value="<?= $books->book_id ?>"
                                                 />
                                             </td>
-                                            <td class="align-middle">
+                                            <td class="align-middle"><?= $books->price ?>
                                                 <input
                                                     type="number"
                                                     hidden
@@ -479,17 +479,17 @@ $(document).ready(function() {
     })
 
     //hilangin buku yg sudah ada
-    <?php foreach ($invoice_book as $books) : ?>
-        $('#book-id option[value="' + <?= $books->book_id ?> + '"]').remove()
+    <?php foreach ($invoice_book as $book) : ?>
+        $('#book-id option[value="' + <?= $book->book_id ?> + '"]').remove()
 
         //fetch stock sekarang
         $.ajax({
             type: "GET",
-            url: "<?= base_url('invoice/api_get_book/'); ?>" + <?= $books->book_id ?>,
+            url: "<?= base_url('invoice/api_get_book/'); ?>" + <?= $book->book_id ?>,
             datatype: "JSON",
             success: function(res) {
-                $('#invoice-book-qty-' + <?= $books->book_id ?>).attr({
-                    "max" : res.data.stock,
+                $('#invoice-book-qty-' + <?= $book->book_id ?>).attr({
+                    "max" : res.data.stock +  <?= $book->qty ?>,
                     "min" : 1
                 });
             },
