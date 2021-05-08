@@ -65,8 +65,8 @@
                                 </div>
                             </div>
 
-                            <div class="form-group" id="date">
-                            <label for="date" class="d-block font-weight-bold">Tanggal Retur <abbr
+                            <div class="form-group" id="revision_date">
+                            <label for="revision_date" class="d-block font-weight-bold">Tanggal Retur <abbr
                                 title="Required">*</abbr> </label>
                             <div class="has-clearable">
                                 <button type="button" class="close" aria-label="Close">
@@ -74,8 +74,8 @@
                                         <i class="fa fa-times-circle"></i>
                                     </span>
                                 </button>
-                                <input type="date" class="form-control dates" name="date"
-                                    id="date" />
+                                <input type="date" class="form-control dates" name="revision_date"
+                                    id="revision_date" />
                             </div>
                             </div>
 

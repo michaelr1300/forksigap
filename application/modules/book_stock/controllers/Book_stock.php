@@ -232,7 +232,7 @@ class Book_stock extends Warehouse_sales_controller
             $type = $this->input->post('type');
             $revision_type = $this->input->post('revision_type');
             $book_id = $this->input->post('book_id');
-            $revision_date = $this->input->post('date');
+            $revision_date = $this->input->post('revision_date');
             $quantity = $this->input->post('warehouse_modifier');
             $notes = $this->input->post('notes');
             $book_stock = $this->book_stock->where('book_id', $book_id)->get();
@@ -244,7 +244,7 @@ class Book_stock extends Warehouse_sales_controller
                 'warehouse_revision' => $quantity,
                 'revision_type'      => $revision_type,
                 'notes'              => $notes,
-                'revision_date'      => $revision_date
+                'revision_date'               => $revision_date
             ];
             if (!$book_stock) {
                 $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
@@ -259,7 +259,7 @@ class Book_stock extends Warehouse_sales_controller
                     $book_stock->retur_stock -= $quantity;
                 }
                 $book_stock_revision->warehouse_present = $book_stock->warehouse_present;
-                $book_stock_revision->revision_date = 'revision_date';
+                $input->revision_date = 'revision_date';
                 $book_stock_revision->type = "return";
 
                 
