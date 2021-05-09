@@ -47,7 +47,7 @@ $level              = check_level();
                                 <tr>
                                     <td width="200px"> Nomor Pemindahan </td>
                                     <td>
-                                        <?= $book_transfer->book_transfer_id;?>
+                                        <?= $book_transfer->transfer_number;?>
                                     </td>
                                 </tr>
                                 <!-- <tr>
