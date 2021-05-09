@@ -225,7 +225,7 @@ function generate_invoice_action($invoice_id)
                                             <?= date("d/m/y", strtotime($lData->issued_date)); ?>
                                         </td>
                                         <td class="align-middle">
-                                            <?= date("d/m/y", strtotime($lData->due_date)); ?>
+                                            <?= $lData->due_date ? date("d/m/y", strtotime($lData->due_date)) : '-'; ?>
                                         </td>
                                         <td class="align-middle pr-4">
                                             <?= get_invoice_status()[$lData->status]; ?>

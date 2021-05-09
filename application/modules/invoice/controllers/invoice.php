@@ -113,15 +113,6 @@ class Invoice extends MY_Controller
                 $book_stock = $this->book_stock->where('book_id', $book['book_id'])->get();
                 $book_stock->warehouse_present -= $book['qty'];
                 $this->book_stock->where('book_id', $book['book_id'])->update($book_stock);
-
-                // Catat Transaksi Buku (titip)
-                // $this->book_transaction->insert([
-                //     'book_id' => $books['book_id'],
-                //     'book_stock_id' => $book_stock->book_stock_id,
-                //     'book_non_sales_id' => $book_non_sales_id,
-                //     'stock_out' => $books['qty'],
-                //     'date' => now()
-                // ]);
             }
             echo json_encode(['status' => TRUE]);
             $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
@@ -133,13 +124,12 @@ class Invoice extends MY_Controller
                 'credit'      => 'Kredit',
                 'online'      => 'Online',
                 'cash'        => 'Tunai',
-                'showroom'    => 'Showroom',
             );
 
             $source = array(
                 'library'   => 'Perpustakaan',
-                'showroom'  => 'Showroom',
-                'warehouse' => 'Gudang'
+                'warehouse' => 'Gudang',
+                'showroom'  => 'Showroom'
             );
 
             $customer_type = get_customer_type();
@@ -159,7 +149,7 @@ class Invoice extends MY_Controller
         // $dropdown_book_options = $this->invoice->get_ready_book_list_showroom();
         $dropdown_book_options = $this->invoice->get_ready_book_list();
 
-        $pages       = $this->pages;
+        $pages       = 'invoice/add_showroom';
         $main_view   = 'invoice/add_showroom';
         $this->load->view('template', compact('pages', 'main_view', 'customer_type', 'dropdown_book_options'));
     }
@@ -186,12 +176,9 @@ class Invoice extends MY_Controller
                 $customer_id = $this->db->insert_id();
             }
 
-            $type = $this->input->post('type');
             $edit = [
-                'number'            => $this->invoice->get_last_invoice_number($type),
                 'customer_id'       => $customer_id,
                 'due_date'          => $this->input->post('due-date'),
-                'type'              => $type,
                 'source'            => $this->input->post('source'),
                 'source_library_id' => $this->input->post('source-library-id'),
                 'status'            => 'waiting'
@@ -251,13 +238,12 @@ class Invoice extends MY_Controller
                 'credit'      => 'Kredit',
                 'online'      => 'Online',
                 'cash'        => 'Tunai',
-                'showroom'    => 'Showroom',
             );
 
             $source = array(
                 'library'   => 'Perpustakaan',
-                'showroom'  => 'Showroom',
-                'warehouse' => 'Gudang'
+                'warehouse' => 'Gudang',
+                'showroom'  => 'Showroom'
             );
 
             $customer_type = get_customer_type();
@@ -298,6 +284,7 @@ class Invoice extends MY_Controller
                 'confirm_date' => now(),
                 'preparing_deadline' => $preparing_deadline
             ]);
+
         } else
             // Cancel Faktur
             if ($invoice_status == 'cancel') {

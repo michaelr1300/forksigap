@@ -26,12 +26,9 @@ $level              = check_level();
     >
         <div class="card-body">
             <?php //=isset($input->draft_id) ? form_hidden('draft_id', $input->draft_id) : ''; ?>
-            <div class="tab-content">
+            <div>
                 <!-- book-data -->
-                <div
-                    class="tab-pane fade active show"
-                    id="logistic-data"
-                >
+                <div>
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered mb-0">
                             <tbody>
@@ -187,55 +184,55 @@ $level              = check_level();
         </div>
     </section>
 </div>
-                <div
-                    class="modal modal-alert fade"
-                    id="modal-delivery"
-                    tabindex="-1"
-                    role="dialog"
-                    aria-labelledby="modal-delivery"
-                    aria-hidden="true"
-                >
-                    <div
-                        class="modal-dialog"
-                        role="document"
-                    >
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Edit Diskon</h5>
-                            </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label
-                                            for="delivery_fee"
-                                            class="font-weight-bold"
-                                        >
-                                            Masukkan Ongkos Kirim
-                                            <abbr title="Required">*</abbr>
-                                        </label>
-                                        <input
-                                            type="number"
-                                            name="delivery_fee"
-                                            id="delivery"
-                                            min=0
-                                            class="form-control"
-                                        />
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button
-                                        type="submit"
-                                        class="btn btn-primary"
-                                        onclick="save_delivery_fee()"
-                                    >Save</button>
-                                    <button
-                                        type="button"
-                                        class="btn btn-light"
-                                        data-dismiss="modal"
-                                    >Close</button>
-                                </div>
-                        </div>
+<div
+    class="modal modal-alert fade"
+    id="modal-delivery"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="modal-delivery"
+    aria-hidden="true"
+>
+    <div
+        class="modal-dialog"
+        role="document"
+    >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ongkos Kirim</h5>
+            </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label
+                            for="delivery_fee"
+                            class="font-weight-bold"
+                        >
+                            Masukkan Ongkos Kirim
+                            <abbr title="Required">*</abbr>
+                        </label>
+                        <input
+                            type="number"
+                            name="delivery_fee"
+                            id="delivery"
+                            min=0
+                            class="form-control"
+                        />
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        onclick="save_delivery_fee()"
+                    >Save</button>
+                    <button
+                        type="button"
+                        class="btn btn-light"
+                        data-dismiss="modal"
+                    >Close</button>
+                </div>
+        </div>
+    </div>
+</div>
 <script>
     function check_delivery(){
         var ongkir = "<?= $invoice->delivery_fee ?>"

@@ -23,35 +23,22 @@
                         method="post"
                     >
                         <legend>Form Edit Faktur</legend>
-                        <div class="form-group">
-                            <label
-                                for="number"
-                                class="font-weight-bold"
-                            >
-                                Nomor Faktur
-                                <abbr title="Required">*</abbr>
-                            </label>
-                            <input
-                                type="text"
-                                name="number"
-                                id="number"
-                                class="form-control"
-                                value="<?= $invoice->number ?>"
-                                readonly
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label
-                                for="type"
-                                class="font-weight-bold"
-                            >Jenis Faktur<abbr title="Required">*</abbr></label>
 
-                            <?= form_dropdown('type', $invoice_type, $invoice->type, 'id="type" class="form-control custom-select d-block"'); ?>
-                            <small
-                                id="error-type"
-                                class="d-none error-message text-danger"
-                            >Jenis Faktur wajib diisi!</small>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-striped table-bordered mb-0">
+                                <tbody>
+                                    <tr>
+                                        <td width="200px"> Nomor Faktur </td>
+                                        <td><strong><?= $invoice->number ?></strong> </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="200px"> Jenis Faktur </td>
+                                        <td><?= get_invoice_type()[$invoice->type]; ?></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
+
                         <div
                             class="form-group"
                             style="display: none;"
@@ -459,7 +446,7 @@
 $(document).ready(function() {
     $('#discount').val('<?= $discount ?>')
 
-    if ($('#type').val() == "cash") {
+    if ('<?= $invoice->type ?>' == "cash") {
         $('#source-dropdown').show()
         if ($('#source').val() == "library") {
             $('#source-library-dropdown').show()
