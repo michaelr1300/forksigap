@@ -42,11 +42,11 @@ $level              = check_level();
                                 </tr>
                                 <tr>
                                     <td width="200px"> Nama Customer </td>
-                                    <td><?= $invoice->customer->name ?></td>
+                                    <td><?= $invoice->customer->name ?? 'Umum' ?></td>
                                 </tr>
                                 <tr>
                                     <td width="200px"> Nomor Customer </td>
-                                    <td><?= $invoice->customer->phone_number ?></td>
+                                    <td><?= $invoice->customer->phone_number ?? '-' ?></td>
                                 </tr>
                                 <tr>
                                     <td width="200px"> Tanggal Jatuh Tempo </td>
