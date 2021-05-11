@@ -59,20 +59,6 @@ $level              = check_level();
                                     <td><?= format_datetime($book_request->confirm_date)?>
                                     </td>
                                 </tr>
-                                <!-- <?php //if($book_request->preparing_start_date) : ?>
-                                <tr>
-                                    <td width="200px"> Tanggal Mulai Penyiapan Buku </td>
-                                    <td><?= format_datetime($book_request->preparing_start_date) ?>
-                                    </td>
-                                </tr>
-                                <?php //endif?>
-                                <?php //if($book_request->preparing_deadline) : ?>
-                                <tr>
-                                    <td width="200px"> Deadline Penyiapan Buku </td>
-                                    <td><?= format_datetime($book_request->preparing_deadline) ?>
-                                    </td>
-                                </tr> -->
-                                <?php //endif?>
                                 <?php if($book_request->preparing_end_date) : ?>
                                 <tr>
                                     <td width="200px"> Tanggal Selesai Penyiapan Buku </td>
@@ -217,15 +203,6 @@ $staff_gudang               = $this->book_request->get_staff_gudang_by_invoice($
                         <span class="badge badge-info p-1"><?= $staff->username; ?></span>
                     <?php endforeach; ?>
                 </strong>
-                <!-- <?php //if (($_SESSION['level'] == 'superadmin' || ($_SESSION['level'] == 'admin_gudang' && !$book_request->preparing_deadline))) : ?>
-                <a href="#" id="btn-modal-staff-preparing" title="Staff Bertugas" data-toggle="modal"
-                    data-target="#modal-staff-preparing">Staff Bertugas <i class="fas fa-edit fa-fw"></i></a>
-                <?php //else : ?>
-                <span class="text-muted">Staff Bertugas</span>
-                <?php //endif ?>
-                <strong>
-                    <span><?//= $book_request->preparing_staff ?></span>
-                </strong> -->
             </div>
             <?php endif?>
             <div class="list-group-item justify-content-between">
@@ -233,30 +210,12 @@ $staff_gudang               = $this->book_request->get_staff_gudang_by_invoice($
                 <strong>
                     <?= format_datetime($book_request->preparing_end_date); ?></strong>
             </div>
-            <!-- <div class="m-3">
-                <div class="text-muted pb-1">Catatan Admin</div>
-                <?//= $book_request->preparing_notes_admin ?>
-            </div>
- -->
         </div>
-
         <?php    
-
             // modal deadline
             $this->load->view('book_request/view/common/deadline_modal', [
                 'progress' => 'preparing'
             ]);
-            // $this->load->view('book_request/view/common/input_staff_modal');
-
-            // modal action
-            // $this->load->view('book_request/view/common/action_modal', [
-            //     'progress' => 'preparing',
-            // ]);
-
-            // modal note
-            // $this->load->view('book_request/view/common/notes_modal', [
-            //     'progress' => 'preparing',
-            // ]);
             ?>
     </div>
 </section>
