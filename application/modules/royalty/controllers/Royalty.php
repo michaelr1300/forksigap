@@ -6,7 +6,7 @@ class Royalty extends MY_Controller
     {
         parent::__construct();
         $this->pages = 'royalty';
-        $this->load->model('royalty_model', 'royalty');
+        $this->load->model('Royalty_model', 'royalty');
         $this->load->model('book/Book_model', 'book');
         $this->load->helper('sales_helper');
     }
