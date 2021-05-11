@@ -40,12 +40,10 @@ class Book_receive_model extends MY_Model
     //get & filter data and total of data
     public function filter_book_receive($filters, $page)
     {
-        $book_receives = $this->select(['print_order.print_order_id', 
-        'print_order.order_number',
-        'print_order.total', 'print_order.total_postprint', 
-        'book.book_id', 
-        'book.book_title',
-        'book_receive.*'])
+        $book_receives = $this->select(['print_order.print_order_id', 'print_order.order_number',
+            'print_order.total', 'print_order.total_postprint', 
+            'book.book_id', 'book.book_title',
+            'book_receive.*'])
             ->when('keyword', $filters['keyword'])
             ->when('book_receive_status', $filters['book_receive_status'])
             ->join_table('print_order', 'book_receive', 'print_order')
@@ -54,7 +52,8 @@ class Book_receive_model extends MY_Model
             ->paginate($page)
             ->get_all();
         $total = $this->select('book_receive_id')
-            ->when('keyword', $filters['keyword'])
+            ->when('keyword', $filters['keyword'])            
+            ->when('book_receive_status', $filters['book_receive_status'])
             ->join_table('print_order', 'book_receive', 'print_order')
             ->join_table('book', 'book_receive', 'book')
             ->count();
@@ -89,7 +88,7 @@ class Book_receive_model extends MY_Model
             ->get('print_order');
     }    
 
-    //get book receive id
+    //get book receive
     public function get_book_receive($book_receive_id)
     {
         return $this->select([
