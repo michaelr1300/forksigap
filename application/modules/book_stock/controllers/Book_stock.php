@@ -435,7 +435,7 @@ class Book_stock extends Warehouse_sales_controller
         $spreadsheet->setActiveSheetIndex(1);
         $sheet_2 = $spreadsheet->getActiveSheet()->setTitle('log retur');
         // Column Title
-        $sheet_2->setCellValue('A1', 'LOG RETUR');
+        $sheet_2->setCellValue('A1', 'LOG PENAMBAHAN RETUR');
         $spreadsheet->getActiveSheet()
                     ->getStyle('A1')
                     ->getFont()
@@ -461,7 +461,7 @@ class Book_stock extends Warehouse_sales_controller
         $sheet_2->getColumnDimension('C')->setAutoSize(true);
         $sheet_2->getColumnDimension('D')->setAutoSize(true);
 
-        $get_data = $this->book_stock->log_retur();
+        $get_data = $this->book_stock->log_add_retur();
         $no = 1;
         $i = 4;
         // Column Content
@@ -481,7 +481,7 @@ class Book_stock extends Warehouse_sales_controller
                             break;
                         }
                     case 'D': {
-                        $value = format_datetime($data->revision_date);
+                        $value = date("d/m/Y", strtotime($data->revision_date));
                         break;
                         }
                 }
@@ -489,6 +489,67 @@ class Book_stock extends Warehouse_sales_controller
             }
             $i++;
         }
+
+        // Create new sheet
+        $spreadsheet->createSheet();
+        // Zero based, so set the second tab as active sheet
+        $spreadsheet->setActiveSheetIndex(2);
+        $sheet_3 = $spreadsheet->getActiveSheet()->setTitle('log retur');
+        // Column Title
+        $sheet_3->setCellValue('A1', 'LOG PENGHAPUSAN RETUR');
+        $spreadsheet->getActiveSheet()
+                    ->getStyle('A1')
+                    ->getFont()
+                    ->setBold(true);
+        $sheet_3->setCellValue('A3', 'No');
+        $sheet_3->setCellValue('B3', 'Judul Buku');
+        $sheet_3->setCellValue('C3', 'Jumlah Hapus');
+        $sheet_3->setCellValue('D3', 'Tanggal Hapus Retur');
+        $spreadsheet->getActiveSheet()
+                    ->getStyle('A3:D3')
+                    ->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()
+                    ->setARGB('A6A6A6');
+        $spreadsheet->getActiveSheet()
+                    ->getStyle('A3:D3')
+                    ->getFont()
+                    ->setBold(true);
+
+        // Auto width
+        $sheet_3->getColumnDimension('B')->setAutoSize(true);
+        $sheet_3->getColumnDimension('C')->setAutoSize(true);
+        $sheet_3->getColumnDimension('D')->setAutoSize(true);
+
+        $get_data = $this->book_stock->log_delete_retur();
+        $no = 1;
+        $i = 4;
+        // Column Content
+        foreach ($get_data as $data) {
+            foreach (range('A', 'D') as $v) {
+                switch ($v) {
+                    case 'A': {
+                            $value = $no++;
+                            break;
+                        }
+                    case 'B': {
+                            $value = $data->book_title;
+                            break;
+                        }
+                    case 'C': {
+                            $value = $data->warehouse_revision;
+                            break;
+                        }
+                    case 'D': {
+                            $value = date("d/m/Y", strtotime($data->revision_date));
+                            break;
+                    }
+
+                }
+                $sheet_3->setCellValue($v . $i, $value);
+            }
+            $i++;
+        }        
 
         $writer = new Xlsx($spreadsheet);
 

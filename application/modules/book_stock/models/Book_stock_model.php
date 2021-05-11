@@ -171,16 +171,30 @@ class Book_stock_model extends MY_Model
             ->join_table('draft_author', 'draft', 'draft')
             ->join_table('author', 'draft_author', 'author')
             ->where_not('retur_stock', NULL)
+            ->where_not('retur_stock', 0)
             ->order_by('book.book_title')
             ->get_all();
     }
 
-    public function log_retur()
+    public function log_add_retur()
     {
         return $this->db->select(['book.book_title', 'book_stock_revision.*'])
             ->from('book_stock_revision')
             ->join('book', 'book.book_id = book_stock_revision.book_id')
             ->where('book_stock_revision.type', 'return')
+            ->where('book_stock_revision.revision_type', 'sub')
+            ->order_by('book_stock_revision_id', 'DESC')
+            ->get()
+            ->result();
+    }
+
+    public function log_delete_retur()
+    {
+        return $this->db->select(['book.book_title', 'book_stock_revision.*'])
+            ->from('book_stock_revision')
+            ->join('book', 'book.book_id = book_stock_revision.book_id')
+            ->where('book_stock_revision.type', 'return')
+            ->where('book_stock_revision.revision_type', 'del')
             ->order_by('book_stock_revision_id', 'DESC')
             ->get()
             ->result();

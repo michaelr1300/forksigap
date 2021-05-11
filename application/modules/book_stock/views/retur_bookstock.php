@@ -35,6 +35,16 @@
                                 <label class="font-weight-bold">Stok Gudang</label>
                                 <span class ="form-control bg-secondary" readonly><?=$input->warehouse_present?></span>
                             </div>
+                            <div class="form-group">
+                                <label class="font-weight-bold">Stok Retur</label>
+                                <span class ="form-control bg-secondary" readonly>
+                                    <?php if($input->retur_stock) : ?>
+                                        <?=$input->retur_stock?>
+                                    <?php else : ?>
+                                        0
+                                    <?php endif?>
+                                </span>
+                            </div>
                             <!-- <div class="form-group"> 
                                 <label for="type" class="d-block font-weight-bold"> Jenis Perubahan <abbr
                                         title="Required">*</abbr></label>
