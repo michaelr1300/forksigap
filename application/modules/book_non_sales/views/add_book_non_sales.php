@@ -22,7 +22,7 @@
                         <fieldset>
                             <legend>Form Buku Non Penjualan</legend>
                             <div class="form-group">
-                                <label for="name">Nama<abbr title="Required">*</abbr></label>
+                                <label for="name">Nama / Acara<abbr title="Required">*</abbr></label>
                                 <input type="text" id="name" class="form-control" required>
                             </div>
                             <div class="form-group">
@@ -42,7 +42,13 @@
                                 <select name="type" id="type" class="form-control custom-select d-block">
                                     <option value="presentgift">Present Gift</option>
                                     <option value="doorprize">Doorprize</option>
+                                    <option value="kedahbuku">Kedah Buku</option>
+                                    <option value="dll">Lain-lain</option>
                                 </select>
+                                <div class="row">
+                                    <div class="col" id="select_type">
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="form-group col-10 mb-0">
@@ -90,6 +96,16 @@ $(document).ready(function() {
         placeholder: '-- Pilih --',
         dropdownParent: $('#app-main')
     });
+
+    $('#type').change(function(){
+        var input_dll = '<small>Silakan isi keterangan tipe non penjualan di bawah ini</small><input type="text" id="notes" class="form-control" required>'
+        if ($("#type").val()=='dll'){
+            $("#select_type").append(input_dll);
+        }
+        else{
+            $("#select_type").empty();
+        }
+    })
 
     $('#book-id').change(function(){
         if ($("#book-id").val()){
@@ -147,6 +163,7 @@ $(document).ready(function() {
             'type': $("#type").val(),
             'name': $("#name").val(),
             'address': $("#address").val(),
+            'notes': $("#notes").val(),
             'book_list': []
         }
         $("#book-list-content tr").each(function(){

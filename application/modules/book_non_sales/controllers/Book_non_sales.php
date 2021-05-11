@@ -75,7 +75,8 @@ class Book_non_sales extends MY_Controller
             'status' => 'waiting',
             'type' => $input->type,
             'name' => $input->name,
-            'address' => $input->address
+            'address' => $input->address,
+            'notes' => $input->notes
         ];
         // insert book non sales
         $book_non_sales_success = $this->book_non_sales->insert($book_non_sales);
@@ -116,6 +117,12 @@ class Book_non_sales extends MY_Controller
         $this->db->trans_begin();
 
         $this->book_non_sales->where('book_non_sales_id', $book_non_sales_id)->delete();
+
+        // hapus list buku
+        $book_non_sales_books  = $this->book_non_sales->fetch_book_non_sales_list($book_non_sales_id);
+        foreach($book_non_sales_books as $book){
+            $this->db->where('book_id', $book->book_id)->delete('book_non_sales_list');
+        }
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
@@ -161,6 +168,7 @@ class Book_non_sales extends MY_Controller
             $data_format['type']          = $book_non_sales->type ?? '';
             $data_format['name']          = $book_non_sales->name ?? '';
             $data_format['address']       = $book_non_sales->address ?? '';
+            $data_format['notes']         = $book_non_sales->notes ?? '';
             $data_format['book_list']     = $book_non_sales_list ?? '';
             $html = $this->load->view('book_non_sales/format_pdf_non_sales', $data_format, true);        $file_name = $data_format['number'].'_Pemindahan Buku';
             $file_name = $data_format['number'].'_Pemindahan Buku';

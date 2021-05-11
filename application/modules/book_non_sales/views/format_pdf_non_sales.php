@@ -29,6 +29,8 @@
     .td-book-list {
         border: 1px solid black;
         text-align: center;
+        padding-left: 4px;
+        padding-right: 4px;
     }
 
     th{
@@ -74,7 +76,7 @@
     }
 
     .left-header {
-        width: 20%;
+        width: 10%;
     }
 
     .left-50 {
@@ -150,6 +152,13 @@
                     <td>:</td>
                     <td><?=get_book_non_sales_type()[$type]?></td>
                 </tr>
+                <?php if($notes) : ?>
+                <tr>
+                    <td>KETERANGAN</td>
+                    <td>:</td>
+                    <td><?=$notes?></td>
+                </tr>
+                <?php endif?>
             </table>
         </div>
         <div class="column middle-10">

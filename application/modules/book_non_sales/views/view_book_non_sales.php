@@ -85,6 +85,14 @@ $level              = check_level();
                                         <?= get_book_non_sales_type()[$book_non_sales->type] ?>
                                     </td>
                                 </tr>
+                                <?php if($book_non_sales->notes):?>
+                                <tr>
+                                    <td width="200px"> Keterangan Jenis </td>
+                                    <td>
+                                        <?= $book_non_sales->notes;?>
+                                    </td>
+                                </tr>
+                                <?php endif?>
                                 <tr>
                                     <td width="200px"> Tanggal Permintaan </td>
                                     <td><?= format_datetime($book_non_sales->issued_date)?>

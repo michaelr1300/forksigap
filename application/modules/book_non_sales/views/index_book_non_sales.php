@@ -70,8 +70,8 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <tr class="text-center">
                                     <th scope="col" class="pl-4">No</th>
                                     <th scope="col" style="min-width:150px;">Nomor Permintaan</th>
-                                    <th scope="col" style="min-width:200px;">Tanggal Pesanan</th>
-                                    <th scope="col" style="min-width:200px;">Tipe Pesanan</th>
+                                    <th scope="col" style="min-width:200px;">Tanggal</th>
+                                    <th scope="col" style="min-width:200px;">Tipe</th>
                                     <th scope="col" style="min-width:200px;">Status</th>
                                     <th style="min-width:100px;"> </th>
                                 </tr>
@@ -92,18 +92,10 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <td class="align-middle">
                                         <?= get_book_non_sales_type()[$book_non_sales->type]?>
                                     </td>
-                                    <!-- <td class="align-middle">
-                                        <?//= get_book_request_source()[$book_non_sales->source]?>
-                                    </td> -->
                                     <td class="align-middle">
                                         <?= get_book_non_sales_status()[$book_non_sales->status]; ?>
                                     </td>
                                     <td class="align-middle text-right">
-                                        <!-- <a href="<?//= base_url('book_request/edit/'.$book_request->book_request_id); ?>"
-                                            class="btn btn-sm btn-secondary">
-                                            <i class="fa fa-pencil-alt"></i>
-                                            <span class="sr-only">Edit</span>
-                                        </a> -->
                                         <?php if($book_non_sales->status=='waiting') : ?>
                                         <button type="button" class="btn btn-sm btn-success" data-toggle="modal"
                                             data-target="#finish_modal" title="Selesai">
