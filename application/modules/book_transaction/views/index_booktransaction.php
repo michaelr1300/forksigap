@@ -86,11 +86,13 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                         Nomor Order
                                     </th>
                                     <th scope="col" style="min-width:150px;" class="align-middle text-center">
+                                        Stok Awal</th>
+                                    <th scope="col" style="min-width:150px;" class="align-middle text-center">
                                         Perubahan</th>
                                     <th scope="col" style="min-width:150px;" class="align-middle text-center">
+                                        Stok Akhir</th>
+                                    <th scope="col" style="min-width:150px;" class="align-middle text-center">
                                         Jenis Transaksi</th>
-                                    <th scope="col" style="min-width:100px;" class="align-middle text-center">
-                                        Tanggal</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -131,8 +133,17 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <td class="align-middle text-center">
                                         <?= $order_number ?>
                                     </td>
+                                    <td class="align-middle text-center">
+                                        <?= $book_transaction->stock_initial; ?>
+                                    </td>
                                     <td class="align-middle text-center" style=<?= "color:". $change_text_color?>>
                                         <?= $stock_display ?>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <?= $book_transaction->stock_last; ?>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <?= format_datetime($book_transaction->date); ?>
                                     </td>
                                     <td class="align-middle text-center">
                                         <?= $type_display ?>
