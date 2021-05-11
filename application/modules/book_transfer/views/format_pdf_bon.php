@@ -35,7 +35,8 @@
     td {
         border: 1px solid black;
         height: 28px;
-        /* text-align: center; */
+        padding-left:4px;
+        padding-right:4px;
     }
 
     p {
@@ -129,7 +130,6 @@
                 <th>NO</th>
                 <th>JUDUL BUKU</th>
                 <th>JUMLAH</th>
-                <th></th>
                 <th>HARGA</th>
                 <th>TOTAL</th>
             </tr>
@@ -139,7 +139,6 @@
                 <td><?=$i++?></td>
                 <td><?= $books->book_title?></td>
                 <td style="text-align: center;"><?= $books->qty?></td>
-                <td style="text-align: center;">X</td>
                 <td> Rp
                     <div class="price"><?=number_format($books->price, 0, ",", ".")?></div>
                 </td>
@@ -153,14 +152,12 @@
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
-                <td style="border: 0px"></td>
                 <td style="border: 0px">Rp <div class="price"><?= number_format($total, 0, ",", ".")?></div></td>
             </tr>
             <tr style="border: 0px">
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px">DISKON</td>
-                <td style="border: 0px"></td>
                 <td style="border: 0px; text-align: center;"><?= $discount?>%</td>
                 <td class="border-bottom" style="text-align: left;">Rp <div class="price"><?= number_format($total_discount, 0, ",", ".")?></div></td>
             </tr>
@@ -168,7 +165,6 @@
                 <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px"><b>TOTAL</b></td>
-                <td style="border: 0px"></td>
                 <td style="border: 0px"></td>
                 <td style="border: 0px; font-weight: bold;">Rp <div class="price"><?= number_format($total-$total_discount, 0, ",", ".") ?></div></td>
             </tr>
