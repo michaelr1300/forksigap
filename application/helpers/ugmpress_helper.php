@@ -893,17 +893,6 @@ function get_book_transfer_status_edit(){
     ];
 }
 
-function get_dropdown_list_library()
-{
-    $condition = function () {
-        $CI = &get_instance();
-        $CI->db->order_by('library_name', 'asc');
-        return $CI;
-    };
-
-    return get_dropdown_list('library', ['library_id', 'library_name'], $condition);
-}
-
 function get_book_transfer_destination(){
     return [
         '' => '--Pilih--',

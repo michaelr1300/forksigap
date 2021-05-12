@@ -23,22 +23,18 @@
                         method="post"
                     >
                         <legend>Form Edit Faktur</legend>
+                        <div class="form-group">
+                            <label
+                                for="type"
+                                class="font-weight-bold"
+                            >Jenis Faktur<abbr title="Required">*</abbr></label>
 
-                        <div class="table-responsive mb-4">
-                            <table class="table table-striped table-bordered mb-0">
-                                <tbody>
-                                    <tr>
-                                        <td width="200px"> Nomor Faktur </td>
-                                        <td><strong><?= $invoice->number ?></strong> </td>
-                                    </tr>
-                                    <tr>
-                                        <td width="200px"> Jenis Faktur </td>
-                                        <td><?= get_invoice_type()[$invoice->type]; ?></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <?= form_dropdown('type', $invoice_type, $invoice->type, 'id="type" class="form-control custom-select d-block"'); ?>
+                            <small
+                                id="error-type"
+                                class="d-none error-message text-danger"
+                            >Jenis Faktur wajib diisi!</small>
                         </div>
-
                         <div
                             class="form-group"
                             style="display: none;"
@@ -235,9 +231,7 @@
                         <small
                             id="error-customer-info"
                             class="d-none error-message text-danger"
-                        >
-                            Data customer wajib diisi!
-                        </small>
+                        >Data customer wajib diisi!</small>
                         
                         <hr class="my-4">
                         <div class="row">
@@ -252,9 +246,7 @@
                                     class="d-none error-message text-danger"
                                 >Buku wajib diisi!</small>
                             </div>
-
                         </div>
-
                         <div
                             id="book-info"
                             style="display:none"
@@ -381,8 +373,9 @@
                                                     value="<?= $books->book_id ?>"
                                                 />
                                             </td>
-                                            <td class="align-middle"><?= $books->price ?>
+                                            <td class="align-middle">Rp <?= $books->price ?>
                                                 <input
+                                                    id="invoice-book-price-<?= $books->book_id ?>"
                                                     type="number"
                                                     hidden
                                                     name="invoice_book_price[]"
@@ -398,10 +391,12 @@
                                                     name="invoice_book_qty[]"
                                                     class="form-control"
                                                     value="<?= $books->qty ?>"
+                                                    onchange="updateQty(<?= $books->book_id ?>)"
                                                 />
                                             </td>
                                             <td class="align-middle"><?= $books->discount ?>%
                                                 <input
+                                                    id="invoice-book-discount-<?= $books->book_id ?>"
                                                     type="number"
                                                     hidden
                                                     name="invoice_book_discount[]"
@@ -410,10 +405,14 @@
                                                 />
                                             </td>
                                             <td class="align-middle">
-                                                <?php
-                                                $total = $books->qty * $books->price * (1 - $books->discount/100);
-                                                echo $total;
-                                                ?></td>
+                                                <span id="invoice-book-total-<?= $books->book_id ?>">
+                                                    Rp 
+                                                    <?php
+                                                    $total = $books->qty * $books->price * (1 - $books->discount/100);
+                                                    echo $total;
+                                                    ?>
+                                                </span>
+                                            </td>
                                             <td class="align-middle"><button
                                                     type="button"
                                                     class="btn btn-danger remove"
@@ -446,7 +445,7 @@
 $(document).ready(function() {
     $('#discount').val('<?= $discount ?>')
 
-    if ('<?= $invoice->type ?>' == "cash") {
+    if ($('#type').val() == "cash") {
         $('#source-dropdown').show()
         if ($('#source').val() == "library") {
             $('#source-library-dropdown').show()
@@ -466,17 +465,17 @@ $(document).ready(function() {
     })
 
     //hilangin buku yg sudah ada
-    <?php foreach ($invoice_book as $book) : ?>
-        $('#book-id option[value="' + <?= $book->book_id ?> + '"]').remove()
+    <?php foreach ($invoice_book as $books) : ?>
+        $('#book-id option[value="' + <?= $books->book_id ?> + '"]').remove()
 
         //fetch stock sekarang
         $.ajax({
             type: "GET",
-            url: "<?= base_url('invoice/api_get_book/'); ?>" + <?= $book->book_id ?>,
+            url: "<?= base_url('invoice/api_get_book/'); ?>" + <?= $books->book_id ?>,
             datatype: "JSON",
             success: function(res) {
-                $('#invoice-book-qty-' + <?= $book->book_id ?>).attr({
-                    "max" : res.data.stock +  <?= $book->qty ?>,
+                $('#invoice-book-qty-' + <?= $books->book_id ?>).attr({
+                    "max" : res.data.stock,
                     "min" : 1
                 });
             },
@@ -512,49 +511,6 @@ $(document).ready(function() {
         placeholder: '-- Pilih --',
         dropdownParent: $('#app-main')
     });
-
-    function add_book_to_invoice(stock) {
-        var bookId = document.getElementById('book-id');
-
-        html = '<tr class="text-center">';
-
-        // Judul option yang di select
-        html += '<td class="align-middle text-left font-weight-bold">' + bookId.options[bookId.selectedIndex].text;
-        html += '<input type="text" hidden name="invoice_book_id[]" class="form-control" value="' + bookId.value + '"/>';
-        html += '</td>';
-
-        // Harga
-        html += '<td class="align-middle"> Rp ' + $('#info-price').text();
-        html += '<input type="number" hidden name="invoice_book_price[]" class="form-control" value="' + $('#info-price').text() + '"/>';
-        html += '</td>';
-
-        // Jumlah
-        html += '<td class="align-middle">';
-        html += '<input type="number" name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '" max="' + stock + '"/>';
-        html += '</td>';
-
-        // Diskon
-        html += '<td class="align-middle">' + document.getElementById('discount').value + '%';
-        html += '<input type="number" hidden name="invoice_book_discount[]" class="form-control" value="' + document.getElementById('discount').value + '"/>';
-        html += '</td>';
-
-        // Total
-        var totalPrice = (parseFloat($('#info-price').text())) * (parseFloat($('#qty').val())) * (1 - (parseFloat($('#discount').val()) / 100));
-        html += '<td class="align-middle"> Rp ' + parseFloat(totalPrice).toFixed(0) + '</td>';
-
-        // Button Hapus
-        html += '<td class="align-middle"><button type="button" class="btn btn-danger remove">Hapus</button></td></tr>';
-
-        $('#invoice_items').append(html);
-        $('#book-id option[value="' + bookId.value + '"]').remove()
-    }
-
-    function reset_book() {
-
-        document.getElementById('qty').value = 1;
-        $("#book-id").val('').trigger('change')
-        $('#book-info').hide();
-    }
 
     $('#add-item').click(function() {
         // Judul buku harus dipilih
@@ -706,4 +662,58 @@ $(document).ready(function() {
         });
     })
 });
+
+function add_book_to_invoice(stock) {
+    var bookId = document.getElementById('book-id');
+
+    html = '<tr class="text-center">';
+
+    // Judul option yang di select
+    html += '<td class="align-middle text-left font-weight-bold">' + bookId.options[bookId.selectedIndex].text;
+    html += '<input type="text" hidden name="invoice_book_id[]" class="form-control" value="' + bookId.value + '"/>';
+    html += '</td>';
+
+    // Harga
+    html += '<td class="align-middle"> Rp ' + $('#info-price').text();
+    html += '<input <input id="invoice-book-price-' + bookId.value + '" type="number" hidden name="invoice_book_price[]" class="form-control" value="' + $('#info-price').text() + '"/>';
+    html += '</td>';
+
+    // Jumlah
+    html += '<td class="align-middle">';
+    html += '<input id="invoice-book-qty-' + bookId.value + '" type="number" required name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '" max="' + stock + '" onchange=updateQty(' + bookId.value + ')>';
+    html += '</td>';
+
+    // Diskon
+    html += '<td class="align-middle">' + document.getElementById('discount').value + '%';
+    html += '<input <input id="invoice-book-discount-' + bookId.value + '" type="number" hidden name="invoice_book_discount[]" class="form-control" value="' + document.getElementById('discount').value + '"/>';
+    html += '</td>';
+
+    // Total
+    var totalPrice = (parseFloat($('#info-price').text())) * (parseFloat($('#qty').val())) * (1 - (parseFloat($('#discount').val()) / 100));
+    html += '<td class="align-middle"> <span id="invoice-book-total-' + bookId.value + '"> Rp ' + parseFloat(totalPrice).toFixed(0) + '</span></td>';
+
+    // Button Hapus
+    html += '<td class="align-middle"><button type="button" class="btn btn-danger remove">Hapus</button></td></tr>';
+
+    $('#invoice_items').append(html);
+    $('#book-id option[value="' + bookId.value + '"]').remove()
+}
+
+function reset_book() {
+
+    document.getElementById('qty').value = 1;
+    $("#book-id").val('').trigger('change')
+    $('#book-info').hide();
+}
+
+function updateQty(book_id) {
+    var qty = $('#invoice-book-qty-' + book_id).val();
+    var price = $('#invoice-book-price-' + book_id).val();
+    var discount = $('#invoice-book-discount-' + book_id).val();
+    var total_html = $('#invoice-book-total-' + book_id);
+
+    var total = Math.round(qty * price * (1 - discount/100));
+    total_html.html('Rp ' + total)
+}
+
 </script>

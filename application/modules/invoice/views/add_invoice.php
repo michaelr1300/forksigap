@@ -66,20 +66,6 @@
                                 class="d-none error-message text-danger"
                             >Asal perpustakaan wajib diisi jika asal stok faktur adalah perpustakaan!</small>
                         </div>
-                        <div
-                            id="invoice-type"
-                            style="display: none;"
-                        >
-                            <div class="form-group">
-                                <input
-                                    type="text"
-                                    name="number"
-                                    id="number"
-                                    class="form-control"
-                                    hidden
-                                />
-                            </div>
-                        </div>
                         <div class="form-group">
                             <label
                                 for="due-date"
@@ -107,6 +93,7 @@
                             >Jatuh Tempo wajib diisi!</small>
                         </div>
                         <hr class="my-4">
+
                         <div class="form-group">
                             <label for="customer-id" class="font-weight-bold mb-0">
                                 Customer
@@ -241,13 +228,14 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
+                        
                         <small
                             id="error-customer-info"
                             class="d-none error-message text-danger"
-                        >
-                            Data customer wajib diisi!
-                        </small>
+                        >Data customer wajib diisi!</small>
+                        
                         <hr class="my-4">
                         <div class="row">
                             <div class="form-group col-md-8">
@@ -444,48 +432,6 @@ $(document).ready(function() {
         dropdownParent: $('#app-main')
     });
 
-    function add_book_to_invoice(stock) {
-        var bookId = document.getElementById('book-id');
-
-        html = '<tr class="text-center">';
-
-        // Judul option yang di select
-        html += '<td class="align-middle text-left font-weight-bold">' + bookId.options[bookId.selectedIndex].text;
-        html += '<input type="text" hidden name="invoice_book_id[]" class="form-control" value="' + bookId.value + '"/>';
-        html += '</td>';
-
-        // Harga
-        html += '<td class="align-middle"> Rp ' + $('#info-price').text();
-        html += '<input type="number" hidden name="invoice_book_price[]" class="form-control" value="' + $('#info-price').text() + '"/>';
-        html += '</td>';
-
-        // Jumlah
-        html += '<td class="align-middle">';
-        html += '<input type="number" required name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '" max="' + stock + '"/>';
-        html += '</td>';
-
-        // Diskon
-        html += '<td class="align-middle">' + document.getElementById('discount').value + '%';
-        html += '<input type="number" hidden name="invoice_book_discount[]" class="form-control" value="' + document.getElementById('discount').value + '"/>';
-        html += '</td>';
-
-        // Total
-        var totalPrice = (parseFloat($('#info-price').text())) * (parseFloat($('#qty').val())) * (1 - (parseFloat($('#discount').val()) / 100));
-        html += '<td class="align-middle"> Rp ' + parseFloat(totalPrice).toFixed(0) + '</td>';
-
-        // Button Hapus
-        html += '<td class="align-middle"><button type="button" class="btn btn-danger remove">Hapus</button></td></tr>';
-
-        $('#invoice_items').append(html);
-        $('#book-id option[value="' + bookId.value + '"]').remove()
-    }
-
-    function reset_book() {
-        document.getElementById('qty').value = 1;
-        $("#book-id").val('').trigger('change')
-        $('#book-info').hide();
-    }
-
     $('#add-item').click(function() {
         // Judul buku harus dipilih
         if (document.getElementById('book-id').value === '') {
@@ -635,8 +581,59 @@ $(document).ready(function() {
             }
         });
     })
-
-
-
 });
+
+function add_book_to_invoice(stock) {
+    var bookId = document.getElementById('book-id');
+
+    html = '<tr class="text-center">';
+
+    // Judul option yang di select
+    html += '<td class="align-middle text-left font-weight-bold">' + bookId.options[bookId.selectedIndex].text;
+    html += '<input type="text" hidden name="invoice_book_id[]" class="form-control" value="' + bookId.value + '"/>';
+    html += '</td>';
+
+    // Harga
+    html += '<td class="align-middle"> Rp ' + $('#info-price').text();
+    html += '<input <input id="invoice-book-price-' + bookId.value + '" type="number" hidden name="invoice_book_price[]" class="form-control" value="' + $('#info-price').text() + '"/>';
+    html += '</td>';
+
+    // Jumlah
+    html += '<td class="align-middle">';
+    html += '<input id="invoice-book-qty-' + bookId.value + '" type="number" required name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '" max="' + stock + '" onchange=updateQty(' + bookId.value + ')>';
+    html += '</td>';
+
+    // Diskon
+    html += '<td class="align-middle">' + document.getElementById('discount').value + '%';
+    html += '<input <input id="invoice-book-discount-' + bookId.value + '" type="number" hidden name="invoice_book_discount[]" class="form-control" value="' + document.getElementById('discount').value + '"/>';
+    html += '</td>';
+
+    // Total
+    var totalPrice = (parseFloat($('#info-price').text())) * (parseFloat($('#qty').val())) * (1 - (parseFloat($('#discount').val()) / 100));
+    html += '<td class="align-middle"> <span id="invoice-book-total-' + bookId.value + '"> Rp ' + parseFloat(totalPrice).toFixed(0) + '</span></td>';
+
+    // Button Hapus
+    html += '<td class="align-middle"><button type="button" class="btn btn-danger remove">Hapus</button></td></tr>';
+
+    $('#invoice_items').append(html);
+    $('#book-id option[value="' + bookId.value + '"]').remove()
+}
+
+function reset_book() {
+
+    document.getElementById('qty').value = 1;
+    $("#book-id").val('').trigger('change')
+    $('#book-info').hide();
+}
+
+function updateQty(book_id) {
+    var qty = $('#invoice-book-qty-' + book_id).val();
+    var price = $('#invoice-book-price-' + book_id).val();
+    var discount = $('#invoice-book-discount-' + book_id).val();
+    var total_html = $('#invoice-book-total-' + book_id);
+
+    var total = Math.round(qty * price * (1 - discount/100));
+    total_html.html('Rp ' + total)
+}
+
 </script>
