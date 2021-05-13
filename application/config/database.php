@@ -74,12 +74,15 @@ $active_group  = 'default';
 $query_builder = true;
 
 $db['default'] = array(
-    'dsn'          => $_SERVER['DATABASE_URL'] ?? '',
-    'hostname'     => $_SERVER['DB_HOST'] ?? 'localhost',
-    'username'     => $_SERVER['DB_USERNAME'] ?? '',
-    'password'     => $_SERVER['DB_PASSWORD'] ?? '',
-    'database'     => $_SERVER['DB_DATABASE'] ?? '',
-    'dbdriver'     => $_SERVER['DB_CONNECTION'] ?? 'mysqli',
+    'dsn'          => '',
+    'hostname'     => 'localhost',
+    'username'     => getenv('DB_USERNAME'),
+    'password'     => getenv('DB_PASSWORD'),
+    'database'     => getenv('DB_DATABASE'),
+    // 'username'     => 'root',
+    // 'password'     => '',
+    // 'database'     => 'ugmpress',
+    'dbdriver'     => 'mysqli',
     'dbprefix'     => '',
     'pconnect'     => false,
     'db_debug'     => (ENVIRONMENT !== 'production'),
