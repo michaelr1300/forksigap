@@ -75,14 +75,11 @@ $query_builder = true;
 
 $db['default'] = array(
     'dsn'          => '',
-    'hostname'     => 'localhost',
+    'hostname'     => getenv('DB_HOST'),
     'username'     => getenv('DB_USERNAME'),
     'password'     => getenv('DB_PASSWORD'),
     'database'     => getenv('DB_DATABASE'),
-    // 'username'     => 'root',
-    // 'password'     => '',
-    // 'database'     => 'ugmpress',
-    'dbdriver'     => 'postgre',
+    'dbdriver'     => getenv('DB_CONNECTION'),
     'dbprefix'     => '',
     'pconnect'     => false,
     'db_debug'     => (ENVIRONMENT !== 'production'),
@@ -97,9 +94,3 @@ $db['default'] = array(
     'failover'     => array(),
     'save_queries' => true,
 );
-
-$db['default']['hostname'] = getenv('DB_HOST');
-$db['default']['username'] = getenv('DB_USERNAME');
-$db['default']['password'] = getenv('DB_PASSWORD');
-$db['default']['database'] = getenv('DB_DATABASE');
-$db['default']['dbdriver'] = getenv('DB_CONNECTION');
