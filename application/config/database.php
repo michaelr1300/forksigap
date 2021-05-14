@@ -82,7 +82,7 @@ $db['default'] = array(
     // 'username'     => 'root',
     // 'password'     => '',
     // 'database'     => 'ugmpress',
-    'dbdriver'     => 'mysqli',
+    'dbdriver'     => 'postgre',
     'dbprefix'     => '',
     'pconnect'     => false,
     'db_debug'     => (ENVIRONMENT !== 'production'),
