@@ -18,7 +18,8 @@ class Book_stock_model extends MY_Model
             ->join_table('author', 'draft_author', 'author')
             ->when('keyword', $filters['keyword'])
             ->when('published_year', $filters['published_year'])
-            ->when('warehouse_present', $filters['warehouse_present'])
+            ->when('stock_moreeq', $filters['stock_moreeq'])
+            ->when('stock_lesseq', $filters['stock_lesseq'])
             ->order_by('warehouse_present')
             ->group_by('draft.draft_id')
             ->paginate($page)
@@ -27,7 +28,8 @@ class Book_stock_model extends MY_Model
         $total = $this->select('book.book_id')
             ->when('keyword', $filters['keyword'])
             ->when('published_year', $filters['published_year'])
-            ->when('warehouse_present', $filters['warehouse_present'])
+            ->when('stock_moreeq', $filters['stock_moreeq'])
+            ->when('stock_lesseq', $filters['stock_lesseq'])
             ->join_table('book', 'book_stock', 'book')
             ->join_table('draft', 'book', 'draft')
             ->join_table('category', 'draft', 'category')
@@ -77,19 +79,14 @@ class Book_stock_model extends MY_Model
                 $this->or_like('author_name', $data);
                 $this->group_end();
             }
-            if ($params == 'published_year') {
+            else if ($params == 'published_year') {
                 $this->where('year(published_date)', $data);
             }
-            if ($params == 'warehouse_present') {
-                if($data == "up_to_50"){
-                    $this->where('warehouse_present <=', 50);
-                }
-                else if($data == "above_50"){
-                    $this->where('warehouse_present >', 50);
-                } 
-                else{
-                    $this->where('warehouse_present', $data);
-                }
+            else if ($params == 'stock_lesseq') {
+                $this->where('warehouse_present <=', $data);
+            }
+            else if ($params == 'stock_moreeq'){
+                $this->where('warehouse_present >=', $data);
             }
         }
         return $this;

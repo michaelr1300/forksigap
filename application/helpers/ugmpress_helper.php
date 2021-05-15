@@ -809,14 +809,6 @@ function strip_disallowed_char($string)
 //     ];
 // }
 
-function get_warehouse_stock(){
-    return [
-        '' => 'Semua',
-        'up_to_50' => '<= 50',
-        'above_50' => '> 50'
-    ];
-}
-
 function get_book_stock_revision_type(){
     return [
         ''  => '',

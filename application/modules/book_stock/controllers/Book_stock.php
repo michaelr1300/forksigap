@@ -20,19 +20,26 @@ class Book_stock extends Warehouse_sales_controller
         $filters = [
             'keyword'           => $this->input->get('keyword', true),
             'published_year'    => $this->input->get('published_year', true),
-            'warehouse_present' => $this->input->get('warehouse_present', true),
+            'stock_moreeq'      => $this->input->get('stock_moreeq', true),
+            'stock_lesseq'      => $this->input->get('stock_lesseq', true),
             'excel'             => $this->input->get('excel', true)
         ];
         //custom per page
         $this->book_stock->per_page = $this->input->get('per_page', true) ?? 10;
         $get_data = $this->book_stock->filter_book_stock($filters, $page);
 
-        $book_stocks= $get_data['book_stocks'];
+        $book_stocks = $get_data['book_stocks'];
         $total = $get_data['total'];
+        if ($book_stocks){
+            $max_stock = $book_stocks[count($book_stocks) - 1]->warehouse_present;
+        }
+        else {
+            $max_stock = 0;
+        }
         $pagination = $this->book_stock->make_pagination(site_url('book_stock'), 2, $total);
         $pages      = $this->pages;
         $main_view  = 'book_stock/index_bookstock';
-        $this->load->view('template', compact('pages', 'main_view', 'book_stocks', 'pagination', 'total'));
+        $this->load->view('template', compact('pages', 'main_view', 'book_stocks', 'pagination', 'total', 'max_stock'));
 
         if ($filters['excel'] == 1) {
             $this->generate_excel($filters);
