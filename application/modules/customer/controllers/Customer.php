@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Customer extends MY_Controller
+class Customer extends Sales_Controller
 {
     public function __construct()
     {
@@ -111,5 +111,4 @@ class Customer extends MY_Controller
 
         $this->session->set_flashdata('success', 'Diskon berhasil diupdate.');
     }
-
 }

@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Proforma extends MY_Controller
+class Proforma extends Sales_Controller
 {
     public function __construct()
     {

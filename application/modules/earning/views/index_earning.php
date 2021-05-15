@@ -108,13 +108,13 @@ $invoice_type_options = [
                                         type="submit"
                                         value="Submit"
                                     ><i class="fa fa-filter"></i> Filter</button>
-                                    <!-- <button
+                                    <button
                                         class="btn btn-success"
                                         type="submit"
                                         id="excel"
                                         name="excel"
                                         value="1"
-                                    >Excel</button> -->
+                                    >Excel</button>
                                 </div>
                             </div>
                         </div>

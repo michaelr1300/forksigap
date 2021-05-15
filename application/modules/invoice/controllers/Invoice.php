@@ -3,7 +3,7 @@
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
-class Invoice extends MY_Controller
+class Invoice extends Sales_Controller
 {
     public function __construct()
     {
@@ -98,7 +98,7 @@ class Invoice extends MY_Controller
             // Jumlah Buku di Faktur
             $countsize = count($this->input->post('invoice_book_id'));
 
-            $total_weight = 0;  
+            $total_weight = 0;
             // Masukkan buku di form faktur ke database
             for ($i = 0; $i < $countsize; $i++) {
                 $book = [
@@ -194,7 +194,7 @@ class Invoice extends MY_Controller
                 // 'user_edited'   => $_SESSION['username']
             ];
 
-            
+
             $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
 
             // Jumlah Buku di Faktur
@@ -212,7 +212,7 @@ class Invoice extends MY_Controller
 
             // Hapus invoice_book yang sudah ada 
             $this->db->where('invoice_id', $invoice_id)->delete('invoice_book');
-            
+
             $total_weight = 0;
             // Masukkan invoice_book yang baru (hasil edit) ke database
             for ($i = 0; $i < $countsize; $i++) {
@@ -264,7 +264,7 @@ class Invoice extends MY_Controller
             $customer_type = get_customer_type();
 
             $invoice_book = $this->invoice->fetch_invoice_book($invoice->invoice_id);
-            
+
 
             $dropdown_book_options = $this->invoice->get_ready_book_list();
 
@@ -299,7 +299,6 @@ class Invoice extends MY_Controller
                 'confirm_date' => now(),
                 'preparing_deadline' => $preparing_deadline
             ]);
-
         } else
             // Cancel Faktur
             if ($invoice_status == 'cancel') {
