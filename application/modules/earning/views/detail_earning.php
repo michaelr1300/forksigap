@@ -90,6 +90,13 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                         type="submit"
                                         value="Submit"
                                     ><i class="fa fa-filter"></i> Filter</button>
+                                    <button
+                                        class="btn btn-success"
+                                        type="submit"
+                                        id="excel"
+                                        name="excel"
+                                        value="1"
+                                    >Excel</button>
                                 </div>
                             </div>
                         </div>
