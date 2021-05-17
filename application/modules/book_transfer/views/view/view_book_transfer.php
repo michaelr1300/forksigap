@@ -340,6 +340,7 @@ $(document).ready(function() {
                 reload_preparing_segment()
                 // reload data
                 $('#book-transfer-data-wrapper').load(' #book-transfer-data');
+                location.reload()
             },
         })
     })

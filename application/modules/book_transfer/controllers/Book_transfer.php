@@ -10,6 +10,7 @@ class Book_transfer extends MY_Controller
         $this->load->model('book_transaction/book_transaction_model', 'book_transaction');
         $this->load->model('book_stock/book_stock_model', 'book_stock');
         $this->load->model('library/library_model', 'library');
+        $this->load->helper('sales_helper');
     }
 
     public function index($page = NULL)
