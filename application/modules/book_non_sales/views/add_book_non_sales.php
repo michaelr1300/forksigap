@@ -42,7 +42,7 @@
                                 <select name="type" id="type" class="form-control custom-select d-block">
                                     <option value="presentgift">Present Gift</option>
                                     <option value="doorprize">Doorprize</option>
-                                    <option value="kedahbuku">Kedah Buku</option>
+                                    <option value="bedahbuku">Bedah Buku</option>
                                     <option value="dll">Lain-lain</option>
                                 </select>
                                 <div class="row">

@@ -898,7 +898,7 @@ function get_book_non_sales_type(){
         '' => '--Pilih--',
         'presentgift' => 'Present Gift',
         'doorprize' => 'Doorprize',
-        'kedahbuku' => 'Kedah Buku',
+        'bedahbuku' => 'Bedah Buku',
         'dll' => 'Lain-lain'
     ];
 }

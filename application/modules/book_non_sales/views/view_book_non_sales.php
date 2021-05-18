@@ -152,3 +152,6 @@ $level              = check_level();
     </div>
 </section>
 <!-- DETAIL -->
+<?php if($book_non_sales->status=="finish"){
+    echo "Permintaan buku non penjualan telah selesai.";
+}?>

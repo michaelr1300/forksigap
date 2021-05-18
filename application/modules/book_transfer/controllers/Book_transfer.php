@@ -84,7 +84,7 @@ class Book_transfer extends MY_Controller
             $data_format['book_list']     = $book_transfer_list ?? '';
             $html = $this->load->view('book_transfer/format_pdf_bon', $data_format, true);
             $file_name = $data_format['number'].'_Pemindahan Buku';    
-            $this->pdf->generate_pdf_a4_portrait($html, $file_name);    
+            $this->pdf->generate_pdf_a4_landscape($html, $file_name);    
         }
 
     }
