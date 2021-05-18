@@ -2,7 +2,7 @@
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class Book_transaction extends MY_Controller
+class Book_transaction extends Warehouse_Controller
 {
     public function __construct()
     {
@@ -40,26 +40,6 @@ class Book_transaction extends MY_Controller
         endif;
     }
 
-
-    public function view($book_transaction_id){
-        // $book_transaction = $this->book_transaction->join('book')->where('book.book_id', $book_id)->get();
-        $book_transaction = $this->book_transaction->get_book_transaction($book_transaction_id);
-        if (!$book_transaction) {
-            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
-            redirect($this->pages);
-        }
-
-        $input = (object) $book_transaction;
-        // $get_transaction      = $this->book_transaction->fetch_transaction_by_id($book_transaction_id);
-        // $transaction_history  = $get_transaction['transaction_history'];
-        // $transaction_last     = $get_transaction['transaction_last'];
-
-        $pages       = $this->pages;
-        $main_view   = 'book_transaction/view_booktransaction';
-        $this->load->view('template', compact('pages', 'main_view', 'input'));
-        return;
-    }
-
     public function generate_excel($filters)
     {
         // $get_data = $this->book_transaction->filter_excel($filters);
@@ -78,14 +58,15 @@ class Book_transaction extends MY_Controller
         $sheet->setCellValue('C3', 'Perubahan');
         $sheet->setCellValue('D3', 'Jenis Transaksi');
         $sheet->setCellValue('E3', 'Tanggal Transaksi');
+        $sheet->setCellValue('F3', 'Keterangan');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:E3')
+                    ->getStyle('A3:F3')
                     ->getFill()
                     ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                     ->getStartColor()
                     ->setARGB('A6A6A6');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:E3')
+                    ->getStyle('A3:F3')
                     ->getFont()
                     ->setBold(true);
 
@@ -95,18 +76,15 @@ class Book_transaction extends MY_Controller
         $sheet->getColumnDimension('C')->setAutoSize(true);
         $sheet->getColumnDimension('D')->setAutoSize(true);
         $sheet->getColumnDimension('E')->setAutoSize(true);
+        $sheet->getColumnDimension('F')->setAutoSize(true);
 
         // $get_data = $this->book_transaction->filter_excel($filters);
         $get_data = $this->book_transaction->filter_excel($filters);
         $no = 1;
         $i = 4;
         // Column Content
-        // Menampilkan data (Nomor, judul buku, 
-        // stok awal, perubahan (total), jenis transaksi ($book_receive_id==null: keluar. Sebaliknya gt), 
-        // tanggal transaksi (finish_date faktur/book_receive))
-
         foreach ($get_data as $data) {
-            foreach (range('A', 'E') as $v) {
+            foreach (range('A', 'F') as $v) {
                 switch ($v) {
                     case 'A': {
                             $value = $no++;
@@ -117,25 +95,46 @@ class Book_transaction extends MY_Controller
                             break;
                         }
                     case 'C': {
-                            if($data->book_receive_id){
-                                $value = $data->stock_in;
-                            }
-                            else{
-                                $value = $data->stock_out;
-                            }
+                            $value = $data->stock_mutation;
                             break;
                     }
                     case 'D': {
                             if($data->book_receive_id){
                                 $value = 'Masuk';
                             }
-                            else{
+                            else if($data->book_stock_revision_id){
+                                if($data->revision_type=='add'){
+                                    $value = 'Masuk';
+                                }
+                                else{
+                                    $value = 'Keluar';
+                                }
+                            }
+                            else if($data->invoice_id){
                                 $value = 'Keluar';
                             }
                             break;
                     }
                     case 'E': {
                             $value = $data->date;
+                        break;
+                    }
+                    case 'F':{
+                        if($data->book_receive_id){
+                            $value = "Penerimaan Buku";
+                        }
+                        else if($data->invoice_book_id){
+                            $value = "Pesanan";
+                        }
+                        // else if($data->book_transfer_id){
+                        //     $value = $data->book_transfer_qty;
+                        // }
+                        // else if($data->book_non_sales_id){
+                        //     $value = $data->book_non_sales_qty;
+                        // }
+                        else if($data->book_stock_revision_id){
+                            $value = "Revisi";
+                        }
                         break;
                     }
                 }

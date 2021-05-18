@@ -43,18 +43,12 @@ $level              = check_level();
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered mb-0 nowrap">
                             <tbody>
-                                <!-- sementara nomor pemindahannya pake id dulu ya -->
                                 <tr>
                                     <td width="200px"> Nomor Pemindahan </td>
                                     <td>
                                         <?= $book_transfer->transfer_number;?>
                                     </td>
                                 </tr>
-                                <!-- <tr>
-                                    <td width="200px"> Jumlah </td>
-                                    <td> <?//= $book_transfer->quantity?>
-                                    </td>
-                                </tr> -->
                                 <tr>
                                     <td width="200px"> Tanggal Pindah </td>
                                     <td><?= format_datetime($book_transfer->transfer_date)?>
@@ -81,11 +75,10 @@ $level              = check_level();
                                 <tr>
                                     <td width="200px"> File Bon </td>
                                     <td>
-                                        <a class="btn btn-info" id="bon" name="bon" 
+                                        <a class="btn btn-outline-danger" id="bon" name="bon" 
                                             href = "<?= base_url('/book_transfer/generate_pdf_bon/'.$book_transfer->book_transfer_id); ?>">
-                                            <i class="fa fa-download mr-3" aria-hidden="true"></i>Download file bon
+                                            <i class="fas fa-file-pdf mr-3" aria-hidden="true"></i>Download file PDF bon
                                         </a>
-                                    <!-- <button type="button" class="btn btn-info"><i class="fa fa-download mr-3" aria-hidden="true"></i>Download File Bon</button> -->
                                     </td>
                                 </tr>
                                 <tr>

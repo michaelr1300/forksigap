@@ -23,8 +23,10 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
             <h1 class="page-title"> Buku Non Penjualan </h1>
             <span class="badge badge-info">Total : <?= $total; ?></span>
         </div>
+        <?php if ($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_pemasaran' ) : ?>
         <a href="<?= base_url("$pages/add"); ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus fa-fw"></i>
             Tambah</a>
+        <?php endif?>
     </div>
 </header>
 <div class="page-section">
@@ -96,7 +98,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                         <?= get_book_non_sales_status()[$book_non_sales->status]; ?>
                                     </td>
                                     <td class="align-middle text-right">
-                                        <?php if($book_non_sales->status=='waiting') : ?>
+                                        <?php if (($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_gudang') && $book_non_sales->status=='waiting'): ?>
                                         <button type="button" class="btn btn-sm btn-success" data-toggle="modal"
                                             data-target="#finish_modal" title="Selesai">
                                             <i class="fas fa-check"></i>
@@ -130,6 +132,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                             </div>
                                         </div>
                                         <?php endif?>
+                                        <?php if(($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_pemasaran')) :?>
                                         <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
                                             data-target="#modal-hapus-<?= $book_non_sales->book_non_sales_id; ?>"><i
                                                 class="fa fa-trash-alt"></i><span class="sr-only">Delete</span></button>
@@ -165,6 +168,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php endif?>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

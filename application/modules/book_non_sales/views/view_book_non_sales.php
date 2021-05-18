@@ -107,9 +107,9 @@ $level              = check_level();
                                 <tr>
                                     <td width="200px"> File Bon </td>
                                     <td>
-                                        <a class="btn btn-info" id="bon" name="bon" 
+                                        <a class="btn btn-outline-danger" id="bon" name="bon" 
                                             href = "<?= base_url('/book_non_sales/generate_pdf_bon/'.$book_non_sales->book_non_sales_id); ?>">
-                                            <i class="fa fa-download mr-3" aria-hidden="true"></i>Download file bon
+                                            <i class="fas fa-file-pdf mr-3" aria-hidden="true"></i>Download file PDF bon
                                         </a>
                                     </td>
                                 </tr>

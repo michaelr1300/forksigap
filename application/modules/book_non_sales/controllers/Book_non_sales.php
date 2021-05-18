@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Book_non_sales extends MY_Controller
+class Book_non_sales extends Warehouse_sales_controller
 {
     public function __construct()
     {
@@ -13,7 +13,7 @@ class Book_non_sales extends MY_Controller
 
     public function index($page = NULL)
     {
-        if ($this->_is_warehouse_admin() == TRUE) :
+        if ($this->_is_warehouse_sales_admin() == TRUE) :
             // all filter
             $filters = [
                 'keyword'           => $this->input->get('keyword', true),
@@ -36,7 +36,7 @@ class Book_non_sales extends MY_Controller
     }
 
     public function add(){
-        if (!$this->_is_warehouse_admin()) {
+        if (!$this->_is_sales_admin()) {
             redirect($this->pages);
         }
 
@@ -88,7 +88,6 @@ class Book_non_sales extends MY_Controller
                 'book_id' => $books['book_id'],
                 'qty' => $books['qty']
             ];
-            $book_stock = $this->book_stock->where('book_id', $books['book_id'])->get();
             $book_non_sales_list_success = $this->db->insert('book_non_sales_list',$book_non_sales_list);
         }
 
@@ -153,7 +152,7 @@ class Book_non_sales extends MY_Controller
 
     public function generate_pdf_bon($book_non_sales_id)
     {
-        if(!$this->_is_warehouse_admin()){
+        if(!$this->_is_warehouse_sales_admin()){
             redirect($_SERVER['HTTP_REFERER']);
         }
         else{
@@ -206,7 +205,9 @@ class Book_non_sales extends MY_Controller
                 'book_id' => $book_non_sales_list->book_id,
                 'book_stock_id' => $book_stock->book_stock_id,
                 'book_non_sales_id' => $book_non_sales_id,
-                'stock_out' => $book_non_sales_list->qty,
+                'stock_initial'=> $book_stock->warehouse_present+$book_non_sales_list->qty,
+                'stock_mutation' => $book_non_sales_list->qty,
+                'stock_last'=> $book_stock->warehouse_present,
                 'date' => now()
             ]);
         }
@@ -226,12 +227,30 @@ class Book_non_sales extends MY_Controller
 
     }
 
-    private function _is_warehouse_admin()
+    private function _is_warehouse_sales_admin()
     {
-        if ($this->level == 'superadmin' || $this->level == 'admin_gudang') {
+        if ($this->level == 'superadmin' || $this->level == 'admin_gudang' || $this->level == 'admin_pemasaran') {
             return true;
         } else {
-            $this->session->set_flashdata('error', 'Hanya admin gudang dan superadmin yang dapat mengakses.');
+            $this->session->set_flashdata('error', 'Hanya admin gudang, admin pemasaran, dan superadmin yang dapat mengakses.');
+            return false;
+        }
+    }
+
+    private function _is_warehouse_admin(){
+        if ($this->level == 'superadmin' || $this->level == 'admin_pemasaran') {
+            return true;
+        } else {
+            $this->session->set_flashdata('error', 'Hanya admin pemasaran dan superadmin yang dapat mengakses.');
+            return false;
+        }
+    }
+
+    private function _is_sales_admin(){
+        if ($this->level == 'superadmin' || $this->level == 'admin_pemasaran') {
+            return true;
+        } else {
+            $this->session->set_flashdata('error', 'Hanya admin pemasaran dan superadmin yang dapat mengakses.');
             return false;
         }
     }

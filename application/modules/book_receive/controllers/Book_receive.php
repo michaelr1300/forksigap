@@ -72,33 +72,33 @@ class Book_receive extends Warehouse_Controller
         redirect('book_receive');
     }
 
-    // public function delete($book_receive_id = null)
-    // {
-    //     if (!$this->_is_warehouse_admin()) {
-    //         redirect($this->pages);
-    //     }
+    public function delete($book_receive_id = null)
+    {
+        if (!$this->_is_warehouse_admin()) {
+            redirect($this->pages);
+        }
 
-    //     $book_receive = $this->book_receive->where('book_receive_id', $book_receive_id)->get();
-    //     if (!$book_receive) {
-    //         $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
-    //         redirect($this->pages);
-    //     }
+        $book_receive = $this->book_receive->where('book_receive_id', $book_receive_id)->get();
+        if (!$book_receive) {
+            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
+            redirect($this->pages);
+        }
 
-    //     // memastikan konsistensi data
-    //     $this->db->trans_begin();
+        // memastikan konsistensi data
+        $this->db->trans_begin();
 
-    //     $this->book_receive->where('book_receive_id', $book_receive_id)->delete();
+        $this->book_receive->where('book_receive_id', $book_receive_id)->delete();
 
-    //     if ($this->db->trans_status() === false) {
-    //         $this->db->trans_rollback();
-    //         $this->session->set_flashdata('error', $this->lang->line('toast_delete_fail'));
-    //     } else {
-    //         $this->db->trans_commit();
-    //         $this->session->set_flashdata('success', $this->lang->line('toast_delete_success'));
-    //     }
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('error', $this->lang->line('toast_delete_fail'));
+        } else {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_delete_success'));
+        }
 
-    //     redirect($this->pages);
-    // }
+        redirect($this->pages);
+    }
 
     //view details of book receive
     public function view($book_receive_id = null)
@@ -439,9 +439,9 @@ class Book_receive extends Warehouse_Controller
     }
 
     // finalisasi book receive, update stok buku
-    public function final($book_receive_id = null, $action = null)
+    public function final($book_receive_id = null)
     {
-        if (!$book_receive_id || !$action) {
+        if (!$book_receive_id) {
             $this->session->set_flashdata('error', $this->lang->line('toast_data_not_available'));
             redirect($this->pages);
         }
@@ -461,23 +461,12 @@ class Book_receive extends Warehouse_Controller
 
         // update data book_receive
         $this->book_receive->where('book_receive_id', $book_receive_id)->update([
-            'book_receive_status' => $action,
-            'finish_date' => $action == 'finish' ? now() : null
+            'book_receive_status' => 'finish',
+            'finish_date' => now()
         ]);
-        
+
         $book_stock = $this->book_stock->where('book_id', $book_receive->book_id)->get();
         $book_stock_print = $this->book_receive->get_print_order($book_receive->print_order_id);
-        
-        //insert to book transaction
-        $this->book_transaction->insert([
-            'book_id'            => $book_receive->book_id,
-            'book_receive_id'    => $book_receive->book_receive_id,
-            'book_stock_id'      => $book_stock->book_stock_id,
-            'stock_initial'      => $book_stock->warehouse_present,
-            'stock_in'           => $book_stock_print->total_postprint,
-            'stock_last'         => $book_stock->warehouse_present+$book_stock_print->total_postprint,
-            'date'               => now()
-        ]);  
 
         // update book stock
         if ($book_stock) {
@@ -488,8 +477,20 @@ class Book_receive extends Warehouse_Controller
                 'book_id'            => $book_receive->book_id,
                 'warehouse_present'  => $book_stock_print->total_postprint
             ]);
-            $book_stock->book_stock_id = $this->db->insert_id();
         }
+        
+        //insert to book transaction
+        $book_stock = $this->book_stock->where('book_id', $book_receive->book_id)->get();
+        $this->book_transaction->insert([
+            'book_id'            => $book_receive->book_id,
+            'book_receive_id'    => $book_receive->book_receive_id,
+            'book_stock_id'      => $book_stock->book_stock_id,
+            'stock_initial'      => $book_stock->warehouse_present-$book_stock_print->total_postprint,
+            'stock_mutation'     => $book_stock_print->total_postprint,
+            'stock_last'         => $book_stock->warehouse_present,
+            'date'               => now()
+        ]);
+        
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
             $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
