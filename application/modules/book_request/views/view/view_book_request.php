@@ -55,6 +55,12 @@ $level              = check_level();
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td width="200px"> Kategoti Pesanan </td>
+                                    <td>
+                                        <?= get_book_request_category()[$book_request->type]?>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td width="200px"> Tanggal Faktur Masuk Gudang </td>
                                     <td><?= format_datetime($book_request->confirm_date)?>
                                     </td>

@@ -44,7 +44,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                     <div class="p-3">
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
-                            <div class="col-12 col-md-4 mb-3">
+                            <div class="col-12 col-md-2 mb-3">
                                 <label for="per_page">Data per halaman</label>
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
@@ -56,7 +56,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                 <label for="category">Lokasi Rak</label>
                                 <?//= form_dropdown('bookshelf_location', get_bookshelf_location(), $bookshelf_location, 'id="bookshelf_location" class="form-control custom-select d-block" title="Lokasi Rak"'); ?>
                             </div> -->
-                            <div class="col-12 col-md-3 mb-3">
+                            <div class="col-12 col-md-4 mb-3">
                                 <label for="category">Stok Gudang lebih dari/sama dengan</label>
                                 <?= form_input(array(
                                     'name' => 'stock_moreeq',
@@ -67,7 +67,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     'min'   => 0
                                 )); ?>
                             </div>
-                            <div class="col-12 col-md-3 mb-3">
+                            <div class="col-12 col-md-4 mb-3">
                                 <label for="category">Stok Gudang kurang dari/sama dengan</label>
                                 <?= form_input(array(
                                     'name' => 'stock_lesseq',

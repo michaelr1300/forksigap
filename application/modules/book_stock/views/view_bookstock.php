@@ -71,7 +71,13 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                         <td width="160px">Judul Buku</td>
                                         <td><strong>
                                                 <?= $input->book_title; ?>
-                                            </strong></td>
+                                        </strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="160px">Lokasi Rak</td>
+                                        <td>
+                                            <?= $input->book_location;?>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td width="160px">Stok Keseluruhan</td>
@@ -126,6 +132,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                         <td><?=$input->retur_stock?></td>
                                     </tr>
                                     <?php endif?>
+                               
                                 </tbody>
                             </table>
                         </div>

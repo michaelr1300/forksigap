@@ -37,15 +37,11 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                     <div class="p-3">
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
-                            <div class="col-12 col-md-4 mb-4">
+                            <div class="col-12 col-md-6 mb-4">
                                 <label for="per_page">Data per halaman</label>
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
-                            <div class="col-12 col-md-4 mb-4">
-                                <label for="category">Tahun Terbit</label>
-                                <?= form_dropdown('published_year', get_published_date(), $published_year, 'id="published_year" class="form-control custom-select d-block" title="Filter Tahun Terbit"'); ?>
-                            </div>
-                            <div class="col-12 col-md-4 mb-4">
+                            <div class="col-12 col-md-6 mb-4">
                                 <label for="category">Status</label>
                                 <?= form_dropdown('book_receive_status', get_book_receive_status(), $book_receive_status, 'id="book_receive_status" class="form-control custom-select d-block" title="Status"'); ?>
                             </div>
@@ -80,6 +76,8 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     <th scope="col" style="min-width:100px;" class="align-middle text-center" >
                                         Jumlah Tercetak</th>
                                     <th scope="col" style="min-width:100px;" class="align-middle text-center" >
+                                        Jumlah Rusak</th>
+                                    <th scope="col" style="min-width:100px;" class="align-middle text-center" >
                                         Tanggal Mulai</th>
                                     <th scope="col" style="min-width:100px;" class="align-middle text-center" >
                                         Tanggal Selesai</th>
@@ -109,6 +107,15 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     </td>
                                     <td class="align-middle text-center">
                                         <?=$book_receive->total_postprint; ?></td>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <?php 
+                                            if ($book_receive->total >= $book_receive->total_postprint) {
+                                                echo $book_receive->total-$book_receive->total_postprint;
+                                            } else {
+                                                echo '<div> ' . '-' . '</div>';
+                                            }
+                                        ?>
                                     </td>
                                     <td class="align-middle text-center">
                                         <?= format_datetime($book_receive->entry_date); ?></td>
