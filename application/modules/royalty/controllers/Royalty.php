@@ -6,40 +6,76 @@ class Royalty extends Sales_Controller
     {
         parent::__construct();
         $this->pages = 'royalty';
-        $this->load->model('Royalty_model', 'royalty');
-        $this->load->model('book/Book_model', 'book');
+        $this->load->model('royalty_model', 'royalty');
+        // $this->load->model('invoice/invoice_model', 'invoice');
+        $this->load->model('book/book_model', 'book');
         $this->load->helper('sales_helper');
     }
 
     public function index($page = NULL)
     {
+        $date_year = $this->input->get('date_year', true);
+        $period_time = $this->input->get('period_time', true);
+        $period_start = null;
+        $period_end = null;
+        if ($period_time != null) {
+            if ($period_time == 1) {
+                $period_start = $date_year . '/01/01';
+                $period_end = $date_year . '/06/30 23:59:59.999';
+            } else if ($period_time == 2) {
+                $period_start = $date_year . '/06/01';
+                $period_end = $date_year . '/12/31 23:59:59.999';
+            }
+        }
+
         $filters = [
-            'keyword'           => $this->input->get('keyword', true)
-            // 'invoice_type'      => $this->input->get('invoice_type', true),
-            // 'status'            => $this->input->get('status', true),
-            // 'customer_type'     => $this->input->get('customer_type', true)
+            'keyword'           => $this->input->get('keyword', true),
+            'period_start'      => $period_start,
+            'period_end'        => $period_end
         ];
+        $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
 
-        $this->invoice->per_page = $this->input->get('per_page', true) ?? 10;
+        $royalty = $this->royalty->author_earning($filters);
+        $total = count($royalty);
+        $total_penjualan = 0;
+        $total_royalty = 0;
+        foreach ($royalty as $royalty_each) {
+            $total_penjualan += $royalty_each->penjualan;
+            $total_royalty += $royalty_each->earned_royalty;
+        }
 
-        $get_data = $this->royalty->filter_royalty($filters, $page);
-
-        //data invoice
-        $royalty    = $get_data['royalty'];
-        $total      = $get_data['total'];
-        $pagination = $this->invoice->make_pagination(site_url('royalty'), 2, $total);
+        $pagination = $this->royalty->make_pagination(site_url('royalty'), 2, $total);
 
         $pages      = $this->pages;
         $main_view  = 'royalty/index_royalty';
-        $this->load->view('template', compact('pages', 'main_view', 'royalty', 'pagination', 'total'));
+        $this->load->view('template', compact('pages', 'main_view', 'royalty', 'pagination', 'total', 'total_penjualan', 'total_royalty'));
     }
 
-    public function view($author_id)
+    public function view($author_id, $period_time = null, $date_year = null)
     {
-        $pages          = $this->pages;
-        $main_view      = 'invoice/view_royalty';
-        $royalty        = $this->invoice->fetch_royalty_id($author_id);
+        $period_start = null;
+        $period_end = null;
+        if ($period_time != null) {
+            if ($period_time == 1) {
+                $period_start = $date_year . '/01/01';
+                $period_end = $date_year . '/06/30 23:59:59.999';
+            } else if ($period_time == 2) {
+                $period_start = $date_year . '/06/01';
+                $period_end = $date_year . '/12/31 23:59:59.999';
+            }
+        }
 
-        $this->load->view('template', compact('pages', 'main_view', 'royalty'));
+        $filters = [
+            'keyword'           => $this->input->get('keyword', true),
+            'period_start'      => $period_start,
+            'period_end'        => $period_end
+        ];
+        $author = $this->db->select('author_name')->from('author')->where('author_id', $author_id)->get()->row();
+        $royalty_details = $this->royalty->author_details($author_id, $filters);
+        $pages          = $this->pages;
+        $main_view      = 'royalty/view_royalty';
+        // var_dump($author);
+
+        $this->load->view('template', compact('pages', 'main_view', 'author', 'royalty_details', 'period_time', 'date_year'));
     }
 }
