@@ -102,7 +102,7 @@ class Book_non_sales extends Warehouse_sales_controller
 
     public function delete($book_non_sales_id = null)
     {
-        if (!$this->_is_warehouse_admin()) {
+        if (!$this->_is_sales_admin()) {
             redirect($this->pages);
         }
 
