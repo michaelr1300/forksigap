@@ -74,6 +74,12 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                         </strong></td>
                                     </tr>
                                     <tr>
+                                        <td width="160px">Penulis</td>
+                                        <td>
+                                            <?= $input->author_name;?>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td width="160px">Lokasi Rak</td>
                                         <td>
                                             <?= $input->book_location;?>

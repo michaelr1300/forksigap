@@ -48,7 +48,6 @@ class Book_stock extends Warehouse_sales_controller
 
 
     public function view($book_stock_id){
-        // $book_stock = $this->book_stock->join('book')->where('book.book_id', $book_id)->get();
         $book_stock = $this->book_stock->get_book_stock($book_stock_id);
         if (!$book_stock) {
             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
@@ -56,17 +55,8 @@ class Book_stock extends Warehouse_sales_controller
         }
 
         $input = (object) $book_stock;
-        // $get_stock      = $this->book_stock->fetch_stock_by_id($book_stock_id);
-        // $stock_history  = $get_stock['stock_history'];
-        // $stock_last     = $get_stock['stock_last'];
-
-        // $book_stocks                = $this->book_stock->get_stock_by_id($book_stock_id);
         $book_stock->revision      = $this->book_stock->get_stock_revision($book_stock->book_id);
         $book_stock->library_stock = $this->book_stock->get_library_stock($book_stock->book_stock_id);
-        // $library_id = $book_stock->library_stock->library_id;
-        // $book_stock->library_stock->library       = $this->book_stock->get_library($library_id);
-        // var_dump($book_stock->library_stock);
-        
         $pages                      = $this->pages;
         $main_view                  = 'book_stock/view_bookstock';
         $this->load->view('template', compact('pages', 'main_view', 'input', 'book_stock'));
@@ -79,7 +69,6 @@ class Book_stock extends Warehouse_sales_controller
         }
 
         $book_stock = $this->book_stock->get_book_stock($book_stock_id);
-        // $input = (object) $book_stock;
         if(!$book_stock){
             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
             redirect($this->pages);
@@ -90,18 +79,11 @@ class Book_stock extends Warehouse_sales_controller
         }
         else{
             $input = (object) $this->input->post(null, true);
-            // catat orang yang menginput stok buku
-            $input->user_id = $_SESSION['user_id'];
-            
         }
-
-        // if(!$this->book_stock->validate() || $this->form_validation->error_array()){
             $pages = $this->pages;
             $main_view = 'book_stock/edit_bookstock';
             $form_action = "book_stock/edit/$book_stock_id";
             $this->load->view('template', compact('pages','main_view', 'input'));   
-        //     return; 
-        // }
     }
 
     public function retur($book_stock_id){
@@ -110,7 +92,6 @@ class Book_stock extends Warehouse_sales_controller
         }
 
         $book_stock = $this->book_stock->get_book_stock($book_stock_id);
-        // $input = (object) $book_stock;
         if(!$book_stock){
             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
             redirect($this->pages);
@@ -120,19 +101,12 @@ class Book_stock extends Warehouse_sales_controller
             $input = (object) $book_stock;
         }
         else{
-            $input = (object) $this->input->post(null, true);
-            // catat orang yang menginput stok buku
-            $input->user_id = $_SESSION['user_id'];
-            
+            $input = (object) $this->input->post(null, true);            
         }
-
-        // if(!$this->book_stock->validate() || $this->form_validation->error_array()){
             $pages = $this->pages;
             $main_view = 'book_stock/retur_bookstock';
             $form_action = "book_stock/retur/$book_stock_id";
             $this->load->view('template', compact('pages','main_view', 'input'));   
-        //     return; 
-        // }
     }
 
     public function edit_book_location(){
@@ -159,38 +133,6 @@ class Book_stock extends Warehouse_sales_controller
         redirect($this->pages);
     }
    
-    public function delete($book_stock_id = null)
-    {
-        if (!$this->_is_warehouse_admin()) {
-            redirect($this->pages);
-        }
-
-        $book_stock = $this->book_stock->where('book_stock_id', $book_stock_id)->get();
-        if (!$book_stock) {
-            $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
-            redirect($this->pages);
-        }
-
-        // memastikan konsistensi data
-        $this->db->trans_begin();
-
-        $this->book_stock->where('book_stock_id', $book_stock_id)->delete();
-            // $this->book_stock->delete_book_stock($book_stock_id);
-            // $this->print_order->delete_print_order_file($print_order->print_order_file);
-            // $this->print_order->delete_letter_file($print_order->letter_file);
-            // $this->print_order->delete_preprint_file($print_order->delete_preprint_file);
-
-        if ($this->db->trans_status() === false) {
-            $this->db->trans_rollback();
-            $this->session->set_flashdata('error', $this->lang->line('toast_delete_fail'));
-        } else {
-            $this->db->trans_commit();
-            $this->session->set_flashdata('success', $this->lang->line('toast_delete_success'));
-        }
-
-        redirect($this->pages);
-    }
-
     public function edit_book_stock(){
         if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
             $type = $this->input->post('type');
@@ -303,6 +245,7 @@ class Book_stock extends Warehouse_sales_controller
         }
         return $this->send_json_output(true, (object) $chart_data);
     }
+
     public function api_get_by_book_id($book_id){
         $book_stock = $this->book_stock->get_book_stock_by_book_id($book_id);
         return $this->send_json_output(true, $book_stock);
@@ -445,7 +388,7 @@ class Book_stock extends Warehouse_sales_controller
         $spreadsheet->createSheet();
         // Zero based, so set the second tab as active sheet
         $spreadsheet->setActiveSheetIndex(1);
-        $sheet_2 = $spreadsheet->getActiveSheet()->setTitle('log retur');
+        $sheet_2 = $spreadsheet->getActiveSheet()->setTitle('log tambah retur');
         // Column Title
         $sheet_2->setCellValue('A1', 'LOG PENAMBAHAN RETUR');
         $spreadsheet->getActiveSheet()
@@ -468,7 +411,6 @@ class Book_stock extends Warehouse_sales_controller
                     ->setBold(true);
 
         // Auto width
-        // $sheet->getColumnDimension('A')->setAutoSize(true);
         $sheet_2->getColumnDimension('B')->setAutoSize(true);
         $sheet_2->getColumnDimension('C')->setAutoSize(true);
         $sheet_2->getColumnDimension('D')->setAutoSize(true);
@@ -506,7 +448,7 @@ class Book_stock extends Warehouse_sales_controller
         $spreadsheet->createSheet();
         // Zero based, so set the second tab as active sheet
         $spreadsheet->setActiveSheetIndex(2);
-        $sheet_3 = $spreadsheet->getActiveSheet()->setTitle('log retur');
+        $sheet_3 = $spreadsheet->getActiveSheet()->setTitle('log hapus retur');
         // Column Title
         $sheet_3->setCellValue('A1', 'LOG PENGHAPUSAN RETUR');
         $spreadsheet->getActiveSheet()

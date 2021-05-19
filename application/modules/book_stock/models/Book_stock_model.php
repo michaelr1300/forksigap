@@ -93,9 +93,14 @@ class Book_stock_model extends MY_Model
     }
 
     public function get_book_stock($book_stock_id){
-        return $this->select(['book.book_title', 
+        return $this->select(['book.book_title', 'author.author_name',
         'book_stock.*'])
-        ->join('book')
+        ->join_table('book', 'book_stock', 'book')
+        ->join_table('draft', 'book', 'draft')
+        ->join_table('draft_author', 'draft', 'draft')
+        ->join_table('author', 'draft_author', 'author')
+        ->group_by('draft.draft_id')
+        ->order_by('book.book_title')
         ->where('book_stock_id', $book_stock_id)
         ->get();
     }

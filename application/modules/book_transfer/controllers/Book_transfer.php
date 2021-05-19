@@ -20,7 +20,6 @@ class Book_transfer extends MY_Controller
             $filters = [
                 'keyword'           => $this->input->get('keyword', true),
                 'status'            => $this->input->get('status', true),
-                // 'book_transfer_category' => $this->input->get('book_transfer_category', true)
             ];
 
             // custom per page
@@ -241,7 +240,6 @@ class Book_transfer extends MY_Controller
         }
 
         // update book stock tapi tabel list buku yg dipindahin blm ada
-        
         $book_transfer_lists  = $this->book_transfer->fetch_book_transfer_list($book_transfer_id);
 
         // update stok perpustakaan
@@ -392,7 +390,6 @@ class Book_transfer extends MY_Controller
         else{
             $pages       = $this->pages;
             $main_view   = 'book_transfer/book_transfer_edit';
-            // $form_action = "book_transfer/edit/$book_transfer_id";
             $this->load->view('template', compact('pages', 'main_view', 'book_transfer'));
             return;
         }

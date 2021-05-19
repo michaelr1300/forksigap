@@ -33,7 +33,6 @@ class Book_transfer_model extends MY_Model{
 
     public function fetch_book_transfer($book_transfer_id){
         return $this->select(['book.book_id', 'book.book_title', 'library.*', 'book_transfer.*'])
-        // ->from('book_transfer')
         ->join_table('book', 'book_transfer', 'book')
         ->join_table('library', 'book_transfer', 'library')
         ->where('book_transfer_id', $book_transfer_id)

@@ -19,8 +19,6 @@
     }
 
     .book-list{
-        /* margin-left: 50px;
-        margin-right: 50px; */
         width: 100%;
         border-collapse: collapse;
         margin-top:16px
@@ -57,15 +55,15 @@
         height: auto;
     }
 
-    .left {
+    .sign-addressee {
         width: 25%;
     }
 
-    .middle {
+    .sign-space {
         width: 50%;
     }
 
-    .right {
+    .sign-stated {
         width: 25%;
     }
 
@@ -75,17 +73,17 @@
         clear: both;
     }
 
-    .left-header {
+    .image-wrapper {
         width: 10%;
     }
 
-    .left-50 {
+    .destination-wrapper {
         width: 50%;
     }
-    .middle-10{
+    .nomor-bon-wrapper{
         width: 10%
     }
-    .right-20 {
+    .nomor-bon {
         width: 20%;
     }
 
@@ -122,7 +120,7 @@
 
 <body>
     <div class="row">
-        <div class="column left-header">
+        <div class="column image-wrapper">
             <img src="<?=base_url('assets/images/logo_ugm_press.jpg')?>" alt="logo" style="width:100%; max-width:90px;">
         </div>
         <div class="column">
@@ -135,7 +133,7 @@
     <br>
     <h1><b>BON PEMINDAHAN BUKU</h1>
     <div class="row">
-        <div class="column left-50">
+        <div class="column destination-wrapper">
             <table>
                 <tr>
                     <td>TUJUAN</td>
@@ -144,10 +142,10 @@
                 </tr>
             </table>
         </div>
-        <div class="column middle-10">
+        <div class="column nomor-bon-wrapper">
             <p><b>Nomor Bon : </b></p>   
         </div>
-        <div class="column right-20">
+        <div class="column nomor-bon">
             <div class="box"><?=$number?></div>
         </div>
     </div>
@@ -170,12 +168,12 @@
     </div>
     <br><br>
     <div class="row" style="margin-left:50px; margin-right:50px">
-        <div class="column left" style="text-align:left">
+        <div class="column sign-addressee" style="text-align:left">
             <p>Tanggal, <?=date('d F Y', strtotime($transfer_date))?> <br>
             Yang Menerima<br><br><br><br><br><br><br>..........................</h2>
         </div>
-        <div class="column middle" style="text-align:left"></div>
-        <div class="column right" style="text-align:left">
+        <div class="column sign-space" style="text-align:left"></div>
+        <div class="column sign-stated" style="text-align:left">
             <br>
             <p>Yang Menyatakan<br><br><br><br><br><br><br>..........................</h2>
         </div>
