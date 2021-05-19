@@ -24,8 +24,10 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
             <h1 class="page-title"> Pemindahan Buku </h1>
             <span class="badge badge-info">Total : <?= $total; ?></span>
         </div>
+        <?php if ($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_pemasaran' ) : ?>
         <a href="<?= base_url("$pages/add"); ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus fa-fw"></i>
             Tambah</a>
+        <?php endif?>
     </div>
 </header>
 <div class="page-section">
@@ -99,12 +101,15 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                         <?= get_book_transfer_status()[$book_transfer->transfer_status ?? $book_transfer->status]; ?>
                                     </td>
                                     <td class="align-middle text-right">
+                                        <?php if ($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_gudang' ) : ?>
                                         <a href="<?= base_url('book_transfer/edit/'.$book_transfer->book_transfer_id); ?>"
                                             class="btn btn-sm btn-secondary">
                                             <i class="fa fa-pencil-alt"></i>
                                             <span class="sr-only">Edit</span>
                                         </a>
-                                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
+                                        <?php endif?>
+                                        <?php if ($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_pemasaran' ) : ?>
+                                            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
                                             data-target="#modal-hapus-<?= $book_transfer->book_transfer_id; ?>"><i
                                                 class="fa fa-trash-alt"></i><span class="sr-only">Delete</span></button>
                                         <div class="text-left">
@@ -138,6 +143,7 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                                 </div>
                                             </div>
                                         </div>
+                                        <?php endif?>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

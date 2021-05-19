@@ -15,7 +15,7 @@ class Book_transfer extends MY_Controller
 
     public function index($page = NULL)
     {
-        if ($this->check_level_gudang_pemasaran() == TRUE) :
+        if ($this->_is_warehouse_sales_admin() == TRUE) :
             // all filter
             $filters = [
                 'keyword'           => $this->input->get('keyword', true),
@@ -331,7 +331,7 @@ class Book_transfer extends MY_Controller
 
     public function add()
     {
-        if (!$this->check_level_gudang_pemasaran()==true) {
+        if (!$this->_is_warehouse_sales_admin()==true) {
             redirect($this->pages);
         }
 
@@ -389,7 +389,7 @@ class Book_transfer extends MY_Controller
 
     public function edit($book_transfer_id = null)
     {
-        if (!$this->check_level_gudang_pemasaran()) {
+        if (!$this->_is_warehouse_admin()) {
             redirect($this->pages);
         }
 
@@ -433,7 +433,7 @@ class Book_transfer extends MY_Controller
 
     public function delete_book_transfer($book_transfer_id = null)
     {
-        if (!$this->_is_warehouse_admin()) {
+        if (!$this->_is_sales_admin()) {
             redirect($this->pages);
         }
 
@@ -459,55 +459,7 @@ class Book_transfer extends MY_Controller
         redirect($this->pages);
     }
 
-    public function action_transfer($book_transfer_id)
-    {
-        if ($this->check_level_gudang() == TRUE) :
-            $this->load->library('form_validation');
-            $this->form_validation->set_rules('flag', 'Aksi', 'required|max_length[1]');
-            $this->form_validation->set_rules('transfer_notes_admin', 'Catatan', 'required|max_length[1000]');
-
-            if ($this->form_validation->run() == FALSE) {
-                $this->session->set_flashdata('error', 'Gagal melakukan aksi pada progress permintaan.');
-                redirect($_SERVER['HTTP_REFERER'] . '#section_transfer', 'refresh');
-            } else {
-                $check  =   $this->book_transfer->action_transfer($book_transfer_id);
-                if ($check   ==  TRUE) {
-                    $this->session->set_flashdata('success', 'Berhasil melakukan aksi pada progress permintaan.');
-                    redirect($_SERVER['HTTP_REFERER'] . '#section_transfer', 'refresh');
-                } else {
-                    $this->session->set_flashdata('error', 'Gagal melakukan aksi pada progress permintaan.');
-                    redirect($_SERVER['HTTP_REFERER'] . '#section_transfer', 'refresh');
-                }
-            }
-        endif;
-    }
-
-    public function action_final($book_transfer_id)
-    {
-        if ($this->check_level_gudang() == TRUE) :
-            $this->load->library('form_validation');
-            $this->form_validation->set_rules('stock_in_warehouse', 'Stok dalam gudang', 'required|max_length[10]');
-            $this->form_validation->set_rules('stock_out_warehouse', 'Stok luar gudang', 'required|max_length[10]');
-            $this->form_validation->set_rules('stock_marketing', 'Stok pemasaran', 'required|max_length[10]');
-            $this->form_validation->set_rules('stock_input_notes', 'Catatan', 'required|max_length[256]');
-
-            if ($this->form_validation->run() == FALSE) {
-                $this->session->set_flashdata('error', 'Permintaan buku gagal di finalisasi.');
-                redirect($_SERVER['HTTP_REFERER'] . '#section_final', 'refresh');
-            } else {
-                $check  =   $this->book_transfer->action_final($book_transfer_id);
-                if ($check   ==  TRUE) {
-                    $this->session->set_flashdata('success', 'Permintaan buku berhasil di finalisasi.');
-                    redirect($_SERVER['HTTP_REFERER'] . '#section_final', 'refresh');
-                } else {
-                    $this->session->set_flashdata('error', 'Permintaan buku gagal di finalisasi.');
-                    redirect($_SERVER['HTTP_REFERER'] . '#section_final', 'refresh');
-                }
-            }
-        endif;
-    }
-
-    public function check_level_gudang_pemasaran()
+    public function _is_warehouse_sales_admin()
     {
         if ($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_gudang' || $_SESSION['level'] == 'admin_pemasaran') {
             return TRUE;
@@ -517,17 +469,7 @@ class Book_transfer extends MY_Controller
         }
     }
 
-    public function check_level_gudang()
-    {
-        if ($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_gudang') {
-            return TRUE;
-        } else {
-            $this->session->set_flashdata('error', 'Hanya admin gudang dan superadmin yang dapat mengakses.');
-            redirect(base_url());
-        }
-    }
-
-    public function check_level_pemasaran()
+    public function _is_sales_admin()
     {
         if ($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_pemasaran') {
             return TRUE;
@@ -535,15 +477,6 @@ class Book_transfer extends MY_Controller
             $this->session->set_flashdata('error', 'Hanya admin pemasaran dan superadmin yang dapat mengakses.');
             redirect(base_url());
         }
-    }
-
-    // kayaknya ini gak kepake ya?
-    public function ac_book_id()
-    {
-        $postData   =   $this->input->post();
-        $data       =   $this->book_transfer->fetch_book_id($postData);
-
-        echo json_encode($data);
     }
 
     private function _is_warehouse_admin()
