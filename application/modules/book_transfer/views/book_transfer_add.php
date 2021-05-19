@@ -57,7 +57,6 @@
                                         <th scope="col" style="min-width:200px">Penulis</th>
                                         <th scope="col" style="min-width:100px">Stok Gudang</th>
 		                    			<th scope="col" style="min-width:100px">Jumlah</th>
-                                        <!-- <th scope="col" style="min-width:150px">Harga</th> -->
 		                    			<th scope="col" style="min-width:100px">Aksi</th>
 		                    		</tr> 
 		                    	</thead>
@@ -66,15 +65,9 @@
 		                    	</tbody>
 		                    </table>
                             <br>
-                            <!-- <div class="form-group" id="input-discount">
-                                <label for="discount">Diskon (%)</label>
-                                <input name="discount" value="0" class='form-control quantity col-2' id="discount" type="number" min="0" max="100">
-                            </div> -->
                         </fieldset>
                         <hr>
-                            <!-- button -->
                         <input type="submit" disabled class="btn btn-primary ml-auto" id="submit-form" value="Submit" />
-                        <!-- <a class="btn btn-secondary" href="<?//php// echo base_url('book_transfer') ?>" role="button">Back</a> -->
                     </form>
                 </div>
             </section>
@@ -128,9 +121,8 @@ $(document).ready(function() {
                     var row3 = "<td style='vertical-align: middle'>" + author + "</td>"
                     var row4 = "<td style='vertical-align: middle' class='stock'>"+stock+"</td>"
                     var row5 = "<td style='vertical-align: middle'><input type='number' value=0 min=1 max='"+stock+"'class='form-control quantity' name='quantity'></td>"
-                    // var row6 = "<td style='vertical-align: middle' class='price'>"+price+"<input type='number' hidden name='price' class='price' value='"+price+"'></td>"
-                    var row7 = "<td style='vertical-align: middle'></button><button type='button' class='btn btn-danger btn-md remove-book'>Hapus</td></tr>"
-                    var html = row1+row2+row3+row4+row5+row7
+                    var row6 = "<td style='vertical-align: middle'></button><button type='button' class='btn btn-danger btn-md remove-book'>Hapus</td></tr>"
+                    var html = row1+row2+row3+row4+row5+row6
                     $('#book-id option[value="' + book_id + '"]').remove()
                     $('#submit-form').prop('disabled', false)
                     $("#book-list-content").append(html);

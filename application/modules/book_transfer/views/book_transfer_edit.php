@@ -70,10 +70,8 @@
                         </div>
                     </fieldset>
                     <hr>
-                    <!-- button -->
                     <input type="submit" class="btn btn-primary" value="Submit" />
                     <a class="btn btn-secondary" href="<?php echo base_url('book_transfer') ?>" role="button">Back</a>
-                    <?//=form_close()?>
                     </form>
                 </div>
             </section>

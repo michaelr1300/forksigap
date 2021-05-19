@@ -226,50 +226,12 @@ $staff_gudang               = $this->book_transfer->get_staff_gudang_by_progress
                 </strong>
             </div>
             <?php endif; ?>
-
-            <!-- <div class="m-3">
-                <div class="text-muted pb-1">Catatan Admin</div>
-                <?//= $book_transfer->preparing_notes_admin ?>
-            </div>
-            <hr class="m-0"> -->
         </div>
-
-        <!-- <div class="card-body">
-            <div class="card-button">
-                button aksi
-                <?php //if (($_SESSION['level'] == 'superadmin' || $_SESSION['level'] == 'admin_gudang') && !$is_preparing_finished) : ?>
-                <button title="Aksi admin"
-                    class="btn btn-outline-dark <?//= !$book_transfer->total ? 'btn-disabled' : ''; ?>" data-toggle="modal"
-                    data-target="#modal-action-preparing" <?//= !$book_transfer->total ? 'disabled' : ''; ?>>Aksi</button>
-                <?php //endif; ?>
-
-                button tanggapan preparing
-                <button type="button" class="btn btn-outline-success" data-toggle="modal"
-                    data-target="#modal-preparing-notes">Catatan</button>
-                <?php //if (!$book_transfer->status=='preparing_finish') : ?>
-                <a href="<?//= base_url('book_transfer/generate_pdf_preparing/' . $book_transfer->book_transfer_id . "/preparing") ?>"
-                    class="btn btn-outline-danger 
-                    <?//= (!$is_preparing_deadline_set) ? 'disabled' : ''; ?>" id="btn-generate-pdf-handover"
-                    title="Generate PDF">Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
-                <?php //endif; ?>
-            </div>
-        </div> -->
-
         <?php
             // modal deadline
             $this->load->view('book_transfer/view/common/deadline_modal', [
                 'progress' => 'preparing',
             ]);
-
-            // modal action
-            // $this->load->view('book_transfer/view/common/action_modal', [
-            //     'progress' => 'preparing',
-            // ]);
-
-            // modal note
-            // $this->load->view('book_transfer/view/common/notes_modal', [
-            //     'progress' => 'preparing',
-            // ]);
             ?>
     </div>
 </section>

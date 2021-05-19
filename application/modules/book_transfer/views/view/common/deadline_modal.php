@@ -78,10 +78,6 @@ $(document).ready(function() {
             complete: () => {
                 const btnName = deadline ? 'Submit' : 'Reset';
                 this.removeAttr("disabled").html(btnName);
-                // trik mengatasi close modal, ketika file di load ulang
-                // $(`#modal-deadline-${progress}`).modal('hide');
-                // $('body').removeClass('modal-open');
-                // $('.modal-backdrop').remove();
             },
         });
     }

@@ -154,9 +154,6 @@ class Book_transfer extends MY_Controller
             return $this->send_json_output(false, $message);
         }
         
-        // berisi 'progress' untuk conditional dibawah
-        // $input = (object) $this->input->post(null, false);
-
         $is_start_preparing = $this->book_transfer->start_progress($book_transfer_id);
 
         if ($is_start_preparing) {
@@ -208,18 +205,12 @@ class Book_transfer extends MY_Controller
             return $this->send_json_output(false, $message, 404);
         }
 
-        // berisi 'progress' untuk conditional dibawah
-        $input = (object) $this->input->post(null, false);
-
         // hanya untuk user yang berkaitan dengan book_transfer ini
         if (!$this->_is_warehouse_admin()) {
             $message = $this->lang->line('toast_error_not_authorized');
             return $this->send_json_output(false, $message);
         }
         
-        // berisi 'progress' untuk conditional dibawah
-        // $input = (object) $this->input->post(null, false);
-
         //update status
         $is_finish_preparing = $this->book_transfer->finish_progress($book_transfer_id);
         

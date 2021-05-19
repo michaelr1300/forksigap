@@ -47,97 +47,20 @@ class Book_transfer_model extends MY_Model{
             ->get('book');
     }
     
-    // public function action_transfer($book_transfer_id){
-    //     $date = date('Y-m-d H:i:s');
-    //     $user = $_SESSION['username'];
-    //     $note = $this->input->post('transfer_notes_admin');
-
-    //     $set = [
-    //         'flag'                  => $this->input->post('flag'),
-    //         'transfer_status'        => 2,
-    //         'transfer_user'          => $user,
-    //         'transfer_notes_admin'   => $note,
-    //         'transfer_date'          => $date
-    //     ];
-
-    //     if($this->input->post('flag') == 2){//setuju
-    //         $set['final_status']        = 1;
-    //         $set['final_user']          = '';
-    //         $set['final_date']          = '';
-    //         $set['final_notes_admin']   = '';
-    //         $set['finish_date']         = '';
-    //         $set['status']              = 1;
-    //     }elseif($this->input->post('flag') == 1){//tolak
-    //         $set['final_status']        = 0;
-    //         $set['final_user']          = $user;
-    //         $set['final_date']          = $date;
-    //         $set['final_notes_admin']   = $note;
-    //         $set['finish_date']         = $date;
-    //         $set['status']              = 2;
-    //     }
-
-    //     $this->db->set($set)->where('book_transfer_id',$book_transfer_id)->update('book_transfer');
-    //     return TRUE;
-    // }
-
-    // public function action_final($book_transfer_id){
-    //     $add    =   [
-    //         'book_id'               => $this->input->post('book_id'),
-    //         'stock_in_warehouse'    => $this->input->post('stock_in_warehouse'),
-    //         'stock_out_warehouse'   => $this->input->post('stock_out_warehouse'),
-    //         'stock_marketing'       => $this->input->post('stock_marketing'),
-    //         'stock_input_notes'     => $this->input->post('stock_input_notes'),
-    //         'stock_input_type'      => 2,
-    //         'stock_input_user'      => $_SESSION['username'],
-    //         'stock_input_date'      => date('Y-m-d H:i:s')
-    //     ];
-        
-    //     $this->db->insert('book_stock', $add);
-
-    //     $set    =   [
-    //         'final_status'      => 2,
-    //         'final_notes_admin' => $this->input->post('stock_input_notes'),
-    //         'final_user'        => $_SESSION['username'],
-    //         'final_date'        => date('Y-m-d H:i:s'),
-    //         'status'            => 3
-    //     ];
-
-    //     $this->db->set($set)->where('book_transfer_id',$book_transfer_id)->update('book_transfer');
-    //     return TRUE;
-    // }
-
-    // public function fetch_book_id($postData){
-    //     $response = array();
-
-    //     if(isset($postData['search']) ){
-    //         $records = $this->db->select('book_id, book_title')->order_by('book_title','ASC')->like('book_title', $postData['search'],'both')->limit(5)->get('book')->result();
-    //         foreach($records as $row ){
-    //             $response[] = array("value"=>$row->book_id,"label"=>$row->book_title);
-    //         }
-    //     }
-
-    //     return $response;
-    // }
-
     public function filter_book_transfer($filters, $page){
         $book_transfer = $this->select(['book_transfer.*','book.book_title','library.library_name'])
         ->when('keyword',$filters['keyword'])
         ->when('status',$filters['status'])
-        // ->when('book_transfer_category', $filters['book_transfer_category'])
         ->join_table('book','book_transfer','book')
         ->join_table('library','book_transfer','library')
         ->order_by('book_transfer_id','DESC')
-        // ->order_by('status')
         ->paginate($page)
         ->get_all();
 
         $total = $this->select('book_transfer.id')
         ->when('keyword',$filters['keyword'])
         ->when('status',$filters['status'])
-        // ->when('book_transfer_category', $filters['book_transfer_category'])
         ->join_table('book','book_transfer','book')
-        // ->order_by('UNIX_TIMESTAMP(entry_date)','DESC')
-        // ->order_by('book_title')
         ->count();
 
         return [
@@ -153,8 +76,6 @@ class Book_transfer_model extends MY_Model{
             if($params == 'keyword'){
                 $this->group_start();
                 $this->or_like('book_title',$data);
-                // $this->or_like('nomor_faktur',$data);
-                // $this->or_like('total',$data);
                 $this->group_end();
             }
             if($params == 'status'){
