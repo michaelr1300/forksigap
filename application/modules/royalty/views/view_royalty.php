@@ -120,6 +120,12 @@ $level              = check_level();
                     </tbody>
                 </table>
                 <br>
+                <a
+                        href="<?= base_url('royalty/generate_pdf/' . $author->author_name) ?>"
+                        class="btn btn-outline-danger float-right"
+                        id="btn-generate-pdf"
+                        title="Generate PDF"
+                    >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
             </div>
         </div>
     </section>

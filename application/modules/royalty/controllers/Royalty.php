@@ -78,4 +78,19 @@ class Royalty extends Sales_Controller
 
         $this->load->view('template', compact('pages', 'main_view', 'author', 'royalty_details', 'period_time', 'date_year'));
     }
+
+    public function generate_pdf($author_id)
+    {
+        $author = $this->db->select('author_name')->from('author')->where('author_id', $author_id)->get()->row();
+        $royalty_details = $this->royalty->author_details($author_id, $filters);
+
+            // PDF
+            $this->load->library('pdf');
+
+            $html = $this->load->view('royalty/view_royalty_pdf', true);
+
+            $file_name = 'Royalti_' . $author->author_name;
+
+            $this->pdf->generate_pdf_a4_landscape($html, $file_name);
+    }
 }
