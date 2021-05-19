@@ -14,6 +14,11 @@ class Migration_Update_book_transaction extends CI_Migration
                 'constraint' => 10,
                 'null' => TRUE
             ],
+            'book_stock_revision_id' => [
+                'type' => 'INT',
+                'constraint' => 10,
+                'null' => TRUE
+            ],
         ]);
     }
 
@@ -33,5 +38,6 @@ class Migration_Update_book_transaction extends CI_Migration
             ],
         ]);
         $this->dbforge->drop_column('book_transaction', 'stock_mutation');
+        $this->dbforge->drop_column('book_transaction', 'book_stock_revision_id');
     }
 }
