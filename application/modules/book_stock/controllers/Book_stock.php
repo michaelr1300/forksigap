@@ -291,8 +291,13 @@ class Book_stock extends Warehouse_sales_controller
         foreach ($book_transaction as $data){
             for ($i=1;$i<=12;$i++){
                 if (substr($data->date,5,2)==$i){
-                    $chart_data['stock_in']['month_'.$i]+=$data->stock_in;
-                    $chart_data['stock_out']['month_'.$i]+=$data->stock_out;
+                    if ($data->stock_initial<$data->stock_last){
+                        $chart_data['stock_in']['month_'.$i]+=$data->stock_mutation;
+                    }
+                    if ($data->stock_initial>$data->stock_last){
+                        $chart_data['stock_out']['month_'.$i]+=$data->stock_mutation;
+                    }
+                    
                 }
             }
         }
