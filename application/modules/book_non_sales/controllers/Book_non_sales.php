@@ -135,7 +135,7 @@ class Book_non_sales extends Warehouse_sales_controller
 
     public function view($book_non_sales_id)
     {
-        if(!$this->_is_warehouse_admin()){
+        if(!$this->_is_warehouse_sales_admin()){
             redirect($this->pages);
         }
         $book_non_sales = $this->book_non_sales->fetch_book_non_sales($book_non_sales_id);
@@ -238,10 +238,10 @@ class Book_non_sales extends Warehouse_sales_controller
     }
 
     private function _is_warehouse_admin(){
-        if ($this->level == 'superadmin' || $this->level == 'admin_pemasaran') {
+        if ($this->level == 'superadmin' || $this->level == 'admin_gudang') {
             return true;
         } else {
-            $this->session->set_flashdata('error', 'Hanya admin pemasaran dan superadmin yang dapat mengakses.');
+            $this->session->set_flashdata('error', 'Hanya admin gudang dan superadmin yang dapat mengakses.');
             return false;
         }
     }
