@@ -152,15 +152,14 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
                     <input type="hidden" name="receive_id" id="receive_id"
                         value=<?= $book_receive->book_receive_id ?> />
                 </form>
+                <?php endif; ?>
                 <?php if ($uploaded_file){ ?>
                 <a href="<?=base_url('book_receive/download_file/bookreceive/'.$uploaded_file)?>"
                     class="btn btn-outline-success" id="btn-download-pdf-handover"
                     title="Download PDF berita acara serah terima disetujui"><i class="fas fa-download fa-fw"></i>
                     Download File Berita Acara
                 </a>
-
                 <?php }?>
-                <?php endif; ?>
             </div>
         </div>
 
