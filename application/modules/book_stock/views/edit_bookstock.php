@@ -54,7 +54,7 @@
                                 <label class="font-weight-bold" for="warehouse_modifier">Perubahan<abbr
                                         title="Required">*</abbr></label>
                                 <input required type="number" class="form-control" name="warehouse_modifier"
-                                    id="warehouse_modifier" min="1" max="">
+                                    id="warehouse_modifier" min="1" max="" />
                                 <input type="hidden" name="warehouse_past" id="warehouse_past"
                                     value="" >
                             </div>
@@ -74,11 +74,6 @@
 
 <script>
 $(document).ready(function() {
-    $('.dates').flatpickr({
-        altInput: true,
-        altFormat: 'j F Y',
-        dateFormat: 'Y-m-d'
-    });
     $("input[name='revision_type']").click(function(){
         if ($("input[name='revision_type']:checked").val()=="sub"){
             $("#warehouse_modifier").attr({
