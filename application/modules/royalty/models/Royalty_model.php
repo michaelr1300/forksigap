@@ -34,8 +34,10 @@ class Royalty_model extends MY_Model
         if ($filters['keyword'] != '') {
             $this->db->like('author_name', $filters['keyword']);
         }
-        if ($filters['period_start'] != null && $filters['period_end'] != null) {
-            $this->db->where('issued_date BETWEEN "' . $filters['period_start'] . '" and "' . $filters['period_end'] . '"');
+        if ($filters['period_end'] != null) {
+            $this->db->where('issued_date BETWEEN author.last_paid_date and "' . $filters['period_end'] . '"');
+        } else {
+            $this->db->where('issued_date BETWEEN "2000/01/01" and now()');
         }
         return $this->db->get()->result();
     }

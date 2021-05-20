@@ -92,13 +92,21 @@ function royalti_action()
                                 <label for="per_page">Data per halaman</label>
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
-                            <div class="col-12 col-md-4 mt-2">
+                            <!-- <div class="col-12 col-md-4 mt-2">
                                 <label for="date_year">Tahun</label>
                                 <?= form_dropdown('date_year', $date_year_options, $date_year, 'id="date_year" class="form-control custom-select d-block" title="Filter Tahun Cetak"'); ?>
                             </div>
                             <div class="col-12 col-md-4 mt-2">
                                 <label for="period_time">Periode</label>
                                 <?= form_dropdown('period_time', $period_time_options, $period_time, 'id="period_time" class="form-control custom-select d-block" title="Periode Royalti"'); ?>
+                            </div> -->
+                            <div class="col-12 col-md-4 mt-2">
+                                <label for="date_end">Periode</label>
+                                <input
+                                    type="end_date"
+                                    id="end_date"
+                                    name="end_date"
+                                >
                             </div>
                             <div class="col-12 col-md-8 mt-2">
                                 <label for="status">Pencarian</label>

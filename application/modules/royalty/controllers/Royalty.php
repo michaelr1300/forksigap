@@ -14,24 +14,11 @@ class Royalty extends Sales_Controller
 
     public function index($page = NULL)
     {
-        $date_year = $this->input->get('date_year', true);
-        $period_time = $this->input->get('period_time', true);
-        $period_start = null;
-        $period_end = null;
-        if ($period_time != null) {
-            if ($period_time == 1) {
-                $period_start = $date_year . '/01/01';
-                $period_end = $date_year . '/06/30 23:59:59.999';
-            } else if ($period_time == 2) {
-                $period_start = $date_year . '/06/01';
-                $period_end = $date_year . '/12/31 23:59:59.999';
-            }
-        }
-
         $filters = [
             'keyword'           => $this->input->get('keyword', true),
-            'period_start'      => $period_start,
-            'period_end'        => $period_end
+            'period_end'        => $this->input->get('end_date', true)
+            // 'period_start'      => $period_start,
+            // 'period_end'        => $period_end
         ];
         $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
 
@@ -104,16 +91,17 @@ class Royalty extends Sales_Controller
         // PDF
         $this->load->library('pdf');
 
-        // $data = array(
-        //     'author' => $author,
-        //     'royalty_details' => $royalty_details,
-        //     'period_time' => $period_time,
-        //     'date_year' => $date_year
-        // );
+        $data = array(
+            'author' => $author,
+            'royalty_details' => $royalty_details,
+            'period_time' => $period_time,
+            'date_year' => $date_year
+        );
 
-        $html = $this->load->view('royalty/view_royalty_pdf', compact('author', 'royalty_details', 'period_time', 'date_year'));
+        // $html = $this->load->view('royalty/view_royalty_pdf', compact('author', 'royalty_details', 'period_time', 'date_year'));
+        $html = $this->load->view('royalty/view_royalty_pdf', $data, true);
 
-        $file_name = 'Royalti_' . $author->author_name;
+        $file_name = 'Royalti_' . $data['author']->author_name;
 
         $this->pdf->generate_pdf_a4_landscape($html, $file_name);
     }
