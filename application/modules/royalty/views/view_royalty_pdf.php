@@ -115,45 +115,63 @@
             </tr>
         </thead>
         <tbody>
-        <?php $index = 0;
-        $total_earning = 0;
-        $total_royalty = 0; ?>
-        <?php foreach ($royalty_details as $royalty) : ?>
-        <tr>
-            <td class="text-center"><?= $index + 1; ?></td>
-            <td class="text-left"><?= $royalty->book_title ?></td>
-            <td class="text-left">Stok Lalu</td>
-            <td class="text-center">Price book</td>
-            <td class="text-right pr-5">Terjual</td>
-            <td class="text-left">15 %</td>
-            <td class="text-right pr-5">Rp <?= round($royalty->earned_royalty, 0) ?></td>
-            <td class="text-left">Sisa Stok</td>
-        </tr>
+            <?php $index = 0;
+            $total_earning = 0;
+            $total_royalty = 0; ?>
+            <?php foreach ($royalty_details as $royalty) : ?>
+                <tr>
+                    <td class="text-center"><?= $index + 1; ?></td>
+                    <td class="text-left"><?= $royalty->book_title ?></td>
+                    <td class="text-left">Stok Lalu</td>
+                    <td class="text-center">Price book</td>
+                    <td class="text-right pr-5">Terjual</td>
+                    <td class="text-left">15 %</td>
+                    <td class="text-right pr-5">Rp <?= round($royalty->earned_royalty, 0) ?></td>
+                    <td class="text-left">Sisa Stok</td>
+                </tr>
         </tbody>
     </table>
 
     <table style="width: 100%;">
         <?php $index++;
-        $total_royalty += $royalty->earned_royalty; ?>
-        <?php endforeach; ?>
-        <tr>
-            <td scope="col" colspan="4"></td>
-            <td scope="col" colspan="2">Jumlah</td>
-            <td>Rp <?= $total_royalty; ?></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td scope="col" colspan="4"></td>
-            <td scope="col" colspan="2">PPh 15%</td>
-            <td>Rp <?= (0,15 *  $total_royalty)?></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td scope="col" colspan="4"></td>
-            <td scope="col" colspan="2">Netto</td>
-            <td><b>Rp <?= (0,85 *  $total_royalty)?></b></td>
-            <td></td>
-        </tr>
+                $total_royalty += $royalty->earned_royalty; ?>
+    <?php endforeach; ?>
+    <tr>
+        <td
+            scope="col"
+            colspan="4"
+        ></td>
+        <td
+            scope="col"
+            colspan="2"
+        >Jumlah</td>
+        <td>Rp <?= $total_royalty; ?></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td
+            scope="col"
+            colspan="4"
+        ></td>
+        <td
+            scope="col"
+            colspan="2"
+        >PPh 15%</td>
+        <td>Rp <?= (0.15 *  $total_royalty) ?></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td
+            scope="col"
+            colspan="4"
+        ></td>
+        <td
+            scope="col"
+            colspan="2"
+        >Netto</td>
+        <td><b>Rp <?= (0.85 *  $total_royalty) ?></b></td>
+        <td></td>
+    </tr>
     </table>
 </body>
 

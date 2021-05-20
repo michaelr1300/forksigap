@@ -70,7 +70,7 @@ class Royalty extends Sales_Controller
             'period_start'      => $period_start,
             'period_end'        => $period_end
         ];
-        $author = $this->db->select('author_name')->from('author')->where('author_id', $author_id)->get()->row();
+        $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $author_id)->get()->row();
         $royalty_details = $this->royalty->author_details($author_id, $filters);
         $pages          = $this->pages;
         $main_view      = 'royalty/view_royalty';
@@ -79,18 +79,42 @@ class Royalty extends Sales_Controller
         $this->load->view('template', compact('pages', 'main_view', 'author', 'royalty_details', 'period_time', 'date_year'));
     }
 
-    public function generate_pdf($author_id)
+    public function generate_pdf($author_id, $period_time = null, $date_year = null)
     {
-        $author = $this->db->select('author_name')->from('author')->where('author_id', $author_id)->get()->row();
+        $period_start = null;
+        $period_end = null;
+        if ($period_time != null) {
+            if ($period_time == 1) {
+                $period_start = $date_year . '/01/01';
+                $period_end = $date_year . '/06/30 23:59:59.999';
+            } else if ($period_time == 2) {
+                $period_start = $date_year . '/06/01';
+                $period_end = $date_year . '/12/31 23:59:59.999';
+            }
+        }
+
+        $filters = [
+            'keyword'           => $this->input->get('keyword', true),
+            'period_start'      => $period_start,
+            'period_end'        => $period_end
+        ];
+        $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $author_id)->get()->row();
         $royalty_details = $this->royalty->author_details($author_id, $filters);
 
-            // PDF
-            $this->load->library('pdf');
+        // PDF
+        $this->load->library('pdf');
 
-            $html = $this->load->view('royalty/view_royalty_pdf', true);
+        // $data = array(
+        //     'author' => $author,
+        //     'royalty_details' => $royalty_details,
+        //     'period_time' => $period_time,
+        //     'date_year' => $date_year
+        // );
 
-            $file_name = 'Royalti_' . $author->author_name;
+        $html = $this->load->view('royalty/view_royalty_pdf', compact('author', 'royalty_details', 'period_time', 'date_year'));
 
-            $this->pdf->generate_pdf_a4_landscape($html, $file_name);
+        $file_name = 'Royalti_' . $author->author_name;
+
+        $this->pdf->generate_pdf_a4_landscape($html, $file_name);
     }
 }

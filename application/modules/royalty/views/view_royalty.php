@@ -42,6 +42,9 @@ $level              = check_level();
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered mb-0">
                             <tbody>
+                                <?php $url = '';
+                                if ($period_time == null) $url = '';
+                                else $url = '/' . $period_time . '/' . $date_year; ?>
                                 <?php if ($period_time == '1') $period_time = 'Januari-Juni';
                                 elseif ($period_time == '2') $period_time = 'Juli-Desember';
                                 else $period_time = '-'; ?>
@@ -121,11 +124,11 @@ $level              = check_level();
                 </table>
                 <br>
                 <a
-                        href="<?= base_url('royalty/generate_pdf/' . $author->author_name) ?>"
-                        class="btn btn-outline-danger float-right"
-                        id="btn-generate-pdf"
-                        title="Generate PDF"
-                    >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
+                    href="<?= base_url('royalty/generate_pdf/' . $author->author_id . $url) ?>"
+                    class="btn btn-outline-danger float-right"
+                    id="btn-generate-pdf"
+                    title="Generate PDF"
+                >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
             </div>
         </div>
     </section>
