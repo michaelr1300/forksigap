@@ -17,8 +17,6 @@ class Royalty extends Sales_Controller
         $filters = [
             'keyword'           => $this->input->get('keyword', true),
             'period_end'        => $this->input->get('end_date', true)
-            // 'period_start'      => $period_start,
-            // 'period_end'        => $period_end
         ];
         $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
 
@@ -38,54 +36,30 @@ class Royalty extends Sales_Controller
         $this->load->view('template', compact('pages', 'main_view', 'royalty', 'pagination', 'total', 'total_penjualan', 'total_royalty'));
     }
 
-    public function view($author_id, $period_time = null, $date_year = null)
+    public function view($author_id, $period_end = null)
     {
-        $period_start = null;
-        $period_end = null;
-        if ($period_time != null) {
-            if ($period_time == 1) {
-                $period_start = $date_year . '/01/01';
-                $period_end = $date_year . '/06/30 23:59:59.999';
-            } else if ($period_time == 2) {
-                $period_start = $date_year . '/06/01';
-                $period_end = $date_year . '/12/31 23:59:59.999';
-            }
-        }
-
+        $author = $this->db->select('author_id, author_name, last_paid_date')->from('author')->where('author_id', $author_id)->get()->row();
         $filters = [
             'keyword'           => $this->input->get('keyword', true),
-            'period_start'      => $period_start,
-            'period_end'        => $period_end
+            'period_end'        => $period_end,
+            'last_paid_date'    => $author->last_paid_date
         ];
-        $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $author_id)->get()->row();
         $royalty_details = $this->royalty->author_details($author_id, $filters);
         $pages          = $this->pages;
         $main_view      = 'royalty/view_royalty';
         // var_dump($author);
 
-        $this->load->view('template', compact('pages', 'main_view', 'author', 'royalty_details', 'period_time', 'date_year'));
+        $this->load->view('template', compact('pages', 'main_view', 'author', 'royalty_details', 'period_end'));
     }
 
-    public function generate_pdf($author_id, $period_time = null, $date_year = null)
+    public function generate_pdf($author_id, $period_end = null)
     {
-        $period_start = null;
-        $period_end = null;
-        if ($period_time != null) {
-            if ($period_time == 1) {
-                $period_start = $date_year . '/01/01';
-                $period_end = $date_year . '/06/30 23:59:59.999';
-            } else if ($period_time == 2) {
-                $period_start = $date_year . '/06/01';
-                $period_end = $date_year . '/12/31 23:59:59.999';
-            }
-        }
-
+        $author = $this->db->select('author_id, author_name, last_paid_date')->from('author')->where('author_id', $author_id)->get()->row();
         $filters = [
             'keyword'           => $this->input->get('keyword', true),
-            'period_start'      => $period_start,
-            'period_end'        => $period_end
+            'period_end'        => $period_end,
+            'last_paid_date'    => $author->last_paid_date
         ];
-        $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $author_id)->get()->row();
         $royalty_details = $this->royalty->author_details($author_id, $filters);
 
         // PDF
@@ -94,8 +68,7 @@ class Royalty extends Sales_Controller
         $data = array(
             'author' => $author,
             'royalty_details' => $royalty_details,
-            'period_time' => $period_time,
-            'date_year' => $date_year
+            'period_end' => $period_end
         );
 
         // $html = $this->load->view('royalty/view_royalty_pdf', compact('author', 'royalty_details', 'period_time', 'date_year'));

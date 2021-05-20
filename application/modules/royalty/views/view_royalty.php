@@ -43,20 +43,15 @@ $level              = check_level();
                         <table class="table table-striped table-bordered mb-0">
                             <tbody>
                                 <?php $url = '';
-                                if ($period_time == null) $url = '';
-                                else $url = '/' . $period_time . '/' . $date_year; ?>
-                                <?php if ($period_time == '1') $period_time = 'Januari-Juni';
-                                elseif ($period_time == '2') $period_time = 'Juli-Desember';
-                                else $period_time = '-'; ?>
-                                <?php if ($date_year == null) $date_year = '-';
-                                else $date_year = $date_year ?>
+                                if ($period_end == null) $url = '';
+                                else $url = '/' . $period_end; ?>
                                 <tr>
                                     <td width="200px"> Periode Royalti </td>
-                                    <td><?= $period_time; ?></td>
+                                    <td>test</td>
                                 </tr>
                                 <tr>
                                     <td width="200px"> Tahun Royalti </td>
-                                    <td><?= $date_year; ?></td>
+                                    <td>test</td>
                                 </tr>
                             </tbody>
                         </table>

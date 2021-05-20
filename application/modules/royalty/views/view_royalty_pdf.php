@@ -50,16 +50,11 @@
     <br>
     <div style="text-align: center;">
         <h3>Daftar Penerima Royalti</h3>
-        <?php $url = '';
-        if ($period_time == null) $url = '';
-        else $url = '/' . $period_time . '/' . $date_year; ?>
-        <?php if ($period_time == '1') $period_time = 'Periode Januari-Juni';
-        elseif ($period_time == '2') $period_time = 'Periode Juli-Desember';
-        else $period_time = ''; ?>
-        <?php if ($date_year == null) $date_year = '';
-        else $date_year = 'Tahun ' . $date_year ?>
-        <h4><?= $period_time ?></h4>
-        <h4><?= $date_year ?></h4>
+        <?php if ($period_end == NULL) { ?>
+            <h4><?= date("d M Y") ?></h4>
+        <?php } else { ?>
+            <h4><?= $period_end ?></h4>
+        <?php } ?>
         <h4><b><?= $author->author_name ?></b></h4>
     </div>
     <br>
@@ -114,52 +109,76 @@
                 >Sisa Stok (Eks)</th>
             </tr>
         </thead>
-        <tbody
-            class="royalty-table"
-        >
+        <tbody class="royalty-table">
             <?php $index = 0;
             $total_earning = 0;
             $total_royalty = 0; ?>
             <?php foreach ($royalty_details as $royalty) : ?>
                 <tr class="royalty-table">
-                    <td class="royalty-table" style="text-align: center; height: 30px;" width="5%"><?= $index + 1; ?></td>
-                    <td class="royalty-table" width="30%"><?= $royalty->book_title ?></td>
-                    <td class="royalty-table" style="text-align: center;" width="10%">Stok Lalu</td>
-                    <td class="royalty-table" style="text-align: center;" width="10%">Price book</td>
-                    <td class="royalty-table" style="text-align: center;" width="10%">Terjual</td>
-                    <td class="royalty-table" style="text-align: center;" width="10%">15 %</td>
-                    <td class="royalty-table" width="15%">Rp <?= round($royalty->earned_royalty, 0) ?></td>
-                    <td class="royalty-table" style="text-align: center;" width="10%">Sisa Stok</td>
+                    <td
+                        class="royalty-table"
+                        style="text-align: center; height: 30px;"
+                        width="5%"
+                    ><?= $index + 1; ?></td>
+                    <td
+                        class="royalty-table"
+                        width="30%"
+                    ><?= $royalty->book_title ?></td>
+                    <td
+                        class="royalty-table"
+                        style="text-align: center;"
+                        width="10%"
+                    >Stok Lalu</td>
+                    <td
+                        class="royalty-table"
+                        style="text-align: center;"
+                        width="10%"
+                    >Price book</td>
+                    <td
+                        class="royalty-table"
+                        style="text-align: center;"
+                        width="10%"
+                    >Terjual</td>
+                    <td
+                        class="royalty-table"
+                        style="text-align: center;"
+                        width="10%"
+                    >15 %</td>
+                    <td
+                        class="royalty-table"
+                        width="15%"
+                    >Rp <?= round($royalty->earned_royalty, 0) ?></td>
+                    <td
+                        class="royalty-table"
+                        style="text-align: center;"
+                        width="10%"
+                    >Sisa Stok</td>
                 </tr>
-            <?php $index++;
-            $total_royalty += $royalty->earned_royalty; ?>
+                <?php $index++;
+                $total_royalty += $royalty->earned_royalty; ?>
             <?php endforeach; ?>
         </tbody>
     </table>
 
     <table style="width: 100%;">
-    <tr>
-        <td
-            style="width:55%; height: 33px;"
-        ></td>
-        <td
-            style="width:20%"
-        >Jumlah</td>
-        <td style="width:15%">Rp <?= $total_royalty; ?></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td style="height: 33px;"></td>
-        <td>PPh 15%</td>
-        <td style="border-bottom: 1px solid black;">Rp <?= (0.15 *  $total_royalty) ?></td>
-        <td></td>
-    </tr>
-    <tr>
-        <td style="height: 33px;"></td>
-        <td><b>Netto</b></td>
-        <td style="border-bottom: 4px double black;"><b>Rp <?= (0.85 *  $total_royalty) ?></b></td>
-        <td></td>
-    </tr>
+        <tr>
+            <td style="width:55%; height: 33px;"></td>
+            <td style="width:20%">Jumlah</td>
+            <td style="width:15%">Rp <?= $total_royalty; ?></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td style="height: 33px;"></td>
+            <td>PPh 15%</td>
+            <td style="border-bottom: 1px solid black;">Rp <?= (0.15 *  $total_royalty) ?></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td style="height: 33px;"></td>
+            <td><b>Netto</b></td>
+            <td style="border-bottom: 4px double black;"><b>Rp <?= (0.85 *  $total_royalty) ?></b></td>
+            <td></td>
+        </tr>
     </table>
 </body>
 

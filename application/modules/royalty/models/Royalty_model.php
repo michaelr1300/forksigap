@@ -35,23 +35,29 @@ class Royalty_model extends MY_Model
             $this->db->like('author_name', $filters['keyword']);
         }
         if ($filters['period_end'] != null) {
-            $this->db->where('issued_date BETWEEN author.last_paid_date and "' . $filters['period_end'] . '"');
+            //if author.last_paid_date == null
+            $this->db->where('issued_date BETWEEN IFNULL(author.last_paid_date, "2000/01/01") and "' . $filters['period_end'] . '"');
         } else {
-            $this->db->where('issued_date BETWEEN "2000/01/01" and now()');
+            $this->db->where('issued_date BETWEEN IFNULL(author.last_paid_date, "2000/01/01") and now()');
         }
         return $this->db->get()->result();
     }
 
     public function author_details($author_id, $filters)
     {
+        $last_paid_date = '';
+        if ($filters['last_paid_date'] == '') $last_paid_date = "2000/01/01";
         $this->db->select('book.book_id, book.book_title, SUM(qty) AS count, SUM(qty*price) AS penjualan, SUM(qty*price*book.royalty/100) as earned_royalty')
             ->from('book')
             ->join('draft_author', 'draft_author.draft_id = book.draft_id', 'right')
             ->join('invoice_book', 'book.book_id = invoice_book.book_id')
             ->join('invoice', 'invoice_book.invoice_id = invoice.invoice_id')
             ->where('draft_author.author_id', $author_id);
-        if ($filters['period_start'] != null && $filters['period_end'] != null) {
-            $this->db->where('issued_date BETWEEN "' . $filters['period_start'] . '" and "' . $filters['period_end'] . '"');
+        if ($filters['period_end'] != null) {
+            //if author.last_paid_date == null
+            $this->db->where('issued_date BETWEEN "' . $last_paid_date .  '" and "' . $filters['period_end'] . '"');
+        } else {
+            $this->db->where('issued_date BETWEEN "' . $last_paid_date .  '" and now()');
         }
         return $this->db->get()->result();
     }

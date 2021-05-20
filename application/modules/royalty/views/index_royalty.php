@@ -3,17 +3,9 @@ $level              = check_level();
 $per_page           = 10;
 $keyword            = $this->input->get('keyword');
 $date_year          = $this->input->get('date_year');
-$period_time        = $this->input->get('period_time');
+$period_end         = $this->input->get('end_date');
 $page               = $this->uri->segment(2);
 $i                  = isset($page) ? $page * $per_page - $per_page : 0;
-
-
-$date_year_options = [];
-
-$period_time_options = [
-    '1' => ' Januari - Juni ',
-    '2' => ' Juli - Desember '
-];
 
 for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
     $date_year_options[$dy] = $dy;
@@ -92,18 +84,10 @@ function royalti_action()
                                 <label for="per_page">Data per halaman</label>
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
-                            <!-- <div class="col-12 col-md-4 mt-2">
-                                <label for="date_year">Tahun</label>
-                                <?= form_dropdown('date_year', $date_year_options, $date_year, 'id="date_year" class="form-control custom-select d-block" title="Filter Tahun Cetak"'); ?>
-                            </div>
-                            <div class="col-12 col-md-4 mt-2">
-                                <label for="period_time">Periode</label>
-                                <?= form_dropdown('period_time', $period_time_options, $period_time, 'id="period_time" class="form-control custom-select d-block" title="Periode Royalti"'); ?>
-                            </div> -->
                             <div class="col-12 col-md-4 mt-2">
                                 <label for="date_end">Periode</label>
                                 <input
-                                    type="end_date"
+                                    type="date"
                                     id="end_date"
                                     name="end_date"
                                 >
@@ -137,15 +121,8 @@ function royalti_action()
                     <div class="text-center">
                         <h5>Daftar Penerima Royalti</h5>
                         <?php $url = '';
-                        if ($period_time == null) $url = '';
-                        else $url = '/' . $period_time . '/' . $date_year; ?>
-                        <?php if ($period_time == '1') $period_time = 'Periode Januari-Juni';
-                        elseif ($period_time == '2') $period_time = 'Periode Juli-Desember';
-                        else $period_time = ''; ?>
-                        <?php if ($date_year == null) $date_year = '';
-                        else $date_year = 'Tahun ' . $date_year ?>
-                        <h6><?= $period_time; ?></h6>
-                        <h6><?= $date_year; ?></h6>
+                        if ($period_end == null) $url = '';
+                        else $url = '/' . $period_end; ?>
                     </div>
                     <table class="table table-striped mb-0 table-responsive">
                         <thead>
@@ -235,7 +212,7 @@ function royalti_action()
                             </tr>
                         </tbody>
                     </table>
-                    <!-- <?= $pagination ?? null; ?> -->
+                    <?= $pagination ?? null; ?>
                 </div>
             </section>
         </div>
