@@ -136,7 +136,7 @@ $staff_gudang              = $this->book_receive->get_staff_gudang_by_progress('
                 <button type="button" class="btn btn-outline-success" data-toggle="modal"
                     data-target="#modal-handover-notes">Catatan</button>
                 <?php if (!$is_final) : ?>
-                <a href="<?= base_url('book_receive/generate_pdf_handover/' . $book_receive->book_receive_id . "/handover") ?>"
+                <a target="_blank" href="<?= base_url('book_receive/generate_pdf_handover/' . $book_receive->book_receive_id . "/handover") ?>"
                     class="btn btn-outline-danger 
                     <?= (!$is_handover_deadline_set) ? 'disabled' : ''; ?>" id="btn-generate-pdf-handover"
                     title="Generate PDF berita acara serah terima">Generate PDF <i class="fas fa-file-pdf fa-fw"></i>
