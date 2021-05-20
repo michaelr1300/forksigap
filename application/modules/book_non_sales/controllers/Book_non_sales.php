@@ -78,8 +78,10 @@ class Book_non_sales extends Warehouse_sales_controller
             'address' => $input->address,
             'notes' => $input->notes
         ];
+
+        $this->db->trans_begin();
         // insert book non sales
-        $book_non_sales_success = $this->book_non_sales->insert($book_non_sales);
+        $this->book_non_sales->insert($book_non_sales);
         $book_non_sales_id = $this->db->insert_id();
         // insert book non sales list
         foreach ($input->book_list as $books){
@@ -88,13 +90,15 @@ class Book_non_sales extends Warehouse_sales_controller
                 'book_id' => $books['book_id'],
                 'qty' => $books['qty']
             ];
-            $book_non_sales_list_success = $this->db->insert('book_non_sales_list',$book_non_sales_list);
+            $this->db->insert('book_non_sales_list',$book_non_sales_list);
         }
 
-        if ($book_non_sales_success && $book_non_sales_list_success) {
-            $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('success', $this->lang->line('toast_add_fail'));
         } else {
-            $this->session->set_flashdata('error', $this->lang->line('toast_add_fail'));
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
         }
 
         redirect('book_non_sales');
