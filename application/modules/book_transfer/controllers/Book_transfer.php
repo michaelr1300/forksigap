@@ -249,16 +249,13 @@ class Book_transfer extends MY_Controller
                 $book_stock->library_present += $book_transfer_list->qty;
                 $this->book_stock->where('book_id', $book_transfer_list->book_id)->update($book_stock);
                 // stok detail perpustakaan
-                $library_stock_detail = $this->db->select('*')
-                    ->from('library_stock_detail')
-                    ->where('book_stock_id', $book_stock->book_stock_id)
-                    ->where('library_id', $book_transfer->library_id)
-                    ->get()
-                    ->row();
+                $library_stock_detail = $this->book_stock->get_one_library_stock($book_stock->book_stock_id,$book_transfer->library_id);
+                // ini bermasalah
                 if($library_stock_detail){
                     $library_stock_detail->library_stock += $book_transfer_list->qty;
                     $this->db->set('library_stock', $library_stock_detail->library_stock);
                     $this->db->where('library_id', $library_stock_detail->library_id);
+                    $this->db->where('book_stock_id', $book_stock->book_stock_id);
                     $this->db->update('library_stock_detail');
                 }
                 else{
@@ -272,7 +269,7 @@ class Book_transfer extends MY_Controller
             }
         }
         // update stok showroom
-        else{
+        else {
             foreach($book_transfer_lists as $book_transfer_list){
                 $book_stock = $this->book_stock->where('book_id', $book_transfer_list->book_id)->get();
                 $book_stock->showroom_present += $book_transfer_list->qty;
@@ -280,16 +277,12 @@ class Book_transfer extends MY_Controller
             }
         }
 
-        // update book stock
         foreach($book_transfer_lists as $book_transfer_list){
             $book_stock = $this->book_stock->where('book_id', $book_transfer_list->book_id)->get();
             $book_stock->warehouse_present -= $book_transfer_list->qty;
+            // update book stock
             $this->book_stock->where('book_id', $book_transfer_list->book_id)->update($book_stock);
-        }
-
-        //insert to book transaction
-        foreach($book_transfer_lists as $book_transfer_list){
-            $book_stock = $this->book_stock->where('book_id', $book_transfer_list->book_id)->get();
+            //insert to book transaction
             $this->book_transaction->insert([
                 'book_id' => $book_transfer_list->book_id,
                 'book_stock_id' => $book_stock->book_stock_id,
@@ -299,8 +292,8 @@ class Book_transfer extends MY_Controller
                 'stock_last'=> $book_stock->warehouse_present,
                 'date' => now()
             ]);
-        }        
-        
+        }
+
         // update data book_transfer
         $this->book_transfer->where('book_transfer_id', $book_transfer_id)->update([
             'status' => $action,
@@ -326,7 +319,6 @@ class Book_transfer extends MY_Controller
 
         if (!$_POST) {
             $input = (object) $this->book_transfer->get_default_values();
-            // dipindah ke sini dulu, soalnya validate belum bisa
             if (!$this->book_transfer->validate() || $this->form_validation->error_array()) {
 
                 $pages       = $this->pages;
@@ -351,8 +343,9 @@ class Book_transfer extends MY_Controller
             'library_id' => $input->library_id,
             'discount' => $input->discount
         ];
+        $this->db->trans_begin();
         // insert book transfer
-        $book_transfer_success = $this->book_transfer->insert($book_transfer);
+        $this->book_transfer->insert($book_transfer);
         $book_transfer_id = $this->db->insert_id();
         foreach ($input->book_list as $books){
             $book_transfer_list = (object)[
@@ -361,12 +354,14 @@ class Book_transfer extends MY_Controller
                 'qty' => $books['qty'],
                 'price' => $books['price']
             ];
-            $book_transfer_list_success = $this->db->insert('book_transfer_list',$book_transfer_list);
+            $this->db->insert('book_transfer_list',$book_transfer_list);
         }
-        if ($book_transfer_success && $book_transfer_list_success) {
-            $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
+        if ($this->db->trans_status() === false) {
+            $this->db->trans_rollback();
+            $this->session->set_flashdata('success', $this->lang->line('toast_add_fail'));
         } else {
-            $this->session->set_flashdata('error', $this->lang->line('toast_add_fail'));
+            $this->db->trans_commit();
+            $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
         }
         redirect('book_transfer/add');
     }

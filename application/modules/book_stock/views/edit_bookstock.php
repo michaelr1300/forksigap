@@ -24,7 +24,7 @@
                         <div class="alert alert-warning">
                             <strong>PERHATIAN!</strong> Fitur ini berfungsi untuk mengubah stok buku.
                         </div>
-                        <form action="<?= base_url('book_stock/edit_book_stock'); ?>" method="post">
+                        <form action="<?= base_url('book_stock/edit_book_stock/'); ?>" method="post">
                             <div class="form-group">
                                 <label class="font-weight-bold">Judul Buku</label>
                                 <input type="text" class="form-control" value="<?= $input->book_title; ?>" disabled />
@@ -35,26 +35,12 @@
                                 <label class="font-weight-bold">Stok Gudang</label>
                                 <span class ="form-control bg-secondary" readonly><?=$input->warehouse_present?></span>
                             </div>
-                            <!-- <div class="form-group"> 
-                                <label for="type" class="d-block font-weight-bold"> Jenis Perubahan <abbr
-                                        title="Required">*</abbr></label>
-                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-secondary active">
-                                        <input type="radio" name="type" value="revision" id="revision" 
-                                            class="custom-control-input" /> Revisi Stok
-                                    </label>
-                                    <label class="btn btn-secondary ">
-                                        <input type="radio" name="type" value="return" id = "return"
-                                            class="custom-control-input" /> Retur Buku 
-                                    </label>
-                                </div>
-                            </div> -->
                             <div class="form-group" id="revisi-buku"> 
                                 <label for="revision_type" class="d-block font-weight-bold"> Tipe Operasi <abbr
                                         title="Required">*</abbr></label>
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                     <label class="btn btn-secondary active">
-                                        <input type="radio" name="revision_type" value="add"
+                                        <input required type="radio" name="revision_type" value="add"
                                             class="custom-control-input" /> Tambah
                                     </label>
                                     <label class="btn btn-secondary ">
@@ -67,14 +53,14 @@
                             <div class="form-group">
                                 <label class="font-weight-bold" for="warehouse_modifier">Perubahan<abbr
                                         title="Required">*</abbr></label>
-                                <input type="number" class="form-control" name="warehouse_modifier"
-                                    id="warehouse_modifier" min="1"/>
+                                <input required type="number" class="form-control" name="warehouse_modifier"
+                                    id="warehouse_modifier" min="1" max="" />
                                 <input type="hidden" name="warehouse_past" id="warehouse_past"
                                     value="" >
                             </div>
                             <div class="form-group">
                                 <label class="font-weight-bold" for="notes">Catatan</label>
-                                <textarea rows="6" class="form-control summernote-basic" id="notes"
+                                <textarea required rows="6" class="form-control summernote-basic" id="notes"
                                     name="notes"></textarea>
                             </div>
                             <button class="btn btn-primary" type="submit">Submit</button>
@@ -88,10 +74,17 @@
 
 <script>
 $(document).ready(function() {
-    $('.dates').flatpickr({
-        altInput: true,
-        altFormat: 'j F Y',
-        dateFormat: 'Y-m-d'
-    });
+    $("input[name='revision_type']").click(function(){
+        if ($("input[name='revision_type']:checked").val()=="sub"){
+            $("#warehouse_modifier").attr({
+                "max" : <?=$input->warehouse_present?>,
+            });
+        }
+        else {
+            $("#warehouse_modifier").attr({
+                "max" : "",
+            });
+        }
+    })
 });
 </script>

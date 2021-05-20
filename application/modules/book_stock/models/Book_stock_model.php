@@ -164,6 +164,15 @@ class Book_stock_model extends MY_Model
         ->result();
     }
 
+    public function get_one_library_stock($book_stock_id,$library_id){
+        return $this->db->select('*')
+        ->from('library_stock_detail')
+        ->where('book_stock_id', $book_stock_id)
+        ->where('library_id', $library_id)
+        ->get()
+        ->row();
+    }
+
     public function retur_stock()
     {
         return $this->select(['book.book_title', 'book.book_id', 'author.author_name',

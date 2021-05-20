@@ -1,4 +1,5 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
+
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -15,7 +16,8 @@ class Book_stock extends Warehouse_sales_controller
         $this->load->model('book_transaction/book_transaction_model', 'book_transaction');
     }
 
-    public function index($page = NULL){
+    public function index($page = NULL)
+    {
         //all filter
         $filters = [
             'keyword'           => $this->input->get('keyword', true),
@@ -30,10 +32,9 @@ class Book_stock extends Warehouse_sales_controller
 
         $book_stocks = $get_data['book_stocks'];
         $total = $get_data['total'];
-        if ($book_stocks){
+        if ($book_stocks) {
             $max_stock = $book_stocks[count($book_stocks) - 1]->warehouse_present;
-        }
-        else {
+        } else {
             $max_stock = 0;
         }
         $pagination = $this->book_stock->make_pagination(site_url('book_stock'), 2, $total);
@@ -47,7 +48,8 @@ class Book_stock extends Warehouse_sales_controller
     }
 
 
-    public function view($book_stock_id){
+    public function view($book_stock_id)
+    {
         $book_stock = $this->book_stock->get_book_stock($book_stock_id);
         if (!$book_stock) {
             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
@@ -63,190 +65,179 @@ class Book_stock extends Warehouse_sales_controller
         return;
     }
 
-    public function edit($book_stock_id){
-        if(!$this->_is_warehouse_admin()){
+    public function edit($book_stock_id)
+    {
+        if (!$this->_is_warehouse_admin()) {
             redirect($this->pages);
         }
 
         $book_stock = $this->book_stock->get_book_stock($book_stock_id);
-        if(!$book_stock){
+        if (!$book_stock) {
             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
             redirect($this->pages);
         }
 
-        if(!$_POST){
+        if (!$_POST) {
             $input = (object) $book_stock;
-        }
-        else{
+        } else {
             $input = (object) $this->input->post(null, true);
         }
-            $pages = $this->pages;
-            $main_view = 'book_stock/edit_bookstock';
-            $form_action = "book_stock/edit/$book_stock_id";
-            $this->load->view('template', compact('pages','main_view', 'input'));   
+        $pages = $this->pages;
+        $main_view = 'book_stock/edit_bookstock';
+        $form_action = "book_stock/edit/$book_stock_id";
+        $this->load->view('template', compact('pages', 'main_view', 'input'));
     }
 
-    public function retur($book_stock_id){
-        if(!$this->_is_warehouse_admin()){
+    public function retur($book_stock_id)
+    {
+        if (!$this->_is_warehouse_admin()) {
             redirect($this->pages);
         }
 
         $book_stock = $this->book_stock->get_book_stock($book_stock_id);
-        if(!$book_stock){
+        if (!$book_stock) {
             $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
             redirect($this->pages);
         }
 
-        if(!$_POST){
+        if (!$_POST) {
             $input = (object) $book_stock;
+        } else {
+            $input = (object) $this->input->post(null, true);
         }
-        else{
-            $input = (object) $this->input->post(null, true);            
-        }
-            $pages = $this->pages;
-            $main_view = 'book_stock/retur_bookstock';
-            $form_action = "book_stock/retur/$book_stock_id";
-            $this->load->view('template', compact('pages','main_view', 'input'));   
+        $pages = $this->pages;
+        $main_view = 'book_stock/retur_bookstock';
+        $form_action = "book_stock/retur/$book_stock_id";
+        $this->load->view('template', compact('pages', 'main_view', 'input'));
     }
 
-    public function edit_book_location(){
-        if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
-            $book_title = $this->input->post('book_title');
-            $book_stock_id = $this->input->post('book_stock_id');
-            $new_location = $this->input->post('book_location');
-            $book_stock = $this->book_stock->where('book_stock_id', $book_stock_id)->get();
+    public function edit_book_location()
+    {
+        if ($this->_is_warehouse_admin() == TRUE && $this->input->method() == 'post') {
+            $input = (object) $this->input->post(null, true);
+            $book_stock = $this->book_stock->where('book_stock_id', $input->book_stock_id)->get();
             if (!$book_stock) {
                 $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
-            }
-            else {
-                $book_stock->book_location = $new_location;
-                if ($this->book_stock->where('book_stock_id', $book_stock_id)->update($book_stock)) {
+            } else {
+                $book_stock->book_location = $input->book_location;
+                if ($this->book_stock->where('book_stock_id', $input->book_stock_id)->update($book_stock)) {
                     $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
                 } else {
                     $this->session->set_flashdata('success', $this->lang->line('toast_edit_fail'));
                 }
             }
-        }
-        else {
+        } else {
             $this->session->set_flashdata('warning', $this->lang->line('toast_edit_fail'));
         }
         redirect($this->pages);
     }
-   
-    public function edit_book_stock(){
-        if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
-            $type = $this->input->post('type');
-            $revision_type = $this->input->post('revision_type');
-            $book_id = $this->input->post('book_id');
-            $revision_date = $this->input->post('date');
-            $quantity = $this->input->post('warehouse_modifier');
-            $notes = $this->input->post('notes');
-            $book_stock = $this->book_stock->where('book_id', $book_id)->get();
-            $book_stock_revision = (object) [
-                'book_id'            => $book_id,
-                'warehouse_past'     => $book_stock->warehouse_present,
-                'type'               => $type,
-                'warehouse_present'  => 0,
-                'warehouse_revision' => $quantity,
-                'revision_type'      => $revision_type,
-                'notes'              => $notes,
-                'revision_date'      => $revision_date
-            ];
+
+    public function edit_book_stock()
+    {
+        if ($this->_is_warehouse_admin() == TRUE && $this->input->method() == 'post') {
+            $input = (object) $this->input->post(null, true);
+            $book_stock = $this->book_stock->where('book_id', $input->book_id)->get();
             if (!$book_stock) {
                 $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
-            }
-            else {
-                if ($revision_type=="add") $book_stock->warehouse_present += $quantity;
-                else $book_stock->warehouse_present -= $quantity;
+            } else {
+                $book_stock_revision = (object) [
+                    'book_id'            => $input->book_id,
+                    'warehouse_past'     => $book_stock->warehouse_present,
+                    'type'               => "revision",
+                    'warehouse_present'  => 0,
+                    'warehouse_revision' => $input->warehouse_modifier,
+                    'revision_type'      => $input->revision_type,
+                    'notes'              => $input->notes,
+                    'revision_date'      => now()
+                ];
+                if ($input->revision_type == "add") $book_stock->warehouse_present += $input->warehouse_modifier;
+                else $book_stock->warehouse_present -= $input->warehouse_modifier;
                 $book_stock_revision->warehouse_present = $book_stock->warehouse_present;
-                $book_stock_revision->revision_date = now();
-                $book_stock_revision->type = "revision";
-                
-                
-                if ($this->book_stock->where('book_id', $book_id)->update($book_stock) && $this->db->insert('book_stock_revision',$book_stock_revision)) {
-                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
-                } else {
+
+                $this->db->trans_begin();
+                $this->book_stock->where('book_id', $input->book_id)->update($book_stock);
+                $this->db->insert('book_stock_revision', $book_stock_revision);
+                if ($this->db->trans_status() === false) {
+                    $this->db->trans_rollback();
                     $this->session->set_flashdata('success', $this->lang->line('toast_edit_fail'));
+                } else {
+                    $this->db->trans_commit();
+                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
                 }
             }
-        }
-        else {
+        } else {
             $this->session->set_flashdata('warning', $this->lang->line('toast_edit_fail'));
         }
-        redirect('book_stock/view/'.$book_stock->book_stock_id);
+        redirect('book_stock/view/' . $book_stock->book_stock_id);
     }
 
-    public function retur_book_stock(){
-        if($this->_is_warehouse_admin() == TRUE && $this->input->method()=='post'){
-            $type = $this->input->post('type');
-            $revision_type = $this->input->post('revision_type');
-            $book_id = $this->input->post('book_id');
-            $revision_date = $this->input->post('revision_date');
-            $quantity = $this->input->post('warehouse_modifier');
-            $notes = $this->input->post('notes');
-            $book_stock = $this->book_stock->where('book_id', $book_id)->get();
-            $book_stock_revision = (object) [
-                'book_id'            => $book_id,
-                'warehouse_past'     => $book_stock->warehouse_present,
-                'type'               => $type,
-                'warehouse_present'  => 0,
-                'warehouse_revision' => $quantity,
-                'revision_type'      => $revision_type,
-                'notes'              => $notes,
-                'revision_date'      => $revision_date
-            ];
+    public function retur_book_stock()
+    {
+        if ($this->_is_warehouse_admin() == TRUE && $this->input->method() == 'post') {
+            $input = (object) $this->input->post(null, true);
+            $book_stock = $this->book_stock->where('book_id', $input->book_id)->get();
             if (!$book_stock) {
                 $this->session->set_flashdata('warning', $this->lang->line('toast_data_not_available'));
-            }
-            else {
-
-                if ($revision_type=="sub") {
-                    $book_stock->warehouse_present -= $quantity;
-                    $book_stock->retur_stock += $quantity;
-                }
-                else {
-                    $book_stock->retur_stock -= $quantity;
+            } else {
+                $book_stock_revision = (object) [
+                    'book_id'            => $input->book_id,
+                    'warehouse_past'     => $book_stock->warehouse_present,
+                    'type'               => "return",
+                    'warehouse_present'  => 0,
+                    'warehouse_revision' => $input->warehouse_modifier,
+                    'revision_type'      => $input->revision_type,
+                    'notes'              => $input->notes,
+                    'revision_date'      => $input->revision_date
+                ];
+                if ($input->revision_type == "sub") {
+                    $book_stock->warehouse_present -= $input->warehouse_modifier;
+                    $book_stock->retur_stock += $input->warehouse_modifier;
+                } else {
+                    $book_stock->retur_stock -= $input->warehouse_modifier;
                 }
                 $book_stock_revision->warehouse_present = $book_stock->warehouse_present;
-                $book_stock_revision->type = "return";
 
-                
-                if ($this->book_stock->where('book_id', $book_id)->update($book_stock) && $this->db->insert('book_stock_revision',$book_stock_revision)) {
-                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
-                } else {
+                $this->db->trans_begin();
+                $this->book_stock->where('book_id', $input->book_id)->update($book_stock);
+                $this->db->insert('book_stock_revision', $book_stock_revision);
+                if ($this->db->trans_status() === false) {
+                    $this->db->trans_rollback();
                     $this->session->set_flashdata('success', $this->lang->line('toast_edit_fail'));
+                } else {
+                    $this->db->trans_commit();
+                    $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
                 }
             }
-        }
-        else {
+        } else {
             $this->session->set_flashdata('warning', $this->lang->line('toast_edit_fail'));
         }
-        redirect('book_stock/view/'.$book_stock->book_stock_id);
+        redirect('book_stock/view/' . $book_stock->book_stock_id);
     }
 
-    public function api_chart_data($book_stock_id,$year){
-        $book_transaction = $this->book_transaction->get_transaction_data($book_stock_id,$year);
-        for ($i=1;$i<=12;$i++){
-            $chart_data['stock_in']['month_'.$i]=0;
-            $chart_data['stock_out']['month_'.$i]=0;
+    public function api_chart_data($book_stock_id, $year)
+    {
+        $book_transaction = $this->book_transaction->get_transaction_data($book_stock_id, $year);
+        for ($i = 1; $i <= 12; $i++) {
+            $chart_data['stock_in']['month_' . $i] = 0;
+            $chart_data['stock_out']['month_' . $i] = 0;
         }
-        foreach ($book_transaction as $data){
-            for ($i=1;$i<=12;$i++){
-                if (substr($data->date,5,2)==$i){
-                    if ($data->stock_initial<$data->stock_last){
-                        $chart_data['stock_in']['month_'.$i]+=$data->stock_mutation;
+        foreach ($book_transaction as $data) {
+            for ($i = 1; $i <= 12; $i++) {
+                if (substr($data->date, 5, 2) == $i) {
+                    if ($data->stock_initial < $data->stock_last) {
+                        $chart_data['stock_in']['month_' . $i] += $data->stock_mutation;
                     }
-                    if ($data->stock_initial>$data->stock_last){
-                        $chart_data['stock_out']['month_'.$i]+=$data->stock_mutation;
+                    if ($data->stock_initial > $data->stock_last) {
+                        $chart_data['stock_out']['month_' . $i] += $data->stock_mutation;
                     }
-                    
                 }
             }
         }
         return $this->send_json_output(true, (object) $chart_data);
     }
 
-    public function api_get_by_book_id($book_id){
+    public function api_get_by_book_id($book_id)
+    {
         $book_stock = $this->book_stock->get_book_stock_by_book_id($book_id);
         return $this->send_json_output(true, $book_stock);
     }
@@ -260,23 +251,23 @@ class Book_stock extends Warehouse_sales_controller
         // Column Title
         $sheet->setCellValue('A1', 'STOK BUKU GUDANG');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A1')
-                    ->getFont()
-                    ->setBold(true);
+            ->getStyle('A1')
+            ->getFont()
+            ->setBold(true);
         $sheet->setCellValue('A3', 'No');
         $sheet->setCellValue('B3', 'Judul');
         $sheet->setCellValue('C3', 'Penulis');
         $sheet->setCellValue('D3', 'Stok Gudang');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:D3')
-                    ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setARGB('A6A6A6');
+            ->getStyle('A3:D3')
+            ->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()
+            ->setARGB('A6A6A6');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:D3')
-                    ->getFont()
-                    ->setBold(true);
+            ->getStyle('A3:D3')
+            ->getFont()
+            ->setBold(true);
 
         // Auto width
         $sheet->getColumnDimension('B')->setAutoSize(true);
@@ -299,18 +290,18 @@ class Book_stock extends Warehouse_sales_controller
                             break;
                         }
                     case 'C': {
-                        $value = $data->author_name;
-                        break;
-                    }
+                            $value = $data->author_name;
+                            break;
+                        }
                     case 'D': {
                             $value = $data->warehouse_present;
-                            if($value <=50){
+                            if ($value <= 50) {
                                 $spreadsheet->getActiveSheet()
-                                ->getStyle('D'.$i)
-                                ->getFill()
-                                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                                ->getStartColor()
-                                ->setARGB('FFC000');            
+                                    ->getStyle('D' . $i)
+                                    ->getFill()
+                                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                                    ->getStartColor()
+                                    ->setARGB('FFC000');
                             }
                             break;
                         }
@@ -332,27 +323,27 @@ class Book_stock extends Warehouse_sales_controller
         // $get_data = $this->book_stock->filter_excel($filters);
         $spreadsheet = new Spreadsheet;
         $sheet_1 = $spreadsheet->getActiveSheet()->setTitle('stok retur');
-        $filename = 'STOK RETUR_'.date('Y m d');
+        $filename = 'STOK RETUR_' . date('Y m d');
 
         // Column Title
         $sheet_1->setCellValue('A1', 'STOK RETUR');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A1')
-                    ->getFont()
-                    ->setBold(true);
+            ->getStyle('A1')
+            ->getFont()
+            ->setBold(true);
         $sheet_1->setCellValue('A3', 'No');
         $sheet_1->setCellValue('B3', 'Judul');
         $sheet_1->setCellValue('C3', 'Stok Retur');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:C3')
-                    ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setARGB('A6A6A6');
+            ->getStyle('A3:C3')
+            ->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()
+            ->setARGB('A6A6A6');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:C3')
-                    ->getFont()
-                    ->setBold(true);
+            ->getStyle('A3:C3')
+            ->getFont()
+            ->setBold(true);
 
         // Auto width
         // $sheet->getColumnDimension('A')->setAutoSize(true);
@@ -392,23 +383,23 @@ class Book_stock extends Warehouse_sales_controller
         // Column Title
         $sheet_2->setCellValue('A1', 'LOG PENAMBAHAN RETUR');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A1')
-                    ->getFont()
-                    ->setBold(true);
+            ->getStyle('A1')
+            ->getFont()
+            ->setBold(true);
         $sheet_2->setCellValue('A3', 'No');
         $sheet_2->setCellValue('B3', 'Judul Buku');
         $sheet_2->setCellValue('C3', 'Jumlah Retur');
         $sheet_2->setCellValue('D3', 'Tanggal');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:D3')
-                    ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setARGB('A6A6A6');
+            ->getStyle('A3:D3')
+            ->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()
+            ->setARGB('A6A6A6');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:D3')
-                    ->getFont()
-                    ->setBold(true);
+            ->getStyle('A3:D3')
+            ->getFont()
+            ->setBold(true);
 
         // Auto width
         $sheet_2->getColumnDimension('B')->setAutoSize(true);
@@ -435,8 +426,8 @@ class Book_stock extends Warehouse_sales_controller
                             break;
                         }
                     case 'D': {
-                        $value = date("d/m/Y", strtotime($data->revision_date));
-                        break;
+                            $value = date("d/m/Y", strtotime($data->revision_date));
+                            break;
                         }
                 }
                 $sheet_2->setCellValue($v . $i, $value);
@@ -452,23 +443,23 @@ class Book_stock extends Warehouse_sales_controller
         // Column Title
         $sheet_3->setCellValue('A1', 'LOG PENGHAPUSAN RETUR');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A1')
-                    ->getFont()
-                    ->setBold(true);
+            ->getStyle('A1')
+            ->getFont()
+            ->setBold(true);
         $sheet_3->setCellValue('A3', 'No');
         $sheet_3->setCellValue('B3', 'Judul Buku');
         $sheet_3->setCellValue('C3', 'Jumlah Hapus');
         $sheet_3->setCellValue('D3', 'Tanggal Hapus Retur');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:D3')
-                    ->getFill()
-                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setARGB('A6A6A6');
+            ->getStyle('A3:D3')
+            ->getFill()
+            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+            ->getStartColor()
+            ->setARGB('A6A6A6');
         $spreadsheet->getActiveSheet()
-                    ->getStyle('A3:D3')
-                    ->getFont()
-                    ->setBold(true);
+            ->getStyle('A3:D3')
+            ->getFont()
+            ->setBold(true);
 
         // Auto width
         $sheet_3->getColumnDimension('B')->setAutoSize(true);
@@ -497,13 +488,12 @@ class Book_stock extends Warehouse_sales_controller
                     case 'D': {
                             $value = date("d/m/Y", strtotime($data->revision_date));
                             break;
-                    }
-
+                        }
                 }
                 $sheet_3->setCellValue($v . $i, $value);
             }
             $i++;
-        }        
+        }
 
         $writer = new Xlsx($spreadsheet);
 
