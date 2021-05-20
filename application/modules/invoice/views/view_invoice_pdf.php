@@ -203,7 +203,7 @@
             <?php $i = 1; ?>
             <?php foreach ($invoice_books as $invoice_book) : ?>
                 <tr class="invoice-table">
-                    <td class="invoice-table"><?= $i++ ?></td>
+                    <td class="invoice-table" style="height: 33px;"><?= $i++ ?></td>
                     <td class="invoice-table"></td>
                     <td class="invoice-table"><?= $invoice_book->book_title ?></td>
                     <td
@@ -237,13 +237,13 @@
 
     <table style="width: 100%;">
         <tr>
-            <td style="width:50%"></td>
+            <td style="width:50%" style="height: 33px;"></td>
             <td style="width:10%"></td>
             <td style="width:10%"></td>
             <td style="width:10%; text-align: right;"><?= $total_temp ?></td>
         </tr>
         <tr>
-            <td scope="col"></td>
+            <td scope="col" style="height: 33px;"></td>
             <td scope="col">Ongkos Kirim</td>
             <td
                 scope="col"
@@ -255,7 +255,7 @@
             ><?= $invoice->delivery_fee ?></td>
         </tr>
         <tr>
-            <td scope="col"></td>
+            <td scope="col" style="height: 33px;"></td>
             <td scope="col"><b>Jumlah</b></td>
             <td
                 scope="col"
@@ -270,12 +270,12 @@
             <td
                 scope="col"
                 colspan="4"
-                style="text-align: right;"
+                style="text-align: right; height: 33px;"
             ><b><?= ucfirst(view_price_to_text($total)) ?> rupiah</b></td>
         </tr>
         <?php if ($invoice->type == 'cash') : ?>
             <tr>
-                <td scope="col"></td>
+                <td scope="col" style="height: 33px;"></td>
                 <td scope="col">Bayar</td>
                 <td
                     scope="col"
@@ -287,7 +287,7 @@
                 ><?= $total ?></td>
             </tr>
             <tr>
-                <td scope="col"></td>
+                <td scope="col" style="height: 33px;"></td>
                 <td scope="col">Kurang</td>
                 <td
                     scope="col"
