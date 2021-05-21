@@ -118,6 +118,11 @@ $level              = check_level();
                     </tbody>
                 </table>
                 <br>
+                <button
+                    type="button"
+                    class="btn btn-primary float-right ml-3"
+                    id="pay-royalty"
+                >Bayar Royalti</button>
                 <a
                     href="<?= base_url('royalty/generate_pdf/' . $author->author_id . $url) ?>"
                     class="btn btn-outline-danger float-right"
@@ -128,3 +133,33 @@ $level              = check_level();
         </div>
     </section>
 </div>
+<script>
+$('#pay-royalty').on("click", function() {
+    var paid_date = "<?= $period_end; ?>"
+    if (paid_date == "") paid_date = new Date().toISOString().slice(0, 10)
+    $.ajax({
+        type: "POST",
+        url: "<?= base_url("royalty/pay"); ?>",
+        data: {
+            paid_date: paid_date,
+            author_id: "<?= $author->author_id ?>"
+        },
+        success: function(result) {
+            var response = $.parseJSON(result)
+            //Validation Error
+            if (response.status != true) {
+                $(".error-message").addClass('d-none');
+                for (var i = 0; i < response.input_error.length; i++) {
+                    // Show error message
+                    $('#' + response.input_error[i]).removeClass('d-none');
+                }
+            } else {
+                location.href = "<?= base_url('royalty'); ?>";
+            }
+        },
+        error: function(req, err) {
+            console.log(err)
+        }
+    });
+})
+</script>

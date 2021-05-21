@@ -78,4 +78,14 @@ class Royalty extends Sales_Controller
 
         $this->pdf->generate_pdf_a4_landscape($html, $file_name);
     }
+
+    public function pay()
+    {
+        $author_id = $this->input->post('author_id');
+        $edit = [
+            'last_paid_date' => $this->input->post('paid_date')
+        ];
+        $this->db->set($edit)->where('author_id', $author_id)->update('author');
+        echo json_encode(['status' => true]);
+    }
 }
