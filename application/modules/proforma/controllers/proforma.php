@@ -7,7 +7,7 @@ class Proforma extends Sales_Controller
         parent::__construct();
         $this->pages = 'proforma';
         $this->load->model('proforma_model', 'proforma');
-        $this->load->model('book/Book_model', 'book');
+        $this->load->model('book/book_model', 'book');
         $this->load->helper('sales_helper');
     }
 
@@ -154,7 +154,7 @@ class Proforma extends Sales_Controller
             }
 
             $add = [
-                'number'            => $this->input->post('number'),
+                'number'            => $this->proforma->get_last_proforma_number(),
                 'customer_id'       => $customer_id,
                 'due_date'          => $this->input->post('due-date'),
                 'issued_date'       => $date_created
@@ -186,12 +186,14 @@ class Proforma extends Sales_Controller
         //View add proforma
         else {
             $customer_type = get_customer_type();
-
+            
             $dropdown_book_options = $this->proforma->get_ready_book_list();
 
+            $form_action = "proforma/add";
+            $form_type = "add";
             $pages       = $this->pages;
-            $main_view   = 'proforma/add_proforma';
-            $this->load->view('template', compact('pages', 'main_view', 'customer_type', 'dropdown_book_options'));
+            $main_view   = 'proforma/form_proforma';
+            $this->load->view('template', compact('pages', 'main_view', 'customer_type', 'dropdown_book_options', 'form_action', 'form_type'));
         }
     }
 
@@ -218,7 +220,6 @@ class Proforma extends Sales_Controller
             }
 
             $edit = [
-                'number'            => $this->input->post('number'),
                 'customer_id'       => $customer_id,
                 'due_date'          => $this->input->post('due-date'),
                 // 'date_edited'   => date('Y-m-d H:i:s'),
@@ -262,9 +263,11 @@ class Proforma extends Sales_Controller
 
             $dropdown_book_options = $this->proforma->get_ready_book_list();
 
+            $form_action = "proforma/edit/$proforma_id";
+            $form_type = "edit";
             $pages       = $this->pages;
-            $main_view   = 'proforma/edit_proforma';
-            $this->load->view('template', compact('pages', 'proforma', 'proforma_book', 'customer', 'discount', 'main_view', 'customer_type', 'dropdown_book_options'));
+            $main_view   = 'proforma/form_proforma';
+            $this->load->view('template', compact('pages', 'proforma', 'proforma_book', 'customer', 'discount', 'main_view', 'customer_type', 'dropdown_book_options', 'form_action', 'form_type'));
         }
     }
 
@@ -287,10 +290,10 @@ class Proforma extends Sales_Controller
         return $this->send_json_output(true, $discount);
     }
 
-    // Auto generate nomor faktur berdasar jenis faktur
-    public function api_get_last_proforma_number()
-    {
-        $number = $this->proforma->get_last_proforma_number();
-        return $this->send_json_output(true, $number);
-    }
+    // // Auto generate nomor faktur berdasar jenis faktur
+    // public function api_get_last_proforma_number()
+    // {
+    //     $number = $this->proforma->get_last_proforma_number();
+    //     return $this->send_json_output(true, $number);
+    // }
 }
