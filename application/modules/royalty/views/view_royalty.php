@@ -22,6 +22,10 @@ $level              = check_level();
 if ($period_end != null) {
     $selected_date = $period_end;
 }
+$url = '';
+if ($period_end == null) $url = '';
+else $url = '/' . $period_end;
+$month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
 ?>
 <div class="page-section">
     <section
@@ -64,22 +68,19 @@ if ($period_end != null) {
                         </div>
                     </div>
                     <hr>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered mb-0">
-                            <tbody>
-                                <?php $url = '';
-                                if ($period_end == null) $url = '';
-                                else $url = '/' . $period_end; ?>
-                                <tr>
-                                    <td width="200px"> Periode Royalti </td>
-                                    <td>test</td>
-                                </tr>
-                                <tr>
-                                    <td width="200px"> Tahun Royalti </td>
-                                    <td>test</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="form-group">
+                        <label
+                            for="due-date"
+                            class="font-weight-bold"
+                        >
+                            Pembayaran Royalti Terakhir</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            value="<?= date("d", strtotime($author->last_paid_date)) . " " . $month[intval(date("m", strtotime($author->last_paid_date))) - 1] . " " . date("Y", strtotime($author->last_paid_date)) ?>"
+                            readonly
+                        />
+
                     </div>
                     <hr>
                 </div>
@@ -153,6 +154,42 @@ if ($period_end != null) {
                     id="btn-generate-pdf"
                     title="Generate PDF"
                 >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
+                <div
+                    class="modal modal-alert fade"
+                    id="modal-confirm"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="modal-confirm"
+                    aria-hidden="true"
+                >
+                    <div
+                        class="modal-dialog"
+                        role="document"
+                    >
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Konfirmasi Pembayaran</h5>
+                            </div>
+                            <form
+                                id="confirm-royalty"
+                                method="post"
+                            >
+                                <p class="ml-5 mt-3">Yakin Membayar Royalti?</p>
+                                <div class="modal-footer">
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                    >Save</button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-light"
+                                        data-dismiss="modal"
+                                    >Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -169,6 +206,9 @@ $(document).ready(function() {
         $flatpickr.clear();
     })
     $('#pay-royalty').on("click", function() {
+        $('#modal-confirm').modal('toggle')
+    })
+    $('#confirm-royalty').on("submit", function() {
         var paid_date = "<?= $period_end; ?>"
         if (paid_date == "") paid_date = new Date().toISOString().slice(0, 10)
         $.ajax({
