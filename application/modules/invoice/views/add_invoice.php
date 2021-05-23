@@ -95,7 +95,10 @@
                         <hr class="my-4">
 
                         <div class="form-group">
-                            <label for="customer-id" class="font-weight-bold mb-0">
+                            <label
+                                for="customer-id"
+                                class="font-weight-bold mb-0"
+                            >
                                 Customer
                             </label>
                             <div class="form-group mb-4">
@@ -230,12 +233,12 @@
                             </div>
 
                         </div>
-                        
+
                         <small
                             id="error-customer-info"
                             class="d-none error-message text-danger"
                         >Data customer wajib diisi!</small>
-                        
+
                         <hr class="my-4">
                         <div class="row">
                             <div class="form-group col-md-8">
@@ -406,8 +409,6 @@ $(document).ready(function() {
         $('#new-customer-type').val('')
     })
 
-    
-
     const $flatpickr = $('.dates').flatpickr({
         altInput: true,
         altFormat: 'j F Y',
@@ -464,7 +465,7 @@ $(document).ready(function() {
     });
 
     $('#book-id').change(function(e) {
-        if(e.target.value != '') {
+        if (e.target.value != '') {
             const bookId = e.target.value
             $.ajax({
                 type: "GET",
@@ -512,26 +513,25 @@ $(document).ready(function() {
         $('#new-customer-name').val('')
         $('#new-customer-type').val('')
 
-        if(customerId != '')
-        {
+        if (customerId != '') {
             $.ajax({
-            type: "GET",
-            url: "<?= base_url('invoice/api_get_customer/'); ?>" + customerId,
-            datatype: "JSON",
-            success: function(res) {
-                $('#customer-info').show()
-                $('#discount').val(res.data.discount)
-                $('#info-customer-name').html(res.data.name)
-                $('#info-address').html(res.data.address)
-                $('#info-phone-number').html(res.data.phone_number)
-                $('#info-type').html(res.data.type)
-            },
-            error: function(err) {
-                $('#customer-info').hide()
-            },
-        });
+                type: "GET",
+                url: "<?= base_url('invoice/api_get_customer/'); ?>" + customerId,
+                datatype: "JSON",
+                success: function(res) {
+                    $('#customer-info').show()
+                    $('#discount').val(res.data.discount)
+                    $('#info-customer-name').html(res.data.name)
+                    $('#info-address').html(res.data.address)
+                    $('#info-phone-number').html(res.data.phone_number)
+                    $('#info-type').html(res.data.type)
+                },
+                error: function(err) {
+                    $('#customer-info').hide()
+                },
+            });
         }
-        
+
     })
 
     $('#type').change(function(e) {
@@ -632,8 +632,7 @@ function updateQty(book_id) {
     var discount = $('#invoice-book-discount-' + book_id).val();
     var total_html = $('#invoice-book-total-' + book_id);
 
-    var total = Math.round(qty * price * (1 - discount/100));
+    var total = Math.round(qty * price * (1 - discount / 100));
     total_html.html('Rp ' + total)
 }
-
 </script>

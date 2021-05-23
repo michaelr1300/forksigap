@@ -18,7 +18,11 @@ $level              = check_level();
         </ol>
     </nav>
 </header>
-
+<?php $selected_date = date("Y-m-d");
+if ($period_end != null) {
+    $selected_date = $period_end;
+}
+?>
 <div class="page-section">
     <section
         id="data-invoice"
@@ -31,12 +35,33 @@ $level              = check_level();
                     class="tab-pane fade active show"
                     id="logistic-data"
                 >
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered mb-0">
-                            <tbody>
-
-                            </tbody>
-                        </table>
+                    <div class="form-group">
+                        <label
+                            for="due-date"
+                            class="font-weight-bold"
+                        >
+                            Tanggal Pembayaran Royalti</label>
+                        <div class="input-group mb-3">
+                            <input
+                                name="due-date"
+                                id="due-date"
+                                class="form-control dates"
+                                value="<?= $selected_date ?>"
+                            />
+                            <div class="input-group-append">
+                                <button
+                                    class="btn btn-outline-secondary"
+                                    type="button"
+                                    id="due_clear"
+                                >Clear</button>
+                            </div>
+                            <div class="input-group-append">
+                                <button
+                                    class="btn btn-primary"
+                                    onclick="filterDate()"
+                                ><i class="fa fa-filter"></i> Filter</button>
+                            </div>
+                        </div>
                     </div>
                     <hr>
                     <div class="table-responsive">
@@ -58,7 +83,6 @@ $level              = check_level();
                     </div>
                     <hr>
                 </div>
-
                 <table class="table table-striped mb-0">
                     <thead>
                         <tr class="text-center">
@@ -134,32 +158,47 @@ $level              = check_level();
     </section>
 </div>
 <script>
-$('#pay-royalty').on("click", function() {
-    var paid_date = "<?= $period_end; ?>"
-    if (paid_date == "") paid_date = new Date().toISOString().slice(0, 10)
-    $.ajax({
-        type: "POST",
-        url: "<?= base_url("royalty/pay"); ?>",
-        data: {
-            paid_date: paid_date,
-            author_id: "<?= $author->author_id ?>"
-        },
-        success: function(result) {
-            var response = $.parseJSON(result)
-            //Validation Error
-            if (response.status != true) {
-                $(".error-message").addClass('d-none');
-                for (var i = 0; i < response.input_error.length; i++) {
-                    // Show error message
-                    $('#' + response.input_error[i]).removeClass('d-none');
-                }
-            } else {
-                location.href = "<?= base_url('royalty'); ?>";
-            }
-        },
-        error: function(req, err) {
-            console.log(err)
-        }
+$(document).ready(function() {
+    const $flatpickr = $('.dates').flatpickr({
+        altInput: true,
+        altFormat: 'j F Y',
+        dateFormat: 'Y-m-d',
+        enableTime: false
     });
+    $("#due_clear").click(function() {
+        $flatpickr.clear();
+    })
+    $('#pay-royalty').on("click", function() {
+        var paid_date = "<?= $period_end; ?>"
+        if (paid_date == "") paid_date = new Date().toISOString().slice(0, 10)
+        $.ajax({
+            type: "POST",
+            url: "<?= base_url("royalty/pay"); ?>",
+            data: {
+                paid_date: paid_date,
+                author_id: "<?= $author->author_id ?>"
+            },
+            success: function(result) {
+                var response = $.parseJSON(result)
+                //Validation Error
+                if (response.status != true) {
+                    $(".error-message").addClass('d-none');
+                    for (var i = 0; i < response.input_error.length; i++) {
+                        // Show error message
+                        $('#' + response.input_error[i]).removeClass('d-none');
+                    }
+                } else {
+                    location.href = "<?= base_url('royalty'); ?>";
+                }
+            },
+            error: function(req, err) {
+                console.log(err)
+            }
+        });
+    })
 })
+
+function filterDate() {
+    location.href = "<?= base_url('royalty/view/' . $author->author_id . '/'); ?>" + $('#due-date').val();
+}
 </script>
