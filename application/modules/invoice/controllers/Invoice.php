@@ -91,7 +91,7 @@ class Invoice extends Sales_Controller
                 'customer_id'       => $customer_id,
                 'due_date'          => $this->input->post('due-date'),
                 'type'              => $type,
-                'source'            => $this->input->post('source'),
+                'source'            => $this->input->post('source') ?? 'warehouse',
                 'source_library_id' => $this->input->post('source-library-id'),
                 'status'            => $status,
                 'issued_date'       => $date_created
@@ -100,9 +100,7 @@ class Invoice extends Sales_Controller
             $this->db->insert('invoice', $add);
             // ID faktur terbaru untuk diisi buku
             $invoice_id = $this->db->insert_id();
-            if ($type == 'credit' || $type == 'online') {
-                $this->db->set('source', 'warehouse')->where('invoice_id', $invoice_id)->update('invoice');
-            }
+
             // Jumlah Buku di Faktur
             $countsize = count($this->input->post('invoice_book_id'));
             // Total berat buku
@@ -342,6 +340,10 @@ class Invoice extends Sales_Controller
                 } else {
                     $add_day = 8 - date('N');
                     $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ " . $add_day . "day"));
+                }
+                if ($invoice->source != 'warehouse')
+                {
+                    $invoice_status = 'finish';
                 }
                 $this->invoice->where('invoice_id', $id)->update([
                     'status' => $invoice_status,
