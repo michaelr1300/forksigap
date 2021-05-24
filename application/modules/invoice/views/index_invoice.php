@@ -233,6 +233,46 @@ function generate_invoice_action($invoice_id)
                                                     <span class="sr-only">Edit</span>
                                                 </a>
                                             <?php endif; ?>
+                                            <!-- Faktur Selesai Diproses -->
+                                            <?php if ($lData->status == 'preparing_finish') : ?>
+                                                <button type="button" class="btn btn-sm btn-secondary font-weight-bold w-100" data-toggle="modal" data-target="#modal-finish-invoice-<?= $lData->invoice_id ?>">Selesai</button>
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="modal-finish-invoice-<?= $lData->invoice_id ?>" role="dialog"aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered"role="document">
+                                                        <div class="modal-content text-left">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Selesai Transaksi Faktur?</h5>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <b> Pastikan jumlah buku yang diambil bagian pemasaran sesuai dengan pesanan faktur! </b> <br>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> 
+                                                                <button data-dismiss="modal" type="button" class="btn btn-primary" onclick="finishInvoice(<?= $lData->invoice_id ?>)">Selesai</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <script>
+                                                    function finishInvoice(id){
+                                                        $.ajax({
+                                                            type: "POST",
+                                                            url: '<?= base_url("invoice/action/"); ?>' + id + '/finish',
+                                                            success: function(res) {
+                                                                showToast(true, res.data);
+                                                                location.reload();
+                                                            },
+                                                            error: function(err) {
+                                                                showToast(false, err.responseJSON.message);
+                                                            },
+                                                            complete: function(data)
+                                                            {
+                                                                console.log(data);
+                                                            }
+                                                        });
+                                                    }
+                                                </script>
+                                            <?php endif ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

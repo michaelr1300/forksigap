@@ -332,22 +332,23 @@ class Invoice extends Sales_Controller
 
         $this->db->trans_begin();
 
-        // Confirm Faktur
-        if ($invoice_status == 'confirm') {
-            // M T W T F S S
-            // 1 2 3 4 5 6 7
-            if (date('N') < 5) {
-                $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ 1 day"));
-            } else {
-                $add_day = 8 - date('N');
-                $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ " . $add_day . "day"));
-            }
-            $this->invoice->where('invoice_id', $id)->update([
-                'status' => $invoice_status,
-                'confirm_date' => now(),
-                'preparing_deadline' => $preparing_deadline
-            ]);
-        } else
+        if ($invoice->status == 'waiting') {
+            // Confirm Faktur
+            if ($invoice_status == 'confirm') {
+                // M T W T F S S
+                // 1 2 3 4 5 6 7
+                if (date('N') < 5) {
+                    $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ 1 day"));
+                } else {
+                    $add_day = 8 - date('N');
+                    $preparing_deadline = date("Y-m-d H:i:s", strtotime("+ " . $add_day . "day"));
+                }
+                $this->invoice->where('invoice_id', $id)->update([
+                    'status' => $invoice_status,
+                    'confirm_date' => now(),
+                    'preparing_deadline' => $preparing_deadline
+                ]);
+            } else
             // Cancel Faktur
             if ($invoice_status == 'cancel') {
                 $this->invoice->where('invoice_id', $id)->update([
@@ -382,6 +383,16 @@ class Invoice extends Sales_Controller
                     $this->db->where('invoice_id', $id)->delete('book_transaction');
                 }
             }
+        } else
+        if ($invoice->status == 'preparing_finish') {
+            // Finish Faktur
+            if ($invoice_status == 'finish') {
+                $this->invoice->where('invoice_id', $id)->update([
+                    'status' => $invoice_status,
+                    'finish_date' => now(),
+                ]);
+            }
+        }
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

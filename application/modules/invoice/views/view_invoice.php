@@ -208,6 +208,48 @@ $level              = check_level();
                         id="card-button"
                         class="d-flex justify-content-end"
                     >
+                        <!-- Faktur Selesai Diproses -->
+                        <?php if ($invoice->status == 'preparing_finish') : ?>
+                            <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#modal-finish-invoice">Selesai</button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="modal-finish-invoice" role="dialog"aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered"role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Selesai Transaksi Faktur?</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <b> Pastikan jumlah buku yang diambil bagian pemasaran sesuai dengan pesanan faktur! </b> <br>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                            <button id="btn-modal-finish-invoice" data-dismiss="modal" type="button" class="btn btn-primary">Selesai</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script>
+                                $(document).ready(function() {
+                                    $('#data-invoice').on('click', '#btn-modal-finish-invoice', function(){
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "<?= base_url("invoice/action/$invoice->invoice_id/finish"); ?>",
+                                            success: function(res) {
+                                                showToast(true, res.data);
+                                                location.reload();
+                                            },
+                                            error: function(err) {
+                                                showToast(false, err.responseJSON.message);
+                                            },
+                                            complete: function(data)
+                                            {
+                                                console.log(data);
+                                            }
+                                        });
+                                    })
+                                }) 
+                            </script>
+                        <?php endif ?>
                         <button
                             onclick="check_delivery()"
                             class="btn btn-outline-danger"
