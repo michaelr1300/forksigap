@@ -186,7 +186,7 @@ class Proforma extends Sales_Controller
         //View add proforma
         else {
             $customer_type = get_customer_type();
-            
+
             $dropdown_book_options = $this->proforma->get_ready_book_list();
 
             $form_action = "proforma/add";
@@ -274,7 +274,7 @@ class Proforma extends Sales_Controller
     public function generate_pdf($proforma_id)
     {
         $proforma      = $this->proforma->fetch_proforma_id($proforma_id);
-        $proforma_book = $this->proforma->fetch_proforma_book($proforma->proforma_id);
+        $proforma_books = $this->proforma->fetch_proforma_book($proforma->proforma_id);
         $proforma->customer = $this->proforma->get_customer($proforma->customer_id);
 
         // PDF
