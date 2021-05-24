@@ -247,17 +247,17 @@
                 scope="col"
                 style="text-align: right;"
             ></td>
-            <!-- <td
+            <td
                 scope="col"
                 style="text-align: right; border-bottom: 4px double black"
-            ><b><?= $total ?></b></td> -->
+            ><b><?= $total ?></b></td>
         </tr>
         <tr>
-            <!-- <td
+            <td
                 scope="col"
                 colspan="4"
                 style="text-align: right; height: 33px;"
-            ><b><?= ucfirst(view_price_to_text($total)) ?> rupiah</b></td> -->
+            ><b><?= ucfirst(view_price_to_text($total)) ?> rupiah</b></td>
         </tr>
             <tr>
                 <td scope="col" style="height: 33px;"></td>
@@ -278,10 +278,10 @@
                     scope="col"
                     style="text-align: right;"
                 ></td>
-                <!-- <td
+                <td
                     scope="col"
                     style="text-align: right;"
-                ><?= $total ?></td> -->
+                ><?= $total ?></td>
             </tr>
     </table>
 
