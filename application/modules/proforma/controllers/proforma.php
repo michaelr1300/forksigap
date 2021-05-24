@@ -52,6 +52,7 @@ class Proforma extends Sales_Controller
         }
         $this->db->trans_begin();
         $flag = true;
+        $empty_books = array();
 
         // Confirm Proforma
         if ($proforma_status == 'confirm') {
@@ -63,6 +64,7 @@ class Proforma extends Sales_Controller
                 $stock = intval($stock->warehouse_present);
                 if ($qty > $stock) {
                     $flag = false;
+                    array_push($empty_books, $book->book_title);
                 }
             }
             if ($flag) {
@@ -115,6 +117,8 @@ class Proforma extends Sales_Controller
         if (!$flag) {
             $this->db->trans_rollback();
             $this->session->set_flashdata('error', $this->lang->line('toast_convert_empty'));
+            $this->session->set_flashdata('empty_books', $empty_books);
+            redirect('proforma/edit/' . $id);
         } else {
             if ($this->db->trans_status() === false) {
                 $this->db->trans_rollback();
