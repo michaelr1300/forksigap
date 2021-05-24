@@ -59,12 +59,12 @@ class Proforma extends Sales_Controller
             //cek stok gudang dengan proforma_book
             $books = $this->proforma->fetch_proforma_book($id);
             foreach ($books as $book) {
-                $stock = $this->proforma->fetch_warehouse_stock($book->book_id);
+                $book->stock = $this->proforma->fetch_warehouse_stock($book->book_id);
                 $qty = intval($book->qty);
-                $stock = intval($stock->warehouse_present);
+                $stock = intval($book->stock->warehouse_present);
                 if ($qty > $stock) {
                     $flag = false;
-                    array_push($empty_books, $book->book_title);
+                    array_push($empty_books, $book);
                 }
             }
             if ($flag) {
@@ -312,10 +312,12 @@ class Proforma extends Sales_Controller
         return $this->send_json_output(true, $discount);
     }
 
-    // // Auto generate nomor faktur berdasar jenis faktur
-    // public function api_get_last_proforma_number()
-    // {
-    //     $number = $this->proforma->get_last_proforma_number();
-    //     return $this->send_json_output(true, $number);
-    // }
+    public function debug($id) {
+        $books = $this->proforma->fetch_proforma_book($id);
+        foreach ($books as $book) {
+            $book->stock = $this->proforma->fetch_warehouse_stock($book->book_id);
+        }
+        var_dump($books);
+        //return $books;
+    }
 }

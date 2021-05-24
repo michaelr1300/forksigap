@@ -27,7 +27,7 @@ $empty_books        = $this->session->flashdata('empty_books');
                         method="post"
                         action="<?= $form_action ?>"
                     >
-                        <legend>Form Tambah Proforma</legend>
+                        <legend>Form Proforma</legend>
                         <?php if ($form_type == 'edit') : ?>
                             <div
                                 id="proforma-number"
@@ -317,12 +317,25 @@ $empty_books        = $this->session->flashdata('empty_books');
                         <hr>
                         <div class="card border-danger">
                             <div class="card-body text-danger">
-                                <?php if (isset($empty_books)) { ?>
-                                    <h5 class="card-title">Buku yang Kosong: </h5>
-                                    <?php foreach ($empty_books as $book) : ?>
-                                        <p class="card-text"><?= $book ?></p>
-                                <?php endforeach;
-                                } ?>
+                                <?php if (isset($empty_books)) : ?>
+                                    <h5 class="card-title">Stock buku yang tidak mencukupi: </h5>
+                                    <table class="table table-stripped text-danger">
+                                        <thead>
+                                            <tr>
+                                                <th>Judul Buku</th>
+                                                <th>Stock Tersedia</th>    
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($empty_books as $book) : ?>
+                                                <tr>
+                                                    <td><?= $book->book_title ?></td>
+                                                    <td> <?= $book->stock->warehouse_present ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                <?php endif ?>
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -473,6 +486,22 @@ $(document).ready(function() {
     <?php if ($form_type == 'edit') : ?>
         <?php foreach ($proforma_book as $books) : ?>
             $('#book-id option[value="' + <?= $books->book_id ?> + '"]').remove()
+
+            //fetch stock sekarang
+            $.ajax({
+                type: "GET",
+                url: "<?= base_url('proforma/api_get_book/'); ?>" + <?= $books->book_id ?>,
+                datatype: "JSON",
+                success: function(res) {
+                    $('#proforma-book-qty-' + <?= $books->book_id ?>).attr({
+                        "max" : res.data.stock,
+                        "min" : 1
+                    });
+                },
+                error: function(err) {
+                    console.log(err);
+                },
+            });
         <?php endforeach; ?>
         $('#discount').val('<?= $discount ?>')
         $('#customer-info').show()

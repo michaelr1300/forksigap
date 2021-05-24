@@ -74,25 +74,9 @@ class Proforma_model extends MY_Model
 
     public function fetch_warehouse_stock($book_id)
     {
-
         $stock = $this->db->select('warehouse_present')
             ->from('book_stock')
             ->where('book_id', $book_id)
-            ->order_by("book_stock_id", "DESC")
-            ->limit(1)
-            ->get()
-            ->row();
-        return $stock;
-    }
-
-    public function fetch_showroom_stock($book_id)
-    {
-
-        $stock = $this->db->select('showroom_present')
-            ->from('book_stock')
-            ->where('book_id', $book_id)
-            ->order_by("book_stock_id", "DESC")
-            ->limit(1)
             ->get()
             ->row();
         return $stock;
@@ -113,39 +97,6 @@ class Proforma_model extends MY_Model
                 $book->stock = 0;
             else
                 $book->stock = $stock->warehouse_present;
-        }
-
-        // Buku stock 0 tidak ditampilkan
-        foreach ($books as $key => $book) {
-            if ($book->stock == 0) {
-                unset($books[$key]);
-            }
-        }
-
-        // Input buku ke array untuk dropdown
-        $options = ['' => '-- Pilih --'];
-        foreach ($books as $book) {
-            $options += [$book->book_id => $book->book_title];
-        }
-
-        return $options;
-    }
-
-    public function get_ready_book_list_showroom()
-    {
-        $books = $this->db
-            ->select('book_id, book_title')
-            ->order_by('book_title', 'ASC')
-            ->from('book')
-            ->get()
-            ->result();
-        foreach ($books as $book) {
-            // Tambahkan data stock ke buku
-            $stock = $this->fetch_showroom_stock($book->book_id);
-            if ($stock == NULL)
-                $book->stock = 0;
-            else
-                $book->stock = $stock->showroom_present;
         }
 
         // Buku stock 0 tidak ditampilkan
@@ -244,51 +195,6 @@ class Proforma_model extends MY_Model
                 $this->group_start();
                 $this->or_like('customer.type', $data);
                 $this->group_end();
-            }
-        }
-        return $this;
-    }
-
-    // BOOK REQUEST BUAT DI GUDANG
-    // filter untuk book request gudang
-    public function filter_book_request($filters, $page)
-    {
-        $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
-            ->where('status', 'confirm')
-            ->or_where('status', 'preparing')
-            ->or_where('status', 'preparing_finish')
-            ->when_request('keyword', $filters['keyword'])
-            ->when_request('type', $filters['type'])
-            ->order_by('invoice_id', 'DESC')
-            ->paginate($page)
-            ->get_all();
-
-        $total = $this->select('invoice_id')
-            ->where('status', 'confirm')
-            ->or_where('status', 'preparing')
-            ->or_where('status', 'preparing_finish')
-            ->when_request('keyword', $filters['keyword'])
-            ->when_request('type', $filters['type'])
-            ->order_by('invoice_id')
-            ->count();
-        return [
-            'book_request'  => $book_request,
-            'total' => $total
-        ];
-    }
-
-    public function when_request($params, $data)
-    {
-        // jika data null, maka skip
-        if ($data != '') {
-            if ($params == 'keyword') {
-                $this->group_start();
-                $this->or_like('number', $data);
-                $this->group_end();
-            } else if ($params == 'type') {
-                $this->where('type', $data);
-            } else if ($params == 'status') {
-                $this->where('status', $data);
             }
         }
         return $this;
