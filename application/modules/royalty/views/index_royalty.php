@@ -80,16 +80,17 @@ function royalti_action()
                         </div>
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
-                            <div class="col-12 col-md-4 mt-2">
+                            <div class="col-12 col-md-6 mt-2">
                                 <label for="per_page">Data per halaman</label>
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
-                            <div class="col-12 col-md-4 mt-2">
+                            <div class="col-12 col-md-6 mt-2">
                                 <label for="date_end">Periode</label>
                                 <input
                                     type="date"
                                     id="end_date"
                                     name="end_date"
+                                    class="form-control custom-select d-block"
                                 >
                             </div>
                             <div class="col-12 col-md-8 mt-2">

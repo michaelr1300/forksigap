@@ -138,9 +138,11 @@ $level              = check_level();
                     class="d-flex justify-content-end"
                 >
                     <a
-                        class="btn btn-outline-danger"
-                        href="<?php echo base_url('proforma/pdf') ?>"
-                    >Generate PDF<i class="fas fa-file-pdf fa-fw"></i></a>
+                        href="<?= base_url('proforma/generate_pdf/' . $proforma->proforma_id) ?>"
+                        class="btn btn-outline-danger float-right"
+                        id="btn-generate-pdf"
+                        title="Generate PDF"
+                    >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
                 </div>
 
 

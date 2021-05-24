@@ -271,6 +271,24 @@ class Proforma extends Sales_Controller
         }
     }
 
+    public function generate_pdf($proforma_id)
+    {
+        $proforma      = $this->proforma->fetch_proforma_id($proforma_id);
+        $proforma_book = $this->proforma->fetch_proforma_book($proforma->proforma_id);
+        $proforma->customer = $this->proforma->get_customer($proforma->customer_id);
+
+        // PDF
+        $this->load->library('pdf');
+        $data_format['proforma'] = $proforma ?? '';
+        $data_format['proforma_books'] = $proforma_books ?? '';
+
+        $html = $this->load->view('proforma/view_proforma_pdf', $data_format, true);
+
+        $file_name = $proforma->number . '_Proforma';
+
+        $this->pdf->generate_pdf_a4_portrait($html, $file_name);
+    }
+
     public function api_get_book($book_id)
     {
         $book = $this->proforma->get_book($book_id);
