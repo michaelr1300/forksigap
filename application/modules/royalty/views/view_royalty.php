@@ -18,7 +18,7 @@ $level              = check_level();
         </ol>
     </nav>
 </header>
-<?php $selected_date = date("Y-m-d");
+<?php $selected_date = date('Y-m-d', strtotime("-1 days"));;
 if ($period_end != null) {
     $selected_date = $period_end;
 }
@@ -200,7 +200,8 @@ $(document).ready(function() {
         altInput: true,
         altFormat: 'j F Y',
         dateFormat: 'Y-m-d',
-        enableTime: false
+        enableTime: false,
+        maxDate: new Date().fp_incr(-1)
     });
     $("#due_clear").click(function() {
         $flatpickr.clear();
