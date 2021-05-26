@@ -244,9 +244,15 @@ $invoice_type_options = [
         options: {
             scales: {
                 yAxes: [{
-                    display: true,
                     ticks: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        callback: function(value, index, values) {
+                            if (parseInt(value) >= 1000) {
+                                return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                            } else {
+                                return 'Rp ' + value;
+                            }
+                        }
                     }
                 }],
                 xAxes: [{
@@ -300,9 +306,15 @@ $invoice_type_options = [
         options: {
             scales: {
                 yAxes: [{
-                    display: true,
                     ticks: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        callback: function(value, index, values) {
+                            if (parseInt(value) >= 1000) {
+                                return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                            } else {
+                                return 'Rp ' + value;
+                            }
+                        }
                     }
                 }],
                 xAxes: [{
@@ -322,6 +334,16 @@ $invoice_type_options = [
             },
             legend: {
                 position: 'bottom'
+            },
+            onClick: function(e) {
+                var bar = this.getElementAtEvent(e)[0];
+                if (bar == null) {
+                    $('#table_laporan').hide()
+                } else {
+                    var index = bar._index //bulan
+                    var datasetIndex = bar._datasetIndex //jenis faktur
+                    appendTable('<?= $year ?>', index, datasetIndex)
+                }
             }
         }
     });
@@ -348,7 +370,12 @@ function populateTable(data) {
     for (i = 0; i < data.length; i++) {
         var type = get_invoice_type(data[i].type)
         var status = get_invoice_status(data[i].status)
-        htmlContent += "<tr class='text-center'><td>" + (i + 1) + "</td><td>" + data[i].number + "</td><td>" + type + "</td><td>" + data[i].issued_date.substring(0, 10) + "</td><td>" + status + "</td><td> Rp " + data[i].earning + " </td></tr>"
+        if (parseInt(data[i].earning) >= 1000) {
+            data[i].earning = 'Rp ' + data[i].earning.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        } else {
+            data[i].earning = 'Rp ' + data[i].earning;
+        }
+        htmlContent += "<tr class='text-center'><td>" + (i + 1) + "</td><td>" + data[i].number + "</td><td>" + type + "</td><td>" + data[i].issued_date.substring(0, 10) + "</td><td>" + status + "</td><td>" + data[i].earning + " </td></tr>"
     }
     $('#table_content').html(htmlContent)
 }
