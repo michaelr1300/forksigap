@@ -191,7 +191,7 @@
                     width="26%"
                     class="align-middle invoice-table"
                     colspan="2"
-                >Harga</th>
+                >Harga (Rp)</th>
             </tr>
 
             <tr>
@@ -203,7 +203,10 @@
             <?php $i = 1; ?>
             <?php foreach ($invoice_books as $invoice_book) : ?>
                 <tr class="invoice-table">
-                    <td class="invoice-table" style="height: 33px;"><?= $i++ ?></td>
+                    <td
+                        class="invoice-table"
+                        style="height: 33px;"
+                    ><?= $i++ ?></td>
                     <td class="invoice-table"></td>
                     <td class="invoice-table"><?= $invoice_book->book_title ?></td>
                     <td
@@ -217,11 +220,11 @@
                     <td
                         class="invoice-table"
                         style="text-align: right;"
-                    ><?= $invoice_book->price ?></td>
+                    ><?= number_format($invoice_book->price, 0, ',', '.'); ?></td>
                     <td
                         class="invoice-table"
                         style="text-align: right;"
-                    ><?= $invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount / 100) ?></td>
+                    ><?= number_format($invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount / 100), 0, ',', '.'); ?></td>
                 </tr>
             <?php endforeach ?>
 
@@ -237,13 +240,19 @@
 
     <table style="width: 100%;">
         <tr>
-            <td style="width:50%" style="height: 33px;"></td>
+            <td
+                style="width:50%"
+                style="height: 33px;"
+            ></td>
             <td style="width:10%"></td>
             <td style="width:10%"></td>
             <td style="width:10%; text-align: right;"><?= $total_temp ?></td>
         </tr>
         <tr>
-            <td scope="col" style="height: 33px;"></td>
+            <td
+                scope="col"
+                style="height: 33px;"
+            ></td>
             <td scope="col">Ongkos Kirim</td>
             <td
                 scope="col"
@@ -252,10 +261,13 @@
             <td
                 scope="col"
                 style="text-align: right; border-bottom: 1px solid black"
-            ><?= $invoice->delivery_fee ?></td>
+            ><?= number_format($invoice->delivery_fee, 0, ',', '.'); ?></td>
         </tr>
         <tr>
-            <td scope="col" style="height: 33px;"></td>
+            <td
+                scope="col"
+                style="height: 33px;"
+            ></td>
             <td scope="col"><b>Jumlah</b></td>
             <td
                 scope="col"
@@ -264,7 +276,7 @@
             <td
                 scope="col"
                 style="text-align: right; border-bottom: 4px double black"
-            ><b><?= $total ?></b></td>
+            ><b><?= number_format($total, 0, ',', '.'); ?></b></td>
         </tr>
         <tr>
             <td
@@ -275,7 +287,10 @@
         </tr>
         <?php if ($invoice->type == 'cash') : ?>
             <tr>
-                <td scope="col" style="height: 33px;"></td>
+                <td
+                    scope="col"
+                    style="height: 33px;"
+                ></td>
                 <td scope="col">Bayar</td>
                 <td
                     scope="col"
@@ -287,7 +302,10 @@
                 ><?= $total ?></td>
             </tr>
             <tr>
-                <td scope="col" style="height: 33px;"></td>
+                <td
+                    scope="col"
+                    style="height: 33px;"
+                ></td>
                 <td scope="col">Kurang</td>
                 <td
                     scope="col"
