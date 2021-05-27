@@ -149,7 +149,7 @@
 
     <table
         class="proforma-table"
-        style="width: 100%;"
+        style="width: 100%; margin-top:10px;"
     >
         <thead
             class="proforma-table"
@@ -207,25 +207,25 @@
                     <tr class="proforma-table">
                         <td
                             class="proforma-table"
-                            style="height: 33px;"
+                            style="height: 33px; padding-left:5px;"
                         ><?= $i ?></td>
                         <td class="proforma-table"></td>
-                        <td class="proforma-table"><?= $proforma_book->book_title ?></td>
+                        <td class="proforma-table" style="padding-left:5px;"><?= $proforma_book->book_title ?></td>
                         <td
                             class="proforma-table"
-                            style="text-align: right;"
+                            style="text-align: right; padding-right:5px;"
                         ><?= $proforma_book->qty ?></td>
                         <td
                             class="proforma-table"
-                            style="text-align: right;"
+                            style="text-align: right; padding-right:5px;"
                         ><?= $proforma_book->discount ?></td>
                         <td
                             class="proforma-table"
-                            style="text-align: right;"
+                            style="text-align: right; padding-right:5px;"
                         ><?= number_format($proforma_book->price, 0, ',', '.'); ?></td>
                         <td
                             class="proforma-table"
-                            style="text-align: right;"
+                            style="text-align: right; padding-right:5px;"
                         ><?= number_format($proforma_book->price * $proforma_book->qty * (1 - $proforma_book->discount / 100), 0, ',', '.'); ?></td>
                     </tr>
                 <?php endforeach; ?>
@@ -246,17 +246,17 @@
         <tr>
             <td
                 scope="col"
-                style="height: 33px;"
+                style="height: 33px; width:50%"
             ></td>
-            <td scope="col"><b>Jumlah</b></td>
+            <td scope="col" style="width:10%"><b>Jumlah</b></td>
             <td
                 scope="col"
-                style="text-align: right;"
+                style="text-align: right; width:10%"
             ></td>
             <td
                 scope="col"
-                style="text-align: right; border-bottom: 4px double black"
-            ><b><?= $total ?></b></td>
+                style="text-align: right; border-bottom: 4px double black; width:10%"
+            ><b><?= number_format($total, 0, ',', '.'); ?></b></td>
         </tr>
         <tr>
             <td
@@ -293,7 +293,7 @@
             <td
                 scope="col"
                 style="text-align: right;"
-            ><?= number_format($total, ',', '.'); ?></td>
+            ><?= number_format($total, 0, ',', '.'); ?></td>
         </tr>
     </table>
 

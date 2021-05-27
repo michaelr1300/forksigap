@@ -149,7 +149,7 @@
 
     <table
         class="invoice-table"
-        style="width: 100%;"
+        style="width: 100%; margin-top: 10px;"
     >
         <thead
             class="invoice-table"
@@ -205,25 +205,25 @@
                 <tr class="invoice-table">
                     <td
                         class="invoice-table"
-                        style="height: 33px;"
+                        style="height: 33px; padding-left:5px;"
                     ><?= $i++ ?></td>
                     <td class="invoice-table"></td>
-                    <td class="invoice-table"><?= $invoice_book->book_title ?></td>
+                    <td class="invoice-table" style="padding-left:5px;"><?= $invoice_book->book_title ?></td>
                     <td
                         class="invoice-table"
-                        style="text-align: right;"
+                        style="text-align: right; padding-right:5px;"
                     ><?= $invoice_book->qty ?></td>
                     <td
                         class="invoice-table"
-                        style="text-align: right;"
+                        style="text-align: right; padding-right:5px;"
                     ><?= $invoice_book->discount ?></td>
                     <td
                         class="invoice-table"
-                        style="text-align: right;"
+                        style="text-align: right; padding-right:5px;"
                     ><?= number_format($invoice_book->price, 0, ',', '.'); ?></td>
                     <td
                         class="invoice-table"
-                        style="text-align: right;"
+                        style="text-align: right; padding-right:5px;"
                     ><?= number_format($invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount / 100), 0, ',', '.'); ?></td>
                 </tr>
             <?php endforeach ?>
@@ -299,7 +299,7 @@
                 <td
                     scope="col"
                     style="text-align: right;"
-                ><?= $total ?></td>
+                ><?= number_format($total, 0, ',', '.'); ?></td>
             </tr>
             <tr>
                 <td
