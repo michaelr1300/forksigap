@@ -11,21 +11,13 @@
 		"source": "https://github.com/bcit-ci/CodeIgniter"
 	},
 	"require": {
-		"php": ">=5.3.7",
-		"fzaninotto/faker": "^1.9",
-		"nesbot/carbon": "^2.31",
-		"dompdf/dompdf": "^0.8.6",
-		"phpoffice/phpspreadsheet": "^1.17",
-		"mike42/escpos-php": "^3.0"
+		"php": ">=5.3.7"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"
 	},
 	"require-dev": {
-		"mikey179/vfsstream": "1.1.*",
+		"mikey179/vfsStream": "1.1.*",
 		"phpunit/phpunit": "4.* || 5.*"
-	},
-	"scripts": {
-		"serve": "php -S localhost:8080"
 	}
 }

@@ -1,1 +1,0 @@
-<h2>edit logistic purchase</h2>
