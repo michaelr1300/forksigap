@@ -46,6 +46,7 @@ class Customer extends Sales_Controller
             'name'          => $this->input->post('name'),
             'address'       => $this->input->post('address'),
             'phone_number'  => $this->input->post('phone-number'),
+            'email'         => $this->input->post('email'),
             'type'          => $this->input->post('type')
         ];
         $this->db->insert('customer', $add);
@@ -62,6 +63,7 @@ class Customer extends Sales_Controller
             'name'          => $this->input->post('edit-name'),
             'address'       => $this->input->post('edit-address'),
             'phone_number'  => $this->input->post('edit-phone-number'),
+            'email'         => $this->input->post('edit-email'),
             'type'          => $this->input->post('edit-type')
         ];
         $this->db->set($update);
