@@ -70,20 +70,21 @@ $month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agust
                     <hr>
                     <div class="form-group">
                         <label
-                            for="due-date"
+                            for="last-paid-date"
                             class="font-weight-bold"
                         >
                             Pembayaran Royalti Terakhir</label>
                         <input
                             type="text"
                             class="form-control"
+                            id="last-paid-date"
                             value="<?= date("d", strtotime($author->last_paid_date)) . " " . $month[intval(date("m", strtotime($author->last_paid_date))) - 1] . " " . date("Y", strtotime($author->last_paid_date)) ?>"
                             readonly
                         />
-
                     </div>
                     <hr>
                 </div>
+                <div id="paid_period"></div>
                 <table class="table table-striped mb-0">
                     <thead>
                         <tr class="text-center">
@@ -196,6 +197,7 @@ $month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agust
 </div>
 <script>
 $(document).ready(function() {
+    showPaidPeriod()
     const $flatpickr = $('.dates').flatpickr({
         altInput: true,
         altFormat: 'j F Y',
@@ -242,4 +244,15 @@ $(document).ready(function() {
 function filterDate() {
     location.href = "<?= base_url('royalty/view/' . $author->author_id . '/'); ?>" + $('#due-date').val();
 }
+
+function showPaidPeriod() {
+    var Month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+    var dueDate = $('#due-date').val().split("-")
+    var stringDueDate = dueDate[2] + " " + Month[dueDate[1] - 1] + " " + dueDate[0]
+    $('#paid_period').html("Periode royalti yang akan dibayarkan " + stringDueDate + ' hingga ' + $('#last-paid-date').val())
+}
+
+$('#due-date').change(function() {
+    showPaidPeriod()
+})
 </script>
