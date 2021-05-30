@@ -43,16 +43,27 @@ class Royalty extends Sales_Controller
         if ($royalty_payment == NULL) $last_paid_date = '2021/01/01';
         else $last_paid_date = $royalty_payment->last_paid_date;
         $filters = [
-            'keyword'           => $this->input->get('keyword', true),
             'period_end'        => $period_end,
             'last_paid_date'    => $last_paid_date
         ];
         $royalty_details = $this->royalty->author_details($author_id, $filters);
+
         $pages          = $this->pages;
         $main_view      = 'royalty/view_royalty';
-        // var_dump($author);
-
         $this->load->view('template', compact('pages', 'main_view', 'author', 'royalty_payment', 'royalty_details', 'period_end'));
+    }
+
+    public function view_detail($author_id)
+    {
+        $filters = [
+            'last_paid_date'        => $this->input->get('start_date'),
+            'period_end'            => $this->input->get('end_date')
+        ];
+        $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $author_id)->get()->row();
+        $royalty_details = $this->royalty->author_details($author_id, $filters);
+        $pages          = $this->pages;
+        $main_view      = 'royalty/view_royalty_detail';
+        $this->load->view('template', compact('pages', 'main_view', 'author', 'royalty_details'));
     }
 
     public function generate_pdf($author_id, $period_end = null)

@@ -48,6 +48,7 @@ class Royalty_model extends MY_Model
     {
         $last_paid_date = '';
         if ($filters['last_paid_date'] == '') $last_paid_date = "2021/01/01";
+        else $last_paid_date = $filters['last_paid_date'];
         $this->db->select('book.book_id, book.book_title, SUM(qty) AS count, SUM(qty*price) AS penjualan, SUM(qty*price*book.royalty/100) as earned_royalty')
             ->from('book')
             ->join('draft_author', 'draft_author.draft_id = book.draft_id', 'right')

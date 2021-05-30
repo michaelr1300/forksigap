@@ -159,10 +159,14 @@ if ($royalty_payment == NULL) {
                 ><?= $button_label; ?></button>
                 <a
                     href="<?= base_url('royalty/generate_pdf/' . $author->author_id . $url) ?>"
-                    class="btn btn-outline-danger float-right"
+                    class="btn btn-outline-danger float-right ml-3"
                     id="btn-generate-pdf"
                     title="Generate PDF"
                 >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
+                <a
+                    href="<?= base_url('royalty/view_detail/' . $author->author_id) ?>"
+                    class="btn btn-info float-right"
+                >Lihat Sejarah</a>
                 <div
                     class="modal modal-alert fade"
                     id="modal-confirm"
