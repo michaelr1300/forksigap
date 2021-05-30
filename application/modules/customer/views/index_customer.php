@@ -100,9 +100,10 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             scope="col"
                                             class="pl-4"
                                         >No</th>
-                                        <th scope="col" style="width:25%">Nama</th>
+                                        <th scope="col" style="width:20%">Nama</th>
                                         <th scope="col" style="width:40%">Alamat</th>
-                                        <th scope="col" style="width:15%">No Telepon</th>
+                                        <th scope="col" style="width:12%">No Telepon</th>
+                                        <th scope="col" style="width:20%">Email</th>
                                         <th scope="col" style="width:15%">Jenis Customer</th>
                                         <th style="width:100px; min-width:100px;"> &nbsp; </th>
                                     </tr>
@@ -114,6 +115,7 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             <td class="align-middle"><?= highlight_keyword($customer->name, $keyword); ?></td>
                                             <td class="align-middle"><?= highlight_keyword($customer->address, $keyword); ?></td>
                                             <td class="align-middle"><?= highlight_keyword($customer->phone_number, $keyword); ?></td>
+                                            <td class="align-middle"><?= highlight_keyword($customer->email, $keyword); ?></td>
                                             <td class="align-middle"><?= get_customer_type()[$customer->type]; ?></td>
                                             <td class="align-middle text-right">
                                                 <button
@@ -253,6 +255,19 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             class="d-none error-message text-danger"
                                         >Nomor telepon wajib diisi!</small>
                                     </div>
+                                    <div class="form-group">
+                                        <label
+                                            for="email"
+                                            class="font-weight-bold"
+                                        >Email
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="email"
+                                            id="email"
+                                            class="form-control"
+                                        />
+                                    </div>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -364,6 +379,19 @@ $type_options =  array_merge(['' => '- Filter Jenis Customer -'], $customer_type
                                             id="error-edit-phone-number"
                                             class="d-none error-message text-danger"
                                         >Nomor telepon customer wajib diisi!</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label
+                                            for="edit-email"
+                                            class="font-weight-bold"
+                                        >Email
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="edit-email"
+                                            id="edit-email"
+                                            class="form-control"
+                                        />
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">

@@ -435,7 +435,7 @@
                         <input
                             type="submit"
                             class="btn btn-primary"
-                            value="Submit"
+                            value="Edit"
                         />
                         <a
                             class="btn btn-secondary"

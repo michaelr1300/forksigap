@@ -62,6 +62,10 @@ $level              = check_level();
                                         <td width="200px"> Total Ongkir </td>
                                         <td><?= $invoice->delivery_fee ?></td>
                                     </tr>
+                                    <tr>
+                                        <td width="200px"> Bukti Bayar </td>
+                                        <td><?= $invoice-> ?></td>
+                                    </tr>
                                 <?php endif ?>
                             </tbody>
                         </table>
