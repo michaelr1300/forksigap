@@ -25,7 +25,15 @@ if ($period_end != null) {
 $url = '';
 if ($period_end == null) $url = '';
 else $url = '/' . $period_end;
-$month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+$month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+if ($royalty_payment == NULL) {
+    $last_paid_date = '2021/01/01';
+    $button_label = 'Ajukan Royalti';
+} else {
+    $last_paid_date = $royalty_payment->last_paid_date;
+    if ($royalty_payment->status == 'requested') $button_label = 'Konfirmasi Pembayaran';
+    if ($royalty_payment->status == NULL) $button_label = 'Ajukan Royalti';
+}
 ?>
 <div class="page-section">
     <section
@@ -78,7 +86,7 @@ $month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agust
                             type="text"
                             class="form-control"
                             id="last-paid-date"
-                            value="<?= date("d", strtotime($author->last_paid_date)) . " " . $month[intval(date("m", strtotime($author->last_paid_date))) - 1] . " " . date("Y", strtotime($author->last_paid_date)) ?>"
+                            value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
                             readonly
                         />
                     </div>
@@ -143,12 +151,12 @@ $month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agust
                         </tr>
                     </tbody>
                 </table>
-                <br>
+                <div id="confirm_notif"></div>
                 <button
                     type="button"
                     class="btn btn-primary float-right ml-3"
                     id="pay-royalty"
-                >Bayar Royalti</button>
+                ><?= $button_label; ?></button>
                 <a
                     href="<?= base_url('royalty/generate_pdf/' . $author->author_id . $url) ?>"
                     class="btn btn-outline-danger float-right"
@@ -197,6 +205,12 @@ $month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agust
 </div>
 <script>
 $(document).ready(function() {
+    <?php if ($button_label == 'Konfirmasi Pembayaran') { ?>
+        $('#paid_period').hide();
+        var startPeriod = '<?= date("d", strtotime($royalty_payment->last_paid_date)) . " " . $month[intval(date("m", strtotime($royalty_payment->last_paid_date))) - 1] . " " . date("Y", strtotime($royalty_payment->last_paid_date)) ?>'
+        var endPeriod = '<?= date("d", strtotime($royalty_payment->last_request_date)) . " " . $month[intval(date("m", strtotime($royalty_payment->last_request_date))) - 1] . " " . date("Y", strtotime($royalty_payment->last_request_date)) ?>'
+        $('#confirm_notif').html('<hr><p class="pl-5">Konfirmasi pembayaran royalti untuk periode <b>' + startPeriod + '</b> hingga <b>' + endPeriod + '</b> </p><hr>')
+    <?php } ?>
     showPaidPeriod()
     const $flatpickr = $('.dates').flatpickr({
         altInput: true,
@@ -249,7 +263,7 @@ function showPaidPeriod() {
     var Month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
     var dueDate = $('#due-date').val().split("-")
     var stringDueDate = dueDate[2] + " " + Month[dueDate[1] - 1] + " " + dueDate[0]
-    $('#paid_period').html("Periode royalti yang akan dibayarkan " + stringDueDate + ' hingga ' + $('#last-paid-date').val())
+    $('#paid_period').html("<p class='pl-5'>Periode royalti yang akan dibayarkan <b>" + $('#last-paid-date').val() + '</b> hingga <b>' + stringDueDate + '</b></p><hr>')
 }
 
 $('#due-date').change(function() {

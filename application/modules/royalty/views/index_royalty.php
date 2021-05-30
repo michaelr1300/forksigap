@@ -157,6 +157,11 @@ function royalti_action()
                                     scope="col"
                                     style="width:20%;"
                                     class="pr-4"
+                                >Tanggal Pembayaran Terakhir</th>
+                                <th
+                                    scope="col"
+                                    style="width:20%;"
+                                    class="pr-4"
                                 >Status</th>
                                 <th
                                     scope="col"
@@ -185,7 +190,8 @@ function royalti_action()
                                     <td class="align-middle">
                                         Rp <?= round($lData->earned_royalty, 0); ?>
                                     </td>
-                                    <td>Status</td>
+                                    <td><?= $lData->last_paid_date; ?></td>
+                                    <td><?= $lData->status; ?></td>
                                     <td></td>
                                 </tr>
                             <?php endforeach; ?>
