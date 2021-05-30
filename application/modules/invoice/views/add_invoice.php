@@ -371,6 +371,12 @@
                                 <tbody id="invoice_items">
                                     <!-- Items -->
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>Grand Total</td>
+                                        <td id="grand_total">0</td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
 
@@ -453,6 +459,7 @@ $(document).ready(function() {
         } else {
             add_book_to_invoice(qty.max);
             reset_book();
+            updateGrandTotal()
         }
     });
 
@@ -610,17 +617,16 @@ function add_book_to_invoice(stock) {
 
     // Total
     var totalPrice = (parseFloat($('#info-price').text())) * (parseFloat($('#qty').val())) * (1 - (parseFloat($('#discount').val()) / 100));
-    html += '<td class="align-middle"> <span id="invoice-book-total-' + bookId.value + '"> Rp ' + parseFloat(totalPrice).toFixed(0) + '</span></td>';
+    html += '<td class="align-middle"> <span id="invoice-book-total-' + bookId.value + '">Rp ' + parseFloat(totalPrice).toFixed(0) + '</span></td>';
 
     // Button Hapus
-    html += '<td class="align-middle"><button type="button" class="btn btn-danger remove">Hapus</button></td></tr>';
+    html += '<td class="align-middle"><button type="button" class="btn btn-danger remove" onclick="decreaseGrandTotal(' + bookId.value + ')">Hapus</button></td></tr>';
 
     $('#invoice_items').append(html);
     $('#book-id option[value="' + bookId.value + '"]').remove()
 }
 
 function reset_book() {
-
     document.getElementById('qty').value = 1;
     $("#book-id").val('').trigger('change')
     $('#book-info').hide();
@@ -634,5 +640,23 @@ function updateQty(book_id) {
 
     var total = Math.round(qty * price * (1 - discount / 100));
     total_html.html('Rp ' + total)
+    updateGrandTotal()
+}
+
+function updateGrandTotal() {
+    var grandTotal = 0
+    $('#invoice_items tr').each(function() {
+        $selector = $(this).find("td:first")
+        book_id = $selector.find("input").val()
+        grandTotal += Math.round($('#invoice-book-qty-' + book_id).val() * $('#invoice-book-price-' + book_id).val() * (1 - $('#invoice-book-discount-' + book_id).val() / 100))
+        $('#grand_total').html(grandTotal)
+    })
+}
+
+function decreaseGrandTotal(book_id) {
+    var total_html = $('#invoice-book-total-' + book_id).html()
+    var res = total_html.split(" ")
+    var grandTotal = parseInt($('#grand_total').html()) - parseInt(res[1])
+    $('#grand_total').html(grandTotal)
 }
 </script>

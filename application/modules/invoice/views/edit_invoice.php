@@ -58,9 +58,9 @@
                                 class="d-none error-message text-danger"
                             >Asal stok wajib diisi jika jenis faktur adalah tunai!</small>
                         </div>
-                        <div 
-                            class="form-group" 
-                            id="source-library-dropdown" 
+                        <div
+                            class="form-group"
+                            id="source-library-dropdown"
                             style="display:none"
                         >
                             <label
@@ -103,7 +103,10 @@
                         </div>
                         <hr class="my-4">
                         <div class="form-group">
-                            <label for="customer-id" class="font-weight-bold mb-0">
+                            <label
+                                for="customer-id"
+                                class="font-weight-bold mb-0"
+                            >
                                 Customer
                             </label>
                             <div class="form-group mb-4">
@@ -235,12 +238,12 @@
                             </div>
 
                         </div>
-                        
+
                         <small
                             id="error-customer-info"
                             class="d-none error-message text-danger"
                         >Data customer wajib diisi!</small>
-                        
+
                         <hr class="my-4">
                         <div class="row">
                             <div class="form-group col-md-8">
@@ -414,9 +417,9 @@
                                             </td>
                                             <td class="align-middle">
                                                 <span id="invoice-book-total-<?= $books->book_id ?>">
-                                                    Rp 
+                                                    Rp
                                                     <?php
-                                                    $total = $books->qty * $books->price * (1 - $books->discount/100);
+                                                    $total = $books->qty * $books->price * (1 - $books->discount / 100);
                                                     echo $total;
                                                     ?>
                                                 </span>
@@ -435,7 +438,7 @@
                         <input
                             type="submit"
                             class="btn btn-primary"
-                            value="Submit"
+                            value="Edit"
                         />
                         <a
                             class="btn btn-secondary"
@@ -483,8 +486,8 @@ $(document).ready(function() {
             datatype: "JSON",
             success: function(res) {
                 $('#invoice-book-qty-' + <?= $book->book_id ?>).attr({
-                    "max" : res.data.stock +  +  <?= $book->qty ?>,
-                    "min" : 1
+                    "max": res.data.stock + +<?= $book->qty ?>,
+                    "min": 1
                 });
             },
             error: function(err) {
@@ -493,7 +496,7 @@ $(document).ready(function() {
         });
 
 
-        
+
     <?php endforeach; ?>
 
     const $flatpickr = $('.dates').flatpickr({
@@ -552,7 +555,7 @@ $(document).ready(function() {
     });
 
     $('#book-id').change(function(e) {
-        if(e.target.value != '') {
+        if (e.target.value != '') {
             const bookId = e.target.value
             $.ajax({
                 type: "GET",
@@ -649,7 +652,7 @@ $(document).ready(function() {
         var form = $(this);
         $.ajax({
             type: "POST",
-            url: "<?= base_url("invoice/edit/" .$invoice->invoice_id); ?>",
+            url: "<?= base_url("invoice/edit/" . $invoice->invoice_id); ?>",
             data: form.serialize(), // serializes the form's elements.
             success: function(result) {
                 var response = $.parseJSON(result)
@@ -720,8 +723,7 @@ function updateQty(book_id) {
     var discount = $('#invoice-book-discount-' + book_id).val();
     var total_html = $('#invoice-book-total-' + book_id);
 
-    var total = Math.round(qty * price * (1 - discount/100));
+    var total = Math.round(qty * price * (1 - discount / 100));
     total_html.html('Rp ' + total)
 }
-
 </script>
