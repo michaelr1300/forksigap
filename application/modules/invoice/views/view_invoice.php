@@ -64,7 +64,7 @@ $level              = check_level();
                                     </tr>
                                     <tr>
                                         <td width="200px"> Bukti Bayar </td>
-                                        <td><?= $invoice-> ?></td>
+                                        <td></td>
                                     </tr>
                                 <?php endif ?>
                             </tbody>

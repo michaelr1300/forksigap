@@ -136,15 +136,17 @@
                 Kepada Yth.<br>
                 <?= $customer->name ?><br>
                 <?= $customer->address ?><br>
-                <?= $customer->phone_number ?><br><br>
-                No Faktur : <?= $invoice->number ?>
+                <?= $customer->phone_number ?><br>
+                <?= $customer->email ?><br><br>
+                No Faktur : <b><?= $invoice->number ?></b><br>
+                Bukti Bayar :
             </td>
             <td style="width:30%; vertical-align: top;">
                 <?php $month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"] ?>
                 Yogyakarta, <?= date("d", strtotime($invoice->issued_date)) . " " . $month[intval(date("m", strtotime($invoice->issued_date)))] . " " . date("Y", strtotime($invoice->issued_date)) ?><br>
                 Jatuh Tempo : <?= date("d", strtotime($invoice->due_date)) . " " . $month[intval(date("m", strtotime($invoice->due_date)))] . " " . date("Y", strtotime($invoice->due_date)) ?>
             </td>
-        </tr>
+        </tr>   
     </table>
 
     <table

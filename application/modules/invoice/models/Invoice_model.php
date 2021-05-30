@@ -207,7 +207,7 @@ class Invoice_model extends MY_Model
 
     public function get_customer($customer_id)
     {
-        $this->db->select('customer_id, name, address, phone_number, type, discount');
+        $this->db->select('customer_id, name, address, phone_number, email, type, discount');
         $this->db->from('customer');
         $this->db->join('discount', 'customer.type = discount.membership', 'left');
         $this->db->where('customer.customer_id', $customer_id);

@@ -136,8 +136,9 @@
                 Kepada Yth.<br>
                 <?= $proforma->customer->name ?><br>
                 <?= $proforma->customer->address ?><br>
-                <?= $proforma->customer->phone_number ?><br><br>
-                No Faktur : <?= $proforma->number ?>
+                <?= $proforma->customer->phone_number ?><br>
+                <?= $proforma->customer->email ?><br><br>
+                No Faktur : <b><?= $proforma->number ?></b>
             </td>
             <td style="width:30%; vertical-align: top;">
                 <?php $month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"] ?>
