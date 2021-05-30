@@ -153,6 +153,9 @@
                                                 <tr>
                                                     <td width="175px"> Nomor Telepon </td>
                                                     <td id="info-phone-number"><?= $customer->phone_number ?></td>
+                                                <tr>
+                                                    <td width="175px"> Email </td>
+                                                    <td id="info-email"><?= $customer->email ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td width="175px"> Tipe Membership </td>
@@ -472,6 +475,7 @@ $(document).ready(function() {
         $('#new-customer-name').val('')
         $('#new-customer-address').val('')
         $('#new-customer-phone-number').val('')
+        $('#new-customer-email').val('')
         $('#new-customer-type').val('')
     })
 
@@ -616,6 +620,7 @@ $(document).ready(function() {
                 $('#info-customer-name').html(res.data.name)
                 $('#info-address').html(res.data.address)
                 $('#info-phone-number').html(res.data.phone_number)
+                $('#info-email').html(res.data.email)
                 $('#info-type').html(res.data.type)
 
             },

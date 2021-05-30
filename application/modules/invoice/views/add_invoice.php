@@ -150,6 +150,10 @@
                                                     <td id="info-phone-number"></td>
                                                 </tr>
                                                 <tr>
+                                                    <td width="175px"> Email </td>
+                                                    <td id="info-email"></td>
+                                                </tr>
+                                                <tr>
                                                     <td width="175px"> Tipe Membership </td>
                                                     <td id="info-type"></td>
                                                 </tr>
@@ -216,6 +220,19 @@
                                                 id="error-new-customer-phone-number"
                                                 class="d-none error-message text-danger"
                                             >Nomor telepon wajib diisi!</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label
+                                                for="new-customer-email"
+                                                class="font-weight-bold"
+                                            >Email
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="new-customer-email"
+                                                id="new-customer-email"
+                                                class="form-control"
+                                            />
                                         </div>
                                         <div class="form-group">
                                             <label
@@ -413,6 +430,7 @@ $(document).ready(function() {
         $('#new-customer-address').val('')
         $('#new-customer-phone-number').val('')
         $('#new-customer-type').val('')
+        $('#new-customer-email').val('')
     })
 
     const $flatpickr = $('.dates').flatpickr({
@@ -531,6 +549,7 @@ $(document).ready(function() {
                     $('#info-customer-name').html(res.data.name)
                     $('#info-address').html(res.data.address)
                     $('#info-phone-number').html(res.data.phone_number)
+                    $('#info-email').html(res.data.email)
                     $('#info-type').html(res.data.type)
                 },
                 error: function(err) {
