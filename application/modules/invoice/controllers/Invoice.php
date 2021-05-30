@@ -357,7 +357,7 @@ class Invoice extends Sales_Controller
                     'status' => $invoice_status,
                     'cancel_date' => now(),
                 ]);
-                if($invoice->source == 'warehouse') {
+                 if ($invoice->type != 'showroom') {
                     // Kembalikan stock Gudang buku
                     $invoice_books  = $this->invoice->fetch_invoice_book($id);
                     foreach ($invoice_books as $invoice_book) {

@@ -117,17 +117,17 @@ class Proforma_model extends MY_Model
 
     public function get_book($book_id)
     {
-        $book = $this->select('book.*')
-            ->where('book_id', $book_id)
-            ->get('book');
-
-        $stock = $this->fetch_warehouse_stock($book_id);
-
-        if ($stock == NULL) {
-            $book->stock = 0;
-        } else {
-            $book->stock = $stock->warehouse_present;
+        $book = $this->db->select('*')
+            ->from('book')
+            ->where('book.book_id', $book_id)
+            ->join('book_stock', 'book.book_id = book_stock.book_id', 'left')
+            ->get()
+            ->row();
+        
+        if ($book->warehouse_present == NULL) {
+            $book->warehouse_present = 0;
         }
+
         return $book;
     }
 
@@ -153,7 +153,13 @@ class Proforma_model extends MY_Model
             $data = $this->db->select('*')->where('type', 'cash')->count_all_results('invoice') + 1;
         } else {
             $initial = 'P';
-            $data = $this->db->select('*')->count_all_results('proforma') + 1;
+            $last_id = $this->db
+            ->select('proforma_id')
+            ->from('proforma')
+            ->order_by('proforma_id', 'DESC')
+            ->get()
+            ->row();
+            $data = $last_id->proforma_id + 1;
         }
         $number = $initial . $date_created . '-' . str_pad($data, 6, 0, STR_PAD_LEFT);
         return $number;
