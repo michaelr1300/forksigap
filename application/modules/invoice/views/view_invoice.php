@@ -49,14 +49,14 @@ $level              = check_level();
                                     <td width="200px"> Nomor Customer </td>
                                     <td><?= $invoice->customer->phone_number ?? '-' ?></td>
                                 </tr>
-                                <?php if($invoice->type != 'showroom'): ?>
+                                <?php if ($invoice->type != 'showroom') : ?>
                                     <tr>
                                         <td width="200px"> Tanggal Jatuh Tempo </td>
                                         <td><?= $invoice->due_date ?></td>
                                     </tr>
                                     <tr>
                                         <td width="200px"> Total Berat </td>
-                                        <td><?= $invoice->total_weight/1000 ?> kg</td>
+                                        <td><?= $invoice->total_weight / 1000 ?> kg</td>
                                     </tr>
                                     <tr>
                                         <td width="200px"> Total Ongkir </td>
@@ -82,7 +82,7 @@ $level              = check_level();
                         </table>
                     </div>
                     <hr>
-                    <?php if($invoice->type != 'showroom'): ?>
+                    <?php if ($invoice->type != 'showroom') : ?>
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered mb-0">
                                 <tbody>
@@ -214,10 +214,23 @@ $level              = check_level();
                     >
                         <!-- Faktur Selesai Diproses -->
                         <?php if ($invoice->status == 'preparing_finish') : ?>
-                            <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#modal-finish-invoice">Selesai</button>
+                            <button
+                                type="button"
+                                class="btn btn-primary mr-2"
+                                data-toggle="modal"
+                                data-target="#modal-finish-invoice"
+                            >Selesai</button>
                             <!-- Modal -->
-                            <div class="modal fade" id="modal-finish-invoice" role="dialog"aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered"role="document">
+                            <div
+                                class="modal fade"
+                                id="modal-finish-invoice"
+                                role="dialog"
+                                aria-hidden="true"
+                            >
+                                <div
+                                    class="modal-dialog modal-dialog-centered"
+                                    role="document"
+                                >
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title">Selesai Transaksi Faktur?</h5>
@@ -226,32 +239,40 @@ $level              = check_level();
                                             <b> Pastikan jumlah buku yang diambil bagian pemasaran sesuai dengan pesanan faktur! </b> <br>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button id="btn-modal-finish-invoice" data-dismiss="modal" type="button" class="btn btn-primary">Selesai</button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-secondary"
+                                                data-dismiss="modal"
+                                            >Close</button>
+                                            <button
+                                                id="btn-modal-finish-invoice"
+                                                data-dismiss="modal"
+                                                type="button"
+                                                class="btn btn-primary"
+                                            >Selesai</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <script>
-                                $(document).ready(function() {
-                                    $('#data-invoice').on('click', '#btn-modal-finish-invoice', function(){
-                                        $.ajax({
-                                            type: "POST",
-                                            url: "<?= base_url("invoice/action/$invoice->invoice_id/finish"); ?>",
-                                            success: function(res) {
-                                                showToast(true, res.data);
-                                                location.reload();
-                                            },
-                                            error: function(err) {
-                                                showToast(false, err.responseJSON.message);
-                                            },
-                                            complete: function(data)
-                                            {
-                                                console.log(data);
-                                            }
-                                        });
-                                    })
-                                }) 
+                            $(document).ready(function() {
+                                $('#data-invoice').on('click', '#btn-modal-finish-invoice', function() {
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "<?= base_url("invoice/action/$invoice->invoice_id/finish"); ?>",
+                                        success: function(res) {
+                                            showToast(true, res.data);
+                                            location.reload();
+                                        },
+                                        error: function(err) {
+                                            showToast(false, err.responseJSON.message);
+                                        },
+                                        complete: function(data) {
+                                            console.log(data);
+                                        }
+                                    });
+                                })
+                            })
                             </script>
                         <?php endif ?>
                         <button
@@ -310,12 +331,11 @@ $level              = check_level();
                         min=0
                         required
                         class="form-control"
+                        value="<?= $invoice->delivery_fee ?>"
                     />
                 </div>
                 <div class="form-group">
-                    <label
-                        for="receipt"
-                    >
+                    <label for="receipt">
                         <b>Bukti Bayar</b> <br>
                         (Masukkan informasi bukti bayar konsumen seperti nama pembayar, nama bank, dll)
                         <abbr title="Required">*</abbr>
@@ -326,6 +346,7 @@ $level              = check_level();
                         id="receipt"
                         required
                         class="form-control"
+                        value="<?= $invoice->receipt ?>"
                     />
                 </div>
             </div>
@@ -346,8 +367,9 @@ $level              = check_level();
 </div>
 <script>
 function check_delivery() {
-    var delivery_fee = "<?= $invoice->delivery_fee ?>"
-    if (delivery_fee == '') {
+    var delivery_fee = "<?= $invoice->delivery_fee ?>";
+    var receipt = "<?= $invoice->receipt ?>"
+    if (delivery_fee == '' || receipt == '') {
         $("#modal-delivery").modal()
     } else {
         location.href = "<?= base_url("invoice/generate_pdf/" . $invoice->invoice_id); ?>"
@@ -357,13 +379,17 @@ function check_delivery() {
 function save_delivery_fee() {
     if ($("#delivery").val() == '') {
         alert("Ongkir wajib diisi!");
+    } else if ($("#receipt").val() == '') {
+        alert("Bukti Pembayaran wajib diisi!")
     } else {
         var delivery_fee = $("#delivery").val()
+        var recept = $("#receipt").val()
         $.ajax({
             type: "POST",
             url: "<?= base_url('invoice/update_delivery_fee/' . $invoice->invoice_id); ?>",
             data: {
-                delivery_fee: delivery_fee
+                delivery_fee: delivery_fee,
+                receipt: receipt
             },
             success: function(res) {
                 var response = $.parseJSON(res)
