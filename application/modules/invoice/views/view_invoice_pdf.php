@@ -139,7 +139,7 @@
                 <?= $customer->phone_number ?><br>
                 <?= $customer->email ?><br><br>
                 No Faktur : <b><?= $invoice->number ?></b><br>
-                Bukti Bayar :
+                Bukti Bayar : <?= $invoice->receipt ?>
             </td>
             <td style="width:30%; vertical-align: top;">
                 <?php $month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"] ?>

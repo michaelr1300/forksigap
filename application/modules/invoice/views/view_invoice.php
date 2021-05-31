@@ -64,7 +64,7 @@ $level              = check_level();
                                     </tr>
                                     <tr>
                                         <td width="200px"> Bukti Bayar </td>
-                                        <td></td>
+                                        <td><?= $invoice->receipt ?></td>
                                     </tr>
                                 <?php endif ?>
                             </tbody>
@@ -383,7 +383,7 @@ function save_delivery_fee() {
         alert("Bukti Pembayaran wajib diisi!")
     } else {
         var delivery_fee = $("#delivery").val()
-        var recept = $("#receipt").val()
+        var receipt = $("#receipt").val()
         $.ajax({
             type: "POST",
             url: "<?= base_url('invoice/update_delivery_fee/' . $invoice->invoice_id); ?>",
