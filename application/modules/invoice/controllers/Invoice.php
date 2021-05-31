@@ -417,8 +417,8 @@ class Invoice extends Sales_Controller
     public function update_delivery_fee($invoice_id)
     {
         $edit = [
-            'delivery_fee' = $this->input->post('delivery_fee'),
-            'receipt' = $this->input->post('receipt')
+            'delivery_fee' => $this->input->post('delivery_fee'),
+            'receipt' => $this->input->post('receipt')
         ];
         $this->db->set($edit)->where('invoice_id', $invoice_id)->update('invoice');
         echo json_encode(['status' => TRUE]);
