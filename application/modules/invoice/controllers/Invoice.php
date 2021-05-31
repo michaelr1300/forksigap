@@ -406,6 +406,9 @@ class Invoice extends Sales_Controller
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
             $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
+        } else if ($this->db->trans_status() != false && $invoice_status == 'confirm') {
+            $this->db->trans_commit();
+            $this->session->set_flashdata('confirm_invoice', 'Permintaan diteruskan ke gudang');
         } else {
             $this->db->trans_commit();
             $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
