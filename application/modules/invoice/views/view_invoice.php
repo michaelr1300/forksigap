@@ -284,7 +284,7 @@ $level              = check_level();
             </div>
             <div class="modal-body">
                 <div class="my-2">
-                    Silakan masukkan ongkir terlebih dahulu!
+                    Silakan masukkan ongkir dan bukti bayar terlebih dahulu!
                 </div>
                 <div class="my-2">
                     Total Berat: <b><?= $invoice->total_weight / 1000 ?></b> kg
@@ -308,6 +308,22 @@ $level              = check_level();
                         name="delivery_fee"
                         id="delivery"
                         min=0
+                        required
+                        class="form-control"
+                    />
+                </div>
+                <div class="form-group">
+                    <label
+                        for="receipt"
+                    >
+                        <b>Bukti Bayar</b> <br>
+                        (Masukkan informasi bukti bayar konsumen seperti nama pembayar, nama bank, dll)
+                        <abbr title="Required">*</abbr>
+                    </label>
+                    <input
+                        type="text"
+                        name="receipt"
+                        id="receipt"
                         required
                         class="form-control"
                     />
