@@ -47,7 +47,22 @@ if ($royalty_payment == NULL) {
                     class="tab-pane fade active show"
                     id="logistic-data"
                 >
-                    <div class="form-group">
+                    <div class="form-group row">
+                        <div class="col-12 col-md-6 mt-2">
+                        <label
+                            for="last-paid-date"
+                            class="font-weight-bold"
+                        >
+                            Pembayaran Royalti Terakhir</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="last-paid-date"
+                            value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
+                            readonly
+                        />
+                        </div>
+                        <div class="col-12 col-md-6 mt-2">
                         <label
                             for="due-date"
                             class="font-weight-bold"
@@ -74,21 +89,7 @@ if ($royalty_payment == NULL) {
                                 ><i class="fa fa-filter"></i> Filter</button>
                             </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="form-group">
-                        <label
-                            for="last-paid-date"
-                            class="font-weight-bold"
-                        >
-                            Pembayaran Royalti Terakhir</label>
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="last-paid-date"
-                            value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
-                            readonly
-                        />
+                        </div>
                     </div>
                     <hr>
                 </div>
@@ -267,7 +268,7 @@ function showPaidPeriod() {
     var Month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
     var dueDate = $('#due-date').val().split("-")
     var stringDueDate = dueDate[2] + " " + Month[dueDate[1] - 1] + " " + dueDate[0]
-    $('#paid_period').html("<p class='pl-5'>Periode royalti yang akan dibayarkan <b>" + $('#last-paid-date').val() + '</b> hingga <b>' + stringDueDate + '</b></p><hr>')
+    $('#paid_period').html("<p class='pl-1'>Periode royalti yang akan dibayarkan <b>" + $('#last-paid-date').val() + '</b> hingga <b>' + stringDueDate + '</b></p><hr>')
 }
 
 $('#due-date').change(function() {
