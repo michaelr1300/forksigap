@@ -84,15 +84,17 @@ class Invoice extends Sales_Controller
 
             $type = $this->input->post('type');
             $status = 'waiting';
+            $source = $this->input->post('source') ?? 'warehouse';
             if ($type == 'showroom') {
                 $status = 'finish';
+                $source = 'showroom';
             }
             $add = [
                 'number'            => $this->invoice->get_last_invoice_number($type),
                 'customer_id'       => $customer_id,
                 'due_date'          => $this->input->post('due-date'),
                 'type'              => $type,
-                'source'            => $this->input->post('source') ?? 'warehouse',
+                'source'            => $source,
                 'source_library_id' => $this->input->post('source-library-id'),
                 'status'            => $status,
                 'issued_date'       => $date_created
@@ -124,9 +126,16 @@ class Invoice extends Sales_Controller
                 $book_stock = $this->book_stock->where('book_id', $book['book_id'])->get();
                 if ($type == 'showroom') {
                     $book_stock->showroom_present -= $book['qty'];
-                } else {
+                } else 
+                if ($source == 'warehouse') {
                     $book_stock->warehouse_present -= $book['qty'];
+                } else
+                if ($source == 'library') {
+                    $book_stock->library_present -= $book['qty'];
+                    // kurangi stock detail perpus
                 }
+
+                
                 $this->book_stock->where('book_id', $book['book_id'])->update($book_stock);
 
                 // Faktur Showroom tidak mencatat transaksi (karena sumber buku bukan dari gudang)
@@ -164,7 +173,7 @@ class Invoice extends Sales_Controller
 
             $customer_type = get_customer_type();
 
-            $dropdown_book_options = $this->invoice->get_ready_book_list();
+            $dropdown_book_options = $this->invoice->get_available_book_list('warehouse', '');
 
             $pages       = $this->pages;
             $main_view   = 'invoice/add_invoice';
@@ -176,8 +185,7 @@ class Invoice extends Sales_Controller
     {
         $customer_type = get_customer_type();
 
-        // $dropdown_book_options = $this->invoice->get_ready_book_list_showroom();
-        $dropdown_book_options = $this->invoice->get_ready_book_list();
+        $dropdown_book_options = $this->invoice->get_available_book_list('showroom', '');
 
         $pages       = 'invoice/add_showroom';
         $main_view   = 'invoice/add_showroom';
@@ -302,7 +310,6 @@ class Invoice extends Sales_Controller
             $source = array(
                 'library'   => 'Perpustakaan',
                 'warehouse' => 'Gudang',
-                'showroom'  => 'Showroom'
             );
 
             $customer_type = get_customer_type();
@@ -310,7 +317,7 @@ class Invoice extends Sales_Controller
             $invoice_book = $this->invoice->fetch_invoice_book($invoice->invoice_id);
 
 
-            $dropdown_book_options = $this->invoice->get_ready_book_list();
+            $dropdown_book_options = $this->invoice->get_available_book_list($invoice->source, $invoice->source_library_id);
 
             $pages       = $this->pages;
             $main_view   = 'invoice/edit_invoice';
@@ -553,5 +560,11 @@ class Invoice extends Sales_Controller
     {
         $discount = $this->invoice->get_discount($customerType);
         return $this->send_json_output(true, $discount);
+    }
+
+    public function api_get_book_dropdown($type, $library_id='')
+    {
+        $data = $this->invoice->get_available_book_list($type, $library_id);
+        return $this->send_json_output(true, $data);
     }
 }

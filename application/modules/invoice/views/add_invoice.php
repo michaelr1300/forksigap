@@ -45,7 +45,7 @@
                                 for="source"
                                 class="font-weight-bold"
                             >Asal Stok<abbr title="Required">*</abbr></label>
-                            <?= form_dropdown('source', $source, 0, 'id="source" class="form-control custom-select d-block"'); ?>
+                            <?= form_dropdown('source', $source, 'warehouse', 'id="source" class="form-control custom-select d-block"'); ?>
                             <small
                                 id="error-source"
                                 class="d-none error-message text-danger"
@@ -258,7 +258,7 @@
 
                         <hr class="my-4">
                         <div class="row">
-                            <div class="form-group col-md-8">
+                            <div id="book-dropdown" class="form-group col-md-8">
                                 <label
                                     for="book_id"
                                     class="font-weight-bold"
@@ -418,7 +418,6 @@
 <script>
 $(document).ready(function() {
     $('#type').val('')
-    $('#source').val('')
 
     $('#tab-customer-new').click(function() {
         $('#customer-info').hide()
@@ -566,9 +565,11 @@ $(document).ready(function() {
             $('#source-dropdown').show()
         } else {
             $('#source-dropdown').hide()
-            $('#source').val('')
-            $('#source-library-dropdown').hide()
-            $('#source-library-id').val('').trigger('change')
+            if ($('#source').val() != 'warehouse') {
+                $('#source').val('warehouse')
+                $('#source-library-dropdown').hide()
+                $('#source-library-id').val('').trigger('change')
+            }
         }
     })
 
@@ -578,6 +579,23 @@ $(document).ready(function() {
         } else {
             $("#source-library-dropdown").hide()
             $('#source-library-id').val('').trigger('change')
+        }
+    })
+
+    // update dropdown list buku
+    $('#source-library-id').change(function() {
+        var value = $("#source-library-id").val()
+        $('#book-info').hide()
+        if (value == '') {
+            $('#invoice_items tr').each(function() {
+                $(this).closest("tr").remove();
+            })
+            updateDropdown('warehouse', '')
+        } else {
+            $('#invoice_items tr').each(function() {
+                $(this).closest("tr").remove();
+            })
+            updateDropdown('library', value)
         }
     })
 
@@ -677,5 +695,25 @@ function decreaseGrandTotal(book_id) {
     var res = total_html.split(" ")
     var grandTotal = parseInt($('#grand_total').html()) - parseInt(res[1])
     $('#grand_total').html(grandTotal)
+}
+
+function updateDropdown(type, library_id) {
+    $.ajax({
+		type: "GET",
+		url: "<?= base_url('invoice/api_get_book_dropdown/'); ?>" + type + '/' + library_id,
+		dataType: "JSON",
+		success: function(res) {
+            $('#book-id').empty();
+            for( i=0; i < Object.keys(res.data).length; i++) {
+                $('#book-id').append('<option value="'+ Object.keys(res.data)[i] +'">'+ Object.values(res.data)[i] +'</option>');
+            }
+		},
+        error: function(err) {
+            console.log(err)
+        },
+		complete: function() {
+            $('#book-id').val('').trigger('change')
+        }
+    }); 
 }
 </script>
