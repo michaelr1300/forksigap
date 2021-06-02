@@ -626,7 +626,7 @@ function add_book_to_invoice(stock) {
 
     // Jumlah
     html += '<td class="align-middle">';
-    html += '<input id="invoice-book-qty-' + bookId.value + '" type="number" required name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '" max="' + stock + '" onchange=updateQty(' + bookId.value + ')>';
+    html += '<input id="invoice-book-qty-' + bookId.value + '" type="number" required name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '"min=1 max="' + stock + '" onchange=updateQty(' + bookId.value + ')>';
     html += '</td>';
 
     // Diskon

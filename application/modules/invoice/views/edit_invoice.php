@@ -40,6 +40,14 @@
                                         <td width="200px"> Jenis Faktur </td>
                                         <td><?= get_invoice_type()[$invoice->type]; ?></td>
                                     </tr>
+                                    <tr>
+                                        <td width="200px"> Asal Faktur </td>
+                                        <td><?= $invoice->source; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="200px"> Nama Perpustakaan </td>
+                                        <td><?= $invoice->source_library_id ?></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -459,13 +467,6 @@
 $(document).ready(function() {
     $('#discount').val('<?= $discount ?>')
 
-    if ('<?= $invoice->type ?>' == "cash") {
-        $('#source-dropdown').show()
-        if ($('#source').val() == "library") {
-            $('#source-library-dropdown').show()
-        }
-    }
-
     $('#tab-customer-new').click(function() {
         $('#customer-info').hide()
         $('#customer-id').val('').trigger('change')
@@ -519,10 +520,6 @@ $(document).ready(function() {
         dropdownParent: $('#app-main')
     });
     $("#book-id").select2({
-        placeholder: '-- Pilih --',
-        dropdownParent: $('#app-main')
-    });
-    $("#source-library-id").select2({
         placeholder: '-- Pilih --',
         dropdownParent: $('#app-main')
     });
@@ -631,27 +628,6 @@ $(document).ready(function() {
         });
     })
 
-    $('#type').change(function(e) {
-        const type = e.target.value
-        if (type == 'cash') {
-            $('#source-dropdown').show()
-        } else {
-            $('#source-dropdown').hide()
-            $('#source').val('')
-            $('#source-library-dropdown').hide()
-            $('#source-library-id').val('').trigger('change')
-        }
-    })
-
-    $('#source').change(function() {
-        if ($("#source").val() == "library") {
-            $("#source-library-dropdown").show()
-        } else {
-            $("#source-library-dropdown").hide()
-            $('#source-library-id').val('').trigger('change')
-        }
-    })
-
     $("#invoice_form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
@@ -696,7 +672,7 @@ function add_book_to_invoice(stock) {
 
     // Jumlah
     html += '<td class="align-middle">';
-    html += '<input id="invoice-book-qty-' + bookId.value + '" type="number" required name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '" max="' + stock + '" onchange=updateQty(' + bookId.value + ')>';
+    html += '<input id="invoice-book-qty-' + bookId.value + '" type="number" required name="invoice_book_qty[]" class="form-control" value="' + document.getElementById('qty').value + '"min=1 max="' + stock + '" onchange=updateQty(' + bookId.value + ')>';
     html += '</td>';
 
     // Diskon

@@ -159,8 +159,7 @@ class Invoice extends Sales_Controller
 
             $source = array(
                 'library'   => 'Perpustakaan',
-                'warehouse' => 'Gudang',
-                'showroom'  => 'Showroom'
+                'warehouse' => 'Gudang'
             );
 
             $customer_type = get_customer_type();
@@ -211,8 +210,6 @@ class Invoice extends Sales_Controller
             $edit = [
                 'customer_id'       => $customer_id,
                 'due_date'          => $this->input->post('due-date'),
-                'source'            => $this->input->post('source'),
-                'source_library_id' => $this->input->post('source-library-id'),
                 'status'            => 'waiting'
                 // 'date_edited'   => date('Y-m-d H:i:s'),
                 // 'user_edited'   => $_SESSION['username']
