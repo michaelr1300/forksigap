@@ -390,9 +390,9 @@
                                     <!-- Items -->
                                 </tbody>
                                 <tfoot>
-                                    <tr>
-                                        <td>Grand Total</td>
-                                        <td id="grand_total">0</td>
+                                    <tr style="text-align:center;">
+                                        <td><b>Grand Total</b></td>
+                                        <td id="grand_total">Rp 0</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -691,7 +691,7 @@ function updateGrandTotal() {
         $selector = $(this).find("td:first")
         book_id = $selector.find("input").val()
         grandTotal += Math.round($('#invoice-book-qty-' + book_id).val() * $('#invoice-book-price-' + book_id).val() * (1 - $('#invoice-book-discount-' + book_id).val() / 100))
-        $('#grand_total').html(grandTotal)
+        $('#grand_total').html('Rp ' + grandTotal)
     })
 }
 
@@ -699,7 +699,7 @@ function decreaseGrandTotal(book_id) {
     var total_html = $('#invoice-book-total-' + book_id).html()
     var res = total_html.split(" ")
     var grandTotal = parseInt($('#grand_total').html()) - parseInt(res[1])
-    $('#grand_total').html(grandTotal)
+    $('#grand_total').html('Rp ' + grandTotal)
 }
 
 function updateDropdown(type, library_id) {

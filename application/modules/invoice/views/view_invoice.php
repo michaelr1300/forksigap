@@ -60,7 +60,7 @@ $level              = check_level();
                                     </tr>
                                     <tr>
                                         <td width="200px"> Total Ongkir </td>
-                                        <td><?= $invoice->delivery_fee ?></td>
+                                        <td>Rp <?= number_format($invoice->delivery_fee, 0, ',', '.') ?></td>
                                     </tr>
                                     <tr>
                                         <td width="200px"> Bukti Bayar </td>
@@ -191,7 +191,7 @@ $level              = check_level();
                                     <?= $invoice_book->author_name ?>
                                 </td>
                                 <td class="align-middle">
-                                    Rp <?= $invoice_book->price ?>
+                                    Rp <?= number_format($invoice_book->price, 0, ',', '.') ?>
                                 </td>
                                 <td class="align-middle">
                                     <?= $invoice_book->qty ?>
@@ -200,11 +200,25 @@ $level              = check_level();
                                     <?= $invoice_book->discount ?> %
                                 </td>
                                 <td class="align-middle">
-                                    Rp <?= $invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount / 100) ?>
+                                    Rp <?= number_format($invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount / 100), 0, ',', '.') ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
+
+                        <?php
+                        $total = 0;
+                        foreach ($invoice_books as $invoice_book) {
+                            $total += $invoice_book->price * $invoice_book->qty * (1 - $invoice_book->discount / 100);
+                        }
+                        ?>
                     </tbody>
+                    <tfoot>
+                        <tr style="text-align:center;">
+                            <td colspan="4"></td>
+                            <td colspan="2"><b>Grand Total</b></td>
+                            <td>Rp <?= number_format($total, 0, ',', '.') ?></td>
+                        </tr>
+                    </tfoot>
                 </table>
                 <br>
                 <?php if ($invoice->status != 'waiting' && $invoice->status != 'cancel') : ?>
