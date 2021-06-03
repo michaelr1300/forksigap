@@ -78,6 +78,7 @@
                                     name="due-date"
                                     id="due-date"
                                     class="form-control dates"
+                                    required
                                 />
                                 <div class="input-group-append">
                                     <button
@@ -490,24 +491,28 @@ $(document).ready(function() {
 
     $('#book-id').change(function(e) {
         if (e.target.value != '') {
-            const bookId = e.target.value
+            var bookId = e.target.value
+            var source =  $("#source").val()
+            var libraryId = 0
+            if ($("#source-library-id").val() != '') {
+                libraryId =  $("#source-library-id").val()
+            }
             $.ajax({
                 type: "GET",
-                url: "<?= base_url('invoice/api_get_book/'); ?>" + bookId,
+                url: "<?= base_url('invoice/api_get_book_dynamic_stock/'); ?>" + bookId + '/' + source + '/' + libraryId,
                 datatype: "JSON",
                 success: function(res) {
                     var published_date = new Date(res.data.published_date);
-
                     $('#book-info').show()
                     $('#qty').attr({
-                        "max": res.data.warehouse_present
+                        "max": res.data.stock
                     });
                     $('#info-book-title').html(res.data.book_title)
                     $('#info-book-author').html(res.data.author_name)
                     $('#info-isbn').html(res.data.isbn)
                     $('#info-price').html(res.data.harga)
                     $('#info-year').html(published_date.getFullYear())
-                    $('#info-stock').html(res.data.warehouse_present)
+                    $('#info-stock').html(res.data.stock)
                 },
                 error: function(err) {
                     console.log(err);

@@ -189,6 +189,27 @@ class Invoice_model extends MY_Model
         return $book;
     }
 
+    public function get_book_dynamic_stock($book_id, $source, $library_id)
+    {
+        $book = $this->db->select('*')
+            ->from('book')
+            ->where('book.book_id', $book_id)
+            ->join('draft_author', 'draft_author.draft_id = book.draft_id')
+            ->join('author', 'draft_author.author_id = author.author_id')
+            ->get()
+            ->row();
+            if ($source == 'warehouse') {
+                $stock = $this->fetch_warehouse_stock($book->book_id) ?? 0;
+                $book->stock = $stock;
+            } else
+            if ($source == 'library') {
+                $stock = $this->fetch_library_stock($book->book_id, $library_id) ?? 0;
+                $book->stock = $stock;
+            }
+
+        return $book;
+    }
+
     public function get_discount($type)
     {
         return $this->select('discount')->where('membership', $type)->get('discount');
