@@ -94,6 +94,7 @@
                                     id="due-date"
                                     class="form-control dates"
                                     value="<?= $invoice->due_date ?>"
+                                    required
                                 />
                                 <div class="input-group-append">
                                     <button
@@ -465,6 +466,9 @@
 
 <script>
 $(document).ready(function() {
+    var source = $('#source').val()
+    var libraryId = $('#source-library-id').val()
+
     $('#discount').val('<?= $discount ?>')
 
     $('#tab-customer-new').click(function() {
@@ -487,11 +491,11 @@ $(document).ready(function() {
         //fetch stock sekarang
         $.ajax({
             type: "GET",
-            url: "<?= base_url('invoice/api_get_book/'); ?>" + <?= $book->book_id ?>,
+            url: "<?= base_url('invoice/api_get_book_dynamic_stock/'); ?>" + <?= $book->book_id ?> + '/' + source + '/' + libraryId,
             datatype: "JSON",
             success: function(res) {
                 $('#invoice-book-qty-' + <?= $book->book_id ?>).attr({
-                    "max": res.data.stock + +<?= $book->qty ?>,
+                    "max": res.data.stock + <?= $book->qty ?>,
                     "min": 1
                 });
             },
@@ -557,14 +561,18 @@ $(document).ready(function() {
 
     $('#book-id').change(function(e) {
         if (e.target.value != '') {
-            const bookId = e.target.value
+            var bookId = e.target.value
+            var source =  $("#source").val()
+            var libraryId = 0
+            if ($("#source-library-id").val() != '') {
+                libraryId =  $("#source-library-id").val()
+            }
             $.ajax({
                 type: "GET",
-                url: "<?= base_url('invoice/api_get_book/'); ?>" + bookId,
+                url: "<?= base_url('invoice/api_get_book_dynamic_stock/'); ?>" + bookId + '/' + source + '/' + libraryId,
                 datatype: "JSON",
                 success: function(res) {
                     var published_date = new Date(res.data.published_date);
-
                     $('#book-info').show()
                     $('#qty').attr({
                         "max": res.data.stock
@@ -706,5 +714,25 @@ function updateQty(book_id) {
 
     var total = Math.round(qty * price * (1 - discount / 100));
     total_html.html('Rp ' + total)
+}
+
+function updateDropdown(type, library_id) {
+    $.ajax({
+		type: "GET",
+		url: "<?= base_url('invoice/api_get_book_dropdown/'); ?>" + type + '/' + library_id,
+		dataType: "JSON",
+		success: function(res) {
+            $('#book-id').empty();
+            for( i=0; i < Object.keys(res.data).length; i++) {
+                $('#book-id').append('<option value="'+ Object.keys(res.data)[i] +'">'+ Object.values(res.data)[i] +'</option>');
+            }
+		},
+        error: function(err) {
+            console.log(err)
+        },
+		complete: function() {
+            $('#book-id').val('').trigger('change')
+        }
+    }); 
 }
 </script>
