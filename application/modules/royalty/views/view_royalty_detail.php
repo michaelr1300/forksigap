@@ -42,6 +42,7 @@ $endDate        = $this->input->get('end_date');
                                 name="start_date"
                                 class="form-control custom-select d-block"
                                 value="<?= $startDate ?>"
+                                min="2021-01-01"
                             >
                         </div>
                         <div class="col-12 col-md-4 mt-2">
@@ -52,6 +53,9 @@ $endDate        = $this->input->get('end_date');
                                 name="end_date"
                                 class="form-control custom-select d-block"
                                 value="<?= $endDate ?>"
+                                max="<?php
+                                        echo date('Y-m-d', strtotime("-1 days"));
+                                        ?>"
                             >
                         </div>
                         <div class="col-12 col-md-4 mt-2">
@@ -158,7 +162,7 @@ $(document).ready(function() {
         $startDate = date("d", strtotime($startDate)) . " " . $month[intval(date("m", strtotime($startDate))) - 1] . " " . date("Y", strtotime($startDate));
     } ?>
     <?php if ($endDate == "") {
-        $endDate = date("Y/m/d");
+        $endDate = date("Y/m/d", strtotime("-1 day"));
         $endDate = date("d", strtotime($endDate)) . " " . $month[intval(date("m", strtotime($endDate))) - 1] . " " . date("Y", strtotime($endDate));
     } else {
         $endDate = date("d", strtotime($endDate)) . " " . $month[intval(date("m", strtotime($endDate))) - 1] . " " . date("Y", strtotime($endDate));
