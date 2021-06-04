@@ -91,6 +91,9 @@ function royalti_action()
                                     id="end_date"
                                     name="end_date"
                                     class="form-control custom-select d-block"
+                                    max="<?php
+                                            echo date('Y-m-d', strtotime("-1 days"));
+                                            ?>"
                                 >
                             </div>
                             <div class="col-12 col-md-8 mt-2">
@@ -225,3 +228,10 @@ function royalti_action()
         </div>
     </div>
 </div>
+<script>
+// $(document).ready(function() {
+//     var today = new Date();
+//     today.setDate(today.getDate() - 1)
+//     document.getElementById("end_date").setAttribute("max", today);
+// });
+</script>
