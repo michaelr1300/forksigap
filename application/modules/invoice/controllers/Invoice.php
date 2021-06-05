@@ -112,12 +112,14 @@ class Invoice extends Sales_Controller
             $total_weight = 0;
             // Masukkan buku di form faktur ke database
             for ($i = 0; $i < $countsize; $i++) {
+                $book_id = $this->input->post('invoice_book_id')[$i];
                 $book = [
                     'invoice_id'    => $invoice_id,
-                    'book_id'       => $this->input->post('invoice_book_id')[$i],
+                    'book_id'       => $book_id,
                     'qty'           => $this->input->post('invoice_book_qty')[$i],
                     'price'         => $this->input->post('invoice_book_price')[$i],
-                    'discount'      => $this->input->post('invoice_book_discount')[$i]
+                    'discount'      => $this->input->post('invoice_book_discount')[$i],
+                    'royalty'       => $this->invoice->get_book_royalty($book_id)
                 ];
                 $this->db->insert('invoice_book', $book);
                 // Hitung berat buku
@@ -280,14 +282,16 @@ class Invoice extends Sales_Controller
             $countsize = count($this->input->post('invoice_book_id'));
 
             $total_weight = 0;
-            // Masukkan invoice_book yang baru (hasil edit) ke database
+           // Masukkan buku di form faktur ke database
             for ($i = 0; $i < $countsize; $i++) {
+                $book_id = $this->input->post('invoice_book_id')[$i];
                 $book = [
                     'invoice_id'    => $invoice_id,
-                    'book_id'       => $this->input->post('invoice_book_id')[$i],
+                    'book_id'       => $book_id,
                     'qty'           => $this->input->post('invoice_book_qty')[$i],
                     'price'         => $this->input->post('invoice_book_price')[$i],
-                    'discount'      => $this->input->post('invoice_book_discount')[$i]
+                    'discount'      => $this->input->post('invoice_book_discount')[$i],
+                    'royalty'       => $this->invoice->get_book_royalty($book_id)
                 ];
                 $this->db->insert('invoice_book', $book);
                 $book_weight = $this->invoice->get_book($book['book_id'])->weight;
@@ -623,8 +627,9 @@ class Invoice extends Sales_Controller
         return $this->send_json_output(true, $data);
     }
 
-    public function debug() {
+    public function debug($book_id) {
+        $b = $this->invoice->get_book_royalty($book_id);
         $a = ($this->book_stock->get_one_library_stock(13, 1))->library_stock;
-        var_dump($a);
+        var_dump($b);
     }
 }

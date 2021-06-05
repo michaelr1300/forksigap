@@ -167,7 +167,7 @@ if ($royalty_payment == NULL) {
                 <a
                     href="<?= base_url('royalty/view_detail/' . $author->author_id) ?>"
                     class="btn btn-info float-right"
-                >Lihat Sejarah</a>
+                >Lihat Riwayat Penjualan</a>
                 <div
                     class="modal modal-alert fade"
                     id="modal-confirm"
