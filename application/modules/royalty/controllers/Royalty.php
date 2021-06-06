@@ -70,18 +70,20 @@ class Royalty extends Sales_Controller
     {
         $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $author_id)->get()->row();
         $filters = [
-            'keyword'           => $this->input->get('keyword', true),
+            'last_paid_date'        => $this->input->get('start_date'),
             'period_end'        => $period_end,
         ];
         $royalty_details = $this->royalty->author_details($author_id, $filters);
-
+        $current_stock = $this->royalty->stocks_info($author_id, $filters);
+        // var_dump($current_stock[0]->WP);
         // PDF
         $this->load->library('pdf');
 
         $data = array(
             'author' => $author,
             'royalty_details' => $royalty_details,
-            'period_end' => $period_end
+            'period_end' => $period_end,
+            'current_stock' => $current_stock
         );
 
         // $html = $this->load->view('royalty/view_royalty_pdf', compact('author', 'royalty_details', 'period_time', 'date_year'));

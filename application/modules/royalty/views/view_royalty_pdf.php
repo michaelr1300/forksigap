@@ -113,7 +113,8 @@
             <?php $index = 0;
             $total_earning = 0;
             $total_royalty = 0; ?>
-            <?php foreach ($royalty_details as $royalty) : ?>
+            <?php foreach ($royalty_details as $royalty) :
+                $stock = $current_stock[$index]->WP + $current_stock[$index]->LP + $current_stock[$index]->SP ?>
                 <tr class="royalty-table">
                     <td
                         class="royalty-table"
@@ -129,12 +130,12 @@
                         class="royalty-table"
                         style="text-align: center;"
                         width="10%"
-                    >Stok Lalu</td>
+                    ><?= $stock + $royalty->count ?></td>
                     <td
                         class="royalty-table"
                         style="text-align: center;"
                         width="10%"
-                    >Price book</td>
+                    ><?= $royalty->harga ?></td>
                     <td
                         class="royalty-table"
                         style="text-align: center;"
@@ -154,7 +155,7 @@
                         class="royalty-table"
                         style="text-align: center;"
                         width="10%"
-                    >Sisa Stok</td>
+                    ><?= $stock ?></td>
                 </tr>
                 <?php $index++;
                 $total_royalty += $royalty->earned_royalty; ?>
@@ -182,4 +183,5 @@
         </tr>
     </table>
 </body>
+
 </html>
