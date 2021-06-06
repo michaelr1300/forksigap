@@ -172,13 +172,13 @@
         <tr>
             <td style="height: 33px;"></td>
             <td>PPh 15%</td>
-            <td style="border-bottom: 1px solid black;">Rp <?= (0.15 *  number_format($total_royalty, 0, ',', '.')); ?></td>
+            <td style="border-bottom: 1px solid black;">Rp <?= number_format((0.15 *  $total_royalty), 0, ',', '.'); ?></td>
             <td></td>
         </tr>
         <tr>
             <td style="height: 33px;"></td>
             <td><b>Netto</b></td>
-            <td style="border-bottom: 4px double black;"><b>Rp <?= (0.85 *  number_format($total_royalty, 0, ',', '.')); ?></b></td>
+            <td style="border-bottom: 4px double black;"><b>Rp <?= number_format((0.85 *  $total_royalty), 0, ',', '.'); ?></b></td>
             <td></td>
         </tr>
     </table>
