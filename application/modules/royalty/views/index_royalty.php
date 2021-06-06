@@ -91,6 +91,7 @@ function royalti_action()
                                     id="end_date"
                                     name="end_date"
                                     class="form-control custom-select d-block"
+                                    min="2021-01-01"
                                     max="<?php
                                             echo date('Y-m-d', strtotime("-1 days"));
                                             ?>"

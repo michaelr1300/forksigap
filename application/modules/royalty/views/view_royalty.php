@@ -49,46 +49,46 @@ if ($royalty_payment == NULL) {
                 >
                     <div class="form-group row">
                         <div class="col-12 col-md-6 mt-2">
-                        <label
-                            for="last-paid-date"
-                            class="font-weight-bold"
-                        >
-                            Pembayaran Royalti Terakhir</label>
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="last-paid-date"
-                            value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
-                            readonly
-                        />
+                            <label
+                                for="last-paid-date"
+                                class="font-weight-bold"
+                            >
+                                Pembayaran Royalti Terakhir</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="last-paid-date"
+                                value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
+                                readonly
+                            />
                         </div>
                         <div class="col-12 col-md-6 mt-2">
-                        <label
-                            for="due-date"
-                            class="font-weight-bold"
-                        >
-                            Tanggal Pembayaran Royalti</label>
-                        <div class="input-group mb-3">
-                            <input
-                                name="due-date"
-                                id="due-date"
-                                class="form-control dates"
-                                value="<?= $selected_date ?>"
-                            />
-                            <div class="input-group-append">
-                                <button
-                                    class="btn btn-outline-secondary"
-                                    type="button"
-                                    id="due_clear"
-                                >Clear</button>
+                            <label
+                                for="due-date"
+                                class="font-weight-bold"
+                            >
+                                Tanggal Pembayaran Royalti</label>
+                            <div class="input-group mb-3">
+                                <input
+                                    name="due-date"
+                                    id="due-date"
+                                    class="form-control dates"
+                                    value="<?= $selected_date ?>"
+                                />
+                                <div class="input-group-append">
+                                    <button
+                                        class="btn btn-outline-secondary"
+                                        type="button"
+                                        id="due_clear"
+                                    >Clear</button>
+                                </div>
+                                <div class="input-group-append">
+                                    <button
+                                        class="btn btn-primary"
+                                        onclick="filterDate()"
+                                    ><i class="fa fa-filter"></i> Filter</button>
+                                </div>
                             </div>
-                            <div class="input-group-append">
-                                <button
-                                    class="btn btn-primary"
-                                    onclick="filterDate()"
-                                ><i class="fa fa-filter"></i> Filter</button>
-                            </div>
-                        </div>
                         </div>
                     </div>
                     <hr>
@@ -222,6 +222,7 @@ $(document).ready(function() {
         altFormat: 'j F Y',
         dateFormat: 'Y-m-d',
         enableTime: false,
+        minDate: '<?= $last_paid_date ?>',
         maxDate: new Date().fp_incr(-1)
     });
     $("#due_clear").click(function() {
