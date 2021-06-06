@@ -59,9 +59,9 @@ class Royalty_model extends MY_Model
             ->where('draft_author.author_id', $author_id);
         if ($filters['period_end'] != null) {
             //if author.last_paid_date == null
-            $this->db->where('issued_date BETWEEN "' . $last_paid_date .  '" and "' . $filters['period_end'] . '"');
+            $this->db->where('issued_date BETWEEN "' . $last_paid_date .  '" and addtime(CURDATE(), "23:59:59") - INTERVAL 1 DAY');
         } else {
-            $this->db->where('issued_date BETWEEN "' . $last_paid_date .  '" and now() - INTERVAL 1 DAY');
+            $this->db->where('issued_date BETWEEN "' . $last_paid_date .  '" and addtime(CURDATE(), "23:59:59") - INTERVAL 1 DAY');
         }
         return $this->db->get()->result();
     }
