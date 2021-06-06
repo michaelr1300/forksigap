@@ -188,10 +188,10 @@ function royalti_action()
                                         </a>
                                     </td>
                                     <td class="align-middle">
-                                        Rp <?= round($lData->penjualan, 0); ?>
+                                        Rp <?= number_format($lData->penjualan, 0, ',', '.'); ?>
                                     </td>
                                     <td class="align-middle">
-                                        Rp <?= round($lData->earned_royalty, 0); ?>
+                                        Rp <?= number_format($lData->earned_royalty, 0, ',', '.'); ?>
                                     </td>
                                     <td><?= $lData->last_paid_date; ?></td>
                                     <td><?= $lData->status; ?></td>
@@ -210,13 +210,13 @@ function royalti_action()
                                     scope="col"
                                     class="align-middle"
                                 >
-                                    <b>Rp <?= round($total_penjualan, 0) ?></b>
+                                    <b>Rp <?= number_format($total_penjualan, 0, ',', '.'); ?></b>
                                 </td>
                                 <td
                                     scope="col"
                                     class="align-middle"
                                 >
-                                    <b>Rp <?= round($total_royalty, 0) ?></b>
+                                    <b>Rp <?= number_format($total_royalty, 0, ',', '.'); ?></b>
                                 </td>
                                 <td>&nbsp;</td>
                             </tr>

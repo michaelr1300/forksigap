@@ -68,11 +68,10 @@ class Royalty extends Sales_Controller
 
     public function generate_pdf($author_id, $period_end = null)
     {
-        $author = $this->db->select('author_id, author_name, last_paid_date')->from('author')->where('author_id', $author_id)->get()->row();
+        $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $author_id)->get()->row();
         $filters = [
             'keyword'           => $this->input->get('keyword', true),
             'period_end'        => $period_end,
-            'last_paid_date'    => $author->last_paid_date
         ];
         $royalty_details = $this->royalty->author_details($author_id, $filters);
 
@@ -90,6 +89,7 @@ class Royalty extends Sales_Controller
 
         $file_name = 'Royalti_' . $data['author']->author_name;
 
+        ob_end_clean();
         $this->pdf->generate_pdf_a4_landscape($html, $file_name);
     }
 

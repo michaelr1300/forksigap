@@ -128,8 +128,8 @@ if ($royalty_payment == NULL) {
                                 <td class="text-center"><?= $index + 1; ?></td>
                                 <td class="text-left"><?= $royalty->book_title; ?></td>
                                 <td class="text-center"><?= $royalty->count; ?></td>
-                                <td class="text-right pr-5">Rp <?= $royalty->penjualan; ?></td>
-                                <td class="text-right pr-5">Rp <?= round($royalty->earned_royalty, 0); ?></td>
+                                <td class="text-right pr-5">Rp <?= number_format($royalty->penjualan, 0, ',', '.'); ?></td>
+                                <td class="text-right pr-5">Rp <?= number_format($royalty->earned_royalty, 0, ',', '.'); ?></td>
                             </tr>
                             <?php $index++;
                             $total_earning += $royalty->penjualan;
@@ -144,10 +144,10 @@ if ($royalty_payment == NULL) {
                                 <b>Total</b>
                             </td>
                             <td class="text-right pr-5">
-                                <b>Rp <?= $total_earning; ?></b>
+                                <b>Rp <?= number_format($total_earning, 0, ',', '.'); ?></b>
                             </td>
                             <td class="text-right pr-5">
-                                <b>Rp <?= $total_royalty; ?></b>
+                                <b>Rp <?= number_format($total_royalty, 0, ',', '.'); ?></b>
                             </td>
                         </tr>
                     </tbody>

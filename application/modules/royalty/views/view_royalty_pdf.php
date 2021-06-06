@@ -50,12 +50,12 @@
     <br>
     <div style="text-align: center;">
         <h3>Daftar Penerima Royalti</h3>
+        <h4><b><?= $author->author_name ?></b></h4>
         <?php if ($period_end == NULL) { ?>
             <h4><?= date("d M Y") ?></h4>
         <?php } else { ?>
             <h4><?= $period_end ?></h4>
         <?php } ?>
-        <h4><b><?= $author->author_name ?></b></h4>
     </div>
     <br>
     <table
@@ -117,12 +117,13 @@
                 <tr class="royalty-table">
                     <td
                         class="royalty-table"
-                        style="text-align: center; height: 30px;"
+                        style="text-align: center; height: 30px; padding-left:5px;"
                         width="5%"
                     ><?= $index + 1; ?></td>
                     <td
                         class="royalty-table"
                         width="30%"
+                        style="padding-left:5px;"
                     ><?= $royalty->book_title ?></td>
                     <td
                         class="royalty-table"
@@ -138,7 +139,7 @@
                         class="royalty-table"
                         style="text-align: center;"
                         width="10%"
-                    >Terjual</td>
+                    ><?= $royalty->count ?></td>
                     <td
                         class="royalty-table"
                         style="text-align: center;"
@@ -147,7 +148,8 @@
                     <td
                         class="royalty-table"
                         width="15%"
-                    >Rp <?= round($royalty->earned_royalty, 0) ?></td>
+                        style="padding-left:5px;"
+                    >Rp <?= number_format($royalty->earned_royalty, 0, ',', '.'); ?></td>
                     <td
                         class="royalty-table"
                         style="text-align: center;"
@@ -159,27 +161,25 @@
             <?php endforeach; ?>
         </tbody>
     </table>
-
     <table style="width: 100%;">
         <tr>
             <td style="width:55%; height: 33px;"></td>
             <td style="width:20%">Jumlah</td>
-            <td style="width:15%">Rp <?= $total_royalty; ?></td>
+            <td style="width:15%">Rp <?= number_format($total_royalty, 0, ',', '.'); ?></td>
             <td></td>
         </tr>
         <tr>
             <td style="height: 33px;"></td>
             <td>PPh 15%</td>
-            <td style="border-bottom: 1px solid black;">Rp <?= (0.15 *  $total_royalty) ?></td>
+            <td style="border-bottom: 1px solid black;">Rp <?= (0.15 *  number_format($total_royalty, 0, ',', '.')); ?></td>
             <td></td>
         </tr>
         <tr>
             <td style="height: 33px;"></td>
             <td><b>Netto</b></td>
-            <td style="border-bottom: 4px double black;"><b>Rp <?= (0.85 *  $total_royalty) ?></b></td>
+            <td style="border-bottom: 4px double black;"><b>Rp <?= (0.85 *  number_format($total_royalty, 0, ',', '.')); ?></b></td>
             <td></td>
         </tr>
     </table>
 </body>
-
 </html>
