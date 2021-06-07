@@ -30,10 +30,11 @@ $endDate        = $this->input->get('end_date');
                 <div class="text-center">
                     <h4>Detail Royalti</h4>
                     <h6><?= $author->author_name ?></h6>
-                    <p>Periode <b><?= $royalty->start_date ?></b> hingga <b><?= $royalty->end_date ?></b></p>
+                    <p>Periode <b><?= date("d F Y", strtotime($royalty->start_date)) ?></b> hingga <b><?= date("d F Y", strtotime($royalty->end_date)) ?></b></p>
                 </div>
                 <div class="my-4">
-                    <p>Status: <b><?= $royalty->status ?></b></p>
+                    <p>Status: <b><?= get_royalty_status()[$royalty->status] ?></b></p>
+                    <p><b><?= $royalty->receipt ?></b></p>
                 </div>
                 <hr>
                 <table class="table table-striped mb-0">
@@ -95,6 +96,96 @@ $endDate        = $this->input->get('end_date');
                     </tbody>
                 </table>
                 <div class="d-flex d-flex justify-content-end mt-3">
+                    <?php if ($royalty->status == 'requested'): ?>
+                        <button
+                            type="button"
+                            class="btn btn-primary text-right mr-3"
+                            data-toggle="modal" 
+                            data-target="#modal-confirm"
+                        >Bayar</button>
+                        <div
+                            class="modal modal-warning fade"
+                            id="modal-confirm"
+                            tabindex="-1"
+                            role="dialog"
+                            aria-labelledby="modal-confirm"
+                            aria-hidden="true"
+                        >
+                            <div
+                                class="modal-dialog"
+                                role="document"
+                            >
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Konfirmasi Pembayaran</h5>
+                                    </div>
+                                    <form
+                                        id="confirm-royalty"
+                                        method="post"
+                                    >
+                                        <p class="mt-3 mx-3">
+                                            Apakah Anda yakin akan membayar royalty periode 
+                                            <b><?= date("d F Y", strtotime($royalty->start_date)) ?></b>
+                                            hingga
+                                            <b><?= date("d F Y", strtotime($royalty->end_date)) ?></b>
+                                            ?
+                                        </p>
+                                        <div class="form-group mx-3">
+                                            <label
+                                                for="receipt"
+                                                class="font-weight-bold"
+                                            >
+                                                Masukkan Bukti Bayar
+                                                <abbr title="Required">*</abbr>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="receipt"
+                                                id="receipt"
+                                                class="form-control"
+                                                required
+                                            />
+                                        </div>                                        
+                                        <div class="modal-footer">
+                                            <button
+                                                type="submit"
+                                                class="btn btn-primary"
+                                            >Confirm</button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-light"
+                                                data-dismiss="modal"
+                                            >Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            $('#confirm-royalty').on("submit", function() {
+                                var paid_date = new Date()
+                                paid_date.setDate(paid_date.getDate() - 1)
+                                paid_date = paid_date.toISOString().slice(0, 10)
+                                var receipt = $('#receipt').val()
+                                $.ajax({
+                                    type: "POST",
+                                    url: "<?= base_url("royalty/pay"); ?>",
+                                    data: {
+                                        paid_date: paid_date,
+                                        author_id: "<?= $author->author_id ?>",
+                                        receipt: receipt
+                                    },
+                                    success: function(result) {
+                                        var response = $.parseJSON(result)
+                                        location.href = "<?= base_url('royalty'); ?>"
+                                    },
+                                    error: function(req, err) {
+                                        console.log(err)
+                                    }
+                                });
+                            })
+                        </script>
+                    <?php endif?>
                     <a
                         href = "<?= base_url('royalty/generate_pdf/' . $royalty->royalty_id); ?>"
                         class="btn btn-outline-danger mr-3"
@@ -102,8 +193,8 @@ $endDate        = $this->input->get('end_date');
                         title="Generate PDF"
                     >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
                     <a
-                        type="button btn-success"
-                        class="btn btn-primary"
+                        type="button"
+                        class="btn btn-secondary"
                         href="<?= base_url('royalty/view/' . $author->author_id) ?>"
                     >Kembali</a>
                 </div>

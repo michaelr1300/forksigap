@@ -84,18 +84,33 @@ if ($royalty_payment == NULL) {
                                 class="font-weight-bold"
                             >
                                 Akhir Periode Royalti Sebelumnya</label>
-                            <input
+                            <?php if ($pending_royalty) : ?>
+                                <input
+                                    type="date"
+                                    id="last-paid-date"
+                                    class="form-control dates d-none"
+                                    value="<?= $royalty_payment->last_request_date ?>"
+                                />
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    value="<?= date("d", strtotime($royalty_payment->last_request_date)) . " " . $month[intval(date("m", strtotime($royalty_payment->last_request_date))) - 1] . " " . date("Y", strtotime($royalty_payment->last_request_date)) ?>"
+                                    readonly
+                                />
+                            <?php else:?>
+                                <input
                                 type="date"
                                 id="last-paid-date"
                                 class="form-control dates d-none"
                                 value="<?= $last_paid_date ?>"
-                            />
-                            <input
-                                type="text"
-                                class="form-control"
-                                value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
-                                readonly
-                            />
+                                />
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
+                                    readonly
+                                />
+                            <?php endif ?>
                         </div>
                         <div class="col-12 col-md-6 mt-2">
                             <label
@@ -205,8 +220,8 @@ if ($royalty_payment == NULL) {
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="text-center align-middle"><?= $latest_royalty->start_date ?? '1 Januari 2021'; ?> </td>
-                                        <td class="text-center align-middle"><?= $latest_royalty->end_date ?? ''; ?></td>
+                                        <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->start_date)) ?? '1 Januari 2021'; ?> </td>
+                                        <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->end_date)) ?? '' ?></td>
                                         <td class="text-center align-middle">Rp <?= round($latest_royalty->details->earned_royalty, 0) ?? 0; ?></td>
                                         <td class="text-center">
                                             <a
@@ -257,9 +272,9 @@ if ($royalty_payment == NULL) {
                                     <?php if($pending_royalty): ?>
                                         <p class="mt-3 mx-3">
                                             Apakah Anda yakin akan membayar royalty periode 
-                                            <b><?= $latest_royalty->start_date ?? '1 January 2021' ?></b>
+                                            <b><?= date("d F Y", strtotime($latest_royalty->start_date)) ?? '1 January 2021' ?></b>
                                             hingga
-                                            <b><?= $latest_royalty->end_date ?></b>
+                                            <b><?= date("d F Y", strtotime($latest_royalty->end_date)) ?></b>
                                             ?
                                         </p>
                                         <div class="form-group mx-3">
@@ -347,10 +362,10 @@ if ($royalty_payment == NULL) {
                                 <?php foreach ($royalty_history as $lData) : ?>
                                     <tr>
                                         <td class="text-center align-middle"><?= $index + 1; ?></td>
-                                        <td class="text-center align-middle"><?= $lData->start_date; ?></td>
-                                        <td class="text-center align-middle"><?= $lData->end_date; ?></td>
-                                        <td class="text-center align-middle"><?= $lData->status; ?></td>
-                                        <td class="text-center align-middle"><?= $lData->paid_date; ?></td>
+                                        <td class="text-center align-middle"><?= date("d F Y", strtotime($lData->start_date)) ?></td>
+                                        <td class="text-center align-middle"><?= date("d F Y", strtotime($lData->end_date)) ?></td>
+                                        <td class="text-center align-middle"><?= get_royalty_status()[$lData->status] ?></td>
+                                        <td class="text-center align-middle"><?= $lData->paid_date ? date("d F Y", strtotime($lData->paid_date)) : '' ?></td>
                                         <td class="text-right align-middle">Rp <?= round($lData->details->earned_royalty, 0);; ?></td>
                                         <td class="text-center">
                                             <a
@@ -404,12 +419,14 @@ $(document).ready(function() {
             paid_date.setDate(paid_date.getDate() - 1)
             paid_date = paid_date.toISOString().slice(0, 10)
         }
+        var receipt = $('#receipt').val()
         $.ajax({
             type: "POST",
             url: "<?= base_url("royalty/pay"); ?>",
             data: {
                 paid_date: paid_date,
-                author_id: "<?= $author->author_id ?>"
+                author_id: "<?= $author->author_id ?>",
+                receipt: receipt
             },
             success: function(result) {
                 var response = $.parseJSON(result)

@@ -179,8 +179,8 @@ function royalti_action()
                                     <td class="text-right align-middle">
                                         Rp <?= number_format($lData->earned_royalty, 0, ',', '.'); ?>
                                     </td>
-                                    <td><?= $lData->last_paid_date; ?></td>
-                                    <td><?= $lData->status; ?></td>
+                                    <td><?= $lData->last_paid_date ? date("d F Y", strtotime($lData->last_paid_date)) : '' ?></td>
+                                    <td><?= get_royalty_status()[$lData->status] ?></td>
                                     <td></td>
                                 </tr>
                             <?php endforeach; ?>

@@ -183,35 +183,7 @@ class Royalty extends Sales_Controller
                 $this->db->insert('royalty', $data);
             }
         }
-
-
-
-        echo json_encode(['status' => true]);
-    }
-
-
-    public function debug($author_id)
-    {
-
-        $royalty_history = $this->royalty->fetch_royalty_history($author_id);
-        foreach ($royalty_history as $history) {
-            $history_filter = [
-                'last_paid_date'    => $history->start_date,
-                'period_end'        => $history->end_date
-            ];
-            $history->details = $this->royalty->author_details($author_id, $history_filter)[0];
-            //var_dump($history->details->total_sales);
-        }
-        $latest_royalty = $this->royalty->fetch_latest_royalty($author_id);
-        $latest_filters = [
-            'last_paid_date'    => $latest_royalty->start_date,
-            'period_end'        => $latest_royalty->end_date
-        ];
-        $latest_royalty->details = $this->royalty->author_details($author_id, $latest_filters);
-        //var_dump($latest_royalty);
-
-        $royalty = $this->db->select('*')->from('royalty')->where('royalty_id', $author_id)->get()->row();
-        $a =  $this->royalty->where('royalty_id', $author_id)->get();
-        var_dump($a->royalty_id);
+        $this->session->set_flashdata('success', $this->lang->line('toast_edit_success'));
+        redirect($this->pages);
     }
 }

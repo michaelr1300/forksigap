@@ -52,9 +52,9 @@
         <h3>Daftar Penerima Royalti</h3>
         <h4><b><?= $author->author_name ?></b></h4>
         <?php if ($period_end == NULL) { ?>
-            <h4><?= date("d M Y") ?></h4>
+            <h4><?= date("d F Y") ?></h4>
         <?php } else { ?>
-            <h4><?= $period_end ?></h4>
+            <h4><?= date("d F Y", strtotime($period_end)) ?></h4>
         <?php } ?>
     </div>
     <br>
