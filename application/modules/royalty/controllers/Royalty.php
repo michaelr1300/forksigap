@@ -161,7 +161,8 @@ class Royalty extends Sales_Controller
             }
             //jika sudah ada dan belum diajukan
             else if ($royalty_payment->status == NULL) {
-                $last_paid_date = strtotime($royalty_payment->last_paid_date . "+1 day");
+                $last_paid_date = strtotime($royalty_payment->last_paid_date) + 1;
+                $last_paid_date = date('Y-m-d H:i:s', $last_paid_date);
                 $date = $this->input->post('paid_date');
 
                 $edit = [
@@ -172,7 +173,7 @@ class Royalty extends Sales_Controller
 
                 $data = [
                     'author_id' => $author_id,
-                    'start_date' => $last_paid_date . '00:00:00',
+                    'start_date' => $last_paid_date,
                     'end_date' => $date . ' 23:59:59',
                     'status' => 'requested'
                 ];
