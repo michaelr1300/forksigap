@@ -65,17 +65,17 @@ $endDate        = $this->input->get('end_date');
                         <?php $index = 0;
                         $total_sales = 0;
                         $total_royalty = 0; ?>
-                        <?php foreach ($royalty_details as $royalty) : ?>
+                        <?php foreach ($royalty_details as $lData) : ?>
                             <tr>
                                 <td class="text-center"><?= $index + 1; ?></td>
-                                <td class="text-left"><?= $royalty->book_title; ?></td>
-                                <td class="text-center"><?= $royalty->count; ?></td>
-                                <td class="text-right pr-5">Rp <?= $royalty->total_sales; ?></td>
-                                <td class="text-right pr-5">Rp <?= round($royalty->earned_royalty, 0); ?></td>
+                                <td class="text-left"><?= $lData->book_title; ?></td>
+                                <td class="text-center"><?= $lData->count; ?></td>
+                                <td class="text-right pr-5">Rp <?= $lData->total_sales; ?></td>
+                                <td class="text-right pr-5">Rp <?= round($lData->earned_royalty, 0); ?></td>
                             </tr>
                             <?php $index++;
-                            $total_sales += $royalty->total_sales;
-                            $total_royalty += $royalty->earned_royalty; ?>
+                            $total_sales += $lData->total_sales;
+                            $total_royalty += $lData->earned_royalty; ?>
                         <?php endforeach; ?>
                         <tr style="text-align:center;">
                             <td
@@ -94,11 +94,19 @@ $endDate        = $this->input->get('end_date');
                         </tr>
                     </tbody>
                 </table>
-                <a
-                    type="button btn-success"
-                    class="btn btn-primary float-right mr-3 mt-3"
-                    href="<?= base_url('royalty/view/' . $author->author_id) ?>"
-                >Kembali</a>
+                <div class="d-flex d-flex justify-content-end mt-3">
+                    <a
+                        href = "<?= base_url('royalty/generate_pdf/' . $royalty->royalty_id); ?>"
+                        class="btn btn-outline-danger mr-3"
+                        id="btn-generate-pdf"
+                        title="Generate PDF"
+                    >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
+                    <a
+                        type="button btn-success"
+                        class="btn btn-primary"
+                        href="<?= base_url('royalty/view/' . $author->author_id) ?>"
+                    >Kembali</a>
+                </div>
             </div>
         </div>
     </section>

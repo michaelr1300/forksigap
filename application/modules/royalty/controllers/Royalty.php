@@ -76,7 +76,8 @@ class Royalty extends Sales_Controller
 
     public function view_detail($royalty_id)
     {
-        $royalty = $this->royalty->where('royalty_id', $royalty_id)->get();
+        // $royalty = $this->db->select('*')->from('royalty')->where('royalty_id', $royalty_id)->get()->row();
+        $royalty =  $this->royalty->where('royalty_id', $royalty_id)->get();
         $filters = [
             'last_paid_date'        => $royalty->start_date,
             'period_end'            => $royalty->end_date,
@@ -88,15 +89,16 @@ class Royalty extends Sales_Controller
         $this->load->view('template', compact('pages', 'main_view', 'author', 'royalty', 'royalty_details'));
     }
 
-    public function generate_pdf($author_id, $period_end = null)
+    public function generate_pdf($royalty_id)
     {
-        $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $author_id)->get()->row();
+        $royalty = $this->db->select('*')->from('royalty')->where('royalty_id', $royalty_id)->get()->row();
+        $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $royalty->author_id)->get()->row();
         $filters = [
-            'last_paid_date'    => $this->input->get('start_date'),
-            'period_end'        => $period_end,
+            'last_paid_date'    => $royalty->start_date,
+            'period_end'        => $royalty->end_date,
         ];
-        $royalty_details = $this->royalty->author_details($author_id, $filters);
-        $current_stock = $this->royalty->stocks_info($author_id, $filters);
+        $royalty_details = $this->royalty->author_details($royalty->author_id, $filters);
+        $current_stock = $this->royalty->stocks_info($royalty->author_id, $filters);
 
         // PDF
         $this->load->library('pdf');
@@ -104,7 +106,7 @@ class Royalty extends Sales_Controller
         $data = array(
             'author' => $author,
             'royalty_details' => $royalty_details,
-            'period_end' => $period_end,
+            'period_end' =>$royalty->end_date,
             'current_stock' => $current_stock
         );
 
@@ -205,6 +207,10 @@ class Royalty extends Sales_Controller
             'period_end'        => $latest_royalty->end_date
         ];
         $latest_royalty->details = $this->royalty->author_details($author_id, $latest_filters);
-        var_dump($latest_royalty);
+        //var_dump($latest_royalty);
+
+        $royalty = $this->db->select('*')->from('royalty')->where('royalty_id', $author_id)->get()->row();
+        $a =  $this->royalty->where('royalty_id', $author_id)->get();
+        var_dump($a->royalty_id);
     }
 }

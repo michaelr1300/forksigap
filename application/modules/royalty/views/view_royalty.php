@@ -232,12 +232,6 @@ if ($royalty_payment == NULL) {
                             class="btn btn-primary float-right ml-3"
                             id="pay-royalty"
                         ><?= $button_label; ?></button>
-                        <a
-                            href="<?= base_url('royalty/generate_pdf/' . $author->author_id . $url) ?>"
-                            class="btn btn-outline-danger float-right ml-3"
-                            id="btn-generate-pdf"
-                            title="Generate PDF"
-                        >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
                     <?php endif ?>
 
                     <div
@@ -254,7 +248,7 @@ if ($royalty_payment == NULL) {
                         >
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Konfirmasi <?= $button_label; ?></h5>
+                                    <h5 class="modal-title"><?= $button_label; ?></h5>
                                 </div>
                                 <form
                                     id="confirm-royalty"
@@ -390,16 +384,7 @@ $(document).ready(function() {
             },
             success: function(result) {
                 var response = $.parseJSON(result)
-                //Validation Error
-                if (response.status != true) {
-                    $(".error-message").addClass('d-none');
-                    for (var i = 0; i < response.input_error.length; i++) {
-                        // Show error message
-                        $('#' + response.input_error[i]).removeClass('d-none');
-                    }
-                } else {
-                    //location.href = "<?= base_url('royalty'); ?>";
-                }
+                location.href = "<?= base_url('royalty'); ?>"
             },
             error: function(req, err) {
                 console.log(err)
