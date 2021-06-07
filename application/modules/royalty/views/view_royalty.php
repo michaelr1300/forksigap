@@ -25,7 +25,7 @@ if ($period_end != null) {
 $url = '';
 if ($period_end == null) $url = '';
 else $url = '/' . $period_end;
-$month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+$month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 if ($royalty_payment == NULL) {
     $last_paid_date = '2021/01/01';
     $button_label = 'Ajukan Royalti';
