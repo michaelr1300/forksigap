@@ -97,7 +97,7 @@
                             <?= form_error('published_date'); ?>
                         </div>
                         <div class="form-group">
-                            <label for="harga">Harga</label>
+                            <label for="harga">Harga (Rp)</label>
                             <?= form_input([
                                 'name'  => "harga",
                                 'class' => 'form-control',
@@ -107,6 +107,32 @@
                             ]);
                             ?>
                             <?= form_error('harga'); ?>
+                        </div>
+                        <div class="form-group">
+                            <label for="harga">Royalti (%)</label>
+                            <?= form_input([
+                                'name'  => "royalty",
+                                'class' => 'form-control',
+                                'id'    => "royalty",
+                                'value' => $input->royalty,
+                                'type' => 'number',
+                                'min'   => 0,
+                                'max'   => 100,
+                            ]);
+                            ?>
+                            <?= form_error('harga'); ?>
+                        </div>
+                        <div class="form-group">
+                            <label for="weight">Berat (gram)</label>
+                            <?= form_input([
+                                'name'  => "weight",
+                                'class' => 'form-control',
+                                'id'    => "weight",
+                                'value' => $input->weight,
+                                'type' => 'number'
+                            ]);
+                            ?>
+                            <?= form_error('weight'); ?>
                         </div>
                         <div class="form-group">
                             <label for="book_file">
