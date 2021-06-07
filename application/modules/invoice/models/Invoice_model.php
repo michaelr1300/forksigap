@@ -308,7 +308,6 @@ class Invoice_model extends MY_Model
     public function filter_book_request($filters, $page)
     {
         $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
-            ->group_start()
             ->where('source', 'warehouse')
                 ->group_start()
                 ->where('status', 'confirm')
@@ -316,7 +315,6 @@ class Invoice_model extends MY_Model
                 ->or_where('status', 'preparing_finish')
                 ->or_where('status', 'finish')                                              
                 ->group_end()
-            ->group_end()
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
             ->order_by('invoice_id', 'DESC')
@@ -324,7 +322,6 @@ class Invoice_model extends MY_Model
             ->get_all();
 
         $total = $this->select('invoice_id')
-            ->group_start()
             ->where('source', 'warehouse')
                 ->group_start()
                 ->where('status', 'confirm')
@@ -332,7 +329,6 @@ class Invoice_model extends MY_Model
                 ->or_where('status', 'preparing_finish')
                 ->or_where('status', 'finish')                                              
                 ->group_end()
-            ->group_end()
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
             ->order_by('invoice_id')
