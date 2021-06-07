@@ -31,8 +31,14 @@ $level              = check_level();
         $button_label = 'Ajukan Royalti';
     } else {
         $last_paid_date = $royalty_payment->last_paid_date;
-        if ($royalty_payment->status == 'requested') $button_label = 'Konfirmasi Pembayaran';
-        if ($royalty_payment->status == NULL) $button_label = 'Ajukan Royalti';
+        if ($royalty_payment->status == 'requested') {
+            $button_label = 'Konfirmasi Pembayaran'; 
+            $pending_royalty = true;
+        }
+        if ($royalty_payment->status == NULL) {
+            $button_label = 'Ajukan Royalti'; 
+            $pending_royalty = false;
+        }
     }
 ?>
 <div class="page-section">
@@ -63,17 +69,26 @@ $level              = check_level();
                     id="request-royalty"
                     class="tab-pane fade active show"
                 >
+                    <?php if($pending_royalty): ?>
+                        <div
+                            class="alert alert-info alert-dismissible fade show"
+                            role="alert"
+                        >
+                            <h5>Info</h5>
+                            <div id="confirm_notif"></div>
+                        </div>
+                    <?php endif?>
                     <div class="form-group row">
                         <div class="col-12 col-md-6 mt-2">
                             <label
                                 for="last-paid-date"
                                 class="font-weight-bold"
                             >
-                                Pembayaran Royalti Terakhir</label>
+                                Akhir Periode Royalti Sebelumnya</label>
                             <input
                                 type="date"
-                                class="form-control dates d-none"
                                 id="last-paid-date"
+                                class="form-control dates d-none"
                                 value="<?= $last_paid_date ?>"
                             />
                             <input
@@ -88,7 +103,7 @@ $level              = check_level();
                                 for="due-date"
                                 class="font-weight-bold"
                             >
-                                Tanggal Pembayaran Royalti</label>
+                                Akhir Periode Royalti Saat Ini</label>
                             <div class="input-group mb-3">
                                 <input
                                     name="due-date"
@@ -159,18 +174,72 @@ $level              = check_level();
                             </tr>
                         </tbody>
                     </table>
-                    <div id="confirm_notif"></div>
-                    <button
-                        type="button"
-                        class="btn btn-primary float-right ml-3"
-                        id="pay-royalty"
-                    ><?= $button_label; ?></button>
-                    <a
-                        href="<?= base_url('royalty/generate_pdf/' . $author->author_id . $url) ?>"
-                        class="btn btn-outline-danger float-right ml-3"
-                        id="btn-generate-pdf"
-                        title="Generate PDF"
-                    >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
+                    
+                    <?php if($pending_royalty): ?>
+                        <hr>
+                        <div class="mt-3">
+                            <h6 class="mb-3">Royalty yang belum dibayar</h6>
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th
+                                            scope="col"
+                                            style="width:20%;"
+                                        >Tanggal Mulai Periode</th>
+                                        <th
+                                            scope="col"
+                                            style="width:20%;"
+                                        >Tanggal Akhir Periode</th>
+                                        <th
+                                            scope="col"
+                                            style="width:15%;"
+                                        >Total</th>
+                                        <th
+                                            scope="col"
+                                            style="width:15%;"
+                                        >Detail</th>
+                                        <th
+                                            scope="col"
+                                            style="width:15%;"
+                                        >Bayar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center align-middle"><?= $latest_royalty->start_date ?? '1 Januari 2021'; ?> </td>
+                                        <td class="text-center align-middle"><?= $latest_royalty->end_date; ?></td>
+                                        <td class="text-center align-middle">Rp <?= round($latest_royalty->details->earned_royalty, 0); ; ?></td>
+                                        <td class="text-center">
+                                            <a
+                                                type="button btn-success"
+                                                class="btn btn-primary text-center"
+                                                href="<?= base_url('royalty/view_detail/' . $latest_royalty->royalty_id) ?>"
+                                            >Detail</a>
+                                        </td>
+                                        <td class="text-center">
+                                            <button
+                                                type="button"
+                                                class="btn btn-primary text-center"
+                                                id="pay-royalty"
+                                            >Bayar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <button
+                            type="button"
+                            class="btn btn-primary float-right ml-3"
+                            id="pay-royalty"
+                        ><?= $button_label; ?></button>
+                        <a
+                            href="<?= base_url('royalty/generate_pdf/' . $author->author_id . $url) ?>"
+                            class="btn btn-outline-danger float-right ml-3"
+                            id="btn-generate-pdf"
+                            title="Generate PDF"
+                        >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
+                    <?php endif ?>
 
                     <div
                         class="modal modal-alert fade"
@@ -186,13 +255,13 @@ $level              = check_level();
                         >
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Konfirmasi Pembayaran</h5>
+                                    <h5 class="modal-title">Konfirmasi <?= $button_label; ?></h5>
                                 </div>
                                 <form
                                     id="confirm-royalty"
                                     method="post"
                                 >
-                                    <p class="ml-5 mt-3">Yakin Membayar Royalti?</p>
+                                    <p class="ml-5 mt-3">Yakin <?= $button_label; ?> Royalti?</p>
                                     <div class="modal-footer">
                                         <button
                                             type="submit"
@@ -208,7 +277,6 @@ $level              = check_level();
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div
                     id="history-royalty"
@@ -286,7 +354,7 @@ $(document).ready(function() {
         $('#paid_period').hide();
         var startPeriod = '<?= date("d", strtotime($royalty_payment->last_paid_date)) . " " . $month[intval(date("m", strtotime($royalty_payment->last_paid_date))) - 1] . " " . date("Y", strtotime($royalty_payment->last_paid_date)) ?>'
         var endPeriod = '<?= date("d", strtotime($royalty_payment->last_request_date)) . " " . $month[intval(date("m", strtotime($royalty_payment->last_request_date))) - 1] . " " . date("Y", strtotime($royalty_payment->last_request_date)) ?>'
-        $('#confirm_notif').html('<hr><p class="pl-5">Konfirmasi pembayaran royalti untuk periode <b>' + startPeriod + '</b> hingga <b>' + endPeriod + '</b> </p><hr>')
+        $('#confirm_notif').html('<p>Silakan konfirmasi pembayaran royalti untuk periode <b>' + startPeriod + '</b> hingga <b>' + endPeriod + '</b> sebelum mengajukan royalty lagi</p>')
     <?php } ?>
     showPaidPeriod()
    
@@ -327,7 +395,7 @@ $(document).ready(function() {
                         $('#' + response.input_error[i]).removeClass('d-none');
                     }
                 } else {
-                    location.href = "<?= base_url('royalty'); ?>";
+                    //location.href = "<?= base_url('royalty'); ?>";
                 }
             },
             error: function(req, err) {

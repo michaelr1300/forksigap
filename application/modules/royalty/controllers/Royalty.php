@@ -39,7 +39,16 @@ class Royalty extends Sales_Controller
     public function view($author_id, $period_end = null)
     {
         $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $author_id)->get()->row();
+        
+        $latest_royalty = $this->royalty->fetch_latest_royalty($author_id);
+        $latest_filters = [
+            'last_paid_date'    => $latest_royalty->start_date,
+            'period_end'        => $latest_royalty->end_date
+        ];
+        $latest_royalty->details = $this->royalty->author_details($author_id, $latest_filters)[0];
+
         $royalty_payment = $this->db->select('last_paid_date, last_request_date, status')->from('royalty_payment')->where('author_id', $author->author_id)->get()->row();
+        
         if ($royalty_payment == NULL) $last_paid_date = '2021/01/01';
         else $last_paid_date = $royalty_payment->last_paid_date;
         $filters = [
@@ -59,7 +68,7 @@ class Royalty extends Sales_Controller
         
         $pages          = $this->pages;
         $main_view      = 'royalty/view_royalty';
-        $this->load->view('template', compact('pages', 'main_view', 'author', 'royalty_payment', 'royalty_details', 'royalty_history', 'period_end'));
+        $this->load->view('template', compact('pages', 'main_view', 'author', 'latest_royalty', 'royalty_payment', 'royalty_details', 'royalty_history', 'period_end'));
     }
 
     public function view_detail($royalty_id)
@@ -85,7 +94,7 @@ class Royalty extends Sales_Controller
         ];
         $royalty_details = $this->royalty->author_details($author_id, $filters);
         $current_stock = $this->royalty->stocks_info($author_id, $filters);
-        // var_dump($current_stock[0]->WP);
+
         // PDF
         $this->load->library('pdf');
 
@@ -112,12 +121,13 @@ class Royalty extends Sales_Controller
         //jika belum ada data royalti
         if ($royalty_payment == NULL) {
             $last_paid_date = '2021/01/01';
+            $date = $this->input->post('paid_date');
 
             //tambahkan data royalti author
             $add = [
                 'author_id ' => $author_id,
                 'last_paid_date' => $last_paid_date,
-                'last_request_date' => $this->input->post('paid_date'),
+                'last_request_date' => $date.' 23:59:59',
                 'status' => 'requested'
             ];
             $this->db->insert('royalty_payment', $add);
@@ -125,7 +135,7 @@ class Royalty extends Sales_Controller
             $data = [
                 'author_id' => $author_id,
                 'start_date' => $last_paid_date,
-                'end_date' => $this->input->post('paid_date'),
+                'end_date' =>  $date.' 23:59:59',
                 'status' => 'requested'
             ];
             $this->db->insert('royalty', $data);
@@ -152,8 +162,10 @@ class Royalty extends Sales_Controller
             //jika sudah ada dan belum diajukan
             else if ($royalty_payment->status == NULL) {
                 $last_paid_date = $royalty_payment->last_paid_date;
+                $date = $this->input->post('paid_date');
+
                 $edit = [
-                    'last_request_date' => $this->input->post('paid_date'),
+                    'last_request_date' => $date.' 23:59:59',
                     'status' => 'requested'
                 ];
                 $this->db->set($edit)->where('author_id', $author_id)->update('royalty_payment');
@@ -161,7 +173,7 @@ class Royalty extends Sales_Controller
                 $data = [
                     'author_id' => $author_id,
                     'start_date' => $last_paid_date,
-                    'end_date' => $this->input->post('paid_date'),
+                    'end_date' => $date.' 23:59:59',
                     'status' => 'requested'
                 ];
                 $this->db->insert('royalty', $data);    
@@ -183,8 +195,15 @@ class Royalty extends Sales_Controller
                 'period_end'        => $history->end_date
             ];
             $history->details = $this->royalty->author_details($author_id, $history_filter)[0];    
-            var_dump($history->details->total_sales);
+            //var_dump($history->details->total_sales);
         }
-        
+        $latest_royalty = $this->royalty->fetch_latest_royalty($author_id);
+        $latest_filters = [
+            'last_paid_date'    => $latest_royalty->start_date,
+            'period_end'        => $latest_royalty->end_date
+        ];
+        $latest_royalty->details = $this->royalty->author_details($author_id, $latest_filters);
+        var_dump($latest_royalty);
+
     }
 }

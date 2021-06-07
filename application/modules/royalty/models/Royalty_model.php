@@ -26,8 +26,19 @@ class Royalty_model extends MY_Model
         return $this->db->select('*')
                         ->from('royalty')
                         ->where('author_id', $author_id)
+                        ->order_by('royalty_id', 'DESC')
                         ->get()
                         ->result();
+    }
+
+    public function fetch_latest_royalty ($author_id) {
+        return $this->db->select('*')
+                        ->from('royalty')
+                        ->where('author_id', $author_id)
+                        ->order_by('royalty_id', 'DESC')
+                        ->limit(1)
+                        ->get()
+                        ->row();
     }
 
     public function author_earning($filters)
