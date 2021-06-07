@@ -31,7 +31,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
         <?php if($level == 'superadmin'):?>
         <div>
             <a href="<?= base_url("$pages/edit/$input->book_stock_id"); ?>" class="btn btn-primary btn-sm"><i
-                    class="fa fa-edit fa-fw"></i> Edit Buku</a>
+                    class="fa fa-edit fa-fw"></i> Edit Stok Buku</a>
         </div>
         <?php endif?>
     </div>
@@ -151,11 +151,8 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                 <thead>
                                     <tr class="text-center">
                                         <th scope="col">No</th>
-                                        <th scope="col">Stok Awal</th>
                                         <th scope="col">Perubahan</th>
-                                        <th scope="col">Stok Akhir</th>
                                         <th scope="col">Tanggal</th>
-                                        <th scope="col">Tipe</th>
                                         <th scope="col">Catatan</th>
                                     </tr>
                                 </thead>
@@ -164,9 +161,6 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                     <tr class="text-center">
                                         <td>
                                             <?= $no++; ?>
-                                        </td>
-                                        <td>
-                                            <?= $revision->warehouse_past; ?>
                                         </td>
                                         <td>
                                             <?php 
@@ -180,13 +174,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                             ?>
                                         </td>
                                         <td>
-                                            <?= $revision->warehouse_present; ?>
-                                        </td>
-                                        <td>
                                             <?= date('d F Y H:i:s', strtotime($revision->revision_date)); ?>
-                                        </td>
-                                        <td>
-                                            <?= get_book_revision_type()[$revision->type]; ?>
                                         </td>
                                         <td>
                                             <?= $revision->notes; ?>
@@ -325,57 +313,6 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                     </div>
                     <!-- Per month chart -->
                     <hr>
-                    <!-- Per day chart -->
-                    <!-- <div class="row">
-                        <p class="col-12 font-weight-bold">Transaksi Buku per Hari</p>
-                        <div class="col-3">
-                            <input type="date" id="date" name="date" class="form-control">
-                        </div>
-                        <canvas id="chart-transaction-per-day" height="35vh !important" width="100% !important">
-                        <script>
-                        book_id = <?//=$book_stock->book_id?>
-                        today = new Date();
-                        document.getELementById('date').valueAsDate = today;
-                        date = today.toISOString().split('T')[0];
-                        var ctx_perday = document.getElementById('chart-transaction-per-day');
-                        var chart_transaction_per_day = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: [],
-                                datasets: [{
-                                    label: 'Transaksi Buku per Hari',
-                                    data: [],
-                                    backgroundColor: [
-                                        'rgba(74, 138, 216, 0.2)'
-                                        // 'rgba(54, 162, 235, 0.2)',
-                                        // 'rgba(255, 206, 86, 0.2)',
-                                        // 'rgba(75, 192, 192, 0.2)',
-                                        // 'rgba(153, 102, 255, 0.2)',
-                                        // 'rgba(255, 159, 64, 0.2)'
-                                    ],
-                                    borderColor: [
-                                        'rgba(74, 138, 216, 1)',
-                                        // 'rgba(54, 162, 235, 1)',
-                                        // 'rgba(255, 206, 86, 1)',
-                                        // 'rgba(75, 192, 192, 1)',
-                                        // 'rgba(153, 102, 255, 1)',
-                                        // 'rgba(255, 159, 64, 1)'
-                                    ],
-                                    // borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                scales: {
-                                    yAxes: [{
-                                        ticks: {
-                                            beginAtZero: true
-                                        }
-                                    }]
-                                }
-                            }
-                        });
-                        </script>
-                    </div> -->
                 </div>
                 <!-- book transaction data -->
             </div>

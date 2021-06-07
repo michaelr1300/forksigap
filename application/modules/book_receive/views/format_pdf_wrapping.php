@@ -40,7 +40,7 @@
 </head>
 
 <body>
-    <h1><b>LEMBAR ANTRIAN KERJA<br><i>WRAPPING</i></b></h1>
+    <h1><b>LEMBAR ANTRIAN KERJA</b></h1>
     <table>
         <tr>
             <td>
@@ -130,7 +130,6 @@
                 <?= $wrapping_deadline; ?>
             </td>
         </tr>
-        <?php if(!empty($wrapping_end_date)) : ?>
         <tr>
             <td>
                 TANGGAL SELESAI KERJA
@@ -142,7 +141,6 @@
                 <?= $wrapping_end_date; ?>
             </td>
         </tr>
-        <?php endif?>
         <tr>
             <td>
                 PIC
@@ -154,6 +152,17 @@
                 <?=$staff?>
             </td>
         </tr>
+        <!-- <tr>
+            <td>
+                STATUS PENYELESAIAN
+            </td>
+            <td>
+                :
+            </td>
+            <td>
+                <?//= $progress; ?>
+            </td>
+        </tr> -->
         <tr>
             <td>
                 KETERANGAN

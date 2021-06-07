@@ -156,13 +156,11 @@ $(document).ready(function() {
         data = {
             'destination': $("#destination").val(),
             'library_id': $("#library-id").val(),
-            'discount': $("#discount").val(),
             'book_list': []
         }
         $("#book-list-content tr").each(function(){
             book_data = {
                 'book_id': $(this).find("input.book_id").val(),
-                'price': Number($(this).find("input.price").val()),
                 'qty': Number($(this).find("input.quantity").val())
             }
             data['book_list'].push(book_data)

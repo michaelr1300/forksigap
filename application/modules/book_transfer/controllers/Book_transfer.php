@@ -61,7 +61,7 @@ class Book_transfer extends MY_Controller
     
     public function generate_pdf_bon($book_transfer_id)
     {
-        if(!$this->_is_warehouse_admin()){
+        if(!$this->_is_warehouse_sales_admin()){
             redirect($_SERVER['HTTP_REFERER']);
         }
         else{
@@ -77,7 +77,6 @@ class Book_transfer extends MY_Controller
             else{
                 $data_format['destination'] = 'Showroom';
             }
-            $data_format['discount']      = $book_transfer->discount ?? '';
             $data_format['number']        = $book_transfer->transfer_number ?? '';
             $data_format['transfer_date'] = $book_transfer->transfer_date ?? '';
             $data_format['book_list']     = $book_transfer_list ?? '';
@@ -98,7 +97,7 @@ class Book_transfer extends MY_Controller
     {
         $input = (object) $this->input->post(null, true);
 
-        if (!$input->book_transfer_id || !$input->user_id || !$input->progress) {
+        if (!$input->book_transfer_id || !$input->user_id) {
             return $this->send_json_output(false, $this->lang->line('toast_data_not_available'));
         }
 
@@ -107,7 +106,7 @@ class Book_transfer extends MY_Controller
             return $this->send_json_output(false, $message);
         }
 
-        if ($this->book_transfer->check_row_staff_gudang($input->book_transfer_id, $input->user_id, $input->progress) > 0) {
+        if ($this->book_transfer->check_row_staff_gudang($input->book_transfer_id, $input->user_id) > 0) {
             return $this->send_json_output(false, $this->lang->line('toast_data_duplicate'), 422);
         }
 
@@ -226,7 +225,7 @@ class Book_transfer extends MY_Controller
             redirect($this->pages);
         }
 
-        if (!$this->_is_warehouse_admin()) {
+        if (!$this->_is_sales_admin()) {
             redirect($_SERVER['HTTP_REFERER']);
         }
 
@@ -250,7 +249,6 @@ class Book_transfer extends MY_Controller
                 $this->book_stock->where('book_id', $book_transfer_list->book_id)->update($book_stock);
                 // stok detail perpustakaan
                 $library_stock_detail = $this->book_stock->get_one_library_stock($book_stock->book_stock_id,$book_transfer->library_id);
-                // ini bermasalah
                 if($library_stock_detail){
                     $library_stock_detail->library_stock += $book_transfer_list->qty;
                     $this->db->set('library_stock', $library_stock_detail->library_stock);
@@ -297,7 +295,7 @@ class Book_transfer extends MY_Controller
         // update data book_transfer
         $this->book_transfer->where('book_transfer_id', $book_transfer_id)->update([
             'status' => $action,
-            'finish_date' => $action == 'finish' ? now() : null
+            'finish_date' => now()
         ]);
 
         if ($this->db->trans_status() === false) {
@@ -313,7 +311,7 @@ class Book_transfer extends MY_Controller
 
     public function add()
     {
-        if (!$this->_is_warehouse_sales_admin()==true) {
+        if (!$this->_is_sales_admin()==true) {
             redirect($this->pages);
         }
 
@@ -330,7 +328,6 @@ class Book_transfer extends MY_Controller
             }
         } else {
             $input = (object) $this->input->post(null, true);
-            // catat orang yang menginput order cetak
         }
 
         $input->library_id = empty_to_null($input->library_id);
@@ -341,7 +338,6 @@ class Book_transfer extends MY_Controller
             'transfer_date' => now(),
             'destination' => $input->destination,
             'library_id' => $input->library_id,
-            'discount' => $input->discount
         ];
         $this->db->trans_begin();
         // insert book transfer
@@ -352,7 +348,6 @@ class Book_transfer extends MY_Controller
                 'book_transfer_id' => $book_transfer_id,
                 'book_id' => $books['book_id'],
                 'qty' => $books['qty'],
-                'price' => $books['price']
             ];
             $this->db->insert('book_transfer_list',$book_transfer_list);
         }
@@ -426,10 +421,19 @@ class Book_transfer extends MY_Controller
             redirect($this->pages);
         }
 
+        if($book_transfer->status=="finish"){
+            $this->session->set_flashdata('warning', "Pemindahan buku telah selesai, tidak dapat menghapus data pemindahan.");
+            redirect($this->pages);
+        }
+
         // memastikan konsistensi data
         $this->db->trans_begin();
 
         $this->book_transfer->where('book_transfer_id', $book_transfer_id)->delete();
+        
+        // hapus book_transfer_list, book_transfer_user
+        $this->db->where('book_transfer_id',$book_transfer_id)->delete('book_transfer_list');
+        $this->db->where('book_transfer_id',$book_transfer_id)->delete('book_transfer_user');
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

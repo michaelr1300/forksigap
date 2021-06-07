@@ -3,9 +3,9 @@ $level = check_level();
 if ($level == 'superadmin' || $level == 'admin_gudang') :
     $progress_text = '';
     if ($progress == 'handover') {
-        $progress_text = 'Serah Terima';
+        $progress_text = 'serah terima';
     } elseif ($progress == 'wrapping') {
-        $progress_text = 'Wrapping';
+        $progress_text = 'wrapping';
     }
 ?>
     <button
@@ -141,7 +141,6 @@ if ($level == 'superadmin' || $level == 'admin_gudang') :
             $(`#modal-select-staff-${progress}`).modal('toggle')
 
 
-            // get data semua staff
             $.get("<?= base_url('book_receive/api_get_staff_gudang'); ?>",
                 function(res) {
                     //  inisialisasi select2
@@ -170,7 +169,6 @@ if ($level == 'superadmin' || $level == 'admin_gudang') :
             )
         })
 
-        // pilih staff
         $(`#${progress}-progress-wrapper`).on('click', `#btn-select-staff-gudang-${progress}`, function() {
             const $this = $(this);
             const user_id = $(`#staff-gudang-id-${progress}`).val();
@@ -198,7 +196,6 @@ if ($level == 'superadmin' || $level == 'admin_gudang') :
                 },
                 complete: function() {
                     $(`[name=staff-gudang-id-${progress}]`).val(null).trigger('change');
-                    // reload segemen daftar staff
                     $(`#staff-gudang-list-wrapper-${progress}`).load(
                         ` #staff-gudang-list-${progress}`);
 
@@ -207,7 +204,6 @@ if ($level == 'superadmin' || $level == 'admin_gudang') :
             });
         });
 
-        // hapus staff
         $(`#${progress}-progress-wrapper`).on('click', `.btn-delete-staff-gudang-${progress}`, function() {
             $(this).attr('disabled', 'disabled').html("<i class='fa fa-spinner fa-spin '></i>");
             let id = $(this).attr('data');
@@ -221,7 +217,6 @@ if ($level == 'superadmin' || $level == 'admin_gudang') :
                     showToast(false, err.responseJSON.message);
                 },
                 complete: function() {
-                    // reload segemen daftar reviewer
                     $(`#staff-gudang-list-wrapper-${progress}`).load(
                         ` #staff-gudang-list-${progress}`);
                 },

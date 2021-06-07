@@ -119,18 +119,24 @@ $i                  = isset($page) ? $page * $per_page - $per_page : 0;
                                     $link = base_url('book_request/view/' . $book_transaction->invoice_id);
                                 }
                                 else if($book_transaction->book_stock_revision_id){
-                                    $type_display = "Revisi";
                                     $order_number = "-";
                                     $link = base_url('book_stock/view/' . $book_transaction->book_stock_id);
                                     if($book_transaction->revision_type=='add'){
                                         $change_text_color = "green";    
                                         $stock_display = '+ '.$book_transaction->stock_mutation;
-                                        $type= "Masuk";                                    
+                                        $type= "Masuk";      
+                                        $type_display = "Revisi";                              
                                     }
                                     else{
                                         $change_text_color = "red";   
                                         $stock_display = '- '.$book_transaction->stock_mutation;
                                         $type= "Keluar";                                     
+                                        if($book_transaction->type=='revision'){
+                                            $type_display = "Revisi";
+                                        }
+                                        else{
+                                            $type_display = "Retur";
+                                        }
                                     }
                                 }
                                 else if ($book_transaction->book_non_sales_id){

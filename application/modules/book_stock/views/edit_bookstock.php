@@ -59,7 +59,8 @@
                                     value="" >
                             </div>
                             <div class="form-group">
-                                <label class="font-weight-bold" for="notes">Catatan</label>
+                                <label class="font-weight-bold" for="notes">Catatan<abbr
+                                        title="Required">*</abbr></label>
                                 <textarea required rows="6" class="form-control summernote-basic" id="notes"
                                     name="notes"></textarea>
                             </div>

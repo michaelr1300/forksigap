@@ -32,8 +32,7 @@ class Book_transfer_model extends MY_Model{
     }
 
     public function fetch_book_transfer($book_transfer_id){
-        return $this->select(['book.book_id', 'book.book_title', 'library.*', 'book_transfer.*'])
-        ->join_table('book', 'book_transfer', 'book')
+        return $this->select(['library.*', 'book_transfer.*'])
         ->join_table('library', 'book_transfer', 'library')
         ->where('book_transfer_id', $book_transfer_id)
         ->get();
@@ -47,19 +46,17 @@ class Book_transfer_model extends MY_Model{
     }
     
     public function filter_book_transfer($filters, $page){
-        $book_transfer = $this->select(['book_transfer.*','book.book_title','library.library_name'])
+        $book_transfer = $this->select(['book_transfer.*','library.library_name'])
         ->when('keyword',$filters['keyword'])
         ->when('status',$filters['status'])
-        ->join_table('book','book_transfer','book')
         ->join_table('library','book_transfer','library')
         ->order_by('book_transfer_id','DESC')
         ->paginate($page)
         ->get_all();
 
-        $total = $this->select('book_transfer.id')
+        $total = $this->select('book_transfer.*')
         ->when('keyword',$filters['keyword'])
         ->when('status',$filters['status'])
-        ->join_table('book','book_transfer','book')
         ->count();
 
         return [
@@ -93,11 +90,6 @@ class Book_transfer_model extends MY_Model{
             ->where('book_transfer_id', $book_transfer_id)
             ->get()
             ->result();
-    }
-
-    public function delete_book_transfer($where){
-        $this->db->where('book_transfer_id', $where);
-        $this->db->delete('book_transfer');
     }
 
     // ambil data buku yg ada di gudang
@@ -180,20 +172,19 @@ class Book_transfer_model extends MY_Model{
             ->get_all('user');
     }
 
-    public function get_staff_gudang_by_progress($progress, $book_transfer_id)
+    public function get_staff_gudang_by_id($book_transfer_id)
     {
-        return $this->db->select(['book_transfer_user_id', 'book_transfer_user.user_id', 'book_transfer_id', 'progress', 'username', 'email'])
+        return $this->db->select(['book_transfer_user_id', 'book_transfer_user.user_id', 'book_transfer_id', 'username', 'email'])
             ->from('user')
             ->join('book_transfer_user', 'user.user_id = book_transfer_user.user_id')
             ->where('book_transfer_id', $book_transfer_id)
-            ->where('progress', $progress)
             ->get()->result();
     }
 
-    public function check_row_staff_gudang($book_transfer_id, $user_id, $progress)
+    public function check_row_staff_gudang($book_transfer_id, $user_id)
     {
         return $this->db
-            ->where(['book_transfer_id' => $book_transfer_id, 'user_id' => $user_id, 'progress' => $progress])
+            ->where(['book_transfer_id' => $book_transfer_id, 'user_id' => $user_id])
             ->get('book_transfer_user')
             ->num_rows();
     }

@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Book_non_sales extends Warehouse_sales_controller
+class Book_non_sales extends Warehouse_Sales_Controller
 {
     public function __construct()
     {
@@ -78,10 +78,8 @@ class Book_non_sales extends Warehouse_sales_controller
             'address' => $input->address,
             'notes' => $input->notes
         ];
-
-        $this->db->trans_begin();
         // insert book non sales
-        $this->book_non_sales->insert($book_non_sales);
+        $book_non_sales_success = $this->book_non_sales->insert($book_non_sales);
         $book_non_sales_id = $this->db->insert_id();
         // insert book non sales list
         foreach ($input->book_list as $books){
@@ -90,15 +88,13 @@ class Book_non_sales extends Warehouse_sales_controller
                 'book_id' => $books['book_id'],
                 'qty' => $books['qty']
             ];
-            $this->db->insert('book_non_sales_list',$book_non_sales_list);
+            $book_non_sales_list_success = $this->db->insert('book_non_sales_list',$book_non_sales_list);
         }
 
-        if ($this->db->trans_status() === false) {
-            $this->db->trans_rollback();
-            $this->session->set_flashdata('success', $this->lang->line('toast_add_fail'));
-        } else {
-            $this->db->trans_commit();
+        if ($book_non_sales_success && $book_non_sales_list_success) {
             $this->session->set_flashdata('success', $this->lang->line('toast_add_success'));
+        } else {
+            $this->session->set_flashdata('error', $this->lang->line('toast_add_fail'));
         }
 
         redirect('book_non_sales');
@@ -116,16 +112,18 @@ class Book_non_sales extends Warehouse_sales_controller
             redirect($this->pages);
         }
 
+        if($book_non_sales->status=="finish"){
+            $this->session->set_flashdata('warning', "Permintaan buku non penjualan telah selesai, tidak dapat menghapus data pemindahan.");
+            redirect($this->pages);
+        }
+
         // memastikan konsistensi data
         $this->db->trans_begin();
 
         $this->book_non_sales->where('book_non_sales_id', $book_non_sales_id)->delete();
 
-        // hapus list buku
-        $book_non_sales_books  = $this->book_non_sales->fetch_book_non_sales_list($book_non_sales_id);
-        foreach($book_non_sales_books as $book){
-            $this->db->where('book_id', $book->book_id)->delete('book_non_sales_list');
-        }
+        // hapus book non sales list
+        $this->db->where('book_non_sales_id',$book_non_sales_id)->delete('book_non_sales_list');
 
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();

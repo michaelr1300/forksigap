@@ -157,7 +157,6 @@ $(document).ready(function() {
             data: {
                 book_transfer_id,
                 user_id,
-                progress
             },
             success: function(res) {
                 showToast(true, res.data);

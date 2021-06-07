@@ -127,7 +127,7 @@ $level              = check_level();
 $is_preparing_started       = format_datetime($book_transfer->preparing_start_date);
 $is_preparing_finished      = format_datetime($book_transfer->preparing_end_date);
 $is_preparing_deadline_set  = format_datetime($book_transfer->preparing_deadline);
-$staff_gudang               = $this->book_transfer->get_staff_gudang_by_progress('preparing', $book_transfer->book_transfer_id);
+$staff_gudang               = $this->book_transfer->get_staff_gudang_by_id($book_transfer->book_transfer_id);
 ?>
 <section id="preparing-progress-wrapper" class="card">
     <div id="preparing-progress">
@@ -160,8 +160,14 @@ $staff_gudang               = $this->book_transfer->get_staff_gudang_by_progress
             $progress = "preparing";
             $progress_text = "penyiapan buku"
         ?>
-
-        <?php if (!$is_preparing_finished) : ?>
+        <?php if (!$is_preparing_started) : ?>
+        <div class="alert alert-warning alert-dismissible fade show mb-1" role="alert">
+        <strong>PERHATIAN!</strong> Pastikan mengisi nama staf bertugas dan deadline <?= $progress_text ?> sebelum memulai proses.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <?php elseif (!$is_preparing_finished) : ?>
         <div class="alert alert-warning alert-dismissible fade show mb-1" role="alert">
             <strong>PERHATIAN!</strong> Pastikan mengisi data-data sebelum menyetujui proses <?= $progress_text ?>.
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
