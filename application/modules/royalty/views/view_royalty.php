@@ -29,6 +29,7 @@ $level              = check_level();
     if ($royalty_payment == NULL) {
         $last_paid_date = '2021/01/01';
         $button_label = 'Ajukan Royalti';
+        $pending_royalty = false;
     } else {
         $last_paid_date = $royalty_payment->last_paid_date;
         if ($royalty_payment->status == 'requested') {
