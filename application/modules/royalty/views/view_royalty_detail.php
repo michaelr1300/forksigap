@@ -27,64 +27,15 @@ $endDate        = $this->input->get('end_date');
     >
         <div class="card-body">
             <div class="tab-content">
-                <!-- book-data -->
-                <div
-                    class="tab-pane fade active show"
-                    id="logistic-data"
-                >
-                    <?= form_open('royalty/view_detail/' . $author->author_id, ['method' => 'GET']); ?>
-                    <div class="row">
-                        <div class="col-12 col-md-4 mt-2">
-                            <label for="start_date">Periode Awal</label>
-                            <input
-                                type="date"
-                                id="start_date"
-                                name="start_date"
-                                class="form-control custom-select d-block"
-                                value="<?= $startDate ?>"
-                                min="2021-01-01"
-                            >
-                        </div>
-                        <div class="col-12 col-md-4 mt-2">
-                            <label for="end_date">Periode Akhir</label>
-                            <input
-                                type="date"
-                                id="end_date"
-                                name="end_date"
-                                class="form-control custom-select d-block"
-                                value="<?= $endDate ?>"
-                                max="<?php
-                                        echo date('Y-m-d', strtotime("-1 days"));
-                                        ?>"
-                            >
-                        </div>
-                        <div class="col-12 col-md-4 mt-2">
-                            <label>&nbsp;</label>
-                            <div
-                                class="btn-group btn-block"
-                                role="group"
-                                aria-label="Filter button"
-                            >
-                                <button
-                                    class="btn btn-secondary"
-                                    type="button"
-                                    onclick="location.href = '<?= base_url('royalty/view_detail/' . $author->author_id); ?>'"
-                                > Reset</button>
-                                <button
-                                    class="btn btn-primary"
-                                    type="submit"
-                                    value="Submit"
-                                ><i class="fa fa-filter"></i> Filter</button>
-                            </div>
-                        </div>
-                    </div>
-                    <?= form_close(); ?>
-                    <hr>
+                <div class="text-center">
+                    <h4>Detail Royalti</h4>
+                    <h6><?= $author->author_name ?></h6>
+                    <p>Periode <b><?= date("d F Y", strtotime($royalty->start_date)) ?></b> hingga <b><?= date("d F Y", strtotime($royalty->end_date)) ?></b></p>
                 </div>
-                <div
-                    id="period_exp"
-                    class="pl-5"
-                ></div>
+                <div class="my-4">
+                    <p>Status: <b><?= get_royalty_status()[$royalty->status] ?></b></p>
+                    <p><b><?= $royalty->receipt ?></b></p>
+                </div>
                 <hr>
                 <table class="table table-striped mb-0">
                     <thead>
@@ -99,7 +50,7 @@ $endDate        = $this->input->get('end_date');
                             >Judul Buku</th>
                             <th
                                 scope="col"
-                                style="width:10%;"
+                                style="width:15%;"
                             >Jumlah Buku Terjual</th>
                             <th
                                 scope="col"
@@ -113,19 +64,19 @@ $endDate        = $this->input->get('end_date');
                     </thead>
                     <tbody>
                         <?php $index = 0;
-                        $total_earning = 0;
+                        $total_sales = 0;
                         $total_royalty = 0; ?>
-                        <?php foreach ($royalty_details as $royalty) : ?>
+                        <?php foreach ($royalty_details as $lData) : ?>
                             <tr>
                                 <td class="text-center"><?= $index + 1; ?></td>
-                                <td class="text-left"><?= $royalty->book_title; ?></td>
-                                <td class="text-center"><?= $royalty->count; ?></td>
-                                <td class="text-right pr-5">Rp <?= $royalty->penjualan; ?></td>
-                                <td class="text-right pr-5">Rp <?= round($royalty->earned_royalty, 0); ?></td>
+                                <td class="text-left"><?= $lData->book_title; ?></td>
+                                <td class="text-center"><?= $lData->count; ?></td>
+                                <td class="text-right pr-5">Rp <?= $lData->total_sales; ?></td>
+                                <td class="text-right pr-5">Rp <?= round($lData->earned_royalty, 0); ?></td>
                             </tr>
                             <?php $index++;
-                            $total_earning += $royalty->penjualan;
-                            $total_royalty += $royalty->earned_royalty; ?>
+                            $total_sales += $lData->total_sales;
+                            $total_royalty += $lData->earned_royalty; ?>
                         <?php endforeach; ?>
                         <tr style="text-align:center;">
                             <td
@@ -136,7 +87,7 @@ $endDate        = $this->input->get('end_date');
                                 <b>Total</b>
                             </td>
                             <td class="text-right pr-5">
-                                <b>Rp <?= $total_earning; ?></b>
+                                <b>Rp <?= $total_sales; ?></b>
                             </td>
                             <td class="text-right pr-5">
                                 <b>Rp <?= $total_royalty; ?></b>
@@ -144,11 +95,109 @@ $endDate        = $this->input->get('end_date');
                         </tr>
                     </tbody>
                 </table>
-                <a
-                    type="button btn-success"
-                    class="btn btn-primary float-right mr-3 mt-3"
-                    href="<?= base_url('royalty/view/' . $author->author_id) ?>"
-                >Kembali</a>
+                <div class="d-flex d-flex justify-content-end mt-3">
+                    <?php if ($royalty->status == 'requested'): ?>
+                        <button
+                            type="button"
+                            class="btn btn-primary text-right mr-3"
+                            data-toggle="modal" 
+                            data-target="#modal-confirm"
+                        >Bayar</button>
+                        <div
+                            class="modal modal-warning fade"
+                            id="modal-confirm"
+                            tabindex="-1"
+                            role="dialog"
+                            aria-labelledby="modal-confirm"
+                            aria-hidden="true"
+                        >
+                            <div
+                                class="modal-dialog"
+                                role="document"
+                            >
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Konfirmasi Pembayaran</h5>
+                                    </div>
+                                    <form
+                                        id="confirm-royalty"
+                                        method="post"
+                                    >
+                                        <p class="mt-3 mx-3">
+                                            Apakah Anda yakin akan membayar royalty periode 
+                                            <b><?= date("d F Y", strtotime($royalty->start_date)) ?></b>
+                                            hingga
+                                            <b><?= date("d F Y", strtotime($royalty->end_date)) ?></b>
+                                            ?
+                                        </p>
+                                        <div class="form-group mx-3">
+                                            <label
+                                                for="receipt"
+                                                class="font-weight-bold"
+                                            >
+                                                Masukkan Bukti Bayar
+                                                <abbr title="Required">*</abbr>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="receipt"
+                                                id="receipt"
+                                                class="form-control"
+                                                required
+                                            />
+                                        </div>                                        
+                                        <div class="modal-footer">
+                                            <button
+                                                type="submit"
+                                                class="btn btn-primary"
+                                            >Confirm</button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-light"
+                                                data-dismiss="modal"
+                                            >Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            $('#confirm-royalty').on("submit", function() {
+                                var paid_date = new Date()
+                                paid_date.setDate(paid_date.getDate() - 1)
+                                paid_date = paid_date.toISOString().slice(0, 10)
+                                var receipt = $('#receipt').val()
+                                $.ajax({
+                                    type: "POST",
+                                    url: "<?= base_url("royalty/pay"); ?>",
+                                    data: {
+                                        paid_date: paid_date,
+                                        author_id: "<?= $author->author_id ?>",
+                                        receipt: receipt
+                                    },
+                                    success: function(result) {
+                                        var response = $.parseJSON(result)
+                                        location.href = "<?= base_url('royalty'); ?>"
+                                    },
+                                    error: function(req, err) {
+                                        console.log(err)
+                                    }
+                                });
+                            })
+                        </script>
+                    <?php endif?>
+                    <a
+                        href = "<?= base_url('royalty/generate_pdf/' . $royalty->royalty_id); ?>"
+                        class="btn btn-outline-danger mr-3"
+                        id="btn-generate-pdf"
+                        title="Generate PDF"
+                    >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
+                    <a
+                        type="button"
+                        class="btn btn-secondary"
+                        href="<?= base_url('royalty/view/' . $author->author_id) ?>"
+                    >Kembali</a>
+                </div>
             </div>
         </div>
     </section>
