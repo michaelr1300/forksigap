@@ -499,11 +499,31 @@ class Invoice extends Sales_Controller
             $data_format['customer'] = $customer ?? '';
 
             $html = $this->load->view('invoice/view_invoice_pdf', $data_format, true);
-
+            
             $file_name = $invoice->number . '_Invoice';
 
             $this->pdf->generate_pdf_a4_portrait($html, $file_name);
         }
+    }
+
+    public function showroom_pdf($invoice_id)
+    {
+        $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
+            $invoice        = $this->invoice->fetch_invoice_id($invoice_id);
+            $invoice_books  = $this->invoice->fetch_invoice_book($invoice_id);
+            $customer       = $this->invoice->get_customer($invoice->customer_id);
+
+            // PDF
+            $this->load->library('pdf');
+            $data_format['invoice'] = $invoice ?? '';
+            $data_format['invoice_books'] = $invoice_books ?? '';
+            $data_format['customer'] = $customer ?? '';
+
+            $html = $this->load->view('invoice/view_showroom_receipt_pdf', $data_format, true);
+            
+            $file_name = $invoice->number . '_Invoice';
+
+            $this->pdf->generate_pdf_a4_portrait($html, $file_name);
     }
 
     public function print_showroom_receipt()
