@@ -334,11 +334,11 @@
                         </div>
 
                         <!-- button -->
-                        <button
+                        <input
                             type="submit"
                             class="btn btn-primary"
-                            onclick="save_showroom_receipt()"
-                        >Submit</button>
+                            value="Submit"
+                        />
                     </form>
                 </div>
             </section>
@@ -537,33 +537,6 @@ $(document).ready(function() {
         });
     })
 });
-
-function save_showroom_receipt() {
-        $.ajax({
-            type: "POST",
-            url: "<?= base_url("invoice/add"); ?>",
-            data: form.serialize(), // serializes the form's elements.
-            success: function(result) {
-                var response = $.parseJSON(result)
-                console.log(response)
-                //Validation Error
-                if (response.status != true) {
-                    $(".error-message").addClass('d-none');
-                    for (var i = 0; i < response.input_error.length; i++) {
-                        // Show error message
-                        $('#' + response.input_error[i]).removeClass('d-none');
-                    }
-                } else {
-                    location.href = "<?= base_url("invoice/showroom_pdf/" . $invoice->invoice_id); ?>"
-                }
-            },
-            error: function(xhr, status, error) {
-                console.log(xhr.responseText);
-            }
-        });
-
-    }
-}
 
 function add_book_to_invoice(stock) {
     var bookId = document.getElementById('book-id');
