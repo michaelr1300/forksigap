@@ -207,8 +207,8 @@ $level              = check_level();
                                 <tbody>
                                     <tr>
                                         <td class="text-center align-middle"><?= $latest_royalty->start_date ?? '1 Januari 2021'; ?> </td>
-                                        <td class="text-center align-middle"><?= $latest_royalty->end_date; ?></td>
-                                        <td class="text-center align-middle">Rp <?= round($latest_royalty->details->earned_royalty, 0); ; ?></td>
+                                        <td class="text-center align-middle"><?= $latest_royalty->end_date ?? ''; ?></td>
+                                        <td class="text-center align-middle">Rp <?= round($latest_royalty->details->earned_royalty, 0) ?? 0; ?></td>
                                         <td class="text-center">
                                             <a
                                                 type="button btn-success"

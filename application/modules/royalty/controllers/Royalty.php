@@ -41,11 +41,14 @@ class Royalty extends Sales_Controller
         $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $author_id)->get()->row();
         
         $latest_royalty = $this->royalty->fetch_latest_royalty($author_id);
-        $latest_filters = [
-            'last_paid_date'    => $latest_royalty->start_date,
-            'period_end'        => $latest_royalty->end_date
-        ];
-        $latest_royalty->details = $this->royalty->author_details($author_id, $latest_filters)[0];
+        if ($latest_royalty != NULL) {
+            $latest_filters = [
+                'last_paid_date'    => $latest_royalty->start_date,
+                'period_end'        => $latest_royalty->end_date
+            ];
+            $latest_royalty->details = $this->royalty->author_details($author_id, $latest_filters)[0];
+        }
+        
 
         $royalty_payment = $this->db->select('last_paid_date, last_request_date, status')->from('royalty_payment')->where('author_id', $author->author_id)->get()->row();
         
