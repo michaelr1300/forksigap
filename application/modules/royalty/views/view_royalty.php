@@ -18,34 +18,50 @@ $level              = check_level();
         </ol>
     </nav>
 </header>
-<?php $selected_date = date('Y-m-d', strtotime("-1 days"));;
-if ($period_end != null) {
-    $selected_date = $period_end;
-}
-$url = '';
-if ($period_end == null) $url = '';
-else $url = '/' . $period_end;
-$month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-if ($royalty_payment == NULL) {
-    $last_paid_date = '2021/01/01';
-    $button_label = 'Ajukan Royalti';
-} else {
-    $last_paid_date = $royalty_payment->last_paid_date;
-    if ($royalty_payment->status == 'requested') $button_label = 'Konfirmasi Pembayaran';
-    if ($royalty_payment->status == NULL) $button_label = 'Ajukan Royalti';
-}
+<?php $selected_date = date('Y-m-d', strtotime("-1 days"));
+    if ($period_end != null) {
+        $selected_date = $period_end;
+    }
+    $url = '';
+    if ($period_end == null) $url = '';
+    else $url = '/' . $period_end;
+    $month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    if ($royalty_payment == NULL) {
+        $last_paid_date = '2021/01/01';
+        $button_label = 'Ajukan Royalti';
+    } else {
+        $last_paid_date = $royalty_payment->last_paid_date;
+        if ($royalty_payment->status == 'requested') $button_label = 'Konfirmasi Pembayaran';
+        if ($royalty_payment->status == NULL) $button_label = 'Ajukan Royalti';
+    }
 ?>
 <div class="page-section">
     <section
-        id="data-invoice"
         class="card"
     >
+        <header class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a
+                        class="nav-link active show"
+                        data-toggle="tab"
+                        href="#request-royalty"
+                    ><i class="fa fa-info-circle"></i> Ajukan Royalti </a>
+                </li>
+                <li class="nav-item">
+                    <a
+                        class="nav-link"
+                        data-toggle="tab"
+                        href="#history-royalty"
+                    ><i class="fa fa-user-tie"></i> Riwayat Royalti </a>
+                </li>
+            </ul>
+        </header>
         <div class="card-body">
             <div class="tab-content">
-                <!-- book-data -->
                 <div
+                    id="request-royalty"
                     class="tab-pane fade active show"
-                    id="logistic-data"
                 >
                     <div class="form-group row">
                         <div class="col-12 col-md-6 mt-2">
@@ -55,9 +71,14 @@ if ($royalty_payment == NULL) {
                             >
                                 Pembayaran Royalti Terakhir</label>
                             <input
+                                type="date"
+                                class="form-control dates d-none"
+                                id="last-paid-date"
+                                value="<?= $last_paid_date ?>"
+                            />
+                            <input
                                 type="text"
                                 class="form-control"
-                                id="last-paid-date"
                                 value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
                                 readonly
                             />
@@ -75,133 +96,184 @@ if ($royalty_payment == NULL) {
                                     class="form-control dates"
                                     value="<?= $selected_date ?>"
                                 />
-                                <div class="input-group-append">
-                                    <button
-                                        class="btn btn-outline-secondary"
-                                        type="button"
-                                        id="due_clear"
-                                    >Clear</button>
-                                </div>
-                                <div class="input-group-append">
-                                    <button
-                                        class="btn btn-primary"
-                                        onclick="filterDate()"
-                                    ><i class="fa fa-filter"></i> Filter</button>
-                                </div>
                             </div>
                         </div>
                     </div>
                     <hr>
-                </div>
-                <div id="paid_period"></div>
-                <table class="table table-striped mb-0">
-                    <thead>
-                        <tr class="text-center">
-                            <th
-                                scope="col"
-                                style="width:2%;"
-                            >No</th>
-                            <th
-                                scope="col"
-                                style="width:30%;"
-                            >Judul Buku</th>
-                            <th
-                                scope="col"
-                                style="width:10%;"
-                            >Jumlah Buku Terjual</th>
-                            <th
-                                scope="col"
-                                style="width:15%;"
-                            >Penjualan</th>
-                            <th
-                                scope="col"
-                                style="width:15%;"
-                            >Royalti</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $index = 0;
-                        $total_earning = 0;
-                        $total_royalty = 0; ?>
-                        <?php foreach ($royalty_details as $royalty) : ?>
-                            <tr>
-                                <td class="text-center"><?= $index + 1; ?></td>
-                                <td class="text-left"><?= $royalty->book_title; ?></td>
-                                <td class="text-center"><?= $royalty->count; ?></td>
-                                <td class="text-right pr-5">Rp <?= number_format($royalty->penjualan, 0, ',', '.'); ?></td>
-                                <td class="text-right pr-5">Rp <?= number_format($royalty->earned_royalty, 0, ',', '.'); ?></td>
+                    <div id="paid_period"></div>
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr class="text-center">
+                                <th
+                                    scope="col"
+                                    style="width:2%;"
+                                >No</th>
+                                <th
+                                    scope="col"
+                                    style="width:30%;"
+                                >Judul Buku</th>
+                                <th
+                                    scope="col"
+                                    style="width:15%;"
+                                >Jumlah Buku Terjual</th>
+                                <th
+                                    scope="col"
+                                    style="width:15%;"
+                                >Penjualan</th>
+                                <th
+                                    scope="col"
+                                    style="width:15%;"
+                                >Royalti</th>
                             </tr>
-                            <?php $index++;
-                            $total_earning += $royalty->penjualan;
-                            $total_royalty += $royalty->earned_royalty; ?>
-                        <?php endforeach; ?>
-                        <tr style="text-align:center;">
-                            <td
-                                scope="col"
-                                class="align-middle"
-                                colspan="3"
-                            >
-                                <b>Total</b>
-                            </td>
-                            <td class="text-right pr-5">
-                                <b>Rp <?= number_format($total_earning, 0, ',', '.'); ?></b>
-                            </td>
-                            <td class="text-right pr-5">
-                                <b>Rp <?= number_format($total_royalty, 0, ',', '.'); ?></b>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div id="confirm_notif"></div>
-                <button
-                    type="button"
-                    class="btn btn-primary float-right ml-3"
-                    id="pay-royalty"
-                ><?= $button_label; ?></button>
-                <a
-                    href="<?= base_url('royalty/generate_pdf/' . $author->author_id . $url) ?>"
-                    class="btn btn-outline-danger float-right ml-3"
-                    id="btn-generate-pdf"
-                    title="Generate PDF"
-                >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
-                <a
-                    href="<?= base_url('royalty/view_detail/' . $author->author_id) ?>"
-                    class="btn btn-info float-right"
-                >Lihat Riwayat Penjualan</a>
-                <div
-                    class="modal modal-alert fade"
-                    id="modal-confirm"
-                    tabindex="-1"
-                    role="dialog"
-                    aria-labelledby="modal-confirm"
-                    aria-hidden="true"
-                >
+                        </thead>
+                        <tbody>
+                            <?php $index = 0;
+                            $total_sales = 0;
+                            $total_royalty = 0; ?>
+                            <?php foreach ($royalty_details as $royalty) : ?>
+                                <tr>
+                                    <td class="text-center"><?= $index + 1; ?></td>
+                                    <td class="text-left"><?= $royalty->book_title; ?></td>
+                                    <td class="text-center"><?= $royalty->count; ?></td>
+                                    <td class="text-right pr-5">Rp <?= $royalty->total_sales; ?></td>
+                                    <td class="text-right pr-5">Rp <?= round($royalty->earned_royalty, 0); ?></td>
+                                </tr>
+                                <?php $index++;
+                                $total_sales += $royalty->total_sales;
+                                $total_royalty += $royalty->earned_royalty; ?>
+                            <?php endforeach; ?>
+                            <tr style="text-align:center;">
+                                <td
+                                    scope="col"
+                                    class="align-middle"
+                                    colspan="3"
+                                >
+                                    <b>Total</b>
+                                </td>
+                                <td class="text-right pr-5">
+                                    <b>Rp <?= $total_sales; ?></b>
+                                </td>
+                                <td class="text-right pr-5">
+                                    <b>Rp <?= $total_royalty; ?></b>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="confirm_notif"></div>
+                    <button
+                        type="button"
+                        class="btn btn-primary float-right ml-3"
+                        id="pay-royalty"
+                    ><?= $button_label; ?></button>
+                    <a
+                        href="<?= base_url('royalty/generate_pdf/' . $author->author_id . $url) ?>"
+                        class="btn btn-outline-danger float-right ml-3"
+                        id="btn-generate-pdf"
+                        title="Generate PDF"
+                    >Generate PDF <i class="fas fa-file-pdf fa-fw"></i></a>
+
                     <div
-                        class="modal-dialog"
-                        role="document"
+                        class="modal modal-alert fade"
+                        id="modal-confirm"
+                        tabindex="-1"
+                        role="dialog"
+                        aria-labelledby="modal-confirm"
+                        aria-hidden="true"
                     >
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Konfirmasi Pembayaran</h5>
-                            </div>
-                            <form
-                                id="confirm-royalty"
-                                method="post"
-                            >
-                                <p class="ml-5 mt-3">Yakin Membayar Royalti?</p>
-                                <div class="modal-footer">
-                                    <button
-                                        type="submit"
-                                        class="btn btn-primary"
-                                    >Save</button>
-                                    <button
-                                        type="button"
-                                        class="btn btn-light"
-                                        data-dismiss="modal"
-                                    >Close</button>
+                        <div
+                            class="modal-dialog"
+                            role="document"
+                        >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Konfirmasi Pembayaran</h5>
                                 </div>
-                            </form>
+                                <form
+                                    id="confirm-royalty"
+                                    method="post"
+                                >
+                                    <p class="ml-5 mt-3">Yakin Membayar Royalti?</p>
+                                    <div class="modal-footer">
+                                        <button
+                                            type="submit"
+                                            class="btn btn-primary"
+                                        >Save</button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-light"
+                                            data-dismiss="modal"
+                                        >Close</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
+                    </div>
+
+                </div>
+                <div
+                    id="history-royalty"
+                    class="tab-pane fade"
+                >
+                    <div class="text-center mb-4">
+                        <h4>Riwayat Royalti</h4>
+                        <h6><?= $author->author_name ?></h6>
+                    </div>
+                    <div>
+                        <table class="table table-striped mb-0">
+                            <thead>
+                                <tr class="text-center">
+                                    <th
+                                        scope="col"
+                                        style="width:2%;"
+                                    >No</th>
+                                    <th
+                                        scope="col"
+                                        style="width:20%;"
+                                    >Tanggal Mulai Periode</th>
+                                    <th
+                                        scope="col"
+                                        style="width:20%;"
+                                    >Tanggal Akhir Periode</th>
+                                    <th
+                                        scope="col"
+                                        style="width:15%;"
+                                    >Status</th>
+                                    <th
+                                        scope="col"
+                                        style="width:15%;"
+                                    >Tanggal Dibayar</th>
+                                    <th
+                                        scope="col"
+                                        style="width:15%;"
+                                    >Total</th>
+                                    <th
+                                        scope="col"
+                                        style="width:15%;"
+                                    >Detail</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php $index = 0; ?>
+                                <?php foreach ($royalty_history as $lData) : ?>
+                                    <tr>
+                                        <td class="text-center align-middle"><?= $index + 1; ?></td>
+                                        <td class="text-center align-middle"><?= $lData->start_date; ?></td>
+                                        <td class="text-center align-middle"><?= $lData->end_date; ?></td>
+                                        <td class="text-center align-middle"><?= $lData->status; ?></td>
+                                        <td class="text-center align-middle"><?= $lData->paid_date; ?></td>
+                                        <td class="text-right align-middle">Rp <?= round($lData->details->earned_royalty, 0); ; ?></td>
+                                        <td class="text-center">
+                                            <a
+                                                type="button btn-success"
+                                                class="btn btn-primary float-right"
+                                                href="<?= base_url('royalty/view_detail/' . $lData->royalty_id) ?>"
+                                            >Detail</a>
+                                        </td>
+                                    </tr>
+                                    <?php $index++; ?>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -217,6 +289,7 @@ $(document).ready(function() {
         $('#confirm_notif').html('<hr><p class="pl-5">Konfirmasi pembayaran royalti untuk periode <b>' + startPeriod + '</b> hingga <b>' + endPeriod + '</b> </p><hr>')
     <?php } ?>
     showPaidPeriod()
+   
     const $flatpickr = $('.dates').flatpickr({
         altInput: true,
         altFormat: 'j F Y',
@@ -225,12 +298,15 @@ $(document).ready(function() {
         minDate: '<?= $last_paid_date ?>',
         maxDate: new Date().fp_incr(-1)
     });
-    $("#due_clear").click(function() {
-        $flatpickr.clear();
+
+    $("#due-date").change(function() {
+        filterDate()
     })
+
     $('#pay-royalty').on("click", function() {
         $('#modal-confirm').modal('toggle')
     })
+
     $('#confirm-royalty').on("submit", function() {
         var paid_date = "<?= $period_end; ?>"
         if (paid_date == "") paid_date = new Date().toISOString().slice(0, 10)
@@ -268,8 +344,13 @@ function filterDate() {
 function showPaidPeriod() {
     var Month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
     var dueDate = $('#due-date').val().split("-")
+    var startDate = $('#last-paid-date').val()
+    var endDate = $('#due-date').val()
     var stringDueDate = dueDate[2] + " " + Month[dueDate[1] - 1] + " " + dueDate[0]
-    $('#paid_period').html("<p class='pl-1'>Periode royalti yang akan dibayarkan <b>" + $('#last-paid-date').val() + '</b> hingga <b>' + stringDueDate + '</b></p><hr>')
+    // var stringStartDate = startDate[2] + " " + Month[startDate[1] - 1] + " " + startDate[0]
+    // console.log(startDate)
+    console.log(endDate)
+    $('#paid_period').html("<p class='pl-1'>Periode royalti yang akan dibayarkan <b>" + startDate + '</b> hingga <b>' + stringDueDate + '</b></p><hr>')
 }
 
 $('#due-date').change(function() {

@@ -27,64 +27,14 @@ $endDate        = $this->input->get('end_date');
     >
         <div class="card-body">
             <div class="tab-content">
-                <!-- book-data -->
-                <div
-                    class="tab-pane fade active show"
-                    id="logistic-data"
-                >
-                    <?= form_open('royalty/view_detail/' . $author->author_id, ['method' => 'GET']); ?>
-                    <div class="row">
-                        <div class="col-12 col-md-4 mt-2">
-                            <label for="start_date">Periode Awal</label>
-                            <input
-                                type="date"
-                                id="start_date"
-                                name="start_date"
-                                class="form-control custom-select d-block"
-                                value="<?= $startDate ?>"
-                                min="2021-01-01"
-                            >
-                        </div>
-                        <div class="col-12 col-md-4 mt-2">
-                            <label for="end_date">Periode Akhir</label>
-                            <input
-                                type="date"
-                                id="end_date"
-                                name="end_date"
-                                class="form-control custom-select d-block"
-                                value="<?= $endDate ?>"
-                                max="<?php
-                                        echo date('Y-m-d', strtotime("-1 days"));
-                                        ?>"
-                            >
-                        </div>
-                        <div class="col-12 col-md-4 mt-2">
-                            <label>&nbsp;</label>
-                            <div
-                                class="btn-group btn-block"
-                                role="group"
-                                aria-label="Filter button"
-                            >
-                                <button
-                                    class="btn btn-secondary"
-                                    type="button"
-                                    onclick="location.href = '<?= base_url('royalty/view_detail/' . $author->author_id); ?>'"
-                                > Reset</button>
-                                <button
-                                    class="btn btn-primary"
-                                    type="submit"
-                                    value="Submit"
-                                ><i class="fa fa-filter"></i> Filter</button>
-                            </div>
-                        </div>
-                    </div>
-                    <?= form_close(); ?>
-                    <hr>
+                <div class="text-center">
+                    <h4>Detail Royalti</h4>
+                    <h6><?= $author->author_name ?></h6>
+                    <p>Periode <b><?= $royalty->start_date ?></b> hingga <b><?= $royalty->end_date ?></b></p>
                 </div>
-                <div
-                    id="period_exp"
-                    class="pl-5"
-                ></div>
+                <div class="my-4">
+                    <p>Status: <b><?= $royalty->status ?></b></p>
+                </div>
                 <hr>
                 <table class="table table-striped mb-0">
                     <thead>
@@ -99,7 +49,7 @@ $endDate        = $this->input->get('end_date');
                             >Judul Buku</th>
                             <th
                                 scope="col"
-                                style="width:10%;"
+                                style="width:15%;"
                             >Jumlah Buku Terjual</th>
                             <th
                                 scope="col"
@@ -113,18 +63,18 @@ $endDate        = $this->input->get('end_date');
                     </thead>
                     <tbody>
                         <?php $index = 0;
-                        $total_earning = 0;
+                        $total_sales = 0;
                         $total_royalty = 0; ?>
                         <?php foreach ($royalty_details as $royalty) : ?>
                             <tr>
                                 <td class="text-center"><?= $index + 1; ?></td>
                                 <td class="text-left"><?= $royalty->book_title; ?></td>
                                 <td class="text-center"><?= $royalty->count; ?></td>
-                                <td class="text-right pr-5">Rp <?= $royalty->penjualan; ?></td>
+                                <td class="text-right pr-5">Rp <?= $royalty->total_sales; ?></td>
                                 <td class="text-right pr-5">Rp <?= round($royalty->earned_royalty, 0); ?></td>
                             </tr>
                             <?php $index++;
-                            $total_earning += $royalty->penjualan;
+                            $total_sales += $royalty->total_sales;
                             $total_royalty += $royalty->earned_royalty; ?>
                         <?php endforeach; ?>
                         <tr style="text-align:center;">
@@ -136,7 +86,7 @@ $endDate        = $this->input->get('end_date');
                                 <b>Total</b>
                             </td>
                             <td class="text-right pr-5">
-                                <b>Rp <?= $total_earning; ?></b>
+                                <b>Rp <?= $total_sales; ?></b>
                             </td>
                             <td class="text-right pr-5">
                                 <b>Rp <?= $total_royalty; ?></b>

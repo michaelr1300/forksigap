@@ -61,23 +61,6 @@ function royalti_action()
             <section class="card card-fluid">
                 <div class="card-body p-0">
                     <div class="p-3">
-                        <div
-                            class="alert alert-info alert-dismissible fade show"
-                            role="alert"
-                        >
-                            <h5>Info</h5>
-                            <p class="m-0">Klik tombol <button class="btn btn-sm btn-secondary"><i class="fa fa-thumbs-up"></i>
-                                    Aksi</button> untuk mengubah status penerimaan royalti penulis
-                            </p>
-                            <button
-                                type="button"
-                                class="close"
-                                data-dismiss="alert"
-                                aria-label="Close"
-                            >
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
                         <?= form_open($pages, ['method' => 'GET']); ?>
                         <div class="row">
                             <div class="col-12 col-md-6 mt-2">
@@ -85,16 +68,18 @@ function royalti_action()
                                 <?= form_dropdown('per_page', get_per_page_options(), $per_page, 'id="per_page" class="form-control custom-select d-block" title="List per page"'); ?>
                             </div>
                             <div class="col-12 col-md-6 mt-2">
-                                <label for="date_end">Periode</label>
+                                <label for="date_end">Tanggal Terakhir Periode</label>
                                 <input
                                     type="date"
                                     id="end_date"
                                     name="end_date"
+                                    class="form-control dates"
+                                    value="<?= $period_end ?>"
                                     class="form-control custom-select d-block"
                                     min="2021-01-01"
                                     max="<?php
                                             echo date('Y-m-d', strtotime("-1 days"));
-                                            ?>"
+                                        ?>"
                                 >
                             </div>
                             <div class="col-12 col-md-8 mt-2">
@@ -180,7 +165,7 @@ function royalti_action()
                                     <td class="align-middle pl-4">
                                         <?= ++$i; ?>
                                     </td>
-                                    <td class="text-center align-middle">
+                                    <td class="text-left align-middle">
                                         <a
                                             href="<?= base_url("$pages/view/$lData->author_id" . $url); ?>"
                                             class="font-weight-bold"
@@ -188,10 +173,10 @@ function royalti_action()
                                             <?= highlight_keyword($lData->author_name, $keyword); ?>
                                         </a>
                                     </td>
-                                    <td class="align-middle">
-                                        Rp <?= number_format($lData->penjualan, 0, ',', '.'); ?>
+                                    <td class="text-right align-middle">
+                                        Rp <?= number_format($lData->total_sales, 0, ',', '.'); ?>
                                     </td>
-                                    <td class="align-middle">
+                                    <td class="text-right align-middle">
                                         Rp <?= number_format($lData->earned_royalty, 0, ',', '.'); ?>
                                     </td>
                                     <td><?= $lData->last_paid_date; ?></td>
@@ -209,13 +194,13 @@ function royalti_action()
                                 </td>
                                 <td
                                     scope="col"
-                                    class="align-middle"
+                                    class="text-right align-middle"
                                 >
                                     <b>Rp <?= number_format($total_penjualan, 0, ',', '.'); ?></b>
                                 </td>
                                 <td
                                     scope="col"
-                                    class="align-middle"
+                                    class="text-right align-middle"
                                 >
                                     <b>Rp <?= number_format($total_royalty, 0, ',', '.'); ?></b>
                                 </td>
