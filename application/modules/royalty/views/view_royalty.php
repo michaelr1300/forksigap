@@ -19,33 +19,31 @@ $level              = check_level();
     </nav>
 </header>
 <?php $selected_date = date('Y-m-d', strtotime("-1 days"));
-    if ($period_end != null) {
-        $selected_date = $period_end;
+if ($period_end != null) {
+    $selected_date = $period_end;
+}
+$url = '';
+if ($period_end == null) $url = '';
+else $url = '/' . $period_end;
+$month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+if ($royalty_payment == NULL) {
+    $last_paid_date = '2021/01/01';
+    $button_label = 'Ajukan Royalti';
+    $pending_royalty = false;
+} else {
+    $last_paid_date = $royalty_payment->last_paid_date;
+    if ($royalty_payment->status == 'requested') {
+        $button_label = 'Konfirmasi Pembayaran';
+        $pending_royalty = true;
     }
-    $url = '';
-    if ($period_end == null) $url = '';
-    else $url = '/' . $period_end;
-    $month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-    if ($royalty_payment == NULL) {
-        $last_paid_date = '2021/01/01';
+    if ($royalty_payment->status == NULL) {
         $button_label = 'Ajukan Royalti';
         $pending_royalty = false;
-    } else {
-        $last_paid_date = $royalty_payment->last_paid_date;
-        if ($royalty_payment->status == 'requested') {
-            $button_label = 'Konfirmasi Pembayaran'; 
-            $pending_royalty = true;
-        }
-        if ($royalty_payment->status == NULL) {
-            $button_label = 'Ajukan Royalti'; 
-            $pending_royalty = false;
-        }
     }
+}
 ?>
 <div class="page-section">
-    <section
-        class="card"
-    >
+    <section class="card">
         <header class="card-header">
             <ul class="nav nav-tabs card-header-tabs">
                 <li class="nav-item">
@@ -70,7 +68,7 @@ $level              = check_level();
                     id="request-royalty"
                     class="tab-pane fade active show"
                 >
-                    <?php if($pending_royalty): ?>
+                    <?php if ($pending_royalty) : ?>
                         <div
                             class="alert alert-info alert-dismissible fade show"
                             role="alert"
@@ -78,7 +76,7 @@ $level              = check_level();
                             <h5>Info</h5>
                             <div id="confirm_notif"></div>
                         </div>
-                    <?php endif?>
+                    <?php endif ?>
                     <div class="form-group row">
                         <div class="col-12 col-md-6 mt-2">
                             <label
@@ -175,8 +173,8 @@ $level              = check_level();
                             </tr>
                         </tbody>
                     </table>
-                    
-                    <?php if($pending_royalty): ?>
+
+                    <?php if ($pending_royalty) : ?>
                         <hr>
                         <div class="mt-3">
                             <h6 class="mb-3">Royalty yang belum dibayar</h6>
@@ -228,7 +226,7 @@ $level              = check_level();
                                 </tbody>
                             </table>
                         </div>
-                    <?php else: ?>
+                    <?php else : ?>
                         <button
                             type="button"
                             class="btn btn-primary float-right ml-3"
@@ -330,7 +328,7 @@ $level              = check_level();
                                         <td class="text-center align-middle"><?= $lData->end_date; ?></td>
                                         <td class="text-center align-middle"><?= $lData->status; ?></td>
                                         <td class="text-center align-middle"><?= $lData->paid_date; ?></td>
-                                        <td class="text-right align-middle">Rp <?= round($lData->details->earned_royalty, 0); ; ?></td>
+                                        <td class="text-right align-middle">Rp <?= round($lData->details->earned_royalty, 0);; ?></td>
                                         <td class="text-center">
                                             <a
                                                 type="button btn-success"
@@ -358,7 +356,7 @@ $(document).ready(function() {
         $('#confirm_notif').html('<p>Silakan konfirmasi pembayaran royalti untuk periode <b>' + startPeriod + '</b> hingga <b>' + endPeriod + '</b> sebelum mengajukan royalty lagi</p>')
     <?php } ?>
     showPaidPeriod()
-   
+
     const $flatpickr = $('.dates').flatpickr({
         altInput: true,
         altFormat: 'j F Y',
@@ -378,7 +376,11 @@ $(document).ready(function() {
 
     $('#confirm-royalty').on("submit", function() {
         var paid_date = "<?= $period_end; ?>"
-        if (paid_date == "") paid_date = new Date().toISOString().slice(0, 10)
+        if (paid_date == "") {
+            paid_date = new Date()
+            paid_date.setDate(paid_date.getDate() - 1)
+            paid_date = paid_date.toISOString().slice(0, 10)
+        }
         $.ajax({
             type: "POST",
             url: "<?= base_url("royalty/pay"); ?>",
