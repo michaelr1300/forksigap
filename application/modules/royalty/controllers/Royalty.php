@@ -157,7 +157,8 @@ class Royalty extends Sales_Controller
 
                 $data = [
                     'paid_date' => now(),
-                    'status' => 'paid'
+                    'status' => 'paid',
+                    'receipt' => $this->input->post('receipt')
                 ];
                 $this->db->set($data)->where('author_id', $author_id)->where('status', 'requested')->update('royalty');
             }

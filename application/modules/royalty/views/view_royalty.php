@@ -235,7 +235,7 @@ if ($royalty_payment == NULL) {
                     <?php endif ?>
 
                     <div
-                        class="modal modal-alert fade"
+                        class="modal modal-warning fade"
                         id="modal-confirm"
                         tabindex="-1"
                         role="dialog"
@@ -254,12 +254,41 @@ if ($royalty_payment == NULL) {
                                     id="confirm-royalty"
                                     method="post"
                                 >
-                                    <p class="ml-5 mt-3">Yakin <?= $button_label; ?> Royalti?</p>
+                                    <?php if($pending_royalty): ?>
+                                        <p class="mt-3 mx-3">
+                                            Apakah Anda yakin akan membayar royalty periode 
+                                            <b><?= $latest_royalty->start_date ?? '1 January 2021' ?></b>
+                                            hingga
+                                            <b><?= $latest_royalty->end_date ?></b>
+                                            ?
+                                        </p>
+                                        <div class="form-group mx-3">
+                                            <label
+                                                for="receipt"
+                                                class="font-weight-bold"
+                                            >
+                                                Masukkan Bukti Bayar
+                                                <abbr title="Required">*</abbr>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                name="receipt"
+                                                id="receipt"
+                                                class="form-control"
+                                                required
+                                            />
+                                        </div>
+                                    <?php else: ?>
+                                        <p class="mt-3 mx-3">
+                                            Apakah Anda yakin akan mengajukan royalty periode ini?
+                                        </p>
+                                    <?php endif ?>
+                                    
                                     <div class="modal-footer">
                                         <button
                                             type="submit"
                                             class="btn btn-primary"
-                                        >Save</button>
+                                        >Confirm</button>
                                         <button
                                             type="button"
                                             class="btn btn-light"
@@ -403,10 +432,9 @@ function showPaidPeriod() {
     var startDate = $('#last-paid-date').val()
     var endDate = $('#due-date').val()
     var stringDueDate = dueDate[2] + " " + Month[dueDate[1] - 1] + " " + dueDate[0]
-    // var stringStartDate = startDate[2] + " " + Month[startDate[1] - 1] + " " + startDate[0]
-    // console.log(startDate)
     console.log(endDate)
-    $('#paid_period').html("<p class='pl-1'>Periode royalti yang akan dibayarkan <b>" + startDate + '</b> hingga <b>' + stringDueDate + '</b></p><hr>')
+    $('#paid_period').html("<p class='pl-1'>Periode royalti yang akan dibayarkan <b>" + '</b> hingga <b>' + stringDueDate + '</b></p><hr>')
+
 }
 
 $('#due-date').change(function() {
