@@ -18,6 +18,12 @@ class Royalty extends Sales_Controller
             'keyword'           => $this->input->get('keyword', true),
             'period_end'        => $this->input->get('end_date', true)
         ];
+
+        //validasi max date
+        $today = date('Y-m-d', time());
+        if (strtotime($filters['period_end']) >= strtotime($today)) {
+            redirect($this->pages);
+        }
         $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
 
         $royalty = $this->royalty->author_earning($filters);
@@ -38,6 +44,12 @@ class Royalty extends Sales_Controller
 
     public function view($author_id, $period_end = null)
     {
+        //validasi max date
+        $today = date('Y-m-d', time());
+        if (strtotime($period_end) >= strtotime($today)) {
+            redirect($this->pages . '/view/' . $author_id);
+        }
+
         $author = $this->db->select('author_id, author_name')->from('author')->where('author_id', $author_id)->get()->row();
 
         $latest_royalty = $this->royalty->fetch_latest_royalty($author_id);
@@ -106,7 +118,7 @@ class Royalty extends Sales_Controller
         $data = array(
             'author' => $author,
             'royalty_details' => $royalty_details,
-            'period_end' =>$royalty->end_date,
+            'period_end' => $royalty->end_date,
             'current_stock' => $current_stock
         );
 
