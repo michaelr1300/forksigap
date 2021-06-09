@@ -45,7 +45,7 @@ class Royalty_model extends MY_Model
 
     public function author_earning($filters)
     {
-        $this->db->select('author.author_id, author_name, royalty.end_date as end_date, royalty.status as status, SUM(qty*price) AS total_sales, SUM(qty*price*book.royalty/100) as earned_royalty')
+        $this->db->select('author.author_id, author_name, royalty.start_date as start_date, royalty.end_date as end_date, royalty.status as status, SUM(qty*price) AS total_sales, SUM(qty*price*book.royalty/100) as earned_royalty')
             ->from('book')
             ->join('draft_author', 'draft_author.draft_id = book.draft_id', 'right')
             ->join('author', 'draft_author.author_id = author.author_id')
@@ -56,6 +56,7 @@ class Royalty_model extends MY_Model
         if ($filters['keyword'] != '') {
             $this->db->like('author_name', $filters['keyword']);
         }
+
         if ($filters['period_end'] != null) {
             //if author.last_paid_date == null
             $this->db->where('issued_date BETWEEN IFNULL(royalty.start_date, "2000/01/01") and "' . $filters['period_end'] . ' 23:59:59"');

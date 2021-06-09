@@ -73,7 +73,62 @@ if ($latest_royalty == NULL) {
                             <h5>Info</h5>
                             <div id="confirm_notif"></div>
                         </div>
+                        <hr>
+                        <div class="mt-3">
+                            <h6 class="mb-3">Royalti yang belum dibayar</h6>
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th
+                                            scope="col"
+                                            style="width:20%;"
+                                        >Tanggal Mulai Periode</th>
+                                        <th
+                                            scope="col"
+                                            style="width:20%;"
+                                        >Tanggal Akhir Periode</th>
+                                        <th
+                                            scope="col"
+                                            style="width:15%;"
+                                        >Total</th>
+                                        <th
+                                            scope="col"
+                                            style="width:15%;"
+                                        >Detail</th>
+                                        <th
+                                            scope="col"
+                                            style="width:15%;"
+                                        >Bayar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->start_date)) ?? '1 Januari 2021'; ?> </td>
+                                        <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->end_date)) ?? '' ?></td>
+                                        <td class="text-center align-middle">Rp <?= round($latest_royalty->details->earned_royalty, 0) ?? 0; ?></td>
+                                        <td class="text-center">
+                                            <a
+                                                type="button btn-success"
+                                                class="btn btn-primary text-center"
+                                                href="<?= base_url('royalty/view_detail/' . $latest_royalty->royalty_id) ?>"
+                                            >Detail</a>
+                                        </td>
+                                        <td class="text-center">
+                                            <button
+                                                type="button"
+                                                class="btn btn-primary text-center"
+                                                id="pay-royalty"
+                                            >Bayar</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <hr>
+                        <br>
                     <?php endif ?>
+                    
+                    <h5 class="mb-3">Form Pengajuan Royalti</h5>
                     <div class="form-group row">
                         <div class="col-12 col-md-6 mt-2">
                             <label
@@ -91,7 +146,7 @@ if ($latest_royalty == NULL) {
                             <input
                                 type="text"
                                 class="form-control"
-                                value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
+                                value="<?= date("d", strtotime($latest_royalty->end_date)) . " " . $month[intval(date("m", strtotime($latest_royalty->end_date))) - 1] . " " . date("Y", strtotime($latest_royalty->end_date)) ?>"
                                 readonly
                             />
                             <!-- <?php else : ?> -->
@@ -125,7 +180,6 @@ if ($latest_royalty == NULL) {
                             </div>
                         </div>
                     </div>
-                    <hr>
                     <div id="paid_period"></div>
                     <table class="table table-striped mb-0">
                         <thead>
@@ -185,60 +239,8 @@ if ($latest_royalty == NULL) {
                             </tr>
                         </tbody>
                     </table>
-
-                    <?php if ($pending_royalty) : ?>
-                        <hr>
-                        <div class="mt-3">
-                            <h6 class="mb-3">Royalti yang belum dibayar</h6>
-                            <table class="table table-striped mb-0">
-                                <thead>
-                                    <tr class="text-center">
-                                        <th
-                                            scope="col"
-                                            style="width:20%;"
-                                        >Tanggal Mulai Periode</th>
-                                        <th
-                                            scope="col"
-                                            style="width:20%;"
-                                        >Tanggal Akhir Periode</th>
-                                        <th
-                                            scope="col"
-                                            style="width:15%;"
-                                        >Total</th>
-                                        <th
-                                            scope="col"
-                                            style="width:15%;"
-                                        >Detail</th>
-                                        <th
-                                            scope="col"
-                                            style="width:15%;"
-                                        >Bayar</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->start_date)) ?? '1 Januari 2021'; ?> </td>
-                                        <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->end_date)) ?? '' ?></td>
-                                        <td class="text-center align-middle">Rp <?= round($latest_royalty->details->earned_royalty, 0) ?? 0; ?></td>
-                                        <td class="text-center">
-                                            <a
-                                                type="button btn-success"
-                                                class="btn btn-primary text-center"
-                                                href="<?= base_url('royalty/view_detail/' . $latest_royalty->royalty_id) ?>"
-                                            >Detail</a>
-                                        </td>
-                                        <td class="text-center">
-                                            <button
-                                                type="button"
-                                                class="btn btn-primary text-center"
-                                                id="pay-royalty"
-                                            >Bayar</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php else : ?>
+                    
+                    <?php if (!$pending_royalty) : ?>
                         <button
                             type="button"
                             class="btn btn-primary float-right ml-3"
@@ -446,7 +448,7 @@ function showPaidPeriod() {
     var startDate = $('#last-paid-date').val()
     var endDate = $('#due-date').val()
     var stringDueDate = dueDate[2] + " " + Month[dueDate[1] - 1] + " " + dueDate[0]
-    $('#paid_period').html("<p class='pl-1'>Periode royalti yang akan dibayarkan <b>" + '</b> hingga <b>' + stringDueDate + '</b></p><hr>')
+    $('#paid_period').html("<p class='pl-1'>Periode royalti yang akan dibayarkan <b>" + '</b> hingga <b>' + stringDueDate + '</b></p>')
 
 }
 

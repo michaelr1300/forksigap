@@ -27,6 +27,20 @@ class Royalty extends Sales_Controller
         $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
 
         $royalty = $this->royalty->author_earning($filters);
+        // Hilangkan author yang tidak dapat royalti periode ini
+        foreach ($royalty as $key => $each_royalty) {
+            if ($each_royalty->status == 'paid') {
+                $filters_next_royalty = [
+                    'last_paid_date'    => $each_royalty->end_date,
+                    'period_end'        => $filters['period_end']
+                ];
+                $next_royalty = $this->royalty->author_details($each_royalty->author_id, $filters_next_royalty);
+                // Buku penulis tidak ada yg terjual selama periode ini
+                if ($next_royalty[0]->book_id == NULL){
+                    unset($royalty[$key]);
+                }
+            }
+        }
         $total = count($royalty);
         $total_penjualan = 0;
         $total_royalty = 0;
