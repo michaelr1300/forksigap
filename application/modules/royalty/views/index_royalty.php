@@ -79,7 +79,7 @@ function royalti_action()
                                     min="2021-01-01"
                                     max="<?php
                                             echo date('Y-m-d', strtotime("-1 days"));
-                                        ?>"
+                                            ?>"
                                 >
                             </div>
                             <div class="col-12 col-md-8 mt-2">
@@ -179,7 +179,7 @@ function royalti_action()
                                     <td class="text-right align-middle">
                                         Rp <?= number_format($lData->earned_royalty, 0, ',', '.'); ?>
                                     </td>
-                                    <td><?= $lData->last_paid_date ? date("d F Y", strtotime($lData->last_paid_date)) : '' ?></td>
+                                    <td><?= $lData->end_date ? date("d F Y", strtotime($lData->end_date)) : '' ?></td>
                                     <td><?= get_royalty_status()[$lData->status] ?></td>
                                     <td></td>
                                 </tr>

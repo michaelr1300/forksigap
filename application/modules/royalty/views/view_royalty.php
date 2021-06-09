@@ -97,12 +97,12 @@ if ($royalty_payment == NULL) {
                                     value="<?= date("d", strtotime($royalty_payment->last_request_date)) . " " . $month[intval(date("m", strtotime($royalty_payment->last_request_date))) - 1] . " " . date("Y", strtotime($royalty_payment->last_request_date)) ?>"
                                     readonly
                                 />
-                            <?php else:?>
+                            <?php else : ?>
                                 <input
-                                type="date"
-                                id="last-paid-date"
-                                class="form-control dates d-none"
-                                value="<?= $last_paid_date ?>"
+                                    type="date"
+                                    id="last-paid-date"
+                                    class="form-control dates d-none"
+                                    value="<?= $last_paid_date ?>"
                                 />
                                 <input
                                     type="text"
@@ -269,9 +269,9 @@ if ($royalty_payment == NULL) {
                                     id="confirm-royalty"
                                     method="post"
                                 >
-                                    <?php if($pending_royalty): ?>
+                                    <?php if ($pending_royalty) : ?>
                                         <p class="mt-3 mx-3">
-                                            Apakah Anda yakin akan membayar royalty periode 
+                                            Apakah Anda yakin akan membayar royalty periode
                                             <b><?= date("d F Y", strtotime($latest_royalty->start_date)) ?? '1 January 2021' ?></b>
                                             hingga
                                             <b><?= date("d F Y", strtotime($latest_royalty->end_date)) ?></b>
@@ -293,12 +293,12 @@ if ($royalty_payment == NULL) {
                                                 required
                                             />
                                         </div>
-                                    <?php else: ?>
+                                    <?php else : ?>
                                         <p class="mt-3 mx-3">
                                             Apakah Anda yakin akan mengajukan royalty periode ini?
                                         </p>
                                     <?php endif ?>
-                                    
+
                                     <div class="modal-footer">
                                         <button
                                             type="submit"
@@ -430,7 +430,7 @@ $(document).ready(function() {
             },
             success: function(result) {
                 var response = $.parseJSON(result)
-                location.href = "<?= base_url('royalty'); ?>"
+                window.location = "<?= base_url('royalty'); ?>"
             },
             error: function(req, err) {
                 console.log(err)
@@ -449,7 +449,6 @@ function showPaidPeriod() {
     var startDate = $('#last-paid-date').val()
     var endDate = $('#due-date').val()
     var stringDueDate = dueDate[2] + " " + Month[dueDate[1] - 1] + " " + dueDate[0]
-    console.log(endDate)
     $('#paid_period').html("<p class='pl-1'>Periode royalti yang akan dibayarkan <b>" + '</b> hingga <b>' + stringDueDate + '</b></p><hr>')
 
 }
