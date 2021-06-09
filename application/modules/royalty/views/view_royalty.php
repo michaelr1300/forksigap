@@ -26,17 +26,14 @@ $url = '';
 if ($period_end == null) $url = '';
 else $url = '/' . $period_end;
 $month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-if ($royalty_payment == NULL) {
-    $last_paid_date = '2021/01/01';
+if ($latest_royalty == NULL) {
     $button_label = 'Ajukan Royalti';
     $pending_royalty = false;
 } else {
-    $last_paid_date = $royalty_payment->last_paid_date;
-    if ($royalty_payment->status == 'requested') {
+    if ($latest_royalty->status == 'requested') {
         $button_label = 'Konfirmasi Pembayaran';
         $pending_royalty = true;
-    }
-    if ($royalty_payment->status == NULL) {
+    } else {
         $button_label = 'Ajukan Royalti';
         $pending_royalty = false;
     }
@@ -84,33 +81,33 @@ if ($royalty_payment == NULL) {
                                 class="font-weight-bold"
                             >
                                 Akhir Periode Royalti Sebelumnya</label>
-                            <?php if ($pending_royalty) : ?>
-                                <input
-                                    type="date"
-                                    id="last-paid-date"
-                                    class="form-control dates d-none"
-                                    value="<?= $royalty_payment->last_request_date ?>"
-                                />
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    value="<?= date("d", strtotime($royalty_payment->last_request_date)) . " " . $month[intval(date("m", strtotime($royalty_payment->last_request_date))) - 1] . " " . date("Y", strtotime($royalty_payment->last_request_date)) ?>"
-                                    readonly
-                                />
-                            <?php else : ?>
-                                <input
-                                    type="date"
-                                    id="last-paid-date"
-                                    class="form-control dates d-none"
-                                    value="<?= $last_paid_date ?>"
-                                />
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
-                                    readonly
-                                />
-                            <?php endif ?>
+                            <!-- <?php if ($pending_royalty) : ?> -->
+                            <input
+                                type="date"
+                                id="last-paid-date"
+                                class="form-control dates d-none"
+                                value="<?= $latest_royalty->end_date ?>"
+                            />
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
+                                readonly
+                            />
+                            <!-- <?php else : ?> -->
+                            <input
+                                type="date"
+                                id="last-paid-date"
+                                class="form-control dates d-none"
+                                value="<?= $last_paid_date ?>"
+                            />
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="<?= date("d", strtotime($last_paid_date)) . " " . $month[intval(date("m", strtotime($last_paid_date))) - 1] . " " . date("Y", strtotime($last_paid_date)) ?>"
+                                readonly
+                            />
+                            <!-- <?php endif ?> -->
                         </div>
                         <div class="col-12 col-md-6 mt-2">
                             <label
@@ -192,7 +189,7 @@ if ($royalty_payment == NULL) {
                     <?php if ($pending_royalty) : ?>
                         <hr>
                         <div class="mt-3">
-                            <h6 class="mb-3">Royalty yang belum dibayar</h6>
+                            <h6 class="mb-3">Royalti yang belum dibayar</h6>
                             <table class="table table-striped mb-0">
                                 <thead>
                                     <tr class="text-center">
@@ -387,10 +384,10 @@ if ($royalty_payment == NULL) {
 </div>
 <script>
 $(document).ready(function() {
-    <?php if ($button_label == 'Konfirmasi Pembayaran') { ?>
+    <?php if ($pending_royalty) { ?>
         $('#paid_period').hide();
-        var startPeriod = '<?= date("d", strtotime($royalty_payment->last_paid_date)) . " " . $month[intval(date("m", strtotime($royalty_payment->last_paid_date))) - 1] . " " . date("Y", strtotime($royalty_payment->last_paid_date)) ?>'
-        var endPeriod = '<?= date("d", strtotime($royalty_payment->last_request_date)) . " " . $month[intval(date("m", strtotime($royalty_payment->last_request_date))) - 1] . " " . date("Y", strtotime($royalty_payment->last_request_date)) ?>'
+        var startPeriod = '<?= date("d", strtotime($latest_royalty->start_date)) . " " . $month[intval(date("m", strtotime($latest_royalty->start_date))) - 1] . " " . date("Y", strtotime($latest_royalty->start_date)) ?>'
+        var endPeriod = '<?= date("d", strtotime($latest_royalty->end_date)) . " " . $month[intval(date("m", strtotime($latest_royalty->end_date))) - 1] . " " . date("Y", strtotime($latest_royalty->end_date)) ?>'
         $('#confirm_notif').html('<p>Silakan konfirmasi pembayaran royalti untuk periode <b>' + startPeriod + '</b> hingga <b>' + endPeriod + '</b> sebelum mengajukan royalty lagi</p>')
     <?php } ?>
     showPaidPeriod()
