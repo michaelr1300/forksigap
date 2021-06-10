@@ -190,6 +190,12 @@ $invoice_type_options = [
                                     id="table_content"
                                     class="align-middle text-center"
                                 >
+                                    <button
+                                        type="button"
+                                        class="btn btn-success mr-3 mb-3"
+                                        style="float: right;"
+                                        id="print_month"
+                                    >Excel</button>
                                     <!-- isi tabel -->
                                 </tbody>
                             </table>
@@ -356,6 +362,8 @@ function appendTable(year, month, invoice_type) {
         url: "<?= base_url('earning/api_get_invoice/'); ?>" + year + '/' + month + '/' + type[invoice_type],
         datatype: "JSON",
         success: function(res) {
+            $('#print_month').attr("onclick", "generateExcel(" + year + ',' + month + ",'" + type[invoice_type] + "')")
+            // $('#print_month').attr("onclick", "generateExcel(" + year + "," + month + ", '" + type[invoice_type] + "')")
             populateTable(res.data)
             $('#table_laporan').show()
         },
@@ -363,6 +371,10 @@ function appendTable(year, month, invoice_type) {
             console.log(err);
         },
     });
+}
+
+function generateExcel(year, month, type) {
+    window.location.href = "<?= base_url('earning/call_generate_excel/'); ?>" + year + '/' + month + '/' + type
 }
 
 function populateTable(data) {

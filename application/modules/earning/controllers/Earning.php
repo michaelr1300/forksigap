@@ -99,6 +99,16 @@ class Earning extends Sales_Controller
         return $this->send_json_output(true, $result);
     }
 
+    public function call_generate_excel($year, $month, $type)
+    {
+        $filters = [
+            'date_year'     => $year,
+            'date_month'    => $month + 1,
+            'invoice_type'  => $type
+        ];
+        $this->generate_excel($filters, 'per_month');
+    }
+
     public function generate_excel($filters, $menu)
     {
         $spreadsheet = new Spreadsheet();
@@ -106,8 +116,11 @@ class Earning extends Sales_Controller
         if ($menu == 'index') {
             $filename = 'Laporan_Pendapatan_Tahun_' . $filters['date_year'];
             $get_data = $this->earning->filter_excel_total($filters);
-        } else {
+        } else if ($menu == 'detail') {
             $filename = 'Laporan_Pendapatan_Bulan_' . $filters['date_month'] . '_Tahun_' . $filters['date_year'];
+            $get_data = $this->earning->filter_excel_detail($filters);
+        } else {
+            $filename = 'Laporan_Pendapatan_Bulan_' . $filters['date_month'] . '_Tahun_' . $filters['date_year'] . '_' . $filters['invoice_type'];
             $get_data = $this->earning->filter_excel_detail($filters);
         }
         $i = 2;
@@ -140,6 +153,10 @@ class Earning extends Sales_Controller
                             $value = $data->earning;
                             break;
                         }
+                    case 'G': {
+                            $value = $data->receipt;
+                            break;
+                        }
                 }
                 $sheet->setCellValue($v . $i, $value);
             }
@@ -152,6 +169,7 @@ class Earning extends Sales_Controller
         $sheet->setCellValue('D1', 'Jenis Faktur');
         $sheet->setCellValue('E1', 'Status');
         $sheet->setCellValue('F1', 'Pendapatan');
+        $sheet->setCellValue('G1', 'Bukti Bayar');
         // Auto width
         $sheet->getColumnDimension('A')->setAutoSize(true);
         $sheet->getColumnDimension('B')->setAutoSize(true);
@@ -159,6 +177,7 @@ class Earning extends Sales_Controller
         $sheet->getColumnDimension('D')->setAutoSize(true);
         $sheet->getColumnDimension('E')->setAutoSize(true);
         $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
 
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.ms-excel');
