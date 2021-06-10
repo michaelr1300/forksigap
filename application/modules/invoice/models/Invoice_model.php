@@ -198,14 +198,14 @@ class Invoice_model extends MY_Model
             ->join('author', 'draft_author.author_id = author.author_id')
             ->get()
             ->row();
-            if ($source == 'warehouse') {
-                $stock = $this->fetch_warehouse_stock($book->book_id) ?? 0;
-                $book->stock = $stock;
-            } else
+        if ($source == 'warehouse') {
+            $stock = $this->fetch_warehouse_stock($book->book_id) ?? 0;
+            $book->stock = $stock;
+        } else
             if ($source == 'library') {
-                $stock = $this->fetch_library_stock($book->book_id, $library_id) ?? 0;
-                $book->stock = $stock;
-            }
+            $stock = $this->fetch_library_stock($book->book_id, $library_id) ?? 0;
+            $book->stock = $stock;
+        }
 
         return $book;
     }
@@ -274,13 +274,36 @@ class Invoice_model extends MY_Model
         }
         $this->db->order_by('invoice_id', 'DESC')
             ->limit($this->per_page, $this->calculate_real_offset($page));
-
         $this->db->stop_cache();
         return [
             'invoice' => $this->db->get()->result(),
             'total'   => $this->db->count_all_results()
         ];
     }
+
+    // public function filter_excel($filters)
+    // {
+    //     $this->db->select(['invoice_id', 'number', 'issued_date', 'due_date', 'invoice.customer_id', 'name as customer_name', 'customer.type as customer_type', 'status', 'invoice.type as invoice_type'])
+    //         ->from('invoice')
+    //         ->join('customer', 'invoice.customer_id = customer.customer_id', 'left')
+    //         ->order_by('invoice_id')
+    //         ->group_start()
+    //         ->or_like('number', $filters['keyword'])
+    //         ->or_like('name', $filters['keyword'])
+    //         ->group_end();
+    //     // ->like('invoice.type', $filters['invoice_type'])
+    //     // ->like('status', $filters['status']);
+    //     // if ($filters['customer_type'] == 'general') {
+    //     //     $this->db->group_start()
+    //     //         ->where('customer.type', 'general')
+    //     //         ->or_where('customer.type IS NULL')
+    //     //         ->group_end();
+    //     // } else if ($filters['customer_type'] != '' && $filters['customer_type'] != 'general') {
+    //     //     $this->db->like('customer.type', $filters['customer_type']);
+    //     // }
+    //     // $this->db->order_by('invoice_id', 'DESC');
+    //     return $this->db->get()->result();
+    // }
 
     public function when($params, $data)
     {
@@ -309,12 +332,12 @@ class Invoice_model extends MY_Model
     {
         $book_request = $this->select(['invoice_id', 'number', 'issued_date', 'due_date', 'status', 'type', 'source'])
             ->where('source', 'warehouse')
-                ->group_start()
-                ->where('status', 'confirm')
-                ->or_where('status', 'preparing')  
-                ->or_where('status', 'preparing_finish')
-                ->or_where('status', 'finish')                                              
-                ->group_end()
+            ->group_start()
+            ->where('status', 'confirm')
+            ->or_where('status', 'preparing')
+            ->or_where('status', 'preparing_finish')
+            ->or_where('status', 'finish')
+            ->group_end()
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
             ->order_by('invoice_id', 'DESC')
@@ -323,12 +346,12 @@ class Invoice_model extends MY_Model
 
         $total = $this->select('invoice_id')
             ->where('source', 'warehouse')
-                ->group_start()
-                ->where('status', 'confirm')
-                ->or_where('status', 'preparing')  
-                ->or_where('status', 'preparing_finish')
-                ->or_where('status', 'finish')                                              
-                ->group_end()
+            ->group_start()
+            ->where('status', 'confirm')
+            ->or_where('status', 'preparing')
+            ->or_where('status', 'preparing_finish')
+            ->or_where('status', 'finish')
+            ->group_end()
             ->when_request('keyword', $filters['keyword'])
             ->when_request('type', $filters['type'])
             ->order_by('invoice_id')

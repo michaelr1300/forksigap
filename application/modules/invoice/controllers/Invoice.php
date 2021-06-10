@@ -2,6 +2,8 @@
 
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class Invoice extends Sales_Controller
 {
@@ -22,7 +24,8 @@ class Invoice extends Sales_Controller
             'keyword'           => $this->input->get('keyword', true),
             'invoice_type'      => $this->input->get('invoice_type', true),
             'status'            => $this->input->get('status', true),
-            'customer_type'     => $this->input->get('customer_type', true)
+            'customer_type'     => $this->input->get('customer_type', true),
+            'excel'             => $this->input->get('excel', true)
         ];
 
         $this->invoice->per_page = $this->input->get('per_page', true) ?? 10;
@@ -40,6 +43,9 @@ class Invoice extends Sales_Controller
         $pages      = $this->pages;
         $main_view  = 'invoice/index_invoice';
         $this->load->view('template', compact('pages', 'main_view', 'invoice', 'pagination', 'total'));
+        if ($filters['excel'] == 1) {
+            $this->generate_excel($get_data['invoice']);
+        }
     }
 
     public function view($invoice_id)
@@ -614,6 +620,75 @@ class Invoice extends Sales_Controller
 
         $printer->feed(5); // mencetak 5 baris kosong agar terangkat (pemotong kertas saya memiliki jarak 5 baris dari toner)
         $printer->close();
+    }
+
+    public function generate_excel($get_data)
+    {
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $filename = 'Data_Faktur_Tahun';
+        $i = 2;
+        $no = 1;
+        // Column Content
+        foreach ($get_data as $data) {
+            foreach (range('A', 'F') as $v) {
+                switch ($v) {
+                    case 'A': {
+                            $value = $no++;
+                            break;
+                        }
+                    case 'B': {
+                            $value = $data->number;
+                            break;
+                        }
+                    case 'C': {
+                            $value = date('d F Y', strtotime($data->issued_date));
+                            break;
+                        }
+                    case 'D': {
+                            $value = get_invoice_type()[$data->invoice_type];
+                            break;
+                        }
+                    case 'E': {
+                            $value = get_invoice_status()[$data->status];
+                            break;
+                        }
+                    case 'F': {
+                            $value = $data->due_date;
+                            break;
+                        }
+                    case 'G': {
+                            $value = $data->receipt;
+                            break;
+                        }
+                }
+                $sheet->setCellValue($v . $i, $value);
+            }
+            $i++;
+        }
+        // Column Title
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Nomor Faktur');
+        $sheet->setCellValue('C1', 'Tanggal Dikeluarkan');
+        $sheet->setCellValue('D1', 'Jenis Faktur');
+        $sheet->setCellValue('E1', 'Status');
+        $sheet->setCellValue('F1', 'Jatuh Tempo');
+        $sheet->setCellValue('G1', 'Bukti Bayar');
+        // Auto width
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        $sheet->getColumnDimension('C')->setAutoSize(true);
+        $sheet->getColumnDimension('D')->setAutoSize(true);
+        $sheet->getColumnDimension('E')->setAutoSize(true);
+        $sheet->getColumnDimension('F')->setAutoSize(true);
+        $sheet->getColumnDimension('G')->setAutoSize(true);
+
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        $writer->save('php://output');
+        die();
     }
 
     public function api_get_book($book_id)
