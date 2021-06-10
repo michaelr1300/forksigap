@@ -149,6 +149,15 @@ if ($latest_royalty == NULL) {
                                     class="font-weight-bold"
                                 >
                                     Tanggal Awal Periode yang Akan Diajukan</label>
+                                <small
+                                    id="error-null-start-date"
+                                    class="d-none error-message text-danger"
+                                >Tanggal mulai periode wajib diisi!</small>
+                                <small
+                                    id="error-invalid-range"
+                                    class="d-none error-message text-danger"
+                                >Tanggal mulai periode tidak bisa melebihi tanggal akhir periode!</small>
+
                                 <?php if ($last_paid_date == NULL): //Baru pertama kali?>
                                     <input
                                         id="start-date"
@@ -307,7 +316,8 @@ if ($latest_royalty == NULL) {
                                             Apakah Anda yakin akan mengajukan royalty periode ini?
                                         </p>
                                     <?php endif ?>
-
+                                    
+                                    
                                     <div class="modal-footer">
                                         <button
                                             type="submit"
@@ -422,12 +432,6 @@ $(document).ready(function() {
     })
 
     $('#confirm-royalty').on("submit", function() {
-        // var paid_date = "<?= $period_end; ?>"
-        // if (paid_date == "") {
-        //     paid_date = new Date()
-        //     paid_date.setDate(paid_date.getDate() - 1)
-        //     paid_date = paid_date.toISOString().slice(0, 10)
-        // }
         var receipt = $('#receipt').val()
         var end_date = $('#due-date').val()
         var start_date = $('#start-date').val()
@@ -442,7 +446,16 @@ $(document).ready(function() {
             },
             success: function(result) {
                 var response = $.parseJSON(result)
-                window.location = "<?= base_url('royalty'); ?>"
+                //Validation Error
+                if (response.status != true) {
+                    $(".error-message").addClass('d-none');
+                    for (var i = 0; i < response.input_error.length; i++) {
+                        // Show error message
+                        $('#' + response.input_error[i]).removeClass('d-none');
+                    }
+                } else {
+                    location.href = "<?= base_url('royalty'); ?>";
+                }
             },
             error: function(req, err) {
                 console.log(err)

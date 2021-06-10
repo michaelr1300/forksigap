@@ -160,6 +160,7 @@ class Royalty extends Sales_Controller
 
     public function pay()
     {
+        $this->royalty->validate_royalty();
         $author_id = $this->input->post('author_id');
         $latest_royalty = $this->royalty->fetch_latest_royalty($author_id);
         //jika belum ada data royalti
