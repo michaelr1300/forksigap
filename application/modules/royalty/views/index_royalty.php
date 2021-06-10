@@ -11,30 +11,6 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
     $date_year_options[$dy] = $dy;
 }
 
-function royalti_action()
-{
-    return html_escape('
-    <div class="list-group list-group-bordered" style="margin: -9px -15px;border-radius:0;">
-      <a href="' . base_url("royalty/index") . '" class="list-group-item list-group-item-action p-2">
-        <div class="list-group-item-figure">
-        <div class="tile bg-success">
-        <span class="fa fa-check"></span>
-        </div>
-        </div>
-        <div class="list-group-item-body"> Sudah Dibayar </div>
-      </a>
-      <a href="' . base_url("royalty/index") . '" class="list-group-item list-group-item-action p-2">
-        <div class="list-group-item-figure">
-        <div class="tile bg-danger">
-        <span class="fa fa-ban"></span>
-        </div>
-        </div>
-        <div class="list-group-item-body"> Belum Dibayar </div>
-      </a>
-    </div>
-    ');
-}
-
 ?>
 
 <header class="page-title-bar">
@@ -179,7 +155,7 @@ function royalti_action()
                                     <td class="text-right align-middle">
                                         Rp <?= number_format($lData->earned_royalty, 0, ',', '.'); ?>
                                     </td>
-                                    <td><?= $lData->start_date ? date("d F Y", strtotime($lData->start_date)) : '' ?></td>
+                                    <td><?= $lData->end_date ? date("d F Y", strtotime($lData->end_date)) : '' ?></td>
                                     <td><?= get_royalty_status()[$lData->status] ?></td>
                                     <td></td>
                                 </tr>
@@ -214,10 +190,3 @@ function royalti_action()
         </div>
     </div>
 </div>
-<script>
-// $(document).ready(function() {
-//     var today = new Date();
-//     today.setDate(today.getDate() - 1)
-//     document.getElementById("end_date").setAttribute("max", today);
-// });
-</script>
