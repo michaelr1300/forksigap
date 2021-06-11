@@ -26,7 +26,7 @@ class Royalty extends Sales_Controller
         }
         $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
 
-        $royalty = $this->royalty->author_earning($filters);
+        $royalty = $this->royalty->author_earning($filters, $page);
         // Hilangkan author yang tidak dapat royalti periode ini
         foreach ($royalty as $key => $each_royalty) {
             if ($each_royalty->status == 'paid') {
@@ -36,7 +36,7 @@ class Royalty extends Sales_Controller
                 ];
                 $next_royalty = $this->royalty->author_details($each_royalty->author_id, $filters_next_royalty);
                 // Buku penulis tidak ada yg terjual selama periode ini
-                if ($next_royalty[0]->book_id == NULL){
+                if ($next_royalty[0]->book_id == NULL) {
                     unset($royalty[$key]);
                 }
             }
@@ -54,6 +54,34 @@ class Royalty extends Sales_Controller
         $pages      = $this->pages;
         $main_view  = 'royalty/index_royalty';
         $this->load->view('template', compact('pages', 'main_view', 'royalty', 'pagination', 'total', 'total_penjualan', 'total_royalty'));
+    }
+
+    public function history($page = NULL)
+    {
+        $filters = [
+            'keyword'           => $this->input->get('keyword', true),
+            'start_date'        => $this->input->get('start_date', true),
+            'period_end'        => $this->input->get('end_date', true)
+        ];
+
+        $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
+        $royalty_history = $this->royalty->fetch_all_royalty_history($filters, $page);
+        foreach ($royalty_history as $history) {
+            $author_id = $history->author_id;
+            $history_filter = [
+                'last_paid_date'    => $history->start_date,
+                'period_end'        => $history->end_date
+            ];
+            $history->details = $this->royalty->author_details($author_id, $history_filter)[0];
+        }
+
+        $total = count($royalty_history);
+        // print_r($royalty_history[0]->details->total_sales);
+
+        $pagination = $this->royalty->make_pagination(site_url('royalty'), 2, $total);
+        $pages      = $this->pages . '/history';
+        $main_view  = 'royalty/history_royalty';
+        $this->load->view('template', compact('pages', 'main_view', 'pagination', 'royalty_history', 'total', 'page'));
     }
 
     public function view($author_id, $period_end = null)
@@ -76,24 +104,22 @@ class Royalty extends Sales_Controller
         }
 
         if ($latest_royalty != NULL) {
-            if ($latest_royalty->status == 'paid') { 
+            if ($latest_royalty->status == 'paid') {
                 // Sudah pernah bayar
                 $last_paid_date = $latest_royalty->end_date;
                 $current_start_date = date('Y-m-d H:i:s', strtotime($latest_royalty->end_date) + 1);
-            }
-            else {
+            } else {
                 // Sedang diajukan
                 $last_paid_date = date('Y-m-d H:i:s', strtotime($latest_royalty->start_date) - 1);
                 $current_start_date = date('Y-m-d H:i:s', strtotime($latest_royalty->end_date) + 1);
             }
-        } 
-        else {
+        } else {
             // Baru pertama kali
             $last_paid_date = NULL;
             $current_start_date = NULL;
         }
-        
-        
+
+
         $filters = [
             'period_end'        => $period_end,
             'last_paid_date'    => $last_paid_date
@@ -170,7 +196,7 @@ class Royalty extends Sales_Controller
             //tambahkan data royalti author
             $data = [
                 'author_id' => $author_id,
-                'start_date' => $start_date. ' 00:00:00',
+                'start_date' => $start_date . ' 00:00:00',
                 'end_date' =>  $end_date . ' 23:59:59',
                 'status' => 'requested'
             ];
