@@ -116,7 +116,7 @@ $level              = check_level();
                                     Penulis
                                 </td>
                                 <td class="align-middle">
-                                    Rp <?= $proforma_book->price ?>
+                                    Rp <?= number_format($proforma_book->price, 0, ',', '.') ?>
                                 </td>
                                 <td class="align-middle">
                                     <?= $proforma_book->qty ?>
@@ -125,7 +125,7 @@ $level              = check_level();
                                     <?= $proforma_book->discount ?> %
                                 </td>
                                 <td class="align-middle">
-                                    Rp <?= $proforma_book->price * $proforma_book->qty * (1 - $proforma_book->discount / 100) ?>
+                                    Rp <?= number_format($proforma_book->price * $proforma_book->qty * (1 - $proforma_book->discount / 100), 0, ',', '.'); ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

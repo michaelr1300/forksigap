@@ -208,15 +208,21 @@ var total_year = new Chart(ctx, {
     options: {
         scales: {
             yAxes: [{
-                display: true,
+                display: false,
                 ticks: {
                     beginAtZero: true
+                },
+                gridLines: {
+                    drawOnChartArea: false
                 }
             }],
             xAxes: [{
-                display: true,
+                display: false,
                 ticks: {
                     beginAtZero: true
+                },
+                gridLines: {
+                    drawOnChartArea: false
                 }
             }]
         },
