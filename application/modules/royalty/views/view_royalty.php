@@ -431,7 +431,8 @@ $(document).ready(function() {
         $('#modal-confirm').modal('toggle')
     })
 
-    $('#confirm-royalty').on("submit", function() {
+    $('#confirm-royalty').on("submit", function(e) {
+        e.preventDefault();
         var receipt = $('#receipt').val()
         var end_date = $('#due-date').val()
         var start_date = $('#start-date').val()
@@ -449,6 +450,7 @@ $(document).ready(function() {
                 //Validation Error
                 if (response.status != true) {
                     $(".error-message").addClass('d-none');
+                    alert("Input tidak valid! Pastikan tanggal awal periode tidak kosong dan tidak melebihi tanggal akhir periode")
                     for (var i = 0; i < response.input_error.length; i++) {
                         // Show error message
                         $('#' + response.input_error[i]).removeClass('d-none');

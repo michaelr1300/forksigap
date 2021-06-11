@@ -10,10 +10,10 @@ class Royalty_model extends MY_Model
         $data['input_error'] = array();
         $data['status'] = TRUE;
 
-        if ($this->input->post('start-date') == '') {
+        if ($this->input->post('start_date') == '') {
             $data['input_error'][] = 'null-start-date';
             $data['status'] = FALSE;
-        } else if ($this->input->post('start-date') > $this->input->post('end-date')) {
+        } else if ($this->input->post('start_date') > $this->input->post('end_date')) {
             $data['input_error'][] = 'invalid-range';
             $data['status'] = FALSE;
         }
