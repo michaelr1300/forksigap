@@ -541,6 +541,11 @@ function get_user_levels()
     return ['superadmin', 'admin_penerbitan', 'author', 'reviewer', 'editor', 'layouter', 'author_reviewer', 'admin_percetakan', 'staff_percetakan', 'admin_gudang', 'staff_gudang', 'admin_pemasaran', 'admin_keuangan'];
 }
 
+function get_marketplace()
+{
+    return ['Tokopedia', 'Shopee', 'Lazada', 'Bukalapak', 'Website UGM Press', 'Lainnya'];
+}
+
 function filter_boolean($data)
 {
     return filter_var($data, FILTER_VALIDATE_BOOLEAN);

@@ -363,7 +363,63 @@ $level              = check_level();
                         value="<?= $invoice->receipt ?>"
                     />
                 </div>
-            </div>
+                <div class="form-group">
+                    <label>
+                        <b>Marketplace</b>
+                        <abbr title="Required">*</abbr><br>
+                    </label>
+                    <?php foreach (get_marketplace() as $marketplace) : ?>
+                        <div class="custom-control custom-radio">
+                            <?= form_radio('marketplace', $marketplace, isset($invoice->receipt) && ($invoice->receipt == $marketplace) ? true : false, ' class="custom-control-input" id="' . $marketplace . '"'); ?>
+                            <label
+                                class="custom-control-label"
+                                for="<?= $marketplace; ?>"
+                            ><?= $marketplace ?></label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <!-- <div class="form-group">
+                    <label for="marketplace">
+                        <b>Marketplace</b>
+                        <abbr title="Required">*</abbr><br>
+                    </label>
+                    <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                        <label class="form-check-label" for="flexRadioDefault1">
+                            Tokopedia
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Shopee
+                    </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Lazada
+                    </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Bukalapak
+                    </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Website UGM Press
+                    </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                        <label class="form-check-label" for="flexRadioDefault2">
+                            Lainnya
+                    </label>
+                    </div>
+                </div> -->
             <div class="modal-footer">
                 <button
                     type="submit"
