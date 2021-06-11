@@ -44,7 +44,7 @@ class Invoice extends Sales_Controller
         $main_view  = 'invoice/index_invoice';
         $this->load->view('template', compact('pages', 'main_view', 'invoice', 'pagination', 'total'));
         if ($filters['excel'] == 1) {
-            $this->generate_excel($get_data['invoice']);
+            $this->generate_excel($filters);
         }
     }
 
@@ -622,16 +622,17 @@ class Invoice extends Sales_Controller
         $printer->close();
     }
 
-    public function generate_excel($get_data)
+    public function generate_excel($filters)
     {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $filename = 'Data_Faktur_Tahun';
+        $filename = 'Data_Faktur';
+        $invoice_test = $this->invoice->filter_invoice($filters, -1);
         $i = 2;
         $no = 1;
         // Column Content
-        foreach ($get_data as $data) {
-            foreach (range('A', 'F') as $v) {
+        foreach ($invoice_test['invoice'] as $data) {
+            foreach (range('A', 'I') as $v) {
                 switch ($v) {
                     case 'A': {
                             $value = $no++;
@@ -650,14 +651,22 @@ class Invoice extends Sales_Controller
                             break;
                         }
                     case 'E': {
-                            $value = get_invoice_status()[$data->status];
+                            $value = $data->customer_name;
                             break;
                         }
                     case 'F': {
-                            $value = $data->due_date;
+                            $value = $data->customer_type;
                             break;
                         }
                     case 'G': {
+                            $value = get_invoice_status()[$data->status];
+                            break;
+                        }
+                    case 'H': {
+                            $value = $data->due_date;
+                            break;
+                        }
+                    case 'I': {
                             $value = $data->receipt;
                             break;
                         }
@@ -671,9 +680,11 @@ class Invoice extends Sales_Controller
         $sheet->setCellValue('B1', 'Nomor Faktur');
         $sheet->setCellValue('C1', 'Tanggal Dikeluarkan');
         $sheet->setCellValue('D1', 'Jenis Faktur');
-        $sheet->setCellValue('E1', 'Status');
-        $sheet->setCellValue('F1', 'Jatuh Tempo');
-        $sheet->setCellValue('G1', 'Bukti Bayar');
+        $sheet->setCellValue('E1', 'Nama Customer');
+        $sheet->setCellValue('F1', 'Jenis Customer');
+        $sheet->setCellValue('G1', 'Status');
+        $sheet->setCellValue('H1', 'Jatuh Tempo');
+        $sheet->setCellValue('I1', 'Bukti Bayar');
         // Auto width
         $sheet->getColumnDimension('A')->setAutoSize(true);
         $sheet->getColumnDimension('B')->setAutoSize(true);
@@ -682,6 +693,8 @@ class Invoice extends Sales_Controller
         $sheet->getColumnDimension('E')->setAutoSize(true);
         $sheet->getColumnDimension('F')->setAutoSize(true);
         $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
+        $sheet->getColumnDimension('I')->setAutoSize(true);
 
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.ms-excel');

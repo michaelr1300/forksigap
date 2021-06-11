@@ -255,7 +255,7 @@ class Invoice_model extends MY_Model
     public function filter_invoice($filters, $page)
     {
         $this->db->start_cache();
-        $this->db->select(['invoice_id', 'number', 'issued_date', 'due_date', 'invoice.customer_id', 'name as customer_name', 'customer.type as customer_type', 'status', 'invoice.type as invoice_type'])
+        $this->db->select(['invoice_id', 'number', 'issued_date', 'due_date', 'invoice.customer_id', 'name as customer_name', 'customer.type as customer_type', 'status', 'invoice.type as invoice_type', 'receipt'])
             ->from('invoice')
             ->join('customer', 'invoice.customer_id = customer.customer_id', 'left')
             ->group_start()
@@ -272,12 +272,19 @@ class Invoice_model extends MY_Model
         } else if ($filters['customer_type'] != '' && $filters['customer_type'] != 'general') {
             $this->db->like('customer.type', $filters['customer_type']);
         }
-        $this->db->order_by('invoice_id', 'DESC')
-            ->limit($this->per_page, $this->calculate_real_offset($page));
+        if ($page != -1) {
+            $this->db->order_by('invoice_id', 'DESC')
+                ->limit($this->per_page, $this->calculate_real_offset($page));
+        } else {
+            $this->db->order_by('invoice_id', 'DESC');
+        }
         $this->db->stop_cache();
+        $invoice = $this->db->get()->result();
+        $total = $this->db->count_all_results();
+        $this->db->flush_cache();
         return [
-            'invoice' => $this->db->get()->result(),
-            'total'   => $this->db->count_all_results()
+            'invoice' => $invoice,
+            'total'   => $total
         ];
     }
 

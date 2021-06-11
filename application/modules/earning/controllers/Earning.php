@@ -127,7 +127,7 @@ class Earning extends Sales_Controller
         $no = 1;
         // Column Content
         foreach ($get_data as $data) {
-            foreach (range('A', 'F') as $v) {
+            foreach (range('A', 'G') as $v) {
                 switch ($v) {
                     case 'A': {
                             $value = $no++;
