@@ -4,16 +4,16 @@ class Royalty_model extends MY_Model
 {
     public $per_page = 10;
 
-    public function validate_royalty() {
+    public function validate_royalty()
+    {
         $data = array();
         $data['input_error'] = array();
         $data['status'] = TRUE;
 
-        // echo($this->input->post('start_date'));
-        if ($this->input->post('start_date') == '') {
+        if ($this->input->post('start-date') == '') {
             $data['input_error'][] = 'null-start-date';
             $data['status'] = FALSE;
-        } else if ($this->input->post('start_date') > $this->input->post('end_date')) {
+        } else if ($this->input->post('start-date') > $this->input->post('end-date')) {
             $data['input_error'][] = 'invalid-range';
             $data['status'] = FALSE;
         }
@@ -63,8 +63,26 @@ class Royalty_model extends MY_Model
             ->row();
     }
 
-    
-    public function author_earning($filters)
+    public function fetch_all_royalty_history($filters, $page)
+    {
+        $this->db->select('royalty_id, author.author_id, author_name, start_date, end_date, status, paid_date, receipt')
+            ->from('royalty')
+            ->join('author', 'royalty.author_id = author.author_id')
+            ->order_by('royalty_id', 'DESC')->limit($this->per_page, $this->calculate_real_offset($page));
+        if ($filters['keyword'] != '') {
+            $this->db->like('author_name', $filters['keyword']);
+        }
+        if ($filters['start_date'] != null) {
+            $this->db->where('start_date >=', $filters['start_date']);
+        }
+        if ($filters['period_end'] != null) {
+            $this->db->where('end_date <=', $filters['period_end']);
+        }
+        return $this->db->get()->result();
+    }
+
+
+    public function author_earning($filters, $page)
     {
         $this->db->select('author.author_id, author_name, royalty.start_date as start_date, royalty.end_date as end_date, royalty.status as status, SUM(qty*price) AS total_sales, SUM(qty*price*book.royalty/100) as earned_royalty')
             ->from('book')
@@ -83,7 +101,7 @@ class Royalty_model extends MY_Model
         } else {
             $this->db->where('issued_date BETWEEN IFNULL((SELECT IF(royalty.status = "paid", end_date, start_date - INTERVAL 1 SECOND)), "2000/01/01") and addtime(CURDATE(), "23:59:59") - INTERVAL 1 DAY');
         }
-        $this->db->where('invoice.status', 'finish');
+        $this->db->where('invoice.status', 'finish')->limit($this->per_page, $this->calculate_real_offset($page));
         return $this->db->get()->result();
     }
 

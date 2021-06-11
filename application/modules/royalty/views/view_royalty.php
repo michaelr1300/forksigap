@@ -106,7 +106,7 @@ if ($latest_royalty == NULL) {
                                     <tr>
                                         <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->start_date)) ?? '1 Januari 2021'; ?> </td>
                                         <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->end_date)) ?? '' ?></td>
-                                        <td class="text-center align-middle">Rp <?= round($latest_royalty->details->earned_royalty, 0) ?? 0; ?></td>
+                                        <td class="text-center align-middle">Rp <?= number_format($latest_royalty->details->earned_royalty, 0, ',', '.') ?? 0; ?></td>
                                         <td class="text-center">
                                             <a
                                                 type="button btn-success"
@@ -233,8 +233,8 @@ if ($latest_royalty == NULL) {
                                         <td class="text-center"><?= $index + 1; ?></td>
                                         <td class="text-left"><?= $royalty->book_title; ?></td>
                                         <td class="text-center"><?= $royalty->count; ?></td>
-                                        <td class="text-right pr-5">Rp <?= $royalty->total_sales; ?></td>
-                                        <td class="text-right pr-5">Rp <?= round($royalty->earned_royalty, 0); ?></td>
+                                        <td class="text-right pr-5">Rp <?= number_format($royalty->total_sales, 0, ',', '.'); ?></td>
+                                        <td class="text-right pr-5">Rp <?= number_format($royalty->earned_royalty, 0, ',', '.'); ?></td>
                                     </tr>
                                     <?php $index++;
                                     $total_sales += $royalty->total_sales;
@@ -249,10 +249,10 @@ if ($latest_royalty == NULL) {
                                         <b>Total</b>
                                     </td>
                                     <td class="text-right pr-5">
-                                        <b>Rp <?= $total_sales; ?></b>
+                                        <b>Rp <?= number_format($total_sales, 0, ',', '.'); ?></b>
                                     </td>
                                     <td class="text-right pr-5">
-                                        <b>Rp <?= $total_royalty; ?></b>
+                                        <b>Rp <?= number_format($total_royalty, 0, ',', '.'); ?></b>
                                     </td>
                                 </tr>
                             </tbody>
@@ -385,7 +385,7 @@ if ($latest_royalty == NULL) {
                                         <td class="text-center align-middle"><?= date("d F Y", strtotime($lData->end_date)) ?></td>
                                         <td class="text-center align-middle"><?= get_royalty_status()[$lData->status] ?></td>
                                         <td class="text-center align-middle"><?= $lData->paid_date ? date("d F Y", strtotime($lData->paid_date)) : '' ?></td>
-                                        <td class="text-right align-middle">Rp <?= round($lData->details->earned_royalty, 0);; ?></td>
+                                        <td class="text-right align-middle">Rp <?= number_format($lData->details->earned_royalty, 0, ',', '.');; ?></td>
                                         <td class="text-center">
                                             <a
                                                 type="button btn-success"
@@ -431,8 +431,7 @@ $(document).ready(function() {
         $('#modal-confirm').modal('toggle')
     })
 
-    $('#confirm-royalty').on("submit", function(e) {
-        e.preventDefault();
+    $('#confirm-royalty').on("submit", function() {
         var receipt = $('#receipt').val()
         var end_date = $('#due-date').val()
         var start_date = $('#start-date').val()
@@ -451,7 +450,6 @@ $(document).ready(function() {
                 if (response.status != true) {
                     $(".error-message").addClass('d-none');
                     for (var i = 0; i < response.input_error.length; i++) {
-                        alert("Input tidak valid! Pastikan tanggal awal periode tidak kosong dan tidak melebihi tanggal akhir periode")
                         // Show error message
                         $('#' + response.input_error[i]).removeClass('d-none');
                     }
