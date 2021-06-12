@@ -42,7 +42,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
             <section class="card card-fluid">
                 <div class="card-body p-0">
                     <div class="p-3">
-                        <?= form_open($pages, ['method' => 'GET']); ?>
+                        <?= form_open(base_url('royalty/history/'), ['method' => 'GET']); ?>
                         <div class="row">
                             <div class="col-12 col-md-4 mt-2">
                                 <label for="per_page">Data per halaman</label>

@@ -86,7 +86,7 @@ class Royalty extends Sales_Controller
         // print_r($royalty_history[0]->details->total_sales);
 
         $pagination = $this->royalty->make_pagination(site_url('royalty'), 2, $total);
-        $pages      = $this->pages . '/history';
+        $pages      = $this->pages;
         $main_view  = 'royalty/history_royalty';
         $this->load->view('template', compact('pages', 'main_view', 'pagination', 'royalty_history', 'total', 'page'));
     }
