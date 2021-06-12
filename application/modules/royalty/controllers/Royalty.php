@@ -179,6 +179,7 @@ class Royalty extends Sales_Controller
         $data = array(
             'author' => $author,
             'royalty_details' => $royalty_details,
+            'start_date' => $royalty->start_date,
             'period_end' => $royalty->end_date,
             'current_stock' => $current_stock
         );

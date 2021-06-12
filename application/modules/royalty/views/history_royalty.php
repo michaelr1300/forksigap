@@ -162,11 +162,11 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                     <td class="text-right align-middle">
                                         Rp <?= number_format($lData->earned_royalty, 0, ',', '.'); ?>
                                     </td> -->
-                                    <td><?= $lData->start_date ? date("d F Y", strtotime($lData->start_date)) : '' ?></td>
-                                    <td><?= $lData->end_date ? date("d F Y", strtotime($lData->end_date)) : '' ?></td>
-                                    <td><?= get_royalty_status()[$lData->status] ?></td>
-                                    <td><?= $lData->paid_date ? date("d F Y", strtotime($lData->paid_date)) : '' ?></td>
-                                    <td class="align-middle">Rp <?= round($lData->details->earned_royalty, 0);; ?></td>
+                                    <td class="align-middle"><?= $lData->start_date ? date("d F Y", strtotime($lData->start_date)) : '' ?></td>
+                                    <td class="align-middle"><?= $lData->end_date ? date("d F Y", strtotime($lData->end_date)) : '' ?></td>
+                                    <td class="align-middle"><?= get_royalty_status()[$lData->status] ?></td>
+                                    <td class="align-middle"><?= $lData->paid_date ? date("d F Y", strtotime($lData->paid_date)) : '' ?></td>
+                                    <td class="align-middle">Rp <?= number_format($lData->details->earned_royalty,  0, ',', '.'); ?></td>
                                     <td class="text-center">
                                         <a
                                             type="button btn-success"
