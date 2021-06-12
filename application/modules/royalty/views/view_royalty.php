@@ -1,5 +1,7 @@
 <?php
 $level              = check_level();
+$start_date         = $this->input->get('start-date');
+$end_date           = $this->input->get('due-date');
 ?>
 
 <header class="page-title-bar mb-3">
@@ -18,14 +20,12 @@ $level              = check_level();
         </ol>
     </nav>
 </header>
-<?php $selected_date = date('Y-m-d', strtotime("-1 days"));
-if ($period_end != null) {
-    $selected_date = $period_end;
+<?php $yesterday = date('Y-m-d', strtotime("-1 days"));
+$selected_date = $yesterday;
+if ($end_date != null) {
+    $selected_date = $end_date;
 }
-$yesterday = date('Y-m-d', strtotime("-1 days"));
-$url = '';
-if ($period_end == null) $url = '';
-else $url = '/' . $period_end;
+
 $month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 if ($latest_royalty == NULL) {
     $button_label = 'Ajukan Royalti';
@@ -129,7 +129,7 @@ if ($latest_royalty == NULL) {
                         <br>
                     <?php endif ?>
                     <h5 class="mb-3">Form Pengajuan Royalti</h5>
-                    <?php if(strtotime($current_start_date) > strtotime($yesterday)): ?>
+                    <?php if (strtotime($current_start_date) > strtotime($yesterday)) : ?>
                         <div
                             class="alert alert-info alert-dismissible fade show"
                             role="alert"
@@ -140,10 +140,13 @@ if ($latest_royalty == NULL) {
                     <?php endif ?>
                     <div
                         id="form-royalty"
-                        class="<?php if(strtotime($current_start_date) > strtotime($yesterday)){echo 'd-none';} ?>"
+                        class="<?php if (strtotime($current_start_date) > strtotime($yesterday)) {
+                                    echo 'd-none';
+                                } ?>"
                     >
+                        <?= form_open(base_url('royalty/view/' . $author->author_id), ['method' => 'GET']); ?>
                         <div class="form-group row">
-                            <div class="col-12 col-md-6 mt-2">
+                            <div class="col-12 col-md-5 mt-2">
                                 <label
                                     for="last-paid-date"
                                     class="font-weight-bold"
@@ -158,30 +161,30 @@ if ($latest_royalty == NULL) {
                                     class="d-none error-message text-danger"
                                 >Tanggal mulai periode tidak bisa melebihi tanggal akhir periode!</small>
 
-                                <?php if ($last_paid_date == NULL): //Baru pertama kali?>
+                                <?php if ($latest_royalty == NULL) : //Baru pertama kali
+                                ?>
                                     <input
                                         id="start-date"
                                         name="start-date"
                                         class="form-control dates"
+                                        value="<?= $start_date ?>"
                                     />
-                                <?php else: ?>
-                                    
-                                    
-                                        <input
-                                            id="start-date"
-                                            name="start-date"
-                                            class="form-control dates d-none"
-                                            value="<?= $current_start_date ?>"
-                                        />
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            value="<?= date("d", strtotime($current_start_date)) . " " . $month[intval(date("m", strtotime($current_start_date))) - 1] . " " . date("Y", strtotime($current_start_date)) ?>"
-                                            readonly
-                                        />
+                                <?php else : ?>
+                                    <input
+                                        id="start-date"
+                                        name="start-date"
+                                        class="form-control dates d-none"
+                                        value="<?= $current_start_date ?>"
+                                    />
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        value="<?= date("d", strtotime($current_start_date)) . " " . $month[intval(date("m", strtotime($current_start_date))) - 1] . " " . date("Y", strtotime($current_start_date)) ?>"
+                                        readonly
+                                    />
                                 <?php endif ?>
                             </div>
-                            <div class="col-12 col-md-6 mt-2">
+                            <div class="col-12 col-md-5 mt-2">
                                 <label
                                     for="due-date"
                                     class="font-weight-bold"
@@ -196,8 +199,24 @@ if ($latest_royalty == NULL) {
                                     />
                                 </div>
                             </div>
+                            <div class="col-12 col-md-2 mt-2">
+                                <label>&nbsp;</label>
+                                <div
+                                    class="btn-group btn-block"
+                                    role="group"
+                                    aria-label="Filter button"
+                                >
+                                    <button
+                                        class="btn btn-primary"
+                                        type="submit"
+                                        value="Submit"
+                                    ><i class="fa fa-filter"></i> Filter</button>
+                                </div>
+
+                            </div>
                         </div>
-                        
+                        <?= form_close(); ?>
+
                         <div id="paid_period"></div>
                         <table class="table table-striped mb-0">
                             <thead>
@@ -258,7 +277,7 @@ if ($latest_royalty == NULL) {
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <?php if (!$pending_royalty) : ?>
                         <button
                             type="button"
@@ -316,8 +335,8 @@ if ($latest_royalty == NULL) {
                                             Apakah Anda yakin akan mengajukan royalty periode ini?
                                         </p>
                                     <?php endif ?>
-                                    
-                                    
+
+
                                     <div class="modal-footer">
                                         <button
                                             type="submit"
@@ -423,10 +442,6 @@ $(document).ready(function() {
         maxDate: new Date().fp_incr(-1)
     });
 
-    $("#due-date").change(function() {
-        filterDate()
-    })
-
     $('#pay-royalty').on("click", function() {
         $('#modal-confirm').modal('toggle')
     })
@@ -440,7 +455,7 @@ $(document).ready(function() {
             type: "POST",
             url: "<?= base_url("royalty/pay"); ?>",
             data: {
-                start_date : start_date,
+                start_date: start_date,
                 end_date: end_date,
                 author_id: "<?= $author->author_id ?>",
                 receipt: receipt
@@ -449,6 +464,7 @@ $(document).ready(function() {
                 var response = $.parseJSON(result)
                 //Validation Error
                 if (response.status != true) {
+                    console.log(response)
                     $(".error-message").addClass('d-none');
                     alert("Input tidak valid! Pastikan tanggal awal periode tidak kosong dan tidak melebihi tanggal akhir periode")
                     for (var i = 0; i < response.input_error.length; i++) {
@@ -465,10 +481,6 @@ $(document).ready(function() {
         });
     })
 })
-
-function filterDate() {
-    location.href = "<?= base_url('royalty/view/' . $author->author_id . '/'); ?>" + $('#due-date').val();
-}
 
 function showPaidPeriod() {
     var Month = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"]

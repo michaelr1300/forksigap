@@ -58,10 +58,17 @@ class Royalty extends Sales_Controller
 
     public function history($page = NULL)
     {
+        $start_date = $this->input->get('start_date', true);
+        $period_end = $this->input->get('end_date', true);
+        //validasi
+        if ($start_date > $period_end) {
+            redirect('royalty/history');
+        }
+
         $filters = [
             'keyword'           => $this->input->get('keyword', true),
-            'start_date'        => $this->input->get('start_date', true),
-            'period_end'        => $this->input->get('end_date', true)
+            'start_date'        => $start_date,
+            'period_end'        => $period_end
         ];
 
         $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
@@ -84,10 +91,11 @@ class Royalty extends Sales_Controller
         $this->load->view('template', compact('pages', 'main_view', 'pagination', 'royalty_history', 'total', 'page'));
     }
 
-    public function view($author_id, $period_end = null)
+    public function view($author_id)
     {
         //validasi max date
         $today = date('Y-m-d', time());
+        $period_end = $this->input->get('due-date');
         if (strtotime($period_end) >= strtotime($today)) {
             redirect($this->pages . '/view/' . $author_id);
         }
@@ -115,7 +123,7 @@ class Royalty extends Sales_Controller
             }
         } else {
             // Baru pertama kali
-            $last_paid_date = NULL;
+            $last_paid_date = $this->input->get('start-date');
             $current_start_date = NULL;
         }
 
@@ -186,11 +194,11 @@ class Royalty extends Sales_Controller
 
     public function pay()
     {
-        $this->royalty->validate_royalty();
         $author_id = $this->input->post('author_id');
         $latest_royalty = $this->royalty->fetch_latest_royalty($author_id);
         //jika belum ada data royalti
         if ($latest_royalty == NULL) {
+            $this->royalty->validate_royalty();
             $end_date = $this->input->post('end_date');
             $start_date = $this->input->post('start_date');
             //tambahkan data royalti author
@@ -213,6 +221,7 @@ class Royalty extends Sales_Controller
             }
             //jika sudah ada dan belum diajukan
             else if ($latest_royalty->status == 'paid') {
+                $this->royalty->validate_royalty();
                 $last_paid_date = strtotime($latest_royalty->end_date) + 1;
                 $start_date = date('Y-m-d H:i:s', $last_paid_date);
                 $end_date = $this->input->post('end_date');
