@@ -84,6 +84,7 @@ class Earning extends Sales_Controller
 
         //generate excel
         if ($filters['excel'] == 1) {
+            $filters['invoice_type'] = '';
             $this->generate_excel($filters, 'detail');
         }
     }
