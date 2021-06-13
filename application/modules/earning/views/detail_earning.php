@@ -170,10 +170,10 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                         <?php $total_online = round($details['online'] / $total * 100, 2) ?>
                                     <?php endif ?>
                                     <tr class="text-center">
-                                        <td><?= intval($details['cash']) . '(' . $total_cash . '%)' ?></td>
-                                        <td><?= intval($details['showroom']) . '(' . $total_showroom . '%)' ?></td>
-                                        <td><?= intval($details['credit']) . '(' . $total_credit . '%)' ?></td>
-                                        <td><?= intval($details['online']) . '(' . $total_online . '%)' ?></td>
+                                        <td>Rp <?= number_format(intval($details['cash']), 0, ',', '.') . ' (' . $total_cash . '%)';?></td>
+                                        <td>Rp <?= number_format(intval($details['showroom']), 0, ',', '.') . ' (' . $total_showroom . '%)'; ?></td>
+                                        <td>Rp <?= number_format(intval($details['credit']), 0, ',', '.') . ' (' . $total_credit . '%)'; ?></td>
+                                        <td>Rp <?= number_format(intval($details['online']), 0, ',', '.') . ' (' . $total_online . '%)'; ?></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -206,26 +206,6 @@ var total_year = new Chart(ctx, {
         }]
     },
     options: {
-        scales: {
-            yAxes: [{
-                display: false,
-                ticks: {
-                    beginAtZero: true
-                },
-                gridLines: {
-                    drawOnChartArea: false
-                }
-            }],
-            xAxes: [{
-                display: false,
-                ticks: {
-                    beginAtZero: true
-                },
-                gridLines: {
-                    drawOnChartArea: false
-                }
-            }]
-        },
         layout: {
             padding: {
                 left: 0,

@@ -5,10 +5,6 @@ $date_month         = $this->input->get('date_month');
 
 $date_year_options = [];
 
-// $date_month_options = [
-//     ''  => '- Bulannya Ga Mau Muncul Ini Gimana Ya -',
-// ];
-
 for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
     $date_year_options[$dy] = $dy;
 }
