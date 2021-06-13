@@ -216,76 +216,98 @@ if ($latest_royalty == NULL) {
                             </div>
                         </div>
                         <?= form_close(); ?>
-
-                        <div id="paid_period"></div>
-                        <table class="table table-striped mb-0">
-                            <thead>
-                                <tr class="text-center">
-                                    <th
-                                        scope="col"
-                                        style="width:2%;"
-                                    >No</th>
-                                    <th
-                                        scope="col"
-                                        style="width:30%;"
-                                    >Judul Buku</th>
-                                    <th
-                                        scope="col"
-                                        style="width:15%;"
-                                    >Jumlah Buku Terjual</th>
-                                    <th
-                                        scope="col"
-                                        style="width:15%;"
-                                    >Penjualan</th>
-                                    <th
-                                        scope="col"
-                                        style="width:15%;"
-                                    >Royalti</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php $index = 0;
-                                $total_sales = 0;
-                                $total_royalty = 0; ?>
-                                <?php foreach ($royalty_details as $royalty) : ?>
-                                    <tr>
-                                        <td class="text-center"><?= $index + 1; ?></td>
-                                        <td class="text-left"><?= $royalty->book_title; ?></td>
-                                        <td class="text-center"><?= $royalty->count; ?></td>
-                                        <td class="text-right pr-5">Rp <?= number_format($royalty->total_sales, 0, ',', '.'); ?></td>
-                                        <td class="text-right pr-5">Rp <?= number_format($royalty->earned_royalty, 0, ',', '.'); ?></td>
+                        <div
+                            class="<?php if ($start_date == NULL) {
+                                    echo 'd-block';
+                                } else {
+                                    echo 'd-none';
+                                }
+                                ?>"
+                        >
+                            <div
+                                class="alert alert-info alert-dismissible fade show"
+                                role="alert"
+                            >
+                                <h5>Info</h5>
+                                <div>Silakan filter tanggal awal dan akhir pembayaran royalti untuk menampilkan data royalti</div>
+                            </div>
+                        </div>
+                        <div
+                            class="<?php if ($start_date == NULL) {
+                                    echo 'd-none';
+                                } ?>"
+                        >
+                            <div id="paid_period"></div>
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th
+                                            scope="col"
+                                            style="width:2%;"
+                                        >No</th>
+                                        <th
+                                            scope="col"
+                                            style="width:30%;"
+                                        >Judul Buku</th>
+                                        <th
+                                            scope="col"
+                                            style="width:15%;"
+                                        >Jumlah Buku Terjual</th>
+                                        <th
+                                            scope="col"
+                                            style="width:15%;"
+                                        >Penjualan</th>
+                                        <th
+                                            scope="col"
+                                            style="width:15%;"
+                                        >Royalti</th>
                                     </tr>
-                                    <?php $index++;
-                                    $total_sales += $royalty->total_sales;
-                                    $total_royalty += $royalty->earned_royalty; ?>
-                                <?php endforeach; ?>
-                                <tr style="text-align:center;">
-                                    <td
-                                        scope="col"
-                                        class="align-middle"
-                                        colspan="3"
-                                    >
-                                        <b>Total</b>
-                                    </td>
-                                    <td class="text-right pr-5">
-                                        <b>Rp <?= number_format($total_sales, 0, ',', '.'); ?></b>
-                                    </td>
-                                    <td class="text-right pr-5">
-                                        <b>Rp <?= number_format($total_royalty, 0, ',', '.'); ?></b>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <?php $index = 0;
+                                    $total_sales = 0;
+                                    $total_royalty = 0; ?>
+                                    <?php foreach ($royalty_details as $royalty) : ?>
+                                        <tr>
+                                            <td class="text-center"><?= $index + 1; ?></td>
+                                            <td class="text-left"><?= $royalty->book_title; ?></td>
+                                            <td class="text-center"><?= $royalty->count; ?></td>
+                                            <td class="text-right pr-5">Rp <?= number_format($royalty->total_sales, 0, ',', '.'); ?></td>
+                                            <td class="text-right pr-5">Rp <?= number_format($royalty->earned_royalty, 0, ',', '.'); ?></td>
+                                        </tr>
+                                        <?php $index++;
+                                        $total_sales += $royalty->total_sales;
+                                        $total_royalty += $royalty->earned_royalty; ?>
+                                    <?php endforeach; ?>
+                                    <tr style="text-align:center;">
+                                        <td
+                                            scope="col"
+                                            class="align-middle"
+                                            colspan="3"
+                                        >
+                                            <b>Total</b>
+                                        </td>
+                                        <td class="text-right pr-5">
+                                            <b>Rp <?= number_format($total_sales, 0, ',', '.'); ?></b>
+                                        </td>
+                                        <td class="text-right pr-5">
+                                            <b>Rp <?= number_format($total_royalty, 0, ',', '.'); ?></b>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <?php if (!$pending_royalty) : ?>
+                                <button
+                                    type="button"
+                                    class="btn btn-primary mt-3 float-right ml-3"
+                                    id="pay-royalty"
+                                ><?= $button_label; ?></button>
+                            <?php endif ?>
+
+                                   
+                        </div>
                     </div>
-
-                    <?php if (!$pending_royalty) : ?>
-                        <button
-                            type="button"
-                            class="btn btn-primary mt-3 float-right ml-3"
-                            id="pay-royalty"
-                        ><?= $button_label; ?></button>
-                    <?php endif ?>
-
                     <div
                         class="modal modal-warning fade"
                         id="modal-confirm"
@@ -352,6 +374,7 @@ if ($latest_royalty == NULL) {
                             </div>
                         </div>
                     </div>
+
                 </div>
                 <div
                     id="history-royalty"

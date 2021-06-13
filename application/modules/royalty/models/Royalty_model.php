@@ -68,7 +68,9 @@ class Royalty_model extends MY_Model
         $this->db->select('royalty_id, author.author_id, author_name, start_date, end_date, status, paid_date, receipt')
             ->from('royalty')
             ->join('author', 'royalty.author_id = author.author_id')
-            ->order_by('royalty_id', 'DESC')->limit($this->per_page, $this->calculate_real_offset($page));
+            ->order_by('author.author_name', 'ASC')
+            //->group_by('author.author_name')
+            ->limit($this->per_page, $this->calculate_real_offset($page));
         if ($filters['keyword'] != '') {
             $this->db->like('author_name', $filters['keyword']);
         }
@@ -91,7 +93,8 @@ class Royalty_model extends MY_Model
             ->join('royalty', 'author.author_id = royalty.author_id AND royalty_id = (SELECT royalty_id from royalty where royalty.author_id = author.author_id order by royalty_id DESC limit 1)', 'left')
             ->join('invoice_book', 'book.book_id = invoice_book.book_id')
             ->join('invoice', 'invoice_book.invoice_id = invoice.invoice_id')
-            ->group_by('author.author_id');
+            ->group_by('author.author_id')
+            ->order_by('author.author_name');
         if ($filters['keyword'] != '') {
             $this->db->like('author_name', $filters['keyword']);
         }
