@@ -5,10 +5,6 @@ $date_month         = $this->input->get('date_month');
 
 $date_year_options = [];
 
-// $date_month_options = [
-//     ''  => '- Bulannya Ga Mau Muncul Ini Gimana Ya -',
-// ];
-
 for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
     $date_year_options[$dy] = $dy;
 }
@@ -162,7 +158,7 @@ $invoice_type_options = [
                                     <tr class="text-center">
                                         <th
                                             scope="col"
-                                            style="width:8%;"
+                                            style="width:5%;"
                                         >No</th>
                                         <th
                                             scope="col"
@@ -412,9 +408,9 @@ function populateTable(data) {
         grandTotal += data[i].earning
         var type = get_invoice_type(data[i].type)
         var status = get_invoice_status(data[i].status)
-        htmlContent += "<tr class='text-center'><td>" + (i + 1) + "</td><td>" + data[i].number + "</td><td>" + type + "</td><td>" + data[i].issued_date.substring(0, 10) + "</td><td>" + status + "</td><td>" + convertToRp(data[i].earning) + " </td></tr>"
+        htmlContent += "<tr class='text-center'><td>" + (i + 1) + "</td><td>" + data[i].number + "</td><td>" + type + "</td><td>" + data[i].issued_date.substring(0, 10) + "</td><td>" + status + "</td><td style='text-align:left'>" + convertToRp(data[i].earning) + " </td></tr>"
     }
-    htmlContent += "<tr><td>Grand Total</td><td>" + convertToRp(grandTotal) + "</td></tr>"
+    htmlContent += "<tr><td colspan='4' style='text-align:center'><b>Grand Total</b></td><td colspan='2' style='text-align:leftt'><b>" + convertToRp(grandTotal) + "</b></td></tr>"
     $('#table_content').html(htmlContent)
 }
 
