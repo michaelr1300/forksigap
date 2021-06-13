@@ -379,17 +379,23 @@ function generateExcel(year, month, type) {
 
 function populateTable(data) {
     var htmlContent = ""
+    var grandTotal = 0
     for (i = 0; i < data.length; i++) {
+        grandTotal += data[i].earning
         var type = get_invoice_type(data[i].type)
         var status = get_invoice_status(data[i].status)
-        if (parseInt(data[i].earning) >= 1000) {
-            data[i].earning = 'Rp ' + data[i].earning.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        } else {
-            data[i].earning = 'Rp ' + data[i].earning;
-        }
-        htmlContent += "<tr class='text-center'><td>" + (i + 1) + "</td><td>" + data[i].number + "</td><td>" + type + "</td><td>" + data[i].issued_date.substring(0, 10) + "</td><td>" + status + "</td><td>" + data[i].earning + " </td></tr>"
+        htmlContent += "<tr class='text-center'><td>" + (i + 1) + "</td><td>" + data[i].number + "</td><td>" + type + "</td><td>" + data[i].issued_date.substring(0, 10) + "</td><td>" + status + "</td><td>" + convertToRp(data[i].earning) + " </td></tr>"
     }
+    htmlContent += "<tr><td>Grand Total</td><td>" + convertToRp(grandTotal) + "</td></tr>"
     $('#table_content').html(htmlContent)
+}
+
+function convertToRp(earning) {
+    if (earning >= 1000) {
+        return 'Rp ' + earning.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    } else {
+        return 'Rp ' + earning;
+    }
 }
 
 function get_invoice_type(type) {
