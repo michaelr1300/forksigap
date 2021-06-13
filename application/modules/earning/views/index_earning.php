@@ -268,6 +268,20 @@ $invoice_type_options = [
                     }
                 }]
             },
+            tooltips: {
+                displayColors: false,
+                callbacks: {
+                    label: function(tooltipItems, data) {
+                        var value = parseInt(data.datasets[0].data[tooltipItems.index])
+                        if (value >= 1000) {
+                            return data.labels[tooltipItems.index] + ' - Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        } else {
+                            return data.labels[tooltipItems.index] + ' - Rp ' + value;
+                        }
+                        // return data.labels[tooltipItems.index] + 'asdadk' + data.datasets[0].data[tooltipItems.index].toLocaleString();
+                    }
+                }
+            },
             layout: {
                 padding: {
                     left: 0,
@@ -329,6 +343,20 @@ $invoice_type_options = [
                         beginAtZero: true
                     }
                 }]
+            },
+            tooltips: {
+                displayColors: false,
+                callbacks: {
+                    label: function(tooltipItems, data) {
+                        var value = parseInt(data.datasets[0].data[tooltipItems.index])
+                        if (value >= 1000) {
+                            return data.labels[tooltipItems.index] + ' - Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                        } else {
+                            return data.labels[tooltipItems.index] + ' - Rp ' + value;
+                        }
+                        // return data.labels[tooltipItems.index] + 'asdadk' + data.datasets[0].data[tooltipItems.index].toLocaleString();
+                    }
+                }
             },
             layout: {
                 padding: {
