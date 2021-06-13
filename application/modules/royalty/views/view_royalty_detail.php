@@ -14,8 +14,12 @@ $endDate        = $this->input->get('end_date');
                 <a href="<?= base_url('royalty'); ?>">Royalti</a>
             </li>
             <li class="breadcrumb-item">
+                <a href="<?= base_url("royalty/view/$author->author_id"); ?>"><?= $author->author_name ?></a>
+            </li>
+            <li class="breadcrumb-item">
                 <a class="text-muted">
-                    <?= $author->author_name ?></a>
+                    Detail Royalti
+                </a>
             </li>
         </ol>
     </nav>
