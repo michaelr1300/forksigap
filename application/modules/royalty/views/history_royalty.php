@@ -156,12 +156,6 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                             <?= highlight_keyword($lData->author_name, $keyword); ?>
                                         </a>
                                     </td>
-                                    <!-- <td class="text-right align-middle">
-                                        Rp <?= number_format($lData->total_sales, 0, ',', '.'); ?>
-                                    </td>
-                                    <td class="text-right align-middle">
-                                        Rp <?= number_format($lData->earned_royalty, 0, ',', '.'); ?>
-                                    </td> -->
                                     <td class="align-middle"><?= $lData->start_date ? date("d F Y", strtotime($lData->start_date)) : '' ?></td>
                                     <td class="align-middle"><?= $lData->end_date ? date("d F Y", strtotime($lData->end_date)) : '' ?></td>
                                     <td class="align-middle"><?= get_royalty_status()[$lData->status] ?></td>
