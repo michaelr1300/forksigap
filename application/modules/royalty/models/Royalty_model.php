@@ -65,6 +65,7 @@ class Royalty_model extends MY_Model
 
     public function fetch_all_royalty_history($filters, $page)
     {
+        $this->db->start_cache();
         $this->db->select('royalty_id, author.author_id, author_name, start_date, end_date, status, paid_date, receipt')
             ->from('royalty')
             ->join('author', 'royalty.author_id = author.author_id')
@@ -80,12 +81,23 @@ class Royalty_model extends MY_Model
         if ($filters['period_end'] != null) {
             $this->db->where('end_date <=', $filters['period_end']);
         }
+        
+        $this->db->stop_cache();
+        $royalty = $this->db->get()->result();
+        $total = $this->db->count_all_results();
+        $this->db->flush_cache();
+        return [
+            'royalty' => $royalty,
+            'total'   => $total
+        ];
+        
         return $this->db->get()->result();
     }
 
 
     public function author_earning($filters, $page)
     {
+        $this->db->start_cache();
         $this->db->select('author.author_id, author_name, royalty.start_date as start_date, royalty.end_date as end_date, royalty.status as status, SUM(qty*price) AS total_sales, SUM(qty*price*book.royalty/100) as earned_royalty')
             ->from('book')
             ->join('draft_author', 'draft_author.draft_id = book.draft_id', 'right')
@@ -105,7 +117,15 @@ class Royalty_model extends MY_Model
             $this->db->where('issued_date BETWEEN IFNULL((SELECT IF(royalty.status = "paid", end_date, start_date - INTERVAL 1 SECOND)), "2000/01/01") and addtime(CURDATE(), "23:59:59") - INTERVAL 1 DAY');
         }
         $this->db->where('invoice.status', 'finish')->limit($this->per_page, $this->calculate_real_offset($page));
-        return $this->db->get()->result();
+        
+        $this->db->stop_cache();
+        $royalty = $this->db->get()->result();
+        $total = $this->db->count_all_results();
+        $this->db->flush_cache();
+        return [
+            'royalty' => $royalty,
+            'total'   => $total
+        ];
     }
 
     public function author_details($author_id, $filters)

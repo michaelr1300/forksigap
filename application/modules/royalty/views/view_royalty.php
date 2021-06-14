@@ -237,6 +237,15 @@ if ($latest_royalty == NULL) {
                                     echo 'd-none';
                                 } ?>"
                         >
+                            <div id="changed_date" style="display: none;">
+                                <div
+                                    class="alert alert-info alert-dismissible fade show"
+                                    role="alert"
+                                >
+                                    <h5>Info</h5>
+                                    <div>Tanggal periode royalti telah diubah. Silakan filter ulang untuk menampilkan data royalti yang baru.</div>
+                                </div>
+                            </div>
                             <div id="paid_period"></div>
                             <table class="table table-striped mb-0">
                                 <thead>
@@ -461,7 +470,7 @@ $(document).ready(function() {
         altFormat: 'j F Y',
         dateFormat: 'Y-m-d',
         enableTime: false,
-        minDate: '<?= $last_paid_date ?>',
+        minDate: '<?= $latest_royalty->end_date ?? '' ?>',
         maxDate: new Date().fp_incr(-1)
     });
 
@@ -517,5 +526,11 @@ function showPaidPeriod() {
 
 $('#due-date').change(function() {
     showPaidPeriod()
+    $('#changed_date').show()
 })
+
+$('#start-date').change(function() {
+    $('#changed_date').show()
+})
+
 </script>

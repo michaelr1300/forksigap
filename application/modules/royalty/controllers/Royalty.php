@@ -26,7 +26,9 @@ class Royalty extends Sales_Controller
         }
         $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
 
-        $royalty = $this->royalty->author_earning($filters, $page);
+        $get_data = $this->royalty->author_earning($filters, $page);
+
+        $royalty = $get_data['royalty'];
         // Hilangkan author yang tidak dapat royalti periode ini
         foreach ($royalty as $key => $each_royalty) {
             if ($each_royalty->status == 'paid') {
@@ -41,7 +43,7 @@ class Royalty extends Sales_Controller
                 }
             }
         }
-        $total = count($royalty);
+        $total = $get_data['total'];
         $total_penjualan = 0;
         $total_royalty = 0;
         foreach ($royalty as $royalty_each) {
@@ -72,7 +74,8 @@ class Royalty extends Sales_Controller
         ];
 
         $this->royalty->per_page = $this->input->get('per_page', true) ?? 10;
-        $royalty_history = $this->royalty->fetch_all_royalty_history($filters, $page);
+        $get_data = $this->royalty->fetch_all_royalty_history($filters, $page);
+        $royalty_history = $get_data['royalty'];
         foreach ($royalty_history as $history) {
             $author_id = $history->author_id;
             $history_filter = [
@@ -82,10 +85,9 @@ class Royalty extends Sales_Controller
             $history->details = $this->royalty->author_details($author_id, $history_filter)[0];
         }
 
-        $total = count($royalty_history);
-        // print_r($royalty_history[0]->details->total_sales);
+        $total = $get_data['total'];
 
-        $pagination = $this->royalty->make_pagination(site_url('royalty'), 2, $total);
+        $pagination = $this->royalty->make_pagination(site_url('royalty/history'), 2, $total);
         $pages      = $this->pages;
         $main_view  = 'royalty/history_royalty';
         $this->load->view('template', compact('pages', 'main_view', 'pagination', 'royalty_history', 'total', 'page'));
