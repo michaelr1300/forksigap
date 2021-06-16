@@ -86,7 +86,7 @@ if ($latest_royalty == NULL) {
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->start_date)) ?? '1 Januari 2021'; ?> </td>
+                                        <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->start_date)) ?? ''; ?> </td>
                                         <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->end_date)) ?? '' ?></td>
                                         <td class="text-center align-middle">Rp <?= number_format($latest_royalty->details->earned_royalty, 0, ',', '.') ?? 0; ?></td>
                                         <td class="text-center">
@@ -198,14 +198,12 @@ if ($latest_royalty == NULL) {
                             </div>
                         </div>
                         <?= form_close(); ?>
-                        <div
-                            class="<?php if ($start_date == NULL) {
-                                    echo 'd-block';
-                                } else {
-                                    echo 'd-none';
-                                }
-                                ?>"
-                        >
+                        <div class="<?php if ($start_date == NULL) {
+                                        echo 'd-block';
+                                    } else {
+                                        echo 'd-none';
+                                    }
+                                    ?>">
                             <div
                                 class="alert alert-info alert-dismissible fade show"
                                 role="alert"
@@ -214,12 +212,13 @@ if ($latest_royalty == NULL) {
                                 <div>Silakan filter tanggal awal dan akhir pembayaran royalti untuk menampilkan data royalti</div>
                             </div>
                         </div>
-                        <div
-                            class="<?php if ($start_date == NULL) {
-                                    echo 'd-none';
-                                } ?>"
-                        >
-                            <div id="changed_date" style="display: none;">
+                        <div class="<?php if ($start_date == NULL) {
+                                        echo 'd-none';
+                                    } ?>">
+                            <div
+                                id="changed_date"
+                                style="display: none;"
+                            >
                                 <div
                                     class="alert alert-info alert-dismissible fade show"
                                     role="alert"
@@ -296,7 +295,7 @@ if ($latest_royalty == NULL) {
                                 ><?= $button_label; ?></button>
                             <?php endif ?>
 
-                                   
+
                         </div>
                     </div>
                     <div
@@ -447,5 +446,4 @@ $('#due-date').change(function() {
 $('#start-date').change(function() {
     $('#changed_date').show()
 })
-
 </script>

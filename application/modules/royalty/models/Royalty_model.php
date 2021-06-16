@@ -146,9 +146,6 @@ class Royalty_model extends MY_Model
 
     public function author_details($author_id, $filters)
     {
-        $last_paid_date = '';
-        if ($filters['last_paid_date'] == '') $last_paid_date = "2021/01/01";
-        else $last_paid_date = $filters['last_paid_date'];
         $this->db->select('book.book_id, book.book_title, price, SUM(invoice_book.qty) AS count, SUM(invoice_book.qty*invoice_book.price) AS total_sales, SUM(invoice_book.qty*invoice_book.price*invoice_book.royalty/100) as earned_royalty')
             ->from('book')
             ->join('draft_author', 'draft_author.draft_id = book.draft_id', 'right')
@@ -159,9 +156,9 @@ class Royalty_model extends MY_Model
             ->where('draft_author.author_id', $author_id);
         if ($filters['period_end'] != null) {
             //if author.last_paid_date == null
-            $this->db->where('issued_date BETWEEN "' . $last_paid_date .  '" and "' . $filters['period_end'] . ' 23:59:59"');
+            $this->db->where('issued_date BETWEEN "' . $filters['last_paid_date'] .  '" and "' . $filters['period_end'] . ' 23:59:59"');
         } else {
-            $this->db->where('issued_date BETWEEN "' . $last_paid_date .  '" and addtime(CURDATE(), "23:59:59") - INTERVAL 1 DAY');
+            $this->db->where('issued_date BETWEEN "' . $filters['last_paid_date'] .  '" and addtime(CURDATE(), "23:59:59") - INTERVAL 1 DAY');
         }
 
         return $this->db->get()->result();
@@ -169,9 +166,6 @@ class Royalty_model extends MY_Model
 
     public function stocks_info($author_id, $filters)
     {
-        $last_paid_date = '';
-        if ($filters['last_paid_date'] == '') $last_paid_date = "2021/01/01";
-        else $last_paid_date = $filters['last_paid_date'];
         $this->db->select('IFNULL(warehouse_present, 0) as WP, IFNULL(showroom_present, 0) as SP, IFNULL(library_present, 0) as LP, SUM(qty) AS count')
             ->from('book')
             ->join('book_stock', 'book_stock.book_id = book.book_id', 'left')
@@ -180,7 +174,7 @@ class Royalty_model extends MY_Model
             ->join('invoice', 'invoice_book.invoice_id = invoice.invoice_id')
             ->where('invoice.status', 'finish')
             ->where('draft_author.author_id', $author_id)
-            ->where('issued_date BETWEEN "' . $last_paid_date .  '" and now()');
+            ->where('issued_date BETWEEN "' . $filters['last_paid_date'] .  '" and now()');
         return $this->db->get()->result();
     }
 }

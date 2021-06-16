@@ -124,7 +124,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                 >Periode</th>
                                 <th
                                     scope="col"
-                                    style="width:15%;"
+                                    style="width:25%;"
                                 >Jumlah Royalti</th>
                                 <th
                                     scope="col"
@@ -144,7 +144,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                     <td class="align-middle pl-4">
                                         <?= ++$i; ?>
                                     </td>
-                                    <td class="text-left align-middle">
+                                    <td class="align-middle">
                                         <a
                                             href="<?= base_url("$pages/view/$lData->author_id" . $url); ?>"
                                             class="font-weight-bold"
@@ -170,7 +170,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                 </td>
                                 <td
                                     scope="col"
-                                    class="text-right align-middle"
+                                    class="text-align-middle"
                                 >
                                     <b>Rp <?= number_format($total_penjualan, 0, ',', '.'); ?></b>
                                 </td>
