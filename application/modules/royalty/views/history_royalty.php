@@ -160,7 +160,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                     </td>
                                     <td class="text-left align-middle">
                                         <a
-                                            href="<?= base_url("royalty/view_detail/$lData->royalty_id"); ?>"
+                                            href="<?= base_url("author/view/royalty_history/$lData->author_id"); ?>"
                                             class="font-weight-bold"
                                         >
                                             <?= highlight_keyword($lData->author_name, $keyword); ?>
