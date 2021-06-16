@@ -31,7 +31,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
     </nav>
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h1 class="page-title"> Royalti </h1>
+            <h1 class="page-title"> Riwayat Royalti </h1>
             <span class="badge badge-info">Total : <?= $total ?></span>
         </div>
     </div>
@@ -41,6 +41,22 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
         <div class="col-12">
             <section class="card card-fluid">
                 <div class="card-body p-0">
+                    <header class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link"
+                                    href="<?= base_url('royalty/'); ?>"
+                                >Tagihan Royalti</a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link active"
+                                    href="<?= base_url('royalty/history'); ?>"
+                                >Riwayat Royalti</a>
+                            </li>
+                        </ul>
+                    </header>
                     <div class="p-3">
                         <?= form_open(base_url('royalty/history/'), ['method' => 'GET']); ?>
                         <div class="row">
@@ -57,11 +73,10 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                     class="form-control dates"
                                     value="<?= $start_date ?>"
                                     class="form-control custom-select d-block"
-                                    min="2021-01-01"
                                 >
                             </div>
                             <div class="col-12 col-md-4 mt-2">
-                                <label for="date_end">Tanggal Terakhir Periode</label>
+                                <label for="date_end">Tanggal Akhir Periode</label>
                                 <input
                                     type="date"
                                     id="end_date"
@@ -69,7 +84,6 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                     class="form-control dates"
                                     value="<?= $period_end ?>"
                                     class="form-control custom-select d-block"
-                                    min="2021-01-01"
                                     max="<?php
                                             echo date('Y-m-d', strtotime("-1 days"));
                                             ?>"
@@ -118,12 +132,12 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                 >Nama</th>
                                 <th
                                     scope="col"
-                                    style="width:15%;"
-                                >Tanggal Mulai Periode</th>
+                                    style="width:25%;"
+                                >Periode</th>
                                 <th
                                     scope="col"
                                     style="width:15%;"
-                                >Tanggal Akhir Periode</th>
+                                >Jumlah Royalti</th>
                                 <th
                                     scope="col"
                                     style="width:15%;"
@@ -132,10 +146,6 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                     scope="col"
                                     style="width:20%;"
                                 >Tanggal Dibayar</th>
-                                <th
-                                    scope="col"
-                                    style="width:15%;"
-                                >Total</th>
                                 <th
                                     scope="col"
                                     style="width:30%;"
@@ -156,11 +166,10 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                             <?= highlight_keyword($lData->author_name, $keyword); ?>
                                         </a>
                                     </td>
-                                    <td class="align-middle"><?= $lData->start_date ? date("d F Y", strtotime($lData->start_date)) : '' ?></td>
-                                    <td class="align-middle"><?= $lData->end_date ? date("d F Y", strtotime($lData->end_date)) : '' ?></td>
+                                    <td class="align-middle"><?= $lData->start_date ? date("d F Y", strtotime($lData->start_date)) : '' ?> - <?= $lData->end_date ? date("d F Y", strtotime($lData->end_date)) : '' ?></td>
+                                    <td class="align-middle text-right">Rp <?= number_format($lData->details->earned_royalty,  0, ',', '.'); ?></td>
                                     <td class="align-middle"><?= get_royalty_status()[$lData->status] ?></td>
                                     <td class="align-middle"><?= $lData->paid_date ? date("d F Y", strtotime($lData->paid_date)) : '' ?></td>
-                                    <td class="align-middle">Rp <?= number_format($lData->details->earned_royalty,  0, ',', '.'); ?></td>
                                     <td class="text-center">
                                         <a
                                             type="button btn-success"
