@@ -24,6 +24,22 @@ class Royalty_model extends MY_Model
         }
     }
 
+    public function get_dropdown_author()
+    {
+        $authors =  $this->db
+            ->select('author_name')
+            ->from('author')
+            ->join('royalty', 'author.author_id = royalty.author_id')
+            ->group_by('author.author_id')
+            ->get()
+            ->result();
+        $options = [];
+        foreach ($authors as $author) {
+            $options += [$author->author_name => $author->author_name];
+        }
+        return $options;
+    }
+
     public function get_authors()
     {
         return $this->db->select('author_name')
@@ -81,7 +97,7 @@ class Royalty_model extends MY_Model
         if ($filters['period_end'] != null) {
             $this->db->where('end_date <=', $filters['period_end']);
         }
-        
+
         $this->db->stop_cache();
         $royalty = $this->db->get()->result();
         $total = $this->db->count_all_results();
@@ -90,7 +106,7 @@ class Royalty_model extends MY_Model
             'royalty' => $royalty,
             'total'   => $total
         ];
-        
+
         return $this->db->get()->result();
     }
 
@@ -117,7 +133,7 @@ class Royalty_model extends MY_Model
             $this->db->where('issued_date BETWEEN IFNULL((SELECT IF(royalty.status = "paid", end_date, start_date - INTERVAL 1 SECOND)), "2000/01/01") and addtime(CURDATE(), "23:59:59") - INTERVAL 1 DAY');
         }
         $this->db->where('invoice.status', 'finish')->limit($this->per_page, $this->calculate_real_offset($page));
-        
+
         $this->db->stop_cache();
         $royalty = $this->db->get()->result();
         $total = $this->db->count_all_results();
