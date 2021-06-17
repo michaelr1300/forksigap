@@ -24,7 +24,7 @@ class Royalty_model extends MY_Model
         }
     }
 
-    public function get_dropdown_author()
+    public function get_dropdown_author_history()
     {
         $authors =  $this->db
             ->select('author_name')
@@ -85,7 +85,7 @@ class Royalty_model extends MY_Model
         $this->db->select('royalty_id, author.author_id, author_name, start_date, end_date, status, paid_date, receipt')
             ->from('royalty')
             ->join('author', 'royalty.author_id = author.author_id')
-            ->order_by('author.author_name', 'ASC')
+            ->order_by('royalty_id', 'DESC')
             //->group_by('author.author_name')
             ->limit($this->per_page, $this->calculate_real_offset($page));
         if ($filters['keyword'] != '') {
@@ -109,7 +109,6 @@ class Royalty_model extends MY_Model
 
         return $this->db->get()->result();
     }
-
 
     public function author_earning($filters, $page)
     {
