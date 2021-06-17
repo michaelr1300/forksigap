@@ -174,7 +174,8 @@ class Royalty_model extends MY_Model
             ->join('invoice', 'invoice_book.invoice_id = invoice.invoice_id')
             ->where('invoice.status', 'finish')
             ->where('draft_author.author_id', $author_id)
-            ->where('issued_date BETWEEN "' . $filters['last_paid_date'] .  '" and now()');
+            ->where('issued_date BETWEEN "' . $filters['last_paid_date'] .  '" and now()')
+            ->group_by('book.book_id');
         return $this->db->get()->result();
     }
 }

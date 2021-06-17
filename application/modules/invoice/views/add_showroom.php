@@ -521,10 +521,6 @@ $(document).ready(function() {
     $("#invoice_form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
-        console.log(form.serialize())
-        if ($('#new-customer-name').val() == '') {
-            console.log("test")
-        }
         $.ajax({
             type: "POST",
             url: "<?= base_url("invoice/add"); ?>",

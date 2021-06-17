@@ -187,7 +187,6 @@ class Royalty extends Sales_Controller
             'current_stock' => $current_stock
         );
 
-        // $html = $this->load->view('royalty/view_royalty_pdf', compact('author', 'royalty_details', 'period_time', 'date_year'));
         $html = $this->load->view('royalty/view_royalty_pdf', $data, true);
 
         $file_name = 'Royalti_' . $data['author']->author_name;
