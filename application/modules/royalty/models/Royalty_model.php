@@ -185,7 +185,7 @@ class Royalty_model extends MY_Model
             ->join('book_non_sales', 'book_non_sales_list.book_non_sales_id = book_non_sales.book_non_sales_id', 'left')
             ->where('book_id', $book_id);
         if ($type == 'now') $this->db->where('issued_date BETWEEN "' . $filters['last_paid_date'] .  '" and now()');
-        else if ($type == 'last') $this->db->where('issued_date BETWEEN "' . $filters['last_paid_date'] .  '" and "' . $filters['last_paid_date'] . '"');
+        else if ($type == 'last') $this->db->where('issued_date BETWEEN "' . $filters['last_paid_date'] .  '" and "' . $filters['period_end'] . '"');
         return $this->db->get()->row();
     }
 }
