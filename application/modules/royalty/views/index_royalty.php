@@ -179,12 +179,7 @@ for ($dy = intval(date('Y')); $dy >= 2015; $dy--) {
                                 >
                                     <b>Total</b>
                                 </td>
-                                <td
-                                    scope="col"
-                                    class="text-align-middle"
-                                >
-                                    <b>Rp <?= number_format($total_penjualan, 0, ',', '.'); ?></b>
-                                </td>
+                                <td></td>
                                 <td
                                     scope="col"
                                     class="text-right align-middle"
