@@ -162,23 +162,23 @@ $invoice_type_options = [
                                         >No</th>
                                         <th
                                             scope="col"
-                                            style="width:25%;"
+                                            style="width:20%;"
                                         >Nomor Faktur</th>
                                         <th
                                             scope="col"
-                                            style="width:15%;"
+                                            style="width:20%;"
                                         >Jenis Faktur</th>
                                         <th
                                             scope="col"
-                                            style="width:25%;"
+                                            style="width:15%;"
                                         >Tanggal Dikeluarkan</th>
                                         <th
                                             scope="col"
-                                            style="width:25%;"
+                                            style="width:15%;"
                                         >Status</th>
                                         <th
                                             scope="col"
-                                            style="width:25%;"
+                                            style="width:30%;"
                                         >Pendapatan</th>
                                     </tr>
                                 </thead>
@@ -408,9 +408,9 @@ function populateTable(data) {
         grandTotal += data[i].earning
         var type = get_invoice_type(data[i].type)
         var status = get_invoice_status(data[i].status)
-        htmlContent += "<tr class='text-center'><td>" + (i + 1) + "</td><td>" + data[i].number + "</td><td>" + type + "</td><td>" + data[i].issued_date.substring(0, 10) + "</td><td>" + status + "</td><td style='text-align:left'>" + convertToRp(data[i].earning) + " </td></tr>"
+        htmlContent += "<tr class='text-center'><td>" + (i + 1) + "</td><td>" + data[i].number + "</td><td>" + type + "</td><td>" + data[i].issued_date.substring(0, 10) + "</td><td>" + status + "</td><td style='text-align:right'>" + convertToRp(data[i].earning) + " </td></tr>"
     }
-    htmlContent += "<tr><td colspan='4' style='text-align:center'><b>Grand Total</b></td><td colspan='2' style='text-align:leftt'><b>" + convertToRp(grandTotal) + "</b></td></tr>"
+    htmlContent += "<tr><td colspan='4' style='text-align:center'><b>Grand Total</b></td><td colspan='2' style='text-align:left'><b>" + convertToRp(grandTotal) + "</b></td></tr>"
     $('#table_content').html(htmlContent)
 }
 
