@@ -602,6 +602,7 @@ function modalEdit(customerId) {
             $('#edit-name').val(res.name)
             $('#edit-address').val(res.address)
             $('#edit-phone-number').val(res.phone_number)
+            $('#edit-email').val(res.email)
             $("#edit-type option").removeAttr('selected');
             $("#edit-type option[value=" + res.type + "]").attr('selected', 'selected');
         },
