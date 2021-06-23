@@ -445,9 +445,6 @@
                                 </tbody>
                                 <tfoot>
                                     <tr style="text-align:center;">
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
                                         <td><b>Grand Total</b></td>
                                         <td id="grand_total">Rp 0</td>
                                     </tr>
@@ -521,7 +518,8 @@ $(document).ready(function() {
         altInput: true,
         altFormat: 'j F Y',
         dateFormat: 'Y-m-d',
-        enableTime: false
+        enableTime: false,
+        minDate: new Date()
     });
 
     $("#due_clear").click(function() {

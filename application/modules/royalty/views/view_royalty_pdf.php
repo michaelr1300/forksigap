@@ -74,7 +74,7 @@
                 >No</th>
                 <th
                     scope="col"
-                    width="25%"
+                    width="30%"
                     class="align-middle royalty-table"
                 >Judul Buku</th>
                 <th
@@ -86,7 +86,7 @@
                     scope="col"
                     width="10%"
                     class="align-middle royalty-table"
-                >Harga</th>
+                >Harga (Rp)</th>
                 <th
                     scope="col"
                     width="10%"
@@ -96,17 +96,12 @@
                     scope="col"
                     width="10%"
                     class="align-middle royalty-table"
-                >Non Penjualan (Eks)</th>
+                >Royalty %</th>
                 <th
                     scope="col"
-                    width="10%"
+                    width="15%"
                     class="align-middle royalty-table"
-                >Royalty</th>
-                <th
-                    scope="col"
-                    width="10%"
-                    class="align-middle royalty-table"
-                >Dibayar</th>
+                >Dibayar (Rp)</th>
                 <th
                     scope="col"
                     width="10%"
@@ -120,7 +115,7 @@
             $total_royalty = 0; ?>
             <?php foreach ($royalty_details as $royalty) :
                 $stock = $current_stock[$index]->WP + $current_stock[$index]->LP + $current_stock[$index]->SP;
-                $prev_stock =  $stock + $current_stock[$index]->count + $current_stock[$index]->non_sales_now; ?>
+                $prev_stock =  $stock + $current_stock[$index]->count; ?>
                 <tr class="royalty-table">
                     <td
                         class="royalty-table"
@@ -129,7 +124,7 @@
                     ><?= $index + 1; ?></td>
                     <td
                         class="royalty-table"
-                        width="25%"
+                        width="30%"
                         style="padding-left:5px;"
                     ><?= $royalty->book_title ?></td>
                     <td
@@ -151,22 +146,17 @@
                         class="royalty-table"
                         style="text-align: center;"
                         width="10%"
-                    ><?= isset($current_stock[$index]->non_sales_last) ? $current_stock[$index]->non_sales_last : 0 ?></td>
+                    >15 %</td>
                     <td
                         class="royalty-table"
-                        style="text-align: center;"
-                        width="10%"
-                    ><?= $royalty->royalty ?> %</td>
-                    <td
-                        class="royalty-table"
-                        width="10%"
+                        width="15%"
                         style="padding-left:5px;"
                     >Rp <?= number_format($royalty->earned_royalty, 0, ',', '.'); ?></td>
                     <td
                         class="royalty-table"
                         style="text-align: center;"
                         width="10%"
-                    ><?= $prev_stock - $royalty->count - $current_stock[$index]->non_sales_last ?></td>
+                    ><?= $prev_stock - $royalty->count ?></td>
                 </tr>
                 <?php $index++;
                 $total_royalty += $royalty->earned_royalty; ?>

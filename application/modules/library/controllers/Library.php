@@ -1,10 +1,11 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
-class Library extends MY_Controller
+class Library extends Warehouse_Sales_Controller
 {
     public function __construct()
     {
         parent::__construct();
         $this->pages = 'library';
+ 
         $this->load->model('Library_model', 'library');
     }
  
@@ -16,7 +17,7 @@ class Library extends MY_Controller
         $main_view = 'library/index_library';
         $this->load->view('template', compact('pages', 'main_view', 'libraries', 'total'));
     }
-
+ 
     public function add()
     {
         if (!$_POST) {
@@ -36,6 +37,7 @@ class Library extends MY_Controller
         } else {
             $this->session->set_flashdata('error', $this->lang->line('toast_add_fail'));
         }
+ 
         redirect($this->pages);
     }
  
@@ -63,9 +65,10 @@ class Library extends MY_Controller
         } else {
             $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));
         }
+ 
         redirect($this->pages);
     }
-  
+ 
     public function delete($id = null)
     {
         $library = $this->library->where('library_id', $id)->get();
@@ -77,10 +80,11 @@ class Library extends MY_Controller
             $this->session->set_flashdata('success', $this->lang->line('toast_delete_success'));
         } else {
             $this->session->set_flashdata('error', $this->lang->line('toast_delete_fail'));
-        } 
+        }
+ 
         redirect($this->pages);
     }
-  
+ 
     public function unique_library_name($library_name)
     {
         $library_id = $this->input->post('library_id');
@@ -93,4 +97,5 @@ class Library extends MY_Controller
         }
         return true;
     }
+ 
 }

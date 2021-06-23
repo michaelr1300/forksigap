@@ -1,10 +1,5 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-use Mike42\Escpos\Printer;
-use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
 class Invoice extends Sales_Controller
 {
     public function __construct()
@@ -24,8 +19,7 @@ class Invoice extends Sales_Controller
             'keyword'           => $this->input->get('keyword', true),
             'invoice_type'      => $this->input->get('invoice_type', true),
             'status'            => $this->input->get('status', true),
-            'customer_type'     => $this->input->get('customer_type', true),
-            'excel'             => $this->input->get('excel', true)
+            'customer_type'     => $this->input->get('customer_type', true)
         ];
 
         $this->invoice->per_page = $this->input->get('per_page', true) ?? 10;
@@ -43,9 +37,6 @@ class Invoice extends Sales_Controller
         $pages      = $this->pages;
         $main_view  = 'invoice/index_invoice';
         $this->load->view('template', compact('pages', 'main_view', 'invoice', 'pagination', 'total'));
-        if ($filters['excel'] == 1) {
-            $this->generate_excel($filters);
-        }
     }
 
     public function view($invoice_id)
@@ -256,9 +247,9 @@ class Invoice extends Sales_Controller
                     $book_stock->library_present += $invoice_book->qty;
                     $library_stock += $invoice_book->qty;
                     $this->db->set('library_stock', $library_stock)
-                        ->where('book_stock_id', $book_stock->book_stock_id)
-                        ->where('library_id', $library_id)
-                        ->update('library_stock_detail');
+                    ->where('book_stock_id', $book_stock->book_stock_id)
+                    ->where('library_id', $library_id)
+                    ->update('library_stock_detail');
                 }
                 $this->book_stock->where('book_id', $invoice_book->book_id)->update($book_stock);
             }
@@ -288,7 +279,7 @@ class Invoice extends Sales_Controller
             $countsize = count($this->input->post('invoice_book_id'));
 
             $total_weight = 0;
-            // Masukkan buku di form faktur ke database
+            // Masukkan invoice_book yang baru (hasil edit) ke database
             for ($i = 0; $i < $countsize; $i++) {
                 $book_id = $this->input->post('invoice_book_id')[$i];
                 $book = [
@@ -428,9 +419,9 @@ class Invoice extends Sales_Controller
                                 $book_stock->library_present += $invoice_book->qty;
                                 $library_stock += $invoice_book->qty;
                                 $this->db->set('library_stock', $library_stock)
-                                    ->where('book_stock_id', $book_stock->book_stock_id)
-                                    ->where('library_id', $library_id)
-                                    ->update('library_stock_detail');
+                                ->where('book_stock_id', $book_stock->book_stock_id)
+                                ->where('library_id', $library_id)
+                                ->update('library_stock_detail');
                             }
                             $this->book_stock->where('book_id', $invoice_book->book_id)->update($book_stock);
                         }
@@ -532,178 +523,6 @@ class Invoice extends Sales_Controller
         $this->pdf->generate_pdf_a4_portrait($html, $file_name);
     }
 
-    public function print_showroom_receipt()
-    {
-        // me-load library escpos
-        // $this->load->library('Escpose');
-        // membuat connector printer ke shared printer bernama "printer_a"
-        $connector = new WindowsPrintConnector("printer_a");
-
-        // membuat objek $printer agar dapat di lakukan fungsinya
-        $printer = new Printer($connector);
-
-        // membuat fungsi untuk membuat 1 baris tabel, agar dapat dipanggil berkali-kali dengan mudah
-        function buatBaris4Kolom($kolom1, $kolom2, $kolom3, $kolom4)
-        {
-            // Mengatur lebar setiap kolom (dalam satuan karakter)
-            $lebar_kolom_1 = 12;
-            $lebar_kolom_2 = 8;
-            $lebar_kolom_3 = 8;
-            $lebar_kolom_4 = 9;
-
-            // Melakukan wordwrap(), jadi jika karakter teks melebihi lebar kolom, ditambahkan \n 
-            $kolom1 = wordwrap($kolom1, $lebar_kolom_1, "\n", true);
-            $kolom2 = wordwrap($kolom2, $lebar_kolom_2, "\n", true);
-            $kolom3 = wordwrap($kolom3, $lebar_kolom_3, "\n", true);
-            $kolom4 = wordwrap($kolom4, $lebar_kolom_4, "\n", true);
-
-            // Merubah hasil wordwrap menjadi array, kolom yang memiliki 2 index array berarti memiliki 2 baris (kena wordwrap)
-            $kolom1Array = explode("\n", $kolom1);
-            $kolom2Array = explode("\n", $kolom2);
-            $kolom3Array = explode("\n", $kolom3);
-            $kolom4Array = explode("\n", $kolom4);
-
-            // Mengambil jumlah baris terbanyak dari kolom-kolom untuk dijadikan titik akhir perulangan
-            $jmlBarisTerbanyak = max(count($kolom1Array), count($kolom2Array), count($kolom3Array), count($kolom4Array));
-
-            // Mendeklarasikan variabel untuk menampung kolom yang sudah di edit
-            $hasilBaris = array();
-
-            // Melakukan perulangan setiap baris (yang dibentuk wordwrap), untuk menggabungkan setiap kolom menjadi 1 baris 
-            for ($i = 0; $i < $jmlBarisTerbanyak; $i++) {
-
-                // memberikan spasi di setiap cell berdasarkan lebar kolom yang ditentukan, 
-                $hasilKolom1 = str_pad((isset($kolom1Array[$i]) ? $kolom1Array[$i] : ""), $lebar_kolom_1, " ");
-                $hasilKolom2 = str_pad((isset($kolom2Array[$i]) ? $kolom2Array[$i] : ""), $lebar_kolom_2, " ");
-
-                // memberikan rata kanan pada kolom 3 dan 4 karena akan kita gunakan untuk harga dan total harga
-                $hasilKolom3 = str_pad((isset($kolom3Array[$i]) ? $kolom3Array[$i] : ""), $lebar_kolom_3, " ", STR_PAD_LEFT);
-                $hasilKolom4 = str_pad((isset($kolom4Array[$i]) ? $kolom4Array[$i] : ""), $lebar_kolom_4, " ", STR_PAD_LEFT);
-
-                // Menggabungkan kolom tersebut menjadi 1 baris dan ditampung ke variabel hasil (ada 1 spasi disetiap kolom)
-                $hasilBaris[] = $hasilKolom1 . " " . $hasilKolom2 . " " . $hasilKolom3 . " " . $hasilKolom4;
-            }
-
-            // Hasil yang berupa array, disatukan kembali menjadi string dan tambahkan \n disetiap barisnya.
-            return implode("\n", $hasilBaris) . "\n";
-        }
-
-        // Membuat judul
-        $printer->initialize();
-        $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT); // Setting teks menjadi lebih besar
-        $printer->setJustification(Printer::JUSTIFY_CENTER); // Setting teks menjadi rata tengah
-        $printer->text("UGM Press\n");
-        $printer->text("\n");
-
-        // Data transaksi
-        $printer->initialize();
-        $printer->text("Kasir : Andrew\n");
-        $printer->text("Waktu : 23-04-2021 19:23:22\n");
-
-        // Membuat tabel
-        $printer->initialize(); // Reset bentuk/jenis teks
-        $printer->text("----------------------------------------\n");
-        $printer->text(buatBaris4Kolom("Barang", "qty", "Harga", "Subtotal"));
-        $printer->text("----------------------------------------\n");
-        $printer->text(buatBaris4Kolom("Makaroni 250gr", "2pcs", "15.000", "30.000"));
-        $printer->text(buatBaris4Kolom("Telur", "2pcs", "5.000", "10.000"));
-        $printer->text(buatBaris4Kolom("Tepung terigu", "1pcs", "8.200", "16.400"));
-        $printer->text("----------------------------------------\n");
-        $printer->text(buatBaris4Kolom('', '', "Total", "56.400"));
-        $printer->text("\n");
-
-        // Pesan penutup
-        $printer->initialize();
-        $printer->setJustification(Printer::JUSTIFY_CENTER);
-        $printer->text("Terima kasih telah berbelanja\n");
-        $printer->text("UGM Press Yogyakarta\n");
-
-        $printer->feed(5); // mencetak 5 baris kosong agar terangkat (pemotong kertas saya memiliki jarak 5 baris dari toner)
-        $printer->close();
-    }
-
-    public function generate_excel($filters)
-    {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $filename = 'Data_Faktur';
-        $invoice_test = $this->invoice->filter_invoice($filters, -1);
-        $i = 2;
-        $no = 1;
-        // Column Content
-        foreach ($invoice_test['invoice'] as $data) {
-            foreach (range('A', 'I') as $v) {
-                switch ($v) {
-                    case 'A': {
-                            $value = $no++;
-                            break;
-                        }
-                    case 'B': {
-                            $value = $data->number;
-                            break;
-                        }
-                    case 'C': {
-                            $value = date('d F Y', strtotime($data->issued_date));
-                            break;
-                        }
-                    case 'D': {
-                            $value = get_invoice_type()[$data->invoice_type];
-                            break;
-                        }
-                    case 'E': {
-                            $value = $data->customer_name;
-                            break;
-                        }
-                    case 'F': {
-                            $value = $data->customer_type;
-                            break;
-                        }
-                    case 'G': {
-                            $value = get_invoice_status()[$data->status];
-                            break;
-                        }
-                    case 'H': {
-                            $value = $data->due_date;
-                            break;
-                        }
-                    case 'I': {
-                            $value = $data->receipt;
-                            break;
-                        }
-                }
-                $sheet->setCellValue($v . $i, $value);
-            }
-            $i++;
-        }
-        // Column Title
-        $sheet->setCellValue('A1', 'No');
-        $sheet->setCellValue('B1', 'Nomor Faktur');
-        $sheet->setCellValue('C1', 'Tanggal Dikeluarkan');
-        $sheet->setCellValue('D1', 'Jenis Faktur');
-        $sheet->setCellValue('E1', 'Nama Customer');
-        $sheet->setCellValue('F1', 'Jenis Customer');
-        $sheet->setCellValue('G1', 'Status');
-        $sheet->setCellValue('H1', 'Jatuh Tempo');
-        $sheet->setCellValue('I1', 'Bukti Bayar');
-        // Auto width
-        $sheet->getColumnDimension('A')->setAutoSize(true);
-        $sheet->getColumnDimension('B')->setAutoSize(true);
-        $sheet->getColumnDimension('C')->setAutoSize(true);
-        $sheet->getColumnDimension('D')->setAutoSize(true);
-        $sheet->getColumnDimension('E')->setAutoSize(true);
-        $sheet->getColumnDimension('F')->setAutoSize(true);
-        $sheet->getColumnDimension('G')->setAutoSize(true);
-        $sheet->getColumnDimension('H')->setAutoSize(true);
-        $sheet->getColumnDimension('I')->setAutoSize(true);
-
-        $writer = new Xlsx($spreadsheet);
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
-        header('Cache-Control: max-age=0');
-        $writer->save('php://output');
-        die();
-    }
-
     public function api_get_book($book_id)
     {
         $book = $this->invoice->get_book($book_id);
@@ -729,16 +548,9 @@ class Invoice extends Sales_Controller
         return $this->send_json_output(true, $discount);
     }
 
-    public function api_get_book_dropdown($type, $library_id = '')
+    public function api_get_book_dropdown($type, $library_id='')
     {
         $data = $this->invoice->get_available_book_list($type, $library_id);
         return $this->send_json_output(true, $data);
-    }
-
-    public function debug($book_id)
-    {
-        $b = $this->invoice->get_book_royalty($book_id);
-        $a = ($this->book_stock->get_one_library_stock(13, 1))->library_stock;
-        var_dump($b);
-    }
+    } 
 }

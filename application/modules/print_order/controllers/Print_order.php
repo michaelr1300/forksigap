@@ -83,7 +83,7 @@ class Print_order extends Printing_Controller
 
         if ($this->print_order->validate()) {
             if (!empty($_FILES) && $file_name = $_FILES['print_order_file']['name']) {
-                $generated_name = strip_disallowed_char($this->_generate_file_name($file_name));
+                $generated_name = $this->_generate_file_name(strip_disallowed_char($file_name));
                 $upload          = $this->print_order->upload_print_order_file('print_order_file', $generated_name);
                 if ($upload) {
                     $input->print_order_file = $generated_name;
@@ -108,8 +108,6 @@ class Print_order extends Printing_Controller
         // set status awal
         $input->print_order_status = 'waiting';
 
-        unset($input->print_mode);
-
         if (empty($input->deadline_date)) {
             $input->deadline_date = empty_to_null($input->deadline_date);
         }
@@ -129,18 +127,23 @@ class Print_order extends Printing_Controller
             $input->book_id = empty_to_null($input->book_id);
         }
 
-        if (empty($input->paper_estimation)) {
-            if (empty($input->book_id)) {
+        if ($input->print_mode !== 'nonbook') {
+            $book_pages = $this->print_order->get_book($input->book_id)->book_pages;
+            if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
                 $input->paper_estimation = empty_to_null($input->paper_estimation);
             } else {
-                $book_pages = $this->print_order->get_book($input->book_id)->book_pages;
-                if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
-                    $input->paper_estimation = empty_to_null($input->paper_estimation);
-                } else {
-                    $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
-                }
+                $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
+            }
+        } else {
+            if (empty($input->total) || empty($input->paper_divider || empty($input->non_book_pages))) {
+                $input->paper_estimation = empty_to_null($input->paper_estimation);
+            } else {
+                $input->paper_estimation = ($input->total * $input->non_book_pages) / $input->paper_divider;
             }
         }
+
+        unset($input->print_mode);
+        unset($input->non_book_pages);
 
         // insert print order
         $print_order_id = $this->print_order->insert($input);
@@ -189,7 +192,7 @@ class Print_order extends Printing_Controller
 
         if ($this->print_order->validate()) {
             if (!empty($_FILES) && $file_name = $_FILES['print_order_file']['name']) {
-                $generated_name = strip_disallowed_char($this->_generate_file_name($file_name));
+                $generated_name = $this->_generate_file_name(strip_disallowed_char($file_name));
                 $upload          = $this->print_order->upload_print_order_file('print_order_file', $generated_name);
                 if ($upload) {
                     $input->print_order_file = $generated_name;
@@ -245,18 +248,22 @@ class Print_order extends Printing_Controller
             $input->book_id = empty_to_null($input->book_id);
         }
 
-        if (empty($input->paper_estimation)) {
-            if (empty($input->book_id)) {
+        if ($input->category == 'nonbook') {
+            if (empty($input->total) || empty($input->paper_divider || empty($input->non_book_pages))) {
                 $input->paper_estimation = empty_to_null($input->paper_estimation);
             } else {
-                $book_pages = $this->print_order->get_book($input->book_id)->book_pages;
-                if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
-                    $input->paper_estimation = empty_to_null($input->paper_estimation);
-                } else {
-                    $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
-                }
+                $input->paper_estimation = ($input->total * $input->non_book_pages) / $input->paper_divider;
+            }
+        } else {
+            $book_pages = $this->print_order->get_book($input->book_id)->book_pages;
+            if (empty($input->total) || empty($book_pages) || empty($input->paper_divider)) {
+                $input->paper_estimation = empty_to_null($input->paper_estimation);
+            } else {
+                $input->paper_estimation = ($input->total * $book_pages) / $input->paper_divider;
             }
         }
+
+        unset($input->non_book_pages);
 
         // update print order
         $this->print_order->where('print_order_id', $print_order_id)->update($input);
@@ -313,41 +320,9 @@ class Print_order extends Printing_Controller
         $category   = $data->category;
 
         if ($category !== 'nonbook' && $category !== 'from_outside') {
-            // Mekanisme input stok
+            // Mekanisme masuk ke penerimaan buku gudang
             $book_id             =   $data->book_id;
             $print_order_id      =   $data->print_order_id;
-            // $warehouse_past      =   intval($data->stock_warehouse);
-
-            // if ($data->total_postprint) {
-            //     $warehouse_modifier  =   abs($data->total_postprint);
-            // } else {
-            //     $warehouse_modifier  =   abs($data->total_print);
-            // }
-
-            // $warehouse_operator  =   "+";
-            // $warehouse_present   =   $warehouse_past + $warehouse_modifier;
-
-            // $edit   =   [
-            //     'stock_warehouse'    => $warehouse_present,
-            // ];
-
-            // $add    =   [
-            //     'book_id'               => $book_id,
-            //     'user_id'               => $_SESSION['user_id'],
-            //     'type'                  => 'print_order',
-            //     'date'                  => date('Y-m-d H:i:s'),
-            //     'notes'                 => '<a href="' . base_url('print_order/view/' . $data->print_order_id) . '" target="_blank"> <i class="fa fa-external-link-alt"></i> Link Order Cetak</a>',
-            //     'warehouse_past'        => $warehouse_past,
-            //     'warehouse_modifier'    => $warehouse_modifier,
-            //     'warehouse_present'     => $warehouse_present,
-            //     'warehouse_operator'    => $warehouse_operator
-            // ];
-
-            // $this->db->set($edit)->where('book_id', $book_id)->update('book');
-            // $this->db->insert('book_stock', $add);
-
-            // insert data print_order_id 
-            // ke tabel book_receive gudang
             $insert_data_print = array(
                 'book_id' => $book_id,
                 'print_order_id' => $print_order_id,
@@ -371,6 +346,7 @@ class Print_order extends Printing_Controller
             'print_order_status' => $action,
             'finish_date' => $action == 'finish' ? now() : null
         ]);
+
         if ($this->db->trans_status() === false) {
             $this->db->trans_rollback();
             $this->session->set_flashdata('error', $this->lang->line('toast_edit_fail'));

@@ -21,7 +21,7 @@ $level_options = [
    'reviewer'         => 'Reviewer',
    'editor'           => 'Editor',
    'layouter'         => 'Layouter',
-   'author_reviewer'  => 'Author dan Reviewer',
+   'author_reviewer'  => 'Author dan Reviewer'
 ];
 
 $status_options = [
