@@ -82,7 +82,9 @@ class Royalty extends Sales_Controller
                 'last_paid_date'    => $history->start_date,
                 'period_end'        => $history->end_date
             ];
-            $history->details = $this->royalty->author_details($author_id, $history_filter)[0];
+            if ($this->royalty->author_details($author_id, $history_filter) != null) {
+                $history->details = $this->royalty->author_details($author_id, $history_filter)[0];
+            }
         }
 
         $total = $get_data['total'];
