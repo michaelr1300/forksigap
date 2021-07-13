@@ -259,7 +259,7 @@ class Royalty extends Sales_Controller
                 ];
                 $next_royalty = $this->royalty->author_details($each_royalty->author_id, $filters_next_royalty);
                 // Buku penulis tidak ada yg terjual selama periode ini
-                if ($next_royalty[0]->book_id == NULL) {
+                if ($next_royalty == NULL) {
                     unset($royalty[$key]);
                 }
             }
