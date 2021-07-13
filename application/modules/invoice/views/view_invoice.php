@@ -475,7 +475,7 @@ $level              = check_level();
         if (validate_flag != true) {
             var delivery_fee = $("#delivery").val()
             if ($('#invoice_type').html() == 'Online') {
-                var receipt = $("input[type='radio'][name='marketplace']:checked").val() + ' - ' + $("#receipt").val()
+                var receipt = $("#receipt").val() + '-' + $("input[type='radio'][name='marketplace']:checked").val()
             } else var receipt = $("#receipt").val()
             $.ajax({
                 type: "POST",
