@@ -128,7 +128,8 @@ class Earning extends Sales_Controller
         $no = 1;
         // Column Content
         foreach ($get_data as $data) {
-            foreach (range('A', 'G') as $v) {
+            foreach (range('A', 'H') as $v) {
+                $receipt = explode("-", $data->receipt);
                 switch ($v) {
                     case 'A': {
                             $value = $no++;
@@ -155,7 +156,11 @@ class Earning extends Sales_Controller
                             break;
                         }
                     case 'G': {
-                            $value = $data->receipt;
+                            $value = $receipt[0];
+                            break;
+                        }
+                    case 'H': {
+                            $value = $receipt[1] ?? '';
                             break;
                         }
                 }
@@ -171,6 +176,7 @@ class Earning extends Sales_Controller
         $sheet->setCellValue('E1', 'Status');
         $sheet->setCellValue('F1', 'Pendapatan');
         $sheet->setCellValue('G1', 'Bukti Bayar');
+        $sheet->setCellValue('H1', 'Marketplace');
         // Auto width
         $sheet->getColumnDimension('A')->setAutoSize(true);
         $sheet->getColumnDimension('B')->setAutoSize(true);
@@ -179,6 +185,7 @@ class Earning extends Sales_Controller
         $sheet->getColumnDimension('E')->setAutoSize(true);
         $sheet->getColumnDimension('F')->setAutoSize(true);
         $sheet->getColumnDimension('G')->setAutoSize(true);
+        $sheet->getColumnDimension('H')->setAutoSize(true);
 
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.ms-excel');
