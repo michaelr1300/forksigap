@@ -113,7 +113,9 @@ class Royalty extends Sales_Controller
                 'last_paid_date'    => $latest_royalty->start_date,
                 'period_end'        => $latest_royalty->end_date
             ];
-            $latest_royalty->details = $this->royalty->author_details($author_id, $latest_filters)[0];
+            if ($this->royalty->author_details($author_id, $latest_filters) != null) {
+                $latest_royalty->details = $this->royalty->author_details($author_id, $latest_filters)[0];
+            }
         }
 
         if ($latest_royalty != NULL) {
@@ -145,7 +147,9 @@ class Royalty extends Sales_Controller
                 'last_paid_date'    => $history->start_date,
                 'period_end'        => $history->end_date
             ];
-            $history->details = $this->royalty->author_details($author_id, $history_filter)[0];
+            if ($this->royalty->author_details($author_id, $history_filter) != null) {
+                $history->details = $this->royalty->author_details($author_id, $history_filter)[0];
+            }
         }
         $pages          = $this->pages;
         $main_view      = 'royalty/view_royalty';
