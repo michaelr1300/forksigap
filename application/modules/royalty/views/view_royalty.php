@@ -88,7 +88,7 @@ if ($latest_royalty == NULL) {
                                     <tr>
                                         <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->start_date)) ?? ''; ?> </td>
                                         <td class="text-center align-middle"><?= date("d F Y", strtotime($latest_royalty->end_date)) ?? '' ?></td>
-                                        <td class="text-center align-middle">Rp <?= number_format($latest_royalty->details->earned_royalty, 0, ',', '.') ?? 0; ?></td>
+                                        <td class="text-center align-middle">Rp <?= number_format($latest_royalty->details->earned_royalty ?? 0, 0, ',', '.') ?? 0; ?></td>
                                         <td class="text-center">
                                             <a
                                                 type="button btn-success"
